@@ -523,10 +523,23 @@ header h1 {
     margin-left: 6px;
 }
 
- #listaQuadras {
-        flex: 1;            /* ocupa todo espaço vertical da box */
-        min-height: 400px;  /* garante altura mínima */
-        overflow-y: auto;   /* scroll se passar */
+@media (min-width: 769px) {
+    .main-grid {
+        display: flex;
+        gap: 20px;
+        align-items: stretch; /* 🔑 faz as boxes ficarem da mesma altura */
+    }
+
+    .main-grid .box {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    #listaQuadras {
+        flex: 1;           /* ocupa todo espaço vertical da box */
+        min-height: 400px; /* garante altura mínima */
+        overflow-y: auto;  /* scroll se passar */
     }
 }
 
@@ -538,7 +551,7 @@ header h1 {
     }
 
     #listaQuadras {
-        max-height: 250px;  /* altura menor no celular */
+        max-height: 250px; /* altura menor no celular */
     }
 }
 
@@ -729,6 +742,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
