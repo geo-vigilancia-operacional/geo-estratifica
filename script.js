@@ -401,7 +401,7 @@ function atualizarProgramados() {
 }
 // Chama a função para atualizar o campo "Imóveis a Trabalhar"
     calcularImoveisATrabalhar();
-}
+
 // 7. CALCULAR TOTAIS DAS QUADRAS SELECIONADAS
 function calcularTotaisQuadrasSelecionadas(dadosBairro) {
     const campos = [
@@ -573,6 +573,7 @@ if (limparTudoBtn) {
 
 console.log("Sistema inicializado com sucesso!");
 }); // ✅ fechamento do DOMContentLoaded
+
 
 
 
