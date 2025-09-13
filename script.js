@@ -526,46 +526,56 @@ function limparTudo() {
 }
 
 // --- INICIALIZAÇÃO ---
+// --- INICIALIZAÇÃO ---
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
 
- carregarDados();
+    carregarDados();
 
-if (selectBairro) {
-    selectBairro.addEventListener("change", function() {
-        estado.bairroSelecionado = this.value;
-        estado.quadrasSelecionadas.clear();
+    if (selectBairro) {
+        selectBairro.addEventListener("change", function() {
+            estado.bairroSelecionado = this.value;
+            estado.quadrasSelecionadas.clear();
 
-        montarResumoGeral();          // ✅ atualiza o painel de resumo
-        montarListaQuadras();
-        atualizarProgramados();
-        atualizarQuadrasSelecionadas(); // ✅ só mostra a numeração
-    });
-}
+            montarResumoGeral();
+            montarListaQuadras();
+            atualizarProgramados();
+            atualizarQuadrasSelecionadas();
+        });
+    }
 
-if (aplicarTextoBtn && entradaQuadras) {
-    aplicarTextoBtn.addEventListener("click", function() {
-        if (!estado.bairroSelecionado) {
-            alert("Selecione um bairro primeiro!");
-            return;
-        }
+    if (aplicarTextoBtn && entradaQuadras) {
+        aplicarTextoBtn.addEventListener("click", function() {
+            if (!estado.bairroSelecionado) {
+                alert("Selecione um bairro primeiro!");
+                return;
+            }
 
-        const texto = entradaQuadras.value;
-        const quadrasSelecionadas = interpretarEntrada(texto);
+            const texto = entradaQuadras.value;
+            const quadrasSelecionadas = interpretarEntrada(texto);
 
-        estado.quadrasSelecionadas = quadrasSelecionadas;
-        montarListaQuadras();
-        atualizarProgramados();
-        atualizarQuadrasSelecionadas(); // ✅ só mostra a numeração
-    });
-}
+            estado.quadrasSelecionadas = quadrasSelecionadas;
+            montarListaQuadras();
+            atualizarProgramados();
+            atualizarQuadrasSelecionadas();
+        });
+    }
 
-if (limparTudoBtn) {
-    limparTudoBtn.addEventListener("click", limparTudo);
-}
+    // ✅ NOVO: Adicione este trecho!
+    // Adiciona o ouvinte de eventos para o campo de percentual
+    const inputPercentual = document.getElementById("percentualFechados");
+    if (inputPercentual) {
+        inputPercentual.addEventListener("input", calcularImoveisATrabalhar);
+    }
+    
+    // ✅ NOVO: Adiciona o ouvinte de eventos para o botão de limpar
+    if (limparTudoBtn) {
+        limparTudoBtn.addEventListener("click", limparTudo);
+    }
 
-console.log("Sistema inicializado com sucesso!");
-}); // ✅ fechamento do DOMContentLoaded
+    console.log("Sistema inicializado com sucesso!");
+});
+
 
 
 
