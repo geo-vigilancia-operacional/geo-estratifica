@@ -104,10 +104,6 @@ function montarResumoGeral() {
         <span><strong>🐈 Gatos:</strong> ${totais.GATO}</span>
     `;
 }
-
-
-
-
 // 4. CALCULAR TOTAIS COMPLETOS DO BAIRRO
 function calcularTotaisBairro(dadosBairro) {
     const campos = [
@@ -142,8 +138,6 @@ function calcularTotaisBairro(dadosBairro) {
     
     return totais;
 }
-
-
 // 5. MONTAR LISTA DE QUADRAS COM DETALHES
 // === FUNÇÃO: MONTAR LISTA DE QUADRAS ===
 function montarListaQuadras() {
@@ -334,8 +328,6 @@ function calcularImoveisATrabalhar() {
 
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
-// 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
-// 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
 function atualizarProgramados() {
     const resumoProgramados = document.getElementById("resumoProgramados");
 
@@ -362,7 +354,7 @@ function atualizarProgramados() {
         return isNaN(num) ? 0 : num;
     };
 
-    // CORREÇÃO: As variáveis de cálculo devem ser declaradas aqui.
+    // **CORREÇÃO: As variáveis de cálculo devem ser declaradas aqui.**
     const totalImoveis = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TOTAL || 0), 0);
     const residencias = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.R || 0), 0);
     const comercios = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.C || 0), 0);
@@ -402,7 +394,6 @@ function atualizarProgramados() {
     // Agora que o elemento existe no DOM, você pode chamá-lo
     calcularImoveisATrabalhar();
 }
-
 // 7. CALCULAR TOTAIS DAS QUADRAS SELECIONADAS
 function calcularTotaisQuadrasSelecionadas(dadosBairro) {
     const campos = [
@@ -677,6 +668,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
