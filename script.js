@@ -305,7 +305,31 @@ function atualizarQuadrasSelecionadas() {
     textarea.value = quadrasValidas.join(", ");
     detalhesDiv.innerHTML = "";
 }
+// Função para calcular e atualizar o campo 'Imóveis a Trabalhar'
+function calcularImoveisATrabalhar() {
+    // 1. Obter o valor de 'Imóveis Programados'
+    // Acessa o valor pelo ID, agora que ele foi adicionado no HTML gerado
+    const imoveisProgramados = Number(document.getElementById("imoveisProgramadosValue").textContent);
 
+    // 2. Obter o percentual de fechados. Se o campo não for encontrado, assume 0.
+    const inputFechados = document.getElementById("percentualFechados");
+    const percentualFechados = inputFechados ? Number(inputFechados.value) || 0 : 0;
+
+    // 3. O valor inicial para 'Imóveis a Trabalhar' é o mesmo que 'Imóveis Programados'
+    let imoveisTrabalhar = imoveisProgramados;
+
+    // 4. Se o percentual de fechados for maior que zero, recalcula o total a trabalhar
+    if (percentualFechados > 0) {
+        const fechados = imoveisProgramados * (percentualFechados / 100);
+        imoveisTrabalhar = imoveisProgramados - fechados;
+    }
+
+    // 5. Atualiza o campo 'Imóveis a Trabalhar' com o valor final, arredondado
+    const campoImoveisTrabalhar = document.getElementById("imoveisATrabalhar");
+    if (campoImoveisTrabalhar) {
+        campoImoveisTrabalhar.value = Math.round(imoveisTrabalhar);
+    }
+}
 
 
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
@@ -375,7 +399,9 @@ function atualizarProgramados() {
         <span>💧 <strong>Depósitos de Água:</strong> ${depositos}</span>
     `;
 }
-
+// Chama a função para atualizar o campo "Imóveis a Trabalhar"
+    calcularImoveisATrabalhar();
+}
 // 7. CALCULAR TOTAIS DAS QUADRAS SELECIONADAS
 function calcularTotaisQuadrasSelecionadas(dadosBairro) {
     const campos = [
@@ -547,6 +573,7 @@ if (limparTudoBtn) {
 
 console.log("Sistema inicializado com sucesso!");
 }); // ✅ fechamento do DOMContentLoaded
+
 
 
 
