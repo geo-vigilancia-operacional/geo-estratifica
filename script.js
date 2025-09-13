@@ -198,7 +198,6 @@ function montarListaQuadras() {
             checkbox.disabled = true;
         } else {
             checkbox.checked = Array.from(estado.quadrasSelecionadas).includes(quadra);
-
             checkbox.addEventListener("change", () => {
                 if (checkbox.checked) {
                     estado.quadrasSelecionadas.add(quadra);
@@ -226,7 +225,17 @@ function montarListaQuadras() {
         labelPositivo.style.fontSize = "0.85em";
         labelPositivo.style.color = "#ccc";
 
-        checkboxPositivo.disabled = !estado.quadrasSelecionadas.has(quadra);
+        // -------------------------------------------------------------
+        // NOVO: Adicionar a verificação 'isExtinta' aqui
+        // O checkbox Positiva só é habilitado se NÃO for extinta
+        // E se o checkbox principal estiver selecionado
+        // -------------------------------------------------------------
+        if (isExtinta) {
+            checkboxPositivo.disabled = true;
+        } else {
+            checkboxPositivo.disabled = !estado.quadrasSelecionadas.has(quadra);
+        }
+
         checkboxPositivo.checked = estado.quadrasPositivas.has(quadra);
 
         checkboxPositivo.addEventListener("change", () => {
@@ -238,8 +247,17 @@ function montarListaQuadras() {
             atualizarQuadrasPositivas();
         });
 
+        // -------------------------------------------------------------
+        // NOVO: Adicionar a verificação 'isExtinta' ao listener
+        // Para evitar que o checkbox seja habilitado em quadras extintas
+        // -------------------------------------------------------------
         checkbox.addEventListener("change", () => {
-            checkboxPositivo.disabled = !checkbox.checked;
+            if (isExtinta) {
+                checkboxPositivo.disabled = true;
+            } else {
+                checkboxPositivo.disabled = !checkbox.checked;
+            }
+            
             if (!checkbox.checked) {
                 checkboxPositivo.checked = false;
                 estado.quadrasPositivas.delete(quadra);
@@ -265,7 +283,6 @@ function montarListaQuadras() {
         listaQuadrasDiv.appendChild(wrapper);
     });
 }
-
 
 
 // === FUNÇÃO: MOSTRAR APENAS QUADRAS SELECIONADAS ===
@@ -530,6 +547,7 @@ if (limparTudoBtn) {
 
 console.log("Sistema inicializado com sucesso!");
 }); // ✅ fechamento do DOMContentLoaded
+
 
 
 
