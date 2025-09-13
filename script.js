@@ -335,6 +335,7 @@ function calcularImoveisATrabalhar() {
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
+// 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
 function atualizarProgramados() {
     const resumoProgramados = document.getElementById("resumoProgramados");
 
@@ -345,36 +346,43 @@ function atualizarProgramados() {
 
     const dadosBairro = bairros.filter(b => b.BAIRRO === estado.bairroSelecionado);
 
+    // Quadras selecionadas ativas (sem extintas)
     const quadrasSelecionadasAtivas = Array.from(estado.quadrasSelecionadas).filter(q => {
         const dadosQuadra = dadosBairro.find(b => b.QT === q);
         return dadosQuadra && Number(dadosQuadra.TOTAL) > 0;
     });
 
     const dadosQuadrasSelecionadas = dadosBairro.filter(b => quadrasSelecionadasAtivas.includes(b.QT));
+
     const totalQuadrasSelecionadas = quadrasSelecionadasAtivas.length;
 
+    // Função auxiliar para converter para número de forma segura
     const getNumero = (valor) => {
         const num = Number(valor);
         return isNaN(num) ? 0 : num;
     };
 
+    // CORREÇÃO: As variáveis de cálculo devem ser declaradas aqui.
     const totalImoveis = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TOTAL || 0), 0);
     const residencias = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.R || 0), 0);
     const comercios = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.C || 0), 0);
     const terrenos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TB || 0), 0);
     const outros = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.OU || 0), 0);
     const pontosEstrategicos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.PE || 0), 0);
+    
+    // Nomes de propriedades corrigidos
     const apartamentos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur['AP. ACIMA DO TÉRREO'] || 0), 0);
     const habitantes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.HABITANTES || 0), 0);
     const caes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.CÃO || 0), 0);
     const gatos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.GATO || 0), 0);
+    
+    // Depósitos de água
     const depositos = dadosQuadrasSelecionadas.reduce((acc, cur) => {
         return acc + getNumero(cur['TANQUE EXISTENTE']) + getNumero(cur['TAMBOR EXISTENTE']) + getNumero(cur['CISTERNA EXISTENTE']) + getNumero(cur['CACIMBA EXISTENTE']) + getNumero(cur["CAIXAS D'ÁGUA EXISTENTE"]);
     }, 0);
 
     const imoveisProgramados = totalImoveis - apartamentos;
 
-    // Primeiro, atualiza o HTML com o valor de 'imoveisProgramados'
     resumoProgramados.innerHTML = `
         <span><strong>Quadras Selecionadas:</strong> ${totalQuadrasSelecionadas}</span>
         <span><strong>Total de Imóveis:</strong> ${totalImoveis}</span>
@@ -669,6 +677,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
