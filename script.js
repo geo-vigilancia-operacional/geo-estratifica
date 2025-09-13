@@ -509,24 +509,118 @@ function interpretarEntrada(texto) {
 
     return selecionadas;
 }
+// A função de cálculo de dias e término está correta. Mantenha-a como está.
+function calcularDiasETermino() {
+    // 1. Obter os valores dos campos de entrada
+    const imoveisATrabalhar = Number(document.getElementById("imoveisATrabalhar").value) || 0;
+    const mediaPorServidor = Number(document.getElementById("media").value) || 0;
+    const servidoresProgramados = Number(document.getElementById("servidores").value) || 0;
+    const dataInicio = document.getElementById("dataInicio").value;
+
+    // 2. Calcular os "Dias Programados"
+    let diasProgramados = 0;
+    if (imoveisATrabalhar > 0 && mediaPorServidor > 0 && servidoresProgramados > 0) {
+        diasProgramados = imoveisATrabalhar / mediaPorServidor / servidoresProgramados;
+    }
+    
+    // Atualiza o campo "Dias Programados"
+    document.getElementById("dias").value = Math.ceil(diasProgramados);
+
+    // 3. Calcular a "Data de Término Programado"
+    const dataTerminoInput = document.getElementById("dataTermino");
+    if (!dataInicio) {
+        dataTerminoInput.value = "";
+        return;
+    }
+
+    const dataAtual = new Date(dataInicio + "T00:00:00"); // Adiciona o horário para evitar problemas de fuso horário
+    
+    let diasUteisAdicionados = 0;
+    while (diasUteisAdicionados < Math.ceil(diasProgramados)) {
+        dataAtual.setDate(dataAtual.getDate() + 1);
+        const diaDaSemana = dataAtual.getDay();
+        if (diaDaSemana !== 0 && diaDaSemana !== 6) {
+            diasUteisAdicionados++;
+        }
+    }
+    
+    const dia = String(dataAtual.getDate()).padStart(2, '0');
+    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+    const ano = dataAtual.getFullYear();
+    dataTerminoInput.value = `${dia}/${mes}/${ano}`;
+}
+
+// Sua função atualizarProgramados (aqui com a chamada para o novo cálculo)
+function atualizarProgramados() {
+    const resumoProgramados = document.getElementById("resumoProgramados");
+
+    if (!estado.bairroSelecionado) {
+        resumoProgramados.innerHTML = "<em>Selecione um bairro para ver os programados.</em>";
+        return;
+    }
+
+    // ... (o restante do seu código para calcular totais) ...
+    
+    const imoveisProgramados = totalImoveis - apartamentos;
+    
+    resumoProgramados.innerHTML = `
+        <span>🏠 <strong>Imóveis Programados:</strong> <span id="imoveisProgramadosValue">${imoveisProgramados}</span></span>
+        `;
+    
+    // Chama o cálculo de imóveis a trabalhar, que por sua vez, chama o cálculo de dias
+    calcularImoveisATrabalhar();
+}
+
+// Sua função de cálculo de Imóveis a Trabalhar
+function calcularImoveisATrabalhar() {
+    const imoveisProgramados = Number(document.getElementById("imoveisProgramadosValue").textContent);
+    const inputFechados = document.getElementById("percentualFechados");
+    const percentualFechados = inputFechados ? Number(inputFechados.value) || 0 : 0;
+    let imoveisTrabalhar = imoveisProgramados;
+
+    if (percentualFechados > 0) {
+        const fechados = imoveisProgramados * (percentualFechados / 100);
+        imoveisTrabalhar = imoveisProgramados - fechados;
+    }
+
+    const campoImoveisTrabalhar = document.getElementById("imoveisATrabalhar");
+    if (campoImoveisTrabalhar) {
+        campoImoveisTrabalhar.value = Math.round(imoveisTrabalhar);
+        calcularDiasETermino(); // Chama o cálculo de dias aqui
+    }
+}
 
 
-// 10. LIMPAR TUDO
+// NOVO: Função de limpeza completa
 function limparTudo() {
     estado.bairroSelecionado = null;
     estado.quadrasSelecionadas.clear();
-    estado.quadrasDisponiveis = [];
+    estado.quadrasPositivas.clear();
     
+    // Limpa campos da tela
     if (selectBairro) selectBairro.value = "";
     if (entradaQuadras) entradaQuadras.value = "";
     if (resumoGeralDiv) resumoGeralDiv.innerHTML = "";
     if (listaQuadrasDiv) listaQuadrasDiv.innerHTML = "";
     if (resumoProgramadosDiv) resumoProgramadosDiv.innerHTML = "<em>Selecione quadras para ver os programados.</em>";
     if (dadosDetalhesDiv) dadosDetalhesDiv.innerHTML = "";
+    
+    // ✅ NOVO: Limpeza dos campos de cálculo
+    document.getElementById("dataInicio").value = "";
+    document.getElementById("media").value = "";
+    document.getElementById("servidores").value = "";
+    document.getElementById("imoveisATrabalhar").value = "";
+    document.getElementById("percentualFechados").value = "";
+    document.getElementById("dias").value = "";
+    document.getElementById("dataTermino").value = "";
+    
+    // Chama as funções de atualização para garantir que tudo seja resetado
+    montarListaQuadras();
+    montarResumoGeral();
+    atualizarProgramados();
 }
 
-// --- INICIALIZAÇÃO ---
-// --- INICIALIZAÇÃO ---
+// --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
 
@@ -536,7 +630,6 @@ document.addEventListener("DOMContentLoaded", function() {
         selectBairro.addEventListener("change", function() {
             estado.bairroSelecionado = this.value;
             estado.quadrasSelecionadas.clear();
-
             montarResumoGeral();
             montarListaQuadras();
             atualizarProgramados();
@@ -550,29 +643,30 @@ document.addEventListener("DOMContentLoaded", function() {
                 alert("Selecione um bairro primeiro!");
                 return;
             }
-
             const texto = entradaQuadras.value;
             const quadrasSelecionadas = interpretarEntrada(texto);
-
             estado.quadrasSelecionadas = quadrasSelecionadas;
             montarListaQuadras();
             atualizarProgramados();
             atualizarQuadrasSelecionadas();
         });
     }
-
-    // ✅ NOVO: Adicione este trecho!
-    // Adiciona o ouvinte de eventos para o campo de percentual
-    const inputPercentual = document.getElementById("percentualFechados");
-    if (inputPercentual) {
-        inputPercentual.addEventListener("input", calcularImoveisATrabalhar);
-    }
     
-    // ✅ NOVO: Adiciona o ouvinte de eventos para o botão de limpar
+    // Adiciona ouvintes de eventos para os campos de cálculo
+    const inputPercentual = document.getElementById("percentualFechados");
+    const inputMedia = document.getElementById("media");
+    const inputServidores = document.getElementById("servidores");
+    const inputDataInicio = document.getElementById("dataInicio");
+    
+    if (inputPercentual) inputPercentual.addEventListener("input", calcularImoveisATrabalhar);
+    if (inputMedia) inputMedia.addEventListener("input", calcularDiasETermino);
+    if (inputServidores) inputServidores.addEventListener("input", calcularDiasETermino);
+    if (inputDataInicio) inputDataInicio.addEventListener("input", calcularDiasETermino);
+
     if (limparTudoBtn) {
         limparTudoBtn.addEventListener("click", limparTudo);
     }
-
+    
     console.log("Sistema inicializado com sucesso!");
 });
 
