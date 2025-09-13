@@ -454,6 +454,7 @@ header h1 {
 }
 
 /* Estilo para o aviso de quadras restantes */
+/* Estilo para o aviso de quadras restantes */
 .aviso-quadras {
     font-size: 1.1em;
     font-weight: bold;
@@ -475,7 +476,6 @@ header h1 {
 }
 
 /* Ajustes específicos para a busca avançada */
-/* Ajustes específicos para a busca avançada */
 #botaoBusca, #limparBusca {
     width: auto;
     padding: 10px 20px;
@@ -486,9 +486,9 @@ header h1 {
 
 /* 🔧 Ajuste para igualar a altura das caixas na linha */
 .main-grid {
-    display: flex;              /* muda de grid para flex */
+    display: flex;
     gap: 20px;
-    align-items: stretch;       /* estica os filhos igualmente */
+    align-items: stretch;
 }
 
 /* Cada .box dentro da grid ocupa 1/3 */
@@ -497,19 +497,7 @@ header h1 {
     display: flex;
     flex-direction: column;
 }
-/* Desktop: manter colunas lado a lado e mesma altura */
-@media (min-width: 769px) {
-    .main-grid {
-        display: flex;
-        gap: 20px;
-        align-items: stretch; /* 🔑 faz as boxes ficarem da mesma altura */
-    }
 
-    .main-grid .box {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
 /* Quadras destacadas em laranja (apenas o número) */
 .quadra-numero {
     color: orange;
@@ -523,6 +511,7 @@ header h1 {
     margin-left: 6px;
 }
 
+/* Desktop: manter colunas lado a lado e mesma altura */
 @media (min-width: 769px) {
     .main-grid {
         display: flex;
@@ -535,7 +524,7 @@ header h1 {
         display: flex;
         flex-direction: column;
     }
-    
+
     #listaQuadras {
         flex: 1;           /* ocupa todo espaço vertical da box */
         min-height: 400px; /* garante altura mínima */
@@ -554,7 +543,6 @@ header h1 {
         max-height: 250px; /* altura menor no celular */
     }
 }
-
  
  </style>
 </head>
@@ -742,6 +730,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
