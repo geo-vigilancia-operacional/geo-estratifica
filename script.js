@@ -687,16 +687,22 @@ function limparTudo() {
     atualizarProgramados();
 }
 document.addEventListener("DOMContentLoaded", () => {
-    const selectSemana = document.getElementById("semanaInicial");
-    if (selectSemana) {
-        for (let i = 1; i <= 52; i++) {
-            const option = document.createElement("option");
-            option.value = i;
-            option.textContent = `${i}ª Semana`;
-            selectSemana.appendChild(option);
+    function preencherSemanas(selectId) {
+        const select = document.getElementById(selectId);
+        if (select) {
+            for (let i = 1; i <= 52; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = `${i}ª Semana`;
+                select.appendChild(option);
+            }
         }
     }
+
+    preencherSemanas("semanaInicial");
+    preencherSemanas("semanaFinal");
 });
+
 
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
@@ -747,6 +753,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
