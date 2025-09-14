@@ -690,6 +690,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function preencherSemanas(selectId) {
         const select = document.getElementById(selectId);
         if (select) {
+            select.innerHTML = '<option value="">Selecione</option>'; // reset
             for (let i = 1; i <= 52; i++) {
                 const option = document.createElement("option");
                 option.value = i;
@@ -699,9 +700,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    const semanaInicial = document.getElementById("semanaInicial");
+    const semanaFinal = document.getElementById("semanaFinal");
+
+    // Preenche lista da Semana Inicial
     preencherSemanas("semanaInicial");
-    preencherSemanas("semanaFinal");
+
+    // Só habilita Semana Final depois de escolher Inicial
+    semanaInicial.addEventListener("change", () => {
+        if (semanaInicial.value) {
+            semanaFinal.disabled = false;
+            preencherSemanas("semanaFinal"); // libera todas
+        } else {
+            semanaFinal.disabled = true;
+            semanaFinal.innerHTML = '<option value="">Preencha a Semana Inicial primeiro</option>';
+        }
+    });
 });
+
 
 
 // --- INICIALIZAÇÃO ÚNICA ---
@@ -753,6 +769,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
