@@ -537,19 +537,29 @@ function calcularDiasETermino() {
     const dataAtual = new Date(dataInicio + "T00:00:00");
     
     // Adiciona os dias úteis, ignorando sábados e domingos
-    let diasUteisAdicionados = 0;
-    while (diasUteisAdicionados < Math.ceil(diasProgramados)) {
-        dataAtual.setDate(dataAtual.getDate() + 1); // Adiciona um dia
-        
-        // Verifica se é fim de semana (0 = Domingo, 6 = Sábado)
+   let diasUteisAdicionados = 0;
+    const diaInicioSemana = dataAtual.getDay();
+    if (diaInicioSemana !== 0 && diaInicioSemana !== 6) {
+        diasUteisAdicionados = 1; // O primeiro dia é um dia útil
+    }
+
+    // Se houver 0 dias programados ou apenas 1 (que é a data de início), ajusta a lógica
+    if (totalDiasUteis <= 1) {
+        dataTerminoInput.value = `${dataAtual.getFullYear()}-${String(dataAtual.getMonth() + 1).padStart(2, '0')}-${String(dataAtual.getDate()).padStart(2, '0')}`;
+        return;
+    }
+
+    // Adiciona os dias úteis restantes
+    while (diasUteisAdicionados < totalDiasUteis) {
+        dataAtual.setDate(dataAtual.getDate() + 1);
         const diaDaSemana = dataAtual.getDay();
         if (diaDaSemana !== 0 && diaDaSemana !== 6) {
             diasUteisAdicionados++;
         }
     }
     
-    // Formata a data de término para exibição (DD/MM/AAAA)
-     const dia = String(dataAtual.getDate()).padStart(2, '0');
+    // Formata a data de término para exibição (AAAA-MM-DD)
+    const dia = String(dataAtual.getDate()).padStart(2, '0');
     const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
     const ano = dataAtual.getFullYear();
     dataTerminoInput.value = `${ano}-${mes}-${dia}`;
@@ -723,6 +733,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
