@@ -524,7 +524,7 @@ function calcularDiasETermino() {
     }
     
     // Atualiza o campo "Dias Programados" com o valor arredondado para cima
-    document.getElementById("dias").value = Math.ceil(diasProgramados);
+    document.getElementById("dias").value = Math.floor(diasProgramados);
 
     // 3. Calcular a "Data de Término Programado"
     const dataTerminoInput = document.getElementById("dataTermino");
@@ -723,6 +723,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
