@@ -687,6 +687,7 @@ function limparTudo() {
     atualizarProgramados();
 }
 document.addEventListener("DOMContentLoaded", () => {
+    // --- Função para preencher semanas ---
     function preencherSemanas(selectId) {
         const select = document.getElementById(selectId);
         if (select) {
@@ -700,11 +701,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // --- Função para preencher ciclos ---
+    function preencherCiclos() {
+        const select = document.getElementById("ciclo");
+        if (select) {
+            select.innerHTML = '<option value="">Selecione</option>'; // reset
+            for (let i = 1; i <= 8; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = `${i}º Ciclo`;
+                select.appendChild(option);
+            }
+        }
+    }
+
     const semanaInicial = document.getElementById("semanaInicial");
     const semanaFinal = document.getElementById("semanaFinal");
 
-    // Preenche lista da Semana Inicial
+    // Preenche listas na inicialização
     preencherSemanas("semanaInicial");
+    preencherCiclos();
 
     // Só habilita Semana Final depois de escolher Inicial
     semanaInicial.addEventListener("change", () => {
@@ -717,6 +733,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 
 
 
@@ -769,6 +786,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
