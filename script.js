@@ -733,6 +733,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+document.addEventListener("DOMContentLoaded", () => {
+    // Função que calcula a soma dos depósitos
+    function atualizarTotalDepositos() {
+        const ids = ["a1", "a2", "b", "c", "d1", "d2", "e"];
+        let total = 0;
+
+        ids.forEach(id => {
+            const campo = document.getElementById(id);
+            const valor = Number(campo.value) || 0; // se vazio vira 0
+            total += valor;
+
+            // sempre recalcula quando mudar
+            campo.addEventListener("input", atualizarTotalDepositos);
+        });
+
+        const totalCampo = document.getElementById("totalDepositos");
+        if (totalCampo) {
+            totalCampo.value = total;
+        }
+    }
+
+    // inicializa o cálculo na carga da página
+    atualizarTotalDepositos();
+});
 
 
 
@@ -786,6 +810,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
