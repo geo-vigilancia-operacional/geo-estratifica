@@ -285,10 +285,8 @@ function atualizarQuadrasSelecionadas() {
     const textarea = document.getElementById("quadrasEstratificadas");
     const detalhesDiv = document.getElementById("dadosDetalhes");
 
-    // Adicione esta verificação para que o código não falhe
-    // se a div com o ID 'dadosDetalhes' não for encontrada.
     if (!textarea || !detalhesDiv) {
-        console.error("Erro: Elementos 'quadrasEstratificadas' ou 'dadosDetalhes' não encontrados.");
+        console.warn("⚠️ Elementos 'quadrasEstratificadas' ou 'dadosDetalhes' não existem no HTML.");
         return;
     }
 
@@ -305,8 +303,9 @@ function atualizarQuadrasSelecionadas() {
     });
 
     textarea.value = quadrasValidas.join(", ");
-    detalhesDiv.innerHTML = "";
+    detalhesDiv.innerHTML = ""; // pode ser expandido para mostrar dados detalhados
 }
+
 // Função para calcular e atualizar o campo 'Imóveis a Trabalhar'
 function calcularImoveisATrabalhar() {
     // 1. Obter o valor de 'Imóveis Programados'
@@ -527,7 +526,6 @@ function calcularDiasETermino() {
     // 2. Calcular os "Dias Programados"
     let diasProgramados = 0;
     if (imoveisATrabalhar > 0 && mediaPorServidor > 0 && servidoresProgramados > 0) {
-        // CORREÇÃO: Utiliza a fórmula que você solicitou.
         diasProgramados = imoveisATrabalhar / mediaPorServidor / servidoresProgramados;
     }
     
@@ -538,27 +536,24 @@ function calcularDiasETermino() {
     const dataTerminoInput = document.getElementById("dataTermino");
     if (!dataInicio) {
         dataTerminoInput.value = "";
-        return; // Retorna se a data de início não foi preenchida
+        return;
     }
 
-    // CORREÇÃO: Adiciona "T00:00:00" para evitar problemas de fuso horário e garantir que o cálculo comece no dia exato.
     const dataAtual = new Date(dataInicio + "T00:00:00");
     
-    // Adiciona os dias úteis, ignorando sábados e domingos
-   let diasUteisAdicionados = 0;
+    let diasUteisAdicionados = 0;
     const diaInicioSemana = dataAtual.getDay();
     if (diaInicioSemana !== 0 && diaInicioSemana !== 6) {
-        diasUteisAdicionados = 1; // O primeiro dia é um dia útil
+        diasUteisAdicionados = 1; // O primeiro dia é útil
     }
 
-    // Se houver 0 dias programados ou apenas 1 (que é a data de início), ajusta a lógica
-    if (totalDiasUteis <= 1) {
+    // CORREÇÃO: agora usa diasProgramados
+    if (diasProgramados <= 1) {
         dataTerminoInput.value = `${dataAtual.getFullYear()}-${String(dataAtual.getMonth() + 1).padStart(2, '0')}-${String(dataAtual.getDate()).padStart(2, '0')}`;
         return;
     }
 
-    // Adiciona os dias úteis restantes
-    while (diasUteisAdicionados < totalDiasUteis) {
+    while (diasUteisAdicionados < diasProgramados) {
         dataAtual.setDate(dataAtual.getDate() + 1);
         const diaDaSemana = dataAtual.getDay();
         if (diaDaSemana !== 0 && diaDaSemana !== 6) {
@@ -566,12 +561,12 @@ function calcularDiasETermino() {
         }
     }
     
-    // Formata a data de término para exibição (AAAA-MM-DD)
     const dia = String(dataAtual.getDate()).padStart(2, '0');
     const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
     const ano = dataAtual.getFullYear();
     dataTerminoInput.value = `${ano}-${mes}-${dia}`;
 }
+
 
 // Sua função atualizarProgramados (aqui com a chamada para o novo cálculo)
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
@@ -741,6 +736,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
