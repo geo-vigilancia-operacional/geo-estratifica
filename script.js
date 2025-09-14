@@ -508,7 +508,7 @@ function interpretarEntrada(texto) {
 
     return selecionadas;
 }
-// A função de cálculo de dias e término está correta. Mantenha-a como está.
+// 1. CALCULAR DIAS E DATA DE TÉRMINO PROGRAMADO
 function calcularDiasETermino() {
     // 1. Obter os valores dos campos de entrada
     const imoveisATrabalhar = Number(document.getElementById("imoveisATrabalhar").value) || 0;
@@ -519,32 +519,38 @@ function calcularDiasETermino() {
     // 2. Calcular os "Dias Programados"
     let diasProgramados = 0;
     if (imoveisATrabalhar > 0 && mediaPorServidor > 0 && servidoresProgramados > 0) {
+        // CORREÇÃO: Utiliza a fórmula que você solicitou.
         diasProgramados = imoveisATrabalhar / mediaPorServidor / servidoresProgramados;
     }
     
-    // Atualiza o campo "Dias Programados"
+    // Atualiza o campo "Dias Programados" com o valor arredondado para cima
     document.getElementById("dias").value = Math.ceil(diasProgramados);
 
     // 3. Calcular a "Data de Término Programado"
     const dataTerminoInput = document.getElementById("dataTermino");
     if (!dataInicio) {
         dataTerminoInput.value = "";
-        return;
+        return; // Retorna se a data de início não foi preenchida
     }
 
-    const dataAtual = new Date(dataInicio + "T00:00:00"); // Adiciona o horário para evitar problemas de fuso horário
+    // CORREÇÃO: Adiciona "T00:00:00" para evitar problemas de fuso horário e garantir que o cálculo comece no dia exato.
+    const dataAtual = new Date(dataInicio + "T00:00:00");
     
+    // Adiciona os dias úteis, ignorando sábados e domingos
     let diasUteisAdicionados = 0;
     while (diasUteisAdicionados < Math.ceil(diasProgramados)) {
-        dataAtual.setDate(dataAtual.getDate() + 1);
+        dataAtual.setDate(dataAtual.getDate() + 1); // Adiciona um dia
+        
+        // Verifica se é fim de semana (0 = Domingo, 6 = Sábado)
         const diaDaSemana = dataAtual.getDay();
         if (diaDaSemana !== 0 && diaDaSemana !== 6) {
             diasUteisAdicionados++;
         }
     }
     
+    // Formata a data de término para exibição (DD/MM/AAAA)
     const dia = String(dataAtual.getDate()).padStart(2, '0');
-    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0'); // Mês é de 0 a 11
     const ano = dataAtual.getFullYear();
     dataTerminoInput.value = `${dia}/${mes}/${ano}`;
 }
@@ -717,6 +723,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
