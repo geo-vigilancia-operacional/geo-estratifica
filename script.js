@@ -686,6 +686,17 @@ function limparTudo() {
     montarResumoGeral();
     atualizarProgramados();
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const selectSemana = document.getElementById("semanaInicial");
+    if (selectSemana) {
+        for (let i = 1; i <= 52; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = `${i}ª Semana`;
+            selectSemana.appendChild(option);
+        }
+    }
+});
 
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
@@ -736,6 +747,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
