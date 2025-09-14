@@ -280,9 +280,17 @@ function montarListaQuadras() {
 
 
 // === FUNÇÃO: MOSTRAR APENAS QUADRAS SELECIONADAS ===
+// === FUNÇÃO: MOSTRAR APENAS QUADRAS SELECIONADAS ===
 function atualizarQuadrasSelecionadas() {
     const textarea = document.getElementById("quadrasEstratificadas");
     const detalhesDiv = document.getElementById("dadosDetalhes");
+
+    // Adicione esta verificação para que o código não falhe
+    // se a div com o ID 'dadosDetalhes' não for encontrada.
+    if (!textarea || !detalhesDiv) {
+        console.error("Erro: Elementos 'quadrasEstratificadas' ou 'dadosDetalhes' não encontrados.");
+        return;
+    }
 
     if (estado.quadrasSelecionadas.size === 0) {
         textarea.value = "";
@@ -733,6 +741,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
