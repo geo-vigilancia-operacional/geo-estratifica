@@ -757,6 +757,37 @@ document.addEventListener("DOMContentLoaded", () => {
     // inicializa o cálculo na carga da página
     atualizarTotalDepositos();
 });
+document.addEventListener("DOMContentLoaded", () => {
+
+    function atualizarPercentuais() {
+        // Pega valor de imóveis programados no painel
+        const resumo = document.querySelector("#resumoProgramados");
+        const match = resumo.innerText.match(/Imóveis Programados:\s*(\d+)/);
+        const imoveisProgramados = match ? parseInt(match[1], 10) : 0;
+
+        // Pega campos
+        const imoveisTrabalhados = Number(document.getElementById("imoveisTrabalhadosInput").value) || 0;
+        const fechados = Number(document.getElementById("fechadosInput").value) || 0;
+
+        // Calcula percentuais
+        const percTrabalhados = imoveisProgramados > 0 ? ((imoveisTrabalhados / imoveisProgramados) * 100).toFixed(1) : 0;
+        const percFechados = imoveisProgramados > 0 ? ((fechados / imoveisProgramados) * 100).toFixed(1) : 0;
+
+        // Atualiza na tela
+        document.getElementById("percImoveisTrabalhados").textContent = 
+            `(${percTrabalhados}% de ${imoveisProgramados} programados)`;
+
+        document.getElementById("percFechados").textContent = 
+            `(${percFechados}% de ${imoveisProgramados} programados)`;
+    }
+
+    // Eventos para recalcular
+    document.getElementById("imoveisTrabalhadosInput").addEventListener("input", atualizarPercentuais);
+    document.getElementById("fechadosInput").addEventListener("input", atualizarPercentuais);
+
+    // Atualiza ao carregar
+    atualizarPercentuais();
+});
 
 
 
@@ -810,6 +841,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
