@@ -549,10 +549,10 @@ function calcularDiasETermino() {
     }
     
     // Formata a data de término para exibição (DD/MM/AAAA)
-    const dia = String(dataAtual.getDate()).padStart(2, '0');
-    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0'); // Mês é de 0 a 11
+     const dia = String(dataAtual.getDate()).padStart(2, '0');
+    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
     const ano = dataAtual.getFullYear();
-    dataTerminoInput.value = `${dia}/${mes}/${ano}`;
+    dataTerminoInput.value = `${ano}-${mes}-${dia}`;
 }
 
 // Sua função atualizarProgramados (aqui com a chamada para o novo cálculo)
@@ -723,6 +723,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
