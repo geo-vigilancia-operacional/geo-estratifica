@@ -529,6 +529,11 @@ header h1 {
         display: flex;
         flex-direction: column;
     }
+#avisoTratamentos {
+    margin-top: 6px;
+    font-weight: bold;
+    color: orange;  /* aviso em laranja */
+}
 
     #listaQuadras {
         flex: 1;           /* ocupa todo espaço vertical da box */
@@ -717,7 +722,8 @@ header h1 {
             <!-- CORREÇÃO: Use apenas um ID consistente -->
             <label>Larvicida Total Gasto Com BTI <input type="number" step="any" id="larvicidaBtiInput" /></label>
             <label>Larvicida Total Gasto Com ESP <input type="number" step="any" id="larvicidaEspInput" /></label>
-            
+            <div id="avisoTratamentos" class="small"></div>
+
             <label>Depósitos Eliminados <input type="number" id="depositosEliminadosInput" /></label>
             
             <label>Data de Início Real <input type="date" id="dataInicioReal" /></label>
@@ -743,6 +749,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
