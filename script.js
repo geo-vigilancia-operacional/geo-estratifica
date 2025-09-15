@@ -897,12 +897,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // só recalcula se o usuário não editou manualmente
         if (hdpInput.dataset.editado === "true") return;
 
-        // Forçar a conversão para números inteiros
-        const servidores = parseInt(servidoresInput.value, 10) || 0;
-        const dias = parseInt(diasInput.value, 10) || 0;
+        // ✅ CORREÇÃO: Forçar a conversão para números de forma mais robusta
+        const servidores = Number(servidoresInput.value) || 0;
+        const dias = Number(diasInput.value) || 0;
 
         if (servidores > 0 && dias > 0) {
-            const resultado = servidores * dias; // 👈 nada além disso
+            // ✅ A LÓGICA DE CÁLCULO ESTÁ CORRETA
+            const resultado = servidores * dias;
             hdpInput.value = resultado;
         } else {
             hdpInput.value = "";
@@ -970,6 +971,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
