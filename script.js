@@ -788,9 +788,41 @@ document.addEventListener("DOMContentLoaded", () => {
     // Atualiza ao carregar
     atualizarPercentuais();
 });
+document.addEventListener("DOMContentLoaded", () => {
+    function verificarTratamentos() {
+        const imoveisBti = Number(document.getElementById("imoveisBtiInput").value) || 0;
+        const imoveisEsp = Number(document.getElementById("imoveisEspInput").value) || 0;
 
+        const depositosBti = document.getElementById("depositosBtiInput").value;
+        const depositosEsp = document.getElementById("depositosEspInput").value;
+        const larvicidaBti = document.getElementById("larvicidaBtiInput").value;
+        const larvicidaEsp = document.getElementById("larvicidaEspInput").value;
 
+        let mensagem = "";
 
+        // Se informou imóveis tratados, mas não preencheu os outros campos
+        if (imoveisBti > 0 && (depositosBti === "" || larvicidaBti === "")) {
+            mensagem += "⚠ Preencha também Depósitos e Larvicida para BTI.<br>";
+        }
+
+        if (imoveisEsp > 0 && (depositosEsp === "" || larvicidaEsp === "")) {
+            mensagem += "⚠ Preencha também Depósitos e Larvicida para ESP.<br>";
+        }
+
+        document.getElementById("avisoTratamentos").innerHTML = mensagem;
+    }
+
+    // Observa mudanças nos campos
+    ["imoveisBtiInput", "imoveisEspInput", 
+     "depositosBtiInput", "depositosEspInput", 
+     "larvicidaBtiInput", "larvicidaEspInput"]
+    .forEach(id => {
+        document.getElementById(id).addEventListener("input", verificarTratamentos);
+    });
+
+    // Rodar ao carregar
+    verificarTratamentos();
+});
 
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
@@ -841,6 +873,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
