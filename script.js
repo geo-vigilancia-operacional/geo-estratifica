@@ -889,39 +889,30 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarQuadrasTrabalhadas(); // rodar na inicialização
 });
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Obter referências para os elementos
     const servidoresInput = document.getElementById("servidores");
     const diasInput = document.getElementById("dias");
     const hdpInput = document.getElementById("hdpInput");
 
-    function atualizarHDP() {
-        // só recalcula se o usuário não editou manualmente
-        if (hdpInput.dataset.editado === "true") return;
+    // 2. Definir a função de cálculo
+    function calcularHDP() {
+        // Seu código para calcular o HDP
+        const servidoresValor = parseFloat(servidoresInput.value) || 0;
+        const diasValor = parseFloat(diasInput.value) || 0;
 
-        // ✅ CORREÇÃO: Forçar a conversão para números de forma mais robusta
-        const servidores = Number(servidoresInput.value) || 0;
-        const dias = Number(diasInput.value) || 0;
-
-        if (servidores > 0 && dias > 0) {
-            // ✅ A LÓGICA DE CÁLCULO ESTÁ CORRETA
-            const resultado = servidores * dias;
-            hdpInput.value = resultado;
+        if (servidoresValor > 0 && diasValor > 0) {
+            hdpInput.value = (servidoresValor * diasValor).toFixed(2);
         } else {
             hdpInput.value = "";
         }
     }
 
-    // Atualiza sempre que mudar servidores ou dias
-    servidoresInput.addEventListener("input", atualizarHDP);
-    diasInput.addEventListener("input", atualizarHDP);
-
-    // Se o usuário editar o HDP manualmente, não sobrescreve
-    hdpInput.addEventListener("input", () => {
-        hdpInput.dataset.editado = "true";
-    });
-
-    // Primeira atualização ao carregar
-    atualizarHDP();
+    // 3. Adicionar os ouvintes de evento
+    // Dispara a função `calcularHDP` sempre que o valor dos inputs mudar
+    servidoresInput.addEventListener("input", calcularHDP);
+    diasInput.addEventListener("input", calcularHDP);
 });
+
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
@@ -971,6 +962,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
