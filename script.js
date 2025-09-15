@@ -895,13 +895,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const hdpInput = document.getElementById("hdpInput");
 
     // 2. Definir a função de cálculo
- document.addEventListener("DOMContentLoaded", () => {
-    // 1. Obter referências para os elementos
-    const servidoresInput = document.getElementById("servidores");
-    const diasInput = document.getElementById("dias");
-    const hdpInput = document.getElementById("hdpInput");
-
-    // 2. Definir a função de cálculo
     function calcularHDP() {
         // Garantir que os valores dos inputs são tratados como números
         // Se o input estiver vazio ou não for um número, a variável será 0
@@ -975,6 +968,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
