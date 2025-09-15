@@ -897,11 +897,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // só recalcula se o usuário não editou manualmente
         if (hdpInput.dataset.editado === "true") return;
 
-        const servidores = parseInt(servidoresInput.value) || 0;
-        const dias = parseInt(diasInput.value) || 0;
+        // Forçar a conversão para números inteiros
+        const servidores = parseInt(servidoresInput.value, 10) || 0;
+        const dias = parseInt(diasInput.value, 10) || 0;
 
         if (servidores > 0 && dias > 0) {
-            hdpInput.value = servidores * dias; // 👈 cálculo simples e direto
+            const resultado = servidores * dias; // 👈 nada além disso
+            hdpInput.value = resultado;
         } else {
             hdpInput.value = "";
         }
@@ -911,19 +913,14 @@ document.addEventListener("DOMContentLoaded", () => {
     servidoresInput.addEventListener("input", atualizarHDP);
     diasInput.addEventListener("input", atualizarHDP);
 
-    // Se o usuário editar o HDP manualmente, para de atualizar automático
+    // Se o usuário editar o HDP manualmente, não sobrescreve
     hdpInput.addEventListener("input", () => {
         hdpInput.dataset.editado = "true";
     });
 
-    // Primeira atualização ao carregar a página
+    // Primeira atualização ao carregar
     atualizarHDP();
 });
-
-
-
-
-
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
@@ -973,6 +970,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
