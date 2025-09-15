@@ -894,28 +894,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const hdpInput = document.getElementById("hdpInput");
 
     function atualizarHDP() {
-        if (hdpInput.dataset.editado) return;
+        // só recalcula se o usuário não editou manualmente
+        if (hdpInput.dataset.editado === "true") return;
 
-        const servidores = Number(servidoresInput.value) || 0;
-        const dias = Number(diasInput.value) || 0;
+        const servidores = parseInt(servidoresInput.value) || 0;
+        const dias = parseInt(diasInput.value) || 0;
 
-        // ✅ cálculo correto: apenas servidores × dias
         if (servidores > 0 && dias > 0) {
-            hdpInput.value = servidores * dias;
+            hdpInput.value = servidores * dias; // 👈 cálculo simples e direto
         } else {
             hdpInput.value = "";
         }
     }
 
+    // Atualiza sempre que mudar servidores ou dias
     servidoresInput.addEventListener("input", atualizarHDP);
     diasInput.addEventListener("input", atualizarHDP);
 
+    // Se o usuário editar o HDP manualmente, para de atualizar automático
     hdpInput.addEventListener("input", () => {
-        hdpInput.dataset.editado = true;
+        hdpInput.dataset.editado = "true";
     });
 
+    // Primeira atualização ao carregar a página
     atualizarHDP();
 });
+
 
 
 
@@ -969,6 +973,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
