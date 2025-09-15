@@ -841,6 +841,53 @@ document.addEventListener("DOMContentLoaded", () => {
     // Executa logo ao carregar
     verificarTratamentos();
 });
+document.addEventListener("DOMContentLoaded", () => {
+    const quadrasTrabalhadasInput = document.getElementById("quadrasTrabalhadasInput");
+    const obsQuadrasTrabalhadas = document.getElementById("obsQuadrasTrabalhadas");
+
+    function atualizarQuadrasTrabalhadas() {
+        // Pega o total de quadras selecionadas em Programados
+        const totalSelecionadasElem = document.querySelector("#resumoProgramados span strong");
+        let totalSelecionadas = 0;
+
+        // Busca no HTML o valor certo (pelo texto "Quadras Selecionadas:")
+        document.querySelectorAll("#resumoProgramados span").forEach(span => {
+            if (span.textContent.includes("Quadras Selecionadas:")) {
+                totalSelecionadas = Number(span.textContent.replace(/\D/g, "")) || 0;
+            }
+        });
+
+        // Se já existir campo de Programados preenchido
+        if (totalSelecionadas > 0 && !quadrasTrabalhadasInput.dataset.editado) {
+            quadrasTrabalhadasInput.value = totalSelecionadas;
+        }
+
+        // Comparar valores
+        const trabalhadas = Number(quadrasTrabalhadasInput.value) || 0;
+        if (trabalhadas === totalSelecionadas && totalSelecionadas > 0) {
+            obsQuadrasTrabalhadas.innerHTML = "✔ Todas as quadras foram trabalhadas.";
+            obsQuadrasTrabalhadas.style.color = "orange";
+        } else if (trabalhadas < totalSelecionadas) {
+            const diferenca = totalSelecionadas - trabalhadas;
+            obsQuadrasTrabalhadas.innerHTML = `⚠ ${diferenca} quadra(s) não foram trabalhadas.`;
+            obsQuadrasTrabalhadas.style.color = "orange";
+        } else {
+            obsQuadrasTrabalhadas.innerHTML = "";
+        }
+    }
+
+    // Marca que o campo foi editado manualmente
+    quadrasTrabalhadasInput.addEventListener("input", () => {
+        quadrasTrabalhadasInput.dataset.editado = true;
+        atualizarQuadrasTrabalhadas();
+    });
+
+    // Sempre que atualizar Programados, atualiza também esse campo
+    const observer = new MutationObserver(atualizarQuadrasTrabalhadas);
+    observer.observe(document.getElementById("resumoProgramados"), { childList: true, subtree: true });
+
+    atualizarQuadrasTrabalhadas(); // rodar na inicialização
+});
 
 
 
@@ -893,6 +940,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
