@@ -895,22 +895,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const hdpInput = document.getElementById("hdpInput");
 
     // 2. Definir a função de cálculo
-    function calcularHDP() {
-        // Seu código para calcular o HDP
-        const servidoresValor = parseFloat(servidoresInput.value) || 0;
-        const diasValor = parseFloat(diasInput.value) || 0;
+ document.addEventListener("DOMContentLoaded", () => {
+    // 1. Obter referências para os elementos
+    const servidoresInput = document.getElementById("servidores");
+    const diasInput = document.getElementById("dias");
+    const hdpInput = document.getElementById("hdpInput");
 
+    // 2. Definir a função de cálculo
+    function calcularHDP() {
+        // Garantir que os valores dos inputs são tratados como números
+        // Se o input estiver vazio ou não for um número, a variável será 0
+        const servidoresValor = Number(servidoresInput.value) || 0;
+        const diasValor = Number(diasInput.value) || 0;
+
+        // Verificar se os valores são válidos antes de calcular
         if (servidoresValor > 0 && diasValor > 0) {
-            hdpInput.value = (servidoresValor * diasValor).toFixed(2);
+            const resultado = servidoresValor * diasValor;
+            hdpInput.value = resultado;
         } else {
             hdpInput.value = "";
         }
     }
 
-    // 3. Adicionar os ouvintes de evento
-    // Dispara a função `calcularHDP` sempre que o valor dos inputs mudar
+    // 3. Conectar a função aos inputs
+    // O cálculo será feito toda vez que o valor de 'servidores' ou 'dias' mudar
     servidoresInput.addEventListener("input", calcularHDP);
     diasInput.addEventListener("input", calcularHDP);
+
+    // 4. Rodar o cálculo na primeira vez que a página carregar
+    calcularHDP();
 });
 
 // --- INICIALIZAÇÃO ÚNICA ---
@@ -962,6 +975,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
