@@ -894,12 +894,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const hdpInput = document.getElementById("hdpInput");
 
     function atualizarHDP() {
-        // só atualiza se o usuário não tiver mexido manualmente
         if (hdpInput.dataset.editado) return;
 
         const servidores = Number(servidoresInput.value) || 0;
         const dias = Number(diasInput.value) || 0;
 
+        // ✅ cálculo correto: apenas servidores × dias
         if (servidores > 0 && dias > 0) {
             hdpInput.value = servidores * dias;
         } else {
@@ -907,17 +907,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Observa mudanças nos campos
     servidoresInput.addEventListener("input", atualizarHDP);
     diasInput.addEventListener("input", atualizarHDP);
 
-    // Marca como editado manualmente
     hdpInput.addEventListener("input", () => {
         hdpInput.dataset.editado = true;
     });
 
-    atualizarHDP(); // roda na inicialização
+    atualizarHDP();
 });
+
 
 
 
@@ -970,6 +969,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
