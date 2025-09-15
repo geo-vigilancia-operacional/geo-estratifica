@@ -888,6 +888,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     atualizarQuadrasTrabalhadas(); // rodar na inicialização
 });
+document.addEventListener("DOMContentLoaded", () => {
+    const servidoresInput = document.getElementById("servidores");
+    const diasInput = document.getElementById("dias");
+    const hdpInput = document.getElementById("hdpInput");
+
+    function atualizarHDP() {
+        // só atualiza se o usuário não tiver mexido manualmente
+        if (hdpInput.dataset.editado) return;
+
+        const servidores = Number(servidoresInput.value) || 0;
+        const dias = Number(diasInput.value) || 0;
+
+        if (servidores > 0 && dias > 0) {
+            hdpInput.value = servidores * dias;
+        } else {
+            hdpInput.value = "";
+        }
+    }
+
+    // Observa mudanças nos campos
+    servidoresInput.addEventListener("input", atualizarHDP);
+    diasInput.addEventListener("input", atualizarHDP);
+
+    // Marca como editado manualmente
+    hdpInput.addEventListener("input", () => {
+        hdpInput.dataset.editado = true;
+    });
+
+    atualizarHDP(); // roda na inicialização
+});
 
 
 
@@ -940,6 +970,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
