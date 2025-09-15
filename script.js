@@ -800,13 +800,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let mensagem = "";
 
-        // Se informou imóveis tratados, mas não preencheu os outros campos
-        if (imoveisBti > 0 && (depositosBti === "" || larvicidaBti === "")) {
-            mensagem += "⚠ Preencha também Depósitos e Larvicida para BTI.<br>";
+        // Caso BTI
+        if (imoveisBti > 0) {
+            if (depositosBti === "" || larvicidaBti === "") {
+                mensagem += "⚠ Preencha também Depósitos e Larvicida para BTI.<br>";
+            }
+        } else if (imoveisBti === 0) {
+            mensagem += "ℹ Não é necessário preencher os campos de BTI.<br>";
         }
 
-        if (imoveisEsp > 0 && (depositosEsp === "" || larvicidaEsp === "")) {
-            mensagem += "⚠ Preencha também Depósitos e Larvicida para ESP.<br>";
+        // Caso ESP
+        if (imoveisEsp > 0) {
+            if (depositosEsp === "" || larvicidaEsp === "") {
+                mensagem += "⚠ Preencha também Depósitos e Larvicida para ESP.<br>";
+            }
+        } else if (imoveisEsp === 0) {
+            mensagem += "ℹ Não é necessário preencher os campos de ESP.<br>";
         }
 
         document.getElementById("avisoTratamentos").innerHTML = mensagem;
@@ -823,6 +832,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Rodar ao carregar
     verificarTratamentos();
 });
+
 
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
@@ -873,6 +883,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
