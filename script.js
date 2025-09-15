@@ -799,41 +799,35 @@ document.addEventListener("DOMContentLoaded", () => {
         const larvicidaBti = document.getElementById("larvicidaBtiInput");
         const larvicidaEsp = document.getElementById("larvicidaEspInput");
 
-        let mensagem = "";
-
         // --- BTI ---
         if (imoveisBti > 0) {
             depositosBti.disabled = false;
             larvicidaBti.disabled = false;
-
-            if (depositosBti.value === "" || larvicidaBti.value === "") {
-                mensagem += "⚠ Preencha também Depósitos e Larvicida para BTI.<br>";
-            }
+            depositosBti.placeholder = "";
+            larvicidaBti.placeholder = "";
         } else {
             depositosBti.disabled = true;
             larvicidaBti.disabled = true;
             depositosBti.value = "";
             larvicidaBti.value = "";
-            mensagem += "ℹ Não é necessário preencher os campos de BTI.<br>";
+            depositosBti.placeholder = "Não é necessário preencher";
+            larvicidaBti.placeholder = "Não é necessário preencher";
         }
 
         // --- ESP ---
         if (imoveisEsp > 0) {
             depositosEsp.disabled = false;
             larvicidaEsp.disabled = false;
-
-            if (depositosEsp.value === "" || larvicidaEsp.value === "") {
-                mensagem += "⚠ Preencha também Depósitos e Larvicida para ESP.<br>";
-            }
+            depositosEsp.placeholder = "";
+            larvicidaEsp.placeholder = "";
         } else {
             depositosEsp.disabled = true;
             larvicidaEsp.disabled = true;
             depositosEsp.value = "";
             larvicidaEsp.value = "";
-            mensagem += "ℹ Não é necessário preencher os campos de ESP.<br>";
+            depositosEsp.placeholder = "Não é necessário preencher";
+            larvicidaEsp.placeholder = "Não é necessário preencher";
         }
-
-        document.getElementById("avisoTratamentos").innerHTML = mensagem;
     }
 
     // Observa mudanças nos campos principais
@@ -847,6 +841,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Executa logo ao carregar
     verificarTratamentos();
 });
+
 
 
 // --- INICIALIZAÇÃO ÚNICA ---
@@ -898,6 +893,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
