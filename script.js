@@ -553,13 +553,14 @@ function calcularDiasETermino() {
         return;
     }
 
-    while (diasUteisAdicionados < diasProgramados) {
-        dataAtual.setDate(dataAtual.getDate() + 1);
-        const diaDaSemana = dataAtual.getDay();
-        if (diaDaSemana !== 0 && diaDaSemana !== 6) {
-            diasUteisAdicionados++;
-        }
+   while (diasUteisAdicionados < (diasProgramados - 1)) {
+    dataAtual.setDate(dataAtual.getDate() + 1);
+    const diaDaSemana = dataAtual.getDay();
+    if (diaDaSemana !== 0 && diaDaSemana !== 6) {
+        diasUteisAdicionados++;
     }
+}
+
     
     const dia = String(dataAtual.getDate()).padStart(2, '0');
     const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
@@ -897,6 +898,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
