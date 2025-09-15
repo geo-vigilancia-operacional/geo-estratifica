@@ -793,43 +793,57 @@ document.addEventListener("DOMContentLoaded", () => {
         const imoveisBti = Number(document.getElementById("imoveisBtiInput").value) || 0;
         const imoveisEsp = Number(document.getElementById("imoveisEspInput").value) || 0;
 
-        const depositosBti = document.getElementById("depositosBtiInput").value;
-        const depositosEsp = document.getElementById("depositosEspInput").value;
-        const larvicidaBti = document.getElementById("larvicidaBtiInput").value;
-        const larvicidaEsp = document.getElementById("larvicidaEspInput").value;
+        const depositosBti = document.getElementById("depositosBtiInput");
+        const depositosEsp = document.getElementById("depositosEspInput");
+        const larvicidaBti = document.getElementById("larvicidaBtiInput");
+        const larvicidaEsp = document.getElementById("larvicidaEspInput");
 
         let mensagem = "";
 
-        // Caso BTI
+        // --- BTI ---
         if (imoveisBti > 0) {
-            if (depositosBti === "" || larvicidaBti === "") {
+            depositosBti.disabled = false;
+            larvicidaBti.disabled = false;
+
+            if (depositosBti.value === "" || larvicidaBti.value === "") {
                 mensagem += "⚠ Preencha também Depósitos e Larvicida para BTI.<br>";
             }
-        } else if (imoveisBti === 0) {
+        } else {
+            depositosBti.disabled = true;
+            larvicidaBti.disabled = true;
+            depositosBti.value = "";
+            larvicidaBti.value = "";
             mensagem += "ℹ Não é necessário preencher os campos de BTI.<br>";
         }
 
-        // Caso ESP
+        // --- ESP ---
         if (imoveisEsp > 0) {
-            if (depositosEsp === "" || larvicidaEsp === "") {
+            depositosEsp.disabled = false;
+            larvicidaEsp.disabled = false;
+
+            if (depositosEsp.value === "" || larvicidaEsp.value === "") {
                 mensagem += "⚠ Preencha também Depósitos e Larvicida para ESP.<br>";
             }
-        } else if (imoveisEsp === 0) {
+        } else {
+            depositosEsp.disabled = true;
+            larvicidaEsp.disabled = true;
+            depositosEsp.value = "";
+            larvicidaEsp.value = "";
             mensagem += "ℹ Não é necessário preencher os campos de ESP.<br>";
         }
 
         document.getElementById("avisoTratamentos").innerHTML = mensagem;
     }
 
-    // Observa mudanças nos campos
-    ["imoveisBtiInput", "imoveisEspInput", 
-     "depositosBtiInput", "depositosEspInput", 
+    // Observa mudanças nos campos principais
+    ["imoveisBtiInput", "imoveisEspInput",
+     "depositosBtiInput", "depositosEspInput",
      "larvicidaBtiInput", "larvicidaEspInput"]
     .forEach(id => {
         document.getElementById(id).addEventListener("input", verificarTratamentos);
     });
 
-    // Rodar ao carregar
+    // Executa logo ao carregar
     verificarTratamentos();
 });
 
@@ -883,6 +897,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
