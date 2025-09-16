@@ -4,7 +4,7 @@
 
 // --- VARIÁVEIS GLOBAIS ---
 let bairros = [];
-let dadosOvitramas = []; // ✅ novo
+let dadosOvitrampas = []; // ✅ novo
 let estado = {
     bairroSelecionado: null,
     quadrasDisponiveis: [],
@@ -895,6 +895,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
