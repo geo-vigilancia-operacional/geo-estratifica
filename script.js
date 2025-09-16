@@ -32,7 +32,7 @@ function carregarDados() {
     ])
     .then(([dadosBairros, dadosOvi]) => {
         bairros = dadosBairros;
-        dadosOvitramas = dadosOvi;
+        dadosOvitramapas = dadosOvi;
 
         preencherListaBairros();
 
@@ -895,6 +895,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
