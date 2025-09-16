@@ -94,10 +94,10 @@ function montarResumoGeral() {
     const totais = calcularTotaisBairro(dadosBairro);
     const totalProgramados = (totais.TOTAL || 0) - (totais["AP. ACIMA DO TÉRREO"] || 0);
 
-    // 🔹 Ovitramas no bairro
+    // ✅ CORREÇÃO APLICADA AQUI: Contando os registros do bairro
     const totalOvitrampasBairro = dadosOvitrampas
         .filter(o => o["BAIRRO "]?.trim() === bairroNome.trim())
-        .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
+        .length; // ✅ Aqui contamos o número de registros no array filtrado
 
     resumoGeralDiv.innerHTML = `
         <div class="small"><strong>Bairro:</strong> ${bairroNome}</div>
@@ -894,6 +894,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
