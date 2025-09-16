@@ -569,8 +569,8 @@ function atualizarProgramados() {
 
     const imoveisProgramados = totalImoveis - apartamentos;
 
-    // 🔹 Ovitramas nas quadras selecionadas
-    const totalOvitrampasSelecionadas = Ovitrampas
+    // 🔹 Ovitrampas nas quadras selecionadas
+    const totalOvitrampasSelecionadas = ovitrampas
         .filter(o => o["BAIRRO "]?.trim() === estado.bairroSelecionado.trim())
         .filter(o => quadrasSelecionadasAtivas.includes(o.QT))
         .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
@@ -896,6 +896,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
