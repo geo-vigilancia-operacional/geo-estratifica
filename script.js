@@ -571,6 +571,7 @@ function calcularDiasETermino() {
 
 // Sua função atualizarProgramados (aqui com a chamada para o novo cálculo)
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
+// 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
 function atualizarProgramados() {
     const resumoProgramados = document.getElementById("resumoProgramados");
 
@@ -597,8 +598,6 @@ function atualizarProgramados() {
         return isNaN(num) ? 0 : num;
     };
 
-    // ❌ CORREÇÃO: As variáveis de cálculo estavam faltando aqui.
-    // Elas precisam ser declaradas e calculadas antes de serem usadas no HTML.
     const totalImoveis = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TOTAL || 0), 0);
     const residencias = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.R || 0), 0);
     const comercios = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.C || 0), 0);
@@ -606,18 +605,19 @@ function atualizarProgramados() {
     const outros = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.OU || 0), 0);
     const pontosEstrategicos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.PE || 0), 0);
     
-    // Nomes de propriedades corrigidos
     const apartamentos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur['AP. ACIMA DO TÉRREO'] || 0), 0);
     const habitantes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.HABITANTES || 0), 0);
     const caes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.CÃO || 0), 0);
     const gatos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.GATO || 0), 0);
     
-    // Depósitos de água
     const depositos = dadosQuadrasSelecionadas.reduce((acc, cur) => {
         return acc + getNumero(cur['TANQUE EXISTENTE']) + getNumero(cur['TAMBOR EXISTENTE']) + getNumero(cur['CISTERNA EXISTENTE']) + getNumero(cur['CACIMBA EXISTENTE']) + getNumero(cur["CAIXAS D'ÁGUA EXISTENTE"]);
     }, 0);
 
     const imoveisProgramados = totalImoveis - apartamentos;
+    
+    // ✅ NOVO: CALCULAR O TOTAL DE PESQUISAS
+    const totalPesquisas = imoveisProgramados - apartamentos - pontosEstrategicos;
 
     resumoProgramados.innerHTML = `
         <span><strong>Quadras Selecionadas:</strong> ${totalQuadrasSelecionadas}</span>
@@ -630,12 +630,12 @@ function atualizarProgramados() {
         <span><strong>Apartamentos Acima Térreo:</strong> ${apartamentos}</span>
         <span><strong>Total de Habitantes:</strong> ${habitantes}</span>
         <span>🏠 <strong>Imóveis Programados:</strong> <span id="imoveisProgramadosValue">${imoveisProgramados}</span></span>
+        <span>🔍 <strong>Pesquisas:</strong> ${totalPesquisas}</span>
         <span>🐕 <strong>Cães:</strong> ${caes}</span>
         <span>🐈 <strong>Gatos:</strong> ${gatos}</span>
         <span>💧 <strong>Depósitos de Água:</strong> ${depositos}</span>
     `;
     
-    // Agora que o elemento existe no DOM, você pode chamá-lo
     calcularImoveisATrabalhar();
 }
 
@@ -939,6 +939,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
