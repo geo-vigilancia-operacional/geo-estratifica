@@ -616,13 +616,13 @@ function atualizarProgramados() {
 
     const imoveisProgramados = totalImoveis - apartamentos;
     
-    // ✅ NOVO: O CÁLCULO ESTÁ CORRETO AGORA!
+    // ✅ CORREÇÃO: A LÓGICA DE CÁLCULO ESTÁ CORRETA AGORA!
     // 1. Pega os Imóveis Programados (já subtraídos os apartamentos)
     // 2. Subtrai os Pontos Estratégicos (PE)
-    const totalPesquisas = imoveisProgramados - pontosEstrategicos;
+    const basePesquisas = imoveisProgramados - pontosEstrategicos;
     
     // 3. Aplica a redução de 20% sobre o resultado de Pesquisas
-    const pesquisasComReducao = totalPesquisas * 0.80; // Multiplica por 0.80 para obter 80% do total
+    const pesquisasFinal = Math.ceil(basePesquisas * 0.20);
     
     resumoProgramados.innerHTML = `
         <span><strong>Quadras Selecionadas:</strong> ${totalQuadrasSelecionadas}</span>
@@ -635,8 +635,9 @@ function atualizarProgramados() {
         <span><strong>Apartamentos Acima Térreo:</strong> ${apartamentos}</span>
         <span><strong>Total de Habitantes:</strong> ${habitantes}</span>
         <span>🏠 <strong>Imóveis Programados:</strong> <span id="imoveisProgramadosValue">${imoveisProgramados}</span></span>
-        <span>🔍 <strong>Pesquisas:</strong> ${totalPesquisas}</span>
-        <span>📉 <strong>Pesquisas (c/ 20% de Redução):</strong> ${Math.round(pesquisasComReducao)}</span>
+        
+        <span>🔍 <strong>Pesquisas:</strong> ${pesquisasFinal}</span>
+        
         <span>🐕 <strong>Cães:</strong> ${caes}</span>
         <span>🐈 <strong>Gatos:</strong> ${gatos}</span>
         <span>💧 <strong>Depósitos de Água:</strong> ${depositos}</span>
@@ -945,6 +946,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
