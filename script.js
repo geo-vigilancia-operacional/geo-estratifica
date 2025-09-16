@@ -615,10 +615,11 @@ function atualizarProgramados() {
     }, 0);
 
     const imoveisProgramados = totalImoveis - apartamentos;
-    
-    // ✅ NOVO: CALCULAR O TOTAL DE PESQUISAS
     const totalPesquisas = imoveisProgramados - apartamentos - pontosEstrategicos;
 
+    // ✅ NOVO: CALCULAR O VALOR DE PESQUISAS COM REDUÇÃO DE 20% FIXA
+    const pesquisasComReducao = totalPesquisas * 0.80; // Multiplica por 0.80 para obter 80% do total
+    
     resumoProgramados.innerHTML = `
         <span><strong>Quadras Selecionadas:</strong> ${totalQuadrasSelecionadas}</span>
         <span><strong>Total de Imóveis:</strong> ${totalImoveis}</span>
@@ -631,6 +632,7 @@ function atualizarProgramados() {
         <span><strong>Total de Habitantes:</strong> ${habitantes}</span>
         <span>🏠 <strong>Imóveis Programados:</strong> <span id="imoveisProgramadosValue">${imoveisProgramados}</span></span>
         <span>🔍 <strong>Pesquisas:</strong> ${totalPesquisas}</span>
+        <span>📉 <strong>Pesquisas (c/ 20% de Redução):</strong> ${Math.round(pesquisasComReducao)}</span>
         <span>🐕 <strong>Cães:</strong> ${caes}</span>
         <span>🐈 <strong>Gatos:</strong> ${gatos}</span>
         <span>💧 <strong>Depósitos de Água:</strong> ${depositos}</span>
@@ -939,6 +941,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
