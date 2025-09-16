@@ -615,9 +615,13 @@ function atualizarProgramados() {
     }, 0);
 
     const imoveisProgramados = totalImoveis - apartamentos;
-    const totalPesquisas = imoveisProgramados - apartamentos - pontosEstrategicos;
-
-    // ✅ NOVO: CALCULAR O VALOR DE PESQUISAS COM REDUÇÃO DE 20% FIXA
+    
+    // ✅ NOVO: O CÁLCULO ESTÁ CORRETO AGORA!
+    // 1. Pega os Imóveis Programados (já subtraídos os apartamentos)
+    // 2. Subtrai os Pontos Estratégicos (PE)
+    const totalPesquisas = imoveisProgramados - pontosEstrategicos;
+    
+    // 3. Aplica a redução de 20% sobre o resultado de Pesquisas
     const pesquisasComReducao = totalPesquisas * 0.80; // Multiplica por 0.80 para obter 80% do total
     
     resumoProgramados.innerHTML = `
@@ -941,6 +945,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
