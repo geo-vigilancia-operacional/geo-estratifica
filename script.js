@@ -611,7 +611,7 @@ function atualizarProgramados() {
     const gatos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.GATO || 0), 0);
     
     const depositos = dadosQuadrasSelecionadas.reduce((acc, cur) => {
-        return acc + getNumero(cur['TANQUE EXISTENTE']) + getNumero(cur['TAMBOR EXISTENTE']) + getNumero(cur['CISTERNA EXISTENTE']) + getNumero(cur['CACIMBA EXISTENTE']) + getNumero(cur["CAIXAS D'ÁGUA EXISTENTE"]);
+        return acc + getNumero(cur['TANQUE EXISTENTE']) + getNumero(cur['TAMBOR EXISTENTE']) + getNumero(cur['CISTERNA EXISTENTE']) + getNumero(cur['CACIMBA EXISTENTE']) + getNumero(cur["CAIXAS D'ÁGUA EXISTENTE"]) + getNumero(cur["FILTRO"]) + getNumero(cur["VASO C/ PLANTA"]) + getNumero(cur["POTE"]) + getNumero(cur["TINA"]);
     }, 0);
 
     const imoveisProgramados = totalImoveis - apartamentos;
@@ -941,6 +941,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
