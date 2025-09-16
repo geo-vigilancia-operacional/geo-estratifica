@@ -37,13 +37,14 @@ function carregarDados() {
         preencherListaBairros();
 
         console.log('Bairros carregados:', bairros.length, 'registros');
-        console.log('Ovitrampas carregadas:', dadosOvitramas.length, 'registros');
+        console.log('Ovitrampas carregadas:', dadosOvitrampas.length, 'registros');
     })
     .catch(error => {
         console.error('Erro ao carregar dados:', error);
         alert('Erro ao carregar dados. Verifique o console para detalhes.');
     });
 }
+
 
 
 // 2. PREENCHER LISTA DE BAIRROS
@@ -94,7 +95,7 @@ function montarResumoGeral() {
     const totalProgramados = (totais.TOTAL || 0) - (totais["AP. ACIMA DO TÉRREO"] || 0);
 
     // 🔹 Ovitramas no bairro
-    const totalOvitrampasBairro = dadosovitrampas
+    const totalOvitrampasBairro = dadosOvitrampas
         .filter(o => o["BAIRRO "]?.trim() === bairroNome.trim())
         .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
 
@@ -895,6 +896,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
