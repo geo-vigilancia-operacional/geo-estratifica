@@ -616,12 +616,8 @@ function atualizarProgramados() {
 
     const imoveisProgramados = totalImoveis - apartamentos;
     
-    // ✅ CORREÇÃO: A LÓGICA DE CÁLCULO ESTÁ CORRETA AGORA!
-    // 1. Pega os Imóveis Programados (já subtraídos os apartamentos)
-    // 2. Subtrai os Pontos Estratégicos (PE)
+    // ✅ CÁLCULO FINAL DE PESQUISAS - Lógica de 20% aplicada
     const basePesquisas = imoveisProgramados - pontosEstrategicos;
-    
-    // 3. Aplica a redução de 20% sobre o resultado de Pesquisas
     const pesquisasFinal = Math.ceil(basePesquisas * 0.20);
     
     resumoProgramados.innerHTML = `
@@ -645,7 +641,6 @@ function atualizarProgramados() {
     
     calcularImoveisATrabalhar();
 }
-
 // Sua função de cálculo de Imóveis a Trabalhar
 function calcularImoveisATrabalhar() {
     const imoveisProgramados = Number(document.getElementById("imoveisProgramadosValue").textContent);
@@ -946,6 +941,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
