@@ -385,7 +385,8 @@ const depositos = dadosQuadrasSelecionadas.reduce((acc, cur) => {
         + getNumero(cur["CAIXAS D'ÁGUA EXISTENTE"])
         + getNumero(cur['FILTRO'])
         + getNumero(cur["VASO C/PLANTA"])
-        + getNumero(cur['TINA']);
+        + getNumero(cur['TINA'])
+        + getNumero(cur['POTE']);
 }, 0);
 
 
@@ -950,6 +951,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
