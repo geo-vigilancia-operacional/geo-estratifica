@@ -72,29 +72,31 @@ function montarResumoGeral() {
         return;
     }
 
-    const dadosBairro = bairros.filter(b => b.BAIRRO.trim() === bairroNome);
+    const dadosBairro = bairros.filter(b => b.BAIRRO === bairroNome);
 
     if (dadosBairro.length === 0) {
         resumoGeralDiv.innerHTML = "<em>Nenhum dado encontrado para este bairro.</em>";
         return;
     }
 
-    // 1) quadras únicas (string trimmed)
+    // Quadras únicas
     const quadrasUnicas = [...new Set(dadosBairro.map(item => String(item.QT).trim()))];
 
-    // 2) quadras ativas = existem e TOTAL > 0
+    // Quadras ativas
     const quadrasAtivas = quadrasUnicas.filter(qt => {
         const row = dadosBairro.find(b => String(b.QT).trim() === qt);
         const total = Number(row?.TOTAL);
         return !isNaN(total) && total > 0;
     });
 
-    // 3) totais (mantém sua função existente)
+    // Totais
     const totais = calcularTotaisBairro(dadosBairro);
     const totalProgramados = (totais.TOTAL || 0) - (totais["AP. ACIMA DO TÉRREO"] || 0);
 
-    // --- Palhetas (ovitrampas) ---
-    const totalPalhetas = dadosBairro.reduce((s, b) => s + Number(b.PALHETA || 0), 0);
+    // 🔹 Ovitramas no bairro
+    const totalOvitrampasBairro = ovitrampas
+        .filter(o => o["BAIRRO "]?.trim() === bairroNome.trim())
+        .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
 
     resumoGeralDiv.innerHTML = `
         <div class="small"><strong>Bairro:</strong> ${bairroNome}</div>
@@ -107,12 +109,13 @@ function montarResumoGeral() {
         <span><strong>Pontos Estratégicos (PE):</strong> ${totais.PE}</span>
         <span><strong>Apartamentos Acima Térreo:</strong> ${totais["AP. ACIMA DO TÉRREO"] || 0}</span>
         <span><strong>Total de Habitantes:</strong> ${totais.HABITANTES}</span>
-        <span><strong>🏠 Imóveis Programados:</strong> ${totalProgramados}</span>
-        <span><strong>🐕 Cães:</strong> ${totais.CÃO}</span>
-        <span><strong>🐈 Gatos:</strong> ${totais.GATO}</span>
-        <span style="color:#ff9800; font-weight:bold;"><strong>🪣 Ovitrampas (palhetas):</strong> ${totalPalhetas}</span>
+        <span>🏠 <strong>Imóveis Programados:</strong> ${totalProgramados}</span>
+        <span>🐕 <strong>Cães:</strong> ${totais.CÃO}</span>
+        <span>🐈 <strong>Gatos:</strong> ${totais.GATO}</span>
+        <span>🧪 <strong>Ovitrampas (palhetas):</strong> ${totalOvitrampasBairro}</span>
     `;
 }
+
 
 // 4. CALCULAR TOTAIS COMPLETOS DO BAIRRO
 function calcularTotaisBairro(dadosBairro) {
@@ -521,16 +524,15 @@ function atualizarProgramados() {
         return;
     }
 
-    const dadosBairro = bairros.filter(b => b.BAIRRO.trim() === estado.bairroSelecionado);
+    const dadosBairro = bairros.filter(b => b.BAIRRO === estado.bairroSelecionado);
 
-    // Quadras selecionadas ativas (sem extintas)
+    // Quadras selecionadas ativas
     const quadrasSelecionadasAtivas = Array.from(estado.quadrasSelecionadas).filter(q => {
-        const dadosQuadra = dadosBairro.find(b => String(b.QT).trim() === q);
+        const dadosQuadra = dadosBairro.find(b => b.QT === q);
         return dadosQuadra && Number(dadosQuadra.TOTAL) > 0;
     });
 
-    const dadosQuadrasSelecionadas = dadosBairro.filter(b => quadrasSelecionadasAtivas.includes(String(b.QT).trim()));
-
+    const dadosQuadrasSelecionadas = dadosBairro.filter(b => quadrasSelecionadasAtivas.includes(b.QT));
     const totalQuadrasSelecionadas = quadrasSelecionadasAtivas.length;
 
     const getNumero = (valor) => {
@@ -538,16 +540,17 @@ function atualizarProgramados() {
         return isNaN(num) ? 0 : num;
     };
 
-    const totalImoveis = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TOTAL), 0);
-    const residencias = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.R), 0);
-    const comercios = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.C), 0);
-    const terrenos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TB), 0);
-    const outros = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.OU), 0);
-    const pontosEstrategicos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.PE), 0);
-    const apartamentos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur['AP. ACIMA DO TÉRREO']), 0);
-    const habitantes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.HABITANTES), 0);
-    const caes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.CÃO), 0);
-    const gatos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.GATO), 0);
+    // Totais
+    const totalImoveis = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TOTAL || 0), 0);
+    const residencias = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.R || 0), 0);
+    const comercios = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.C || 0), 0);
+    const terrenos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TB || 0), 0);
+    const outros = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.OU || 0), 0);
+    const pontosEstrategicos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.PE || 0), 0);
+    const apartamentos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur['AP. ACIMA DO TÉRREO'] || 0), 0);
+    const habitantes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.HABITANTES || 0), 0);
+    const caes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.CÃO || 0), 0);
+    const gatos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.GATO || 0), 0);
 
     // Depósitos de água
     const depositos = dadosQuadrasSelecionadas.reduce((acc, cur) => {
@@ -563,10 +566,13 @@ function atualizarProgramados() {
             + getNumero(cur['POTE']);
     }, 0);
 
-    // Palhetas (ovitrampas)
-    const palhetas = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.PALHETA), 0);
-
     const imoveisProgramados = totalImoveis - apartamentos;
+
+    // 🔹 Ovitramas nas quadras selecionadas
+    const totalOvitrampasSelecionadas = ovitrampas
+        .filter(o => o["BAIRRO "]?.trim() === estado.bairroSelecionado.trim())
+        .filter(o => quadrasSelecionadasAtivas.includes(o.QT))
+        .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
 
     resumoProgramados.innerHTML = `
         <span><strong>Quadras Selecionadas:</strong> ${totalQuadrasSelecionadas}</span>
@@ -582,11 +588,12 @@ function atualizarProgramados() {
         <span>🐕 <strong>Cães:</strong> ${caes}</span>
         <span>🐈 <strong>Gatos:</strong> ${gatos}</span>
         <span>💧 <strong>Depósitos de Água:</strong> ${depositos}</span>
-        <span style="color:#ff9800; font-weight:bold;">🪣 <strong>Ovitrampas (palhetas):</strong> ${palhetas}</span>
+        <span>🧪 <strong>Ovitrampas (palhetas):</strong> ${totalOvitrampasSelecionadas}</span>
     `;
 
     calcularImoveisATrabalhar();
 }
+
 
 // Sua função de cálculo de Imóveis a Trabalhar
 function calcularImoveisATrabalhar() {
@@ -888,6 +895,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
