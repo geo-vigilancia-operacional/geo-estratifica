@@ -94,7 +94,7 @@ function montarResumoGeral() {
     const totalProgramados = (totais.TOTAL || 0) - (totais["AP. ACIMA DO TÉRREO"] || 0);
 
     // 🔹 Ovitramas no bairro
-    const totalOvitrampasBairro = ovitrampas
+    const totalOvitrampasBairro = dadosovitrampas
         .filter(o => o["BAIRRO "]?.trim() === bairroNome.trim())
         .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
 
@@ -895,6 +895,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
