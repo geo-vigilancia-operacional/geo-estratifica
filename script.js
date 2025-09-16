@@ -516,7 +516,6 @@ function calcularDiasETermino() {
 
 // Sua função atualizarProgramados (aqui com a chamada para o novo cálculo)
 // 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
-// 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
 function atualizarProgramados() {
     const resumoProgramados = document.getElementById("resumoProgramados");
 
@@ -569,8 +568,8 @@ function atualizarProgramados() {
 
     const imoveisProgramados = totalImoveis - apartamentos;
 
-    // 🔹 Ovitrampas nas quadras selecionadas
-    const totalOvitrampasSelecionadas = Ovitrampas
+    // ✅ CORREÇÃO APLICADA AQUI: mudado de 'Ovitrampas' para 'dadosOvitrampas'
+    const totalOvitrampasSelecionadas = dadosOvitrampas
         .filter(o => o["BAIRRO "]?.trim() === estado.bairroSelecionado.trim())
         .filter(o => quadrasSelecionadasAtivas.includes(o.QT))
         .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
@@ -594,7 +593,6 @@ function atualizarProgramados() {
 
     calcularImoveisATrabalhar();
 }
-
 
 // Sua função de cálculo de Imóveis a Trabalhar
 function calcularImoveisATrabalhar() {
@@ -896,6 +894,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
