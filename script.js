@@ -377,7 +377,7 @@ function atualizarProgramados() {
     
     // Depósitos de água
     const depositos = dadosQuadrasSelecionadas.reduce((acc, cur) => {
-        return acc + getNumero(cur['TANQUE EXISTENTE']) + getNumero(cur['TAMBOR EXISTENTE']) + getNumero(cur['CISTERNA EXISTENTE']) + getNumero(cur['CACIMBA EXISTENTE']) + getNumero(cur["CAIXAS D'ÁGUA EXISTENTE"]);
+        return acc + getNumero(cur['TANQUE EXISTENTE']) + getNumero(cur['TAMBOR EXISTENTE']) + getNumero(cur['CISTERNA EXISTENTE']) + getNumero(cur['CACIMBA EXISTENTE']) + getNumero(cur["CAIXAS D'ÁGUA EXISTENTE"])getNumero(cur['FILTRO'])getNumero(cur["VASO C/PLANTA"])getNumero(cur['TINA']);
     }, 0);
 
     const imoveisProgramados = totalImoveis - apartamentos;
@@ -941,6 +941,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
