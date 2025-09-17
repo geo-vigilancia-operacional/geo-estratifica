@@ -649,18 +649,6 @@ header h1 {
     <span id="obsTermino" class="small" style="color:red;">Adicione a data de início programado</span>
 </div>
 
-        <div class="box">
-            <h3>Informações Adicionais</h3>
-            <div class="form-group">
-                <label for="observacoes">Observações:</label>
-                <textarea id="observacoes" rows="3" placeholder="Insira aqui as observações (o campo se ajustará automaticamente)."></textarea>
-            </div>
-            <div class="form-group">
-                <label for="responsavel">Responsável pela Informação:</label>
-                <input type="text" id="responsavel" placeholder="Insira o nome do responsável.">
-            </div>
-        </div>
-
         <div id="RESULTADO" class="box">
             <h3>RESULTADO</h3>
             <label for="quadrasPositivas">Quadras Positivas</label>
@@ -687,10 +675,7 @@ header h1 {
         <option value="">Preencha a Semana Inicial primeiro</option>
     </select>
 </label>
-
-
-            
-            <label>Ciclo
+      <label>Ciclo
                 <select id="ciclo">
                     <option value="">Selecione</option>
                 </select>
@@ -729,7 +714,17 @@ header h1 {
             <label>Data de Início Real <input type="date" id="dataInicioReal" /></label>
             <label>Data de Término Real <input type="date" id="dataTerminoReal" /></label>
         </div>
-
+ <div class="box">
+            <h3>Informações Adicionais</h3>
+            <div class="form-group">
+                <label for="observacoes">Observações:</label>
+                <textarea id="observacoes" rows="3" placeholder="Insira aqui as observações (o campo se ajustará automaticamente)."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="responsavel">Responsável pela Informação:</label>
+                <input type="text" id="responsavel" placeholder="Insira o nome do responsável.">
+            </div>
+        </div>
         <button id="salvarTxt" class="botao">Salvar como TXT</button>
 
         <div class="box" style="margin-top: 30px;">
@@ -749,6 +744,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
