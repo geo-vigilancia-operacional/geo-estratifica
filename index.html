@@ -562,29 +562,26 @@ header h1 {
           <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
     </header>
     
-    <div class="container">
-        <div style="padding: 20px;">
-            <button type="button" id="salvarProcessoBtn">Salvar Processo</button>
-            <button type="button" id="carregarProcessoBtn">Carregar Processo</button>
-            <input type="file" id="inputArquivo" style="display: none;" accept=".json" />
-            
-            <div class="estratificacao-container">
-                <button id="abrirMapa" class="botao">Abrir Mapa</button>          
-                <label for="tipoEstratificacao">Tipo de Estratificação:</label>
-                <select id="tipoEstratificacao" name="tipoEstratificacao" required>
-                    <option value="" disabled selected>Selecione uma opção</option>
-                    <option value="estratificacaoDeArea">Estratificação de Área</option>
-                    <option value="mutiraoRegional">Mutirão Regional</option>
-                    <option value="mutiraoMunicipal">Mutirão Municipal</option>
-                    <option value="outros">Outros</option>
-                </select>
-            </div>
-
-            <div id="outrosCampoContainer" class="oculto">
-                <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
-                <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
-            </div>
+ <div class="container">
+    <div style="padding: 20px;">
+        <div class="estratificacao-container">
+            <button id="abrirMapa" class="botao">Abrir Mapa</button>
+            <label for="tipoEstratificacao">Tipo de Estratificação:</label>
+            <select id="tipoEstratificacao" name="tipoEstratificacao" required>
+                <option value="" disabled selected>Selecione uma opção</option>
+                <option value="estratificacaoDeArea">Estratificação de Área</option>
+                <option value="mutiraoRegional">Mutirão Regional</option>
+                <option value="mutiraoMunicipal">Mutirão Municipal</option>
+                <option value="outros">Outros</option>
+            </select>
         </div>
+
+        <div id="outrosCampoContainer" class="oculto">
+            <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
+            <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
+        </div>
+    </div>
+</div>
 
         <div class="main-grid">
             <!-- Seções do grid mantidas iguais -->
@@ -725,7 +722,10 @@ header h1 {
                 <input type="text" id="responsavel" placeholder="Insira o nome do responsável.">
             </div>
         </div>
-        <button id="salvarTxt" class="botao">Salvar como TXT</button>
+      <button type="button" id="salvarProcessoBtn">Salvar Processo</button>
+<button type="button" id="carregarProcessoBtn">Carregar Processo</button>
+<input type="file" id="inputArquivo" style="display: none;" accept=".json" />  
+    <button id="salvarTxt" class="botao">Salvar como TXT</button>
 
         <div class="box" style="margin-top: 30px;">
             <label for="busca">BUSCA AVANÇADA (ex: bairro ancuri 10 gatos)</label>
@@ -744,6 +744,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
