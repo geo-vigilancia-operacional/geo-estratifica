@@ -6,17 +6,38 @@
     <title>Dados de Ovitrampas</title>
     <link rel="stylesheet" href="caminho/para/seu/estilo.css">
     
-    <style>
-        /* Estilos adicionais para esta página, se necessário */
-        .box {
-            /* Copie os estilos da classe .box da sua página principal aqui */
-            background-color: #2c2f33; /* Exemplo de cor de fundo escura */
-            color: #ffffff; /* Exemplo de cor de texto clara */
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-    </style>
+<style>
+/* Estilo para ter a mesma aparência da sua página principal */
+:root {
+    --bg-color: #1a1a2e;
+    --text-color: #e0e0e0;
+    --card-bg: #21213e;
+    --border-color: #3e4a61;
+}
+
+body {
+    font-family: sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 10px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.box {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+</style>
 </head>
 <body>
 
@@ -61,3 +82,4 @@
 
 </body>
 </html>
+
