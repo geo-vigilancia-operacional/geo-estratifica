@@ -4,35 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dados de Ovitrampas</title>
+    <link rel="stylesheet" href="caminho/para/seu/estilo.css">
+    
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        .container { max-width: 800px; margin: auto; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin-bottom: 5px; }
+        /* Estilos adicionais para esta página, se necessário */
+        .box {
+            /* Copie os estilos da classe .box da sua página principal aqui */
+            background-color: #2c2f33; /* Exemplo de cor de fundo escura */
+            color: #ffffff; /* Exemplo de cor de texto clara */
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Bairros de Ovitrampas</h1>
-        <p>Buscando e mapeando os bairros do arquivo JSON...</p>
-        <ul id="lista-bairros"></ul>
+        <div class="box">
+            <h1>Bairros de Ovitrampas</h1>
+            <p>Buscando e mapeando os bairros do arquivo JSON...</p>
+            <ul id="lista-bairros"></ul>
+        </div>
     </div>
 
     <script>
-        // URL do seu arquivo JSON.
         const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
-
-        // O elemento da lista onde os bairros serão adicionados
         const listaBairros = document.getElementById('lista-bairros');
 
-        // Função para buscar o JSON e exibir os bairros
         async function mapearBairros() {
             try {
                 const response = await fetch(urlDoJson);
                 const dados = await response.json();
 
-                // Usamos um Set para pegar apenas os bairros únicos, sem repetição
                 const bairrosUnicos = new Set();
                 dados.forEach(item => {
                     if (item['BAIRRO ']) {
@@ -40,7 +44,6 @@
                     }
                 });
 
-                // Agora, criamos um item de lista para cada bairro e o adicionamos na página
                 bairrosUnicos.forEach(bairro => {
                     const li = document.createElement('li');
                     li.textContent = bairro;
@@ -53,7 +56,6 @@
             }
         }
 
-        // Chamamos a função para iniciar o processo
         document.addEventListener('DOMContentLoaded', mapearBairros);
     </script>
 
