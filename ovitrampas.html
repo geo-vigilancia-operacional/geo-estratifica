@@ -3,12 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Ovitrampas</title>
+    <title>Dados de Ovitrampas</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 5px; }
+    </style>
 </head>
 <body>
 
-    <h1>Bem-vindo à página de Ovitrampas!</h1>
-    <p>O link funcionou. Agora vamos carregar os dados do JSON.</p>
+    <div class="container">
+        <h1>Bairros de Ovitrampas</h1>
+        <p>Buscando e mapeando os bairros do arquivo JSON...</p>
+        <ul id="lista-bairros"></ul>
+    </div>
+
+    <script>
+        // URL do seu arquivo JSON.
+        const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
+
+        // O elemento da lista onde os bairros serão adicionados
+        const listaBairros = document.getElementById('lista-bairros');
+
+        // Função para buscar o JSON e exibir os bairros
+        async function mapearBairros() {
+            try {
+                const response = await fetch(urlDoJson);
+                const dados = await response.json();
+
+                // Usamos um Set para pegar apenas os bairros únicos, sem repetição
+                const bairrosUnicos = new Set();
+                dados.forEach(item => {
+                    if (item['BAIRRO ']) {
+                        bairrosUnicos.add(item['BAIRRO '].trim());
+                    }
+                });
+
+                // Agora, criamos um item de lista para cada bairro e o adicionamos na página
+                bairrosUnicos.forEach(bairro => {
+                    const li = document.createElement('li');
+                    li.textContent = bairro;
+                    listaBairros.appendChild(li);
+                });
+
+            } catch (error) {
+                console.error('Erro ao buscar o JSON:', error);
+                listaBairros.innerHTML = '<li>Erro ao carregar os bairros.</li>';
+            }
+        }
+
+        // Chamamos a função para iniciar o processo
+        document.addEventListener('DOMContentLoaded', mapearBairros);
+    </script>
 
 </body>
 </html>
