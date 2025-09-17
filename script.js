@@ -859,8 +859,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 outrosCampoContainer.classList.add('oculto');
                 avisoOutros.classList.add('oculto');
                 outrosCampoInput.removeAttribute('required');
-            }
-        });
+         }
+    });
+});
 
 
 // --- INICIALIZAÇÃO ÚNICA ---
@@ -912,6 +913,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
