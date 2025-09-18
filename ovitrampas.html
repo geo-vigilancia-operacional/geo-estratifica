@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>Dados de Ovitrampas</title>
     <style>
 /* Estilos para ter a mesma aparência da sua página principal */
@@ -12,7 +11,7 @@
     --text-color: #e0e0e0;
     --card-bg: #21213e;
     --border-color: #3e4a61;
-    --primary-color: #00b4d8; /* Mantido para estilo de títulos */
+    --primary-color: #00b4d8;
 }
 
 body {
@@ -57,6 +56,23 @@ body {
 .box h1 {
     color: var(--primary-color);
 }
+
+.box h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Estilo para a área de resultados */
+#resultados {
+    margin-top: 20px;
+    padding: 15px;
+    background: #111122;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
     </style>
 </head>
 <body>
@@ -70,101 +86,146 @@ body {
             
             <div id="semanasContainer" class="oculto">
                 <label for="selecaoSemanas">Selecione a(s) Semana(s):</label>
-                <select id="selecaoSemanas" multiple></select>
+                <select id="selecaoSemanas" multiple size="10"></select>
+            </div>
+
+            <div id="resultadosContainer" class="oculto">
+                <h3>Resultados</h3>
+                <div id="resultados"></div>
             </div>
             
         </div>
     </div>
 
-  <script>
-    const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
-    const selecaoBairro = document.getElementById('selecaoBairro');
-    const semanasContainer = document.getElementById('semanasContainer');
-    const selecaoSemanas = document.getElementById('selecaoSemanas');
+    <script>
+        const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
+        const selecaoBairro = document.getElementById('selecaoBairro');
+        const semanasContainer = document.getElementById('semanasContainer');
+        const selecaoSemanas = document.getElementById('selecaoSemanas');
+        const resultadosContainer = document.getElementById('resultadosContainer');
+        const resultadosDiv = document.getElementById('resultados');
 
-    let dadosCompletos = []; // Variável para guardar o JSON inteiro
+        let dadosCompletos = []; // Variável para guardar o JSON inteiro
 
-    // Função para carregar o JSON e popular a lista de bairros
-    async function carregarBairros() {
-        try {
-            const response = await fetch(urlDoJson);
-            dadosCompletos = await response.json();
+        // Função para carregar o JSON e popular a lista de bairros
+        async function carregarBairros() {
+            try {
+                const response = await fetch(urlDoJson);
+                dadosCompletos = await response.json();
 
-            const bairrosUnicos = new Set();
-            dadosCompletos.forEach(item => {
-                if (item['BAIRRO ']) {
-                    bairrosUnicos.add(item['BAIRRO '].trim());
-                }
-            });
+                const bairrosUnicos = new Set();
+                dadosCompletos.forEach(item => {
+                    if (item['BAIRRO ']) {
+                        bairrosUnicos.add(item['BAIRRO '].trim());
+                    }
+                });
 
-            // Adiciona uma opção padrão
-            const defaultOption = document.createElement('option');
-            defaultOption.textContent = 'Selecione um bairro';
-            defaultOption.value = '';
-            selecaoBairro.appendChild(defaultOption);
+                const defaultOption = document.createElement('option');
+                defaultOption.textContent = 'Selecione um bairro';
+                defaultOption.value = '';
+                selecaoBairro.appendChild(defaultOption);
 
-            // Adiciona os bairros únicos à lista suspensa
-            Array.from(bairrosUnicos).sort().forEach(bairro => {
+                Array.from(bairrosUnicos).sort().forEach(bairro => {
+                    const option = document.createElement('option');
+                    option.textContent = bairro;
+                    option.value = bairro;
+                    selecaoBairro.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Erro ao buscar o JSON:', error);
                 const option = document.createElement('option');
-                option.textContent = bairro;
-                option.value = bairro;
+                option.textContent = 'Erro ao carregar dados';
                 selecaoBairro.appendChild(option);
+            }
+        }
+
+        // Função para popular as semanas com base no bairro selecionado
+        function popularSemanas(bairroSelecionado) {
+            selecaoSemanas.innerHTML = '';
+            
+            const semanasDoBairro = dadosCompletos.filter(item => 
+                item['BAIRRO '].trim() === bairroSelecionado
+            );
+
+            const semanasUnicas = new Set();
+            semanasDoBairro.forEach(item => {
+                for (const key in item) {
+                    if (key.startsWith('SEMANA ')) {
+                        semanasUnicas.add(key.replace('SEMANA ', ''));
+                    }
+                }
             });
 
-        } catch (error) {
-            console.error('Erro ao buscar o JSON:', error);
-            const option = document.createElement('option');
-            option.textContent = 'Erro ao carregar dados';
-            selecaoBairro.appendChild(option);
+            Array.from(semanasUnicas).sort((a, b) => parseInt(a) - parseInt(b)).forEach(semana => {
+                const option = document.createElement('option');
+                option.textContent = `Semana ${semana}`;
+                option.value = semana;
+                selecaoSemanas.appendChild(option);
+            });
         }
-    }
-
-    // Função para popular as semanas com base no bairro selecionado
-    function popularSemanas(bairroSelecionado) {
-        // Limpa as opções de semanas anteriores
-        selecaoSemanas.innerHTML = '';
         
-        const semanasDoBairro = dadosCompletos.filter(item => 
-            item['BAIRRO '].trim() === bairroSelecionado
-        );
+        // Função para exibir os valores das semanas selecionadas
+        function exibirValoresSelecionados(bairroSelecionado) {
+            resultadosDiv.innerHTML = ''; // Limpa resultados anteriores
 
-        const semanasUnicas = new Set();
-        semanasDoBairro.forEach(item => {
-            for (const key in item) {
-                // Procura por todas as chaves que começam com "SEMANA "
-                if (key.startsWith('SEMANA ')) {
-                    semanasUnicas.add(key.replace('SEMANA ', ''));
-                }
+            const semanasSelecionadas = Array.from(selecaoSemanas.options)
+                                                .filter(option => option.selected)
+                                                .map(option => option.value);
+
+            if (semanasSelecionadas.length === 0) {
+                resultadosContainer.classList.add('oculto');
+                return;
+            }
+
+            resultadosContainer.classList.remove('oculto');
+
+            const dadosDoBairro = dadosCompletos.find(item => 
+                item['BAIRRO '].trim() === bairroSelecionado
+            );
+
+            if (dadosDoBairro) {
+                semanasSelecionadas.forEach(semana => {
+                    const chaveSemana = `SEMANA ${semana}`;
+                    const valor = dadosDoBairro[chaveSemana] || 'N/A';
+                    
+                    const p = document.createElement('p');
+                    p.innerHTML = `<strong>Semana ${semana}:</strong> ${valor}`;
+                    resultadosDiv.appendChild(p);
+                });
+            } else {
+                resultadosDiv.innerHTML = '<p>Dados não encontrados para o bairro selecionado.</p>';
+            }
+        }
+
+        // Evento que escuta a mudança no seletor de bairros
+        selecaoBairro.addEventListener('change', (event) => {
+            const bairroSelecionado = event.target.value;
+            if (bairroSelecionado) {
+                semanasContainer.classList.remove('oculto');
+                resultadosContainer.classList.add('oculto');
+                popularSemanas(bairroSelecionado);
+            } else {
+                semanasContainer.classList.add('oculto');
+                resultadosContainer.classList.add('oculto');
             }
         });
 
-        // Adiciona as semanas únicas à lista de múltipla escolha
-        Array.from(semanasUnicas).sort((a, b) => parseInt(a) - parseInt(b)).forEach(semana => {
-            const option = document.createElement('option');
-            option.textContent = `Semana ${semana}`;
-            option.value = semana;
-            selecaoSemanas.appendChild(option);
+        // Evento que escuta a mudança na seleção de semanas
+        selecaoSemanas.addEventListener('change', () => {
+            const bairroSelecionado = selecaoBairro.value;
+            if (bairroSelecionado) {
+                exibirValoresSelecionados(bairroSelecionado);
+            }
         });
-    }
 
-    // Evento que escuta a mudança no seletor de bairros
-    selecaoBairro.addEventListener('change', (event) => {
-        const bairroSelecionado = event.target.value;
-        if (bairroSelecionado) {
-            // Mostra o container das semanas e popula a lista
-            semanasContainer.classList.remove('oculto');
-            popularSemanas(bairroSelecionado);
-        } else {
-            // Esconde o container se nada for selecionado
-            semanasContainer.classList.add('oculto');
-        }
-    });
+        // Inicia o processo carregando os bairros
+        document.addEventListener('DOMContentLoaded', carregarBairros);
+    </script>
 
-    // Inicia o processo carregando os bairros
-    document.addEventListener('DOMContentLoaded', carregarBairros);
-</script>
 </body>
 </html>
+
 
 
 
