@@ -1,900 +1,755 @@
-// =============================================
-// SISTEMA DE ESTRATIFICAÇÃO - VERSÃO COMPLETA
-// =============================================
-
-// --- VARIÁVEIS GLOBAIS ---
-let bairros = [];
-let dadosOvitrampas = []; // ✅ novo
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-let estado = {
-    bairroSelecionado: null,
-    quadrasDisponiveis: [],
-    quadrasSelecionadas: new Set(),
-    quadrasPositivas: new Set(), // ✅ novo
-};
-
-// --- ELEMENTOS DO DOM ---
-const selectBairro = document.getElementById("bairro");
-const resumoGeralDiv = document.getElementById("resumoGeral");
-const listaQuadrasDiv = document.getElementById("listaQuadras");
-const resumoProgramadosDiv = document.getElementById("resumoProgramados");
-const entradaQuadras = document.getElementById("entradaQuadras");
-const aplicarTextoBtn = document.getElementById("aplicarTexto");
-const limparTudoBtn = document.getElementById("limparTudo");
-const dadosDetalhesDiv = document.getElementById("dadosDetalhes");
-
-// --- FUNÇÕES PRINCIPAIS ---
-
-// 1. CARREGAR DADOS (bairros + ovitrampas)
-function carregarDados() {
-    Promise.all([
-        fetch('bairros_4ciclo_2025.json').then(r => r.json()),
-        fetch('ACOMPANHAMENTO_OVITRAMPAS.json').then(r => r.json())
-    ])
-    .then(([dadosBairros, dadosOvi]) => {
-        bairros = dadosBairros;
-        dadosOvitrampas = dadosOvi;
-
-        preencherListaBairros();
-
-        console.log('Bairros carregados:', bairros.length, 'registros');
-        console.log('Ovitrampas carregadas:', dadosOvitrampas.length, 'registros');
-    })
-    .catch(error => {
-        console.error('Erro ao carregar dados:', error);
-        alert('Erro ao carregar dados. Verifique o console para detalhes.');
-    });
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estratificação de Áreas</title>
+   <link rel="icon" href="data:,">
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+ <style>
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-
-
-// 2. PREENCHER LISTA DE BAIRROS
-function preencherListaBairros() {
-    if (!selectBairro) return;
-    
-    selectBairro.innerHTML = '<option value="">-- Escolha um bairro --</option>';
-    
-    const bairrosUnicos = [...new Set(bairros.map(item => item.BAIRRO))].sort();
-    
-    bairrosUnicos.forEach(bairro => {
-        const option = document.createElement("option");
-        option.value = bairro;
-        option.textContent = bairro;
-        selectBairro.appendChild(option);
-    });
+:root {
+    --bg-color: #1a1a2e;
+    --primary-color: #00b4d8;
+    --secondary-color: #89b4f0;
+    --text-color: #e0e0e0;
+    --card-bg: #21213e;
+    --border-color: #3e4a61;
+    --input-bg: #111122;
+    --input-focus: #00eaff;
+    --whatsapp-color: #25D366;
+    --whatsapp-hover: #1eaa55;
+    --warning-color: #ff6b6b;
 }
 
-// 3. MONTAR RESUMO GERAL DO BAIRRO (COM TODOS OS DADOS)
-function montarResumoGeral() {
-    if (!resumoGeralDiv) return;
-
-    const bairroNome = estado.bairroSelecionado;
-    if (!bairroNome) {
-        resumoGeralDiv.innerHTML = "";
-        return;
-    }
-
-    const dadosBairro = bairros.filter(b => b.BAIRRO === bairroNome);
-
-    if (dadosBairro.length === 0) {
-        resumoGeralDiv.innerHTML = "<em>Nenhum dado encontrado para este bairro.</em>";
-        return;
-    }
-
-    // Quadras únicas
-    const quadrasUnicas = [...new Set(dadosBairro.map(item => String(item.QT).trim()))];
-
-    // Quadras ativas
-    const quadrasAtivas = quadrasUnicas.filter(qt => {
-        const row = dadosBairro.find(b => String(b.QT).trim() === qt);
-        const total = Number(row?.TOTAL);
-        return !isNaN(total) && total > 0;
-    });
-
-    // Totais
-    const totais = calcularTotaisBairro(dadosBairro);
-    const totalProgramados = (totais.TOTAL || 0) - (totais["AP. ACIMA DO TÉRREO"] || 0);
-
-    // 🔹 Ovitramas no bairro
-    const totalOvitrampasBairro = dadosOvitrampas
-        .filter(o => o["BAIRRO "]?.trim() === bairroNome.trim())
-        .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
-
-    resumoGeralDiv.innerHTML = `
-        <div class="small"><strong>Bairro:</strong> ${bairroNome}</div>
-        <span><strong>Total de Quadras (ativas):</strong> ${quadrasAtivas.length}</span>
-        <span><strong>Total de Imóveis:</strong> ${totais.TOTAL}</span>
-        <span><strong>Residências (R):</strong> ${totais.R}</span>
-        <span><strong>Comércios (C):</strong> ${totais.C}</span>
-        <span><strong>Terrenos Baldios (TB):</strong> ${totais.TB}</span>
-        <span><strong>Outros (OU):</strong> ${totais.OU}</span>
-        <span><strong>Pontos Estratégicos (PE):</strong> ${totais.PE}</span>
-        <span><strong>Apartamentos Acima Térreo:</strong> ${totais["AP. ACIMA DO TÉRREO"] || 0}</span>
-        <span><strong>Total de Habitantes:</strong> ${totais.HABITANTES}</span>
-        <span>🏠 <strong>Imóveis Programados:</strong> ${totalProgramados}</span>
-        <span>🐕 <strong>Cães:</strong> ${totais.CÃO}</span>
-        <span>🐈 <strong>Gatos:</strong> ${totais.GATO}</span>
-        <span>🧪 <strong>Ovitrampas (palhetas):</strong> ${totalOvitrampasBairro}</span>
-    `;
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 10px;
 }
 
-
-// 4. CALCULAR TOTAIS COMPLETOS DO BAIRRO
-function calcularTotaisBairro(dadosBairro) {
-    const campos = [
-        'R', 'C', 'TB', 'OU', 'PE', 'TOTAL', 'APARTAMENTO EXISTENTE',
-        'APARTAMENTO NO TÉRREO', 'AP. ACIMA DO TÉRREO', 'HABITANTES',
-        'TANQUE EXISTENTE', 'TANQUE PEIXADO', 'TAMBOR EXISTENTE', 'TAMBOR PEIXADO',
-        'CISTERNA EXISTENTE', 'CISTERNA VEDADA', 'CISTERNA PEIXADA',
-        'CACIMBA EXISTENTE', 'CACIMBA VEDADA', 'CACIMBA PEIXADA',
-        "CAIXAS D'ÁGUA EXISTENTE", "CAIXAS D'ÁGUA NORMAL", "CAIXAS D'ÁGUA VEDADA",
-        "CAIXAS D'ÁGUA ED. NORMAL", "CAIXAS D'ÁGUA ED. VEDADA",
-        'FILTRO', 'VASO C/ PLANTA', 'POTE', 'TINA', 'CÃO', 'GATO'
-    ];
-    
-    const totais = {};
-    
-    campos.forEach(campo => {
-        totais[campo] = dadosBairro.reduce((total, item) => {
-            let valor = item[campo];
-
-            // Se for string numérica, converte
-            if (typeof valor === "string") {
-                valor = valor.trim();
-                valor = valor === "" ? 0 : Number(valor);
-            }
-
-            // Se não for número válido, ignora (considera 0)
-            if (isNaN(valor)) valor = 0;
-
-            return total + valor;
-        }, 0);
-    });
-    
-    return totais;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
 }
-// 5. MONTAR LISTA DE QUADRAS COM DETALHES
-// === FUNÇÃO: MONTAR LISTA DE QUADRAS ===
-function montarListaQuadras() {
-    if (!listaQuadrasDiv) return;
 
-    listaQuadrasDiv.innerHTML = "";
+header h1 {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    text-shadow: 0 0 5px var(--primary-color);
+}
 
-    if (!estado.bairroSelecionado) {
-        listaQuadrasDiv.innerHTML = "<em>Selecione um bairro primeiro.</em>";
-        return;
+.main-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.box {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 180, 216, 0.05) 0%, rgba(137, 180, 240, 0.05) 100%);
+    z-index: 0;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.box h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--secondary-color);
+    text-shadow: 0 0 3px var(--secondary-color);
+    position: relative;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.box label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.box input[type="text"],
+.box input[type="number"],
+.box input[type="date"],
+.box select,
+.box textarea,
+#dadosDetalhes {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.box input[type="text"]:focus,
+.box input[type="number"]:focus,
+.box input[type="date"]:focus,
+.box select:focus,
+.box textarea:focus,
+#dadosDetalhes:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 10px rgba(0, 234, 255, 0.4);
+    background-color: var(--card-bg);
+}
+
+.box button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.box button.primary {
+    background: linear-gradient(45deg, var(--primary-color), #0077b6);
+    color: white;
+}
+
+.box button.secondary {
+    background: linear-gradient(45deg, #4b586e, #6c757d);
+    color: white;
+}
+
+.box button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+#listaQuadras {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: var(--input-bg);
+}
+
+.quadra-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 6px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.quadra-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.quadra-item .extinta {
+    color: #999;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+#resumoGeral,
+#resumoProgramados {
+    margin-top: 15px;
+    padding: 15px;
+    background: #111122;
+    border-radius: 8px;
+    font-size: 0.9em;
+    border: 1px solid var(--border-color);
+}
+
+#resumoGeral span,
+#resumoProgramados span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+/* Botão WhatsApp em verde */
+#compartilharWhatsapp {
+    background: linear-gradient(45deg, var(--whatsapp-color), #20a354);
+    color: white;
+    text-shadow: none; /* Remove text-shadow para melhorar a legibilidade */
+}
+
+#compartilharWhatsapp:hover {
+    background: linear-gradient(45deg, #1eaa55, #198c46);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+#busca {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+#resultadoBusca {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 350px;
+    overflow-y: auto;
+    margin-top: 15px;
+    background: var(--input-bg);
+}
+
+.resultado-card {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.resultado-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    color: var(--primary-color);
+}
+
+.resultado-card p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--text-color);
+}
+
+.resultado-card mark {
+    background-color: #ffffcc;
+    padding: 0 2px;
+}
+
+.small {
+    font-size: 0.8em;
+    color: #a0a0a0;
+    margin-top: 5px;
+}
+
+#obsTermino {
+    color: var(--warning-color);
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: none;
+}
+
+.output-box {
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    font-size: 1em;
+    min-height: 120px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+}
+
+.quadras-vermelho {
+    color: #ff6b6b;
+    font-weight: bold;
+}
+
+#salvarProcessoBtn,
+#carregarProcessoBtn {
+    background: linear-gradient(45deg, #ff8c00, #ff5722);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px; /* Ajuste para garantir um tamanho consistente */
+    font-weight: 700;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: inline-block; /* Garante que os botões se comportem de forma consistente */
+    width: 48%; /* Define uma largura relativa para que se ajustem em linha */
+    box-sizing: border-box; /* Inclui o padding na largura */
+    margin: 5px 1%; /* Adiciona um pequeno espaçamento entre eles */
+}
+#salvarProcessoBtn:hover,
+#carregarProcessoBtn:hover {
+    background: linear-gradient(45deg, #e07b00, #ff8c00);
+    box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+}
+
+input[readonly] {
+    background-color: #21213e;
+    cursor: not-allowed;
+    color: #a0a0a0;
+}
+
+.oculto {
+    display: none;
+}
+
+.estratificacao-container,
+#outrosCampoContainer {
+    margin-bottom: 20px;
+}
+
+.estratificacao-container label {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 8px;
+}
+
+#tipoEstratificacao,
+#outrosTipoEstratificacao {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    color: var(--text-color);
+    background-color: var(--input-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.aviso-obrigatorio {
+    font-size: 0.8em;
+    color: #D32F2F;
+    display: block;
+    margin-top: 5px;
+    font-weight: normal;
+}
+
+header {
+    text-align: center;
+    padding: 30px 0;
+    background: linear-gradient(135deg, #1a1a2e, #111122);
+    border-bottom: 2px solid var(--primary-color);
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    margin: 0;
+}
+
+.botao-navegacao {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.primary {
+    background: linear-gradient(45deg, var(--primary-color), #0077b6);
+    color: white;
+}
+
+.secondary {
+    background: linear-gradient(45deg, #4b586e, #6c757d);
+    color: white;
+}
+
+.botao-navegacao:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilo para os botões "Salvar como TXT" e "Abrir Mapa" */
+#salvarTxt,
+#abrirMapa {
+    width: auto; /* Permite que o botão se ajuste ao conteúdo */
+    padding: 12px 20px;
+    margin: 10px 5px; /* Adiciona espaçamento entre os botões */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+#percImoveisTrabalhados, #percFechados {
+    color: #ff9800;   /* laranja */
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+#salvarTxt {
+    background: linear-gradient(45deg, #0077b6, var(--primary-color));
+    color: white;
+}
+
+#salvarTxt:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+#abrirMapa {
+    background: linear-gradient(45deg, #00b65f, #00994d); /* Novo gradiente verde */
+    color: white;
+}
+
+#abrirMapa:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilo para o aviso de quadras restantes */
+/* Estilo para o aviso de quadras restantes */
+.aviso-quadras {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--warning-color);
+    background-color: rgba(255, 107, 107, 0.1);
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--warning-color);
+    text-align: center;
+    margin-top: 15px;
+    letter-spacing: 1px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* Ajustes específicos para a busca avançada */
+#botaoBusca, #limparBusca {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 14px;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+/* 🔧 Ajuste para igualar a altura das caixas na linha */
+.main-grid {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* Cada .box dentro da grid ocupa 1/3 */
+.main-grid .box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Quadras destacadas em laranja (apenas o número) */
+.quadra-numero {
+    color: orange;
+    font-weight: bold;
+}
+
+/* Deixa o total de imóveis menos chamativo */
+.quadra-item small {
+    color: #ccc;
+    font-size: 0.85em;
+    margin-left: 6px;
+}
+
+/* Desktop: manter colunas lado a lado e mesma altura */
+@media (min-width: 769px) {
+    .main-grid {
+        display: flex;
+        gap: 20px;
+        align-items: stretch; /* 🔑 faz as boxes ficarem da mesma altura */
     }
 
-    const dadosBairro = bairros.filter(b => b.BAIRRO === estado.bairroSelecionado);
+    .main-grid .box {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+#avisoTratamentos {
+    margin-top: 6px;
+    font-weight: bold;
+    color: orange;  /* aviso em laranja */
+}
 
-    // pega todas as quadras e aplica a ordenação pai/filho
-    const quadras = [...new Set(dadosBairro.map(item => item.QT))].sort((a, b) => {
-        const [paiA, filhoA] = a.split("/").map(Number);
-        const [paiB, filhoB] = b.split("/").map(Number);
+    #listaQuadras {
+        flex: 1;           /* ocupa todo espaço vertical da box */
+        min-height: 400px; /* garante altura mínima */
+        overflow-y: auto;  /* scroll se passar */
+    }
+}
 
-        if (paiA !== paiB) return paiA - paiB;
-        if (filhoA == null && filhoB != null) return -1;
-        if (filhoA != null && filhoB == null) return 1;
-        if (filhoA != null && filhoB != null) return filhoA - filhoB;
-        return 0;
-    });
-
-    estado.quadrasDisponiveis = quadras.filter(q => {
-        const dadosQuadra = dadosBairro.find(b => b.QT === q);
-        return dadosQuadra && Number(dadosQuadra.TOTAL) > 0;
-    });
-
-    if (quadras.length === 0) {
-        listaQuadrasDiv.innerHTML = "<em>Nenhuma quadra encontrada.</em>";
-        return;
+/* Mobile: volta para grid empilhado normal */
+@media (max-width: 768px) {
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1fr;
     }
 
-    quadras.forEach(quadra => {
-        const dadosQuadra = dadosBairro.find(b => b.QT === quadra);
-        const somaTotal = Number(dadosQuadra?.TOTAL || 0);
-        const isExtinta = somaTotal === 0;
+    #listaQuadras {
+        max-height: 250px; /* altura menor no celular */
+    }
+}
+ 
+ </style>
+</head>
+<body>
+<header>
 
-        const wrapper = document.createElement("div");
-        wrapper.className = "quadra-item";
-
-        // === Checkbox normal ===
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.value = quadra;
-        checkbox.id = `quadra-${quadra}`;
-
-        if (isExtinta) {
-            checkbox.disabled = true;
-        } else {
-            checkbox.checked = Array.from(estado.quadrasSelecionadas).includes(quadra);
-            checkbox.addEventListener("change", () => {
-                if (checkbox.checked) {
-                    estado.quadrasSelecionadas.add(quadra);
-                } else {
-                    estado.quadrasSelecionadas.delete(quadra);
-                    estado.quadrasPositivas.delete(quadra);
-                }
-                atualizarProgramados();
-                atualizarQuadrasSelecionadas();
-                atualizarQuadrasPositivas();
-            });
-        }
-
-        // === Checkbox positiva ===
-        const checkboxPositivo = document.createElement("input");
-        checkboxPositivo.type = "checkbox";
-        checkboxPositivo.value = quadra;
-        checkboxPositivo.id = `positivo-${quadra}`;
-        checkboxPositivo.style.marginLeft = "10px";
-
-        const labelPositivo = document.createElement("label");
-        labelPositivo.htmlFor = checkboxPositivo.id;
-        labelPositivo.textContent = "Positiva";
-        labelPositivo.style.marginLeft = "4px";
-        labelPositivo.style.fontSize = "0.85em";
-        labelPositivo.style.color = "#ccc";
-
-        // -------------------------------------------------------------
-        // NOVO: Adicionar a verificação 'isExtinta' aqui
-        // O checkbox Positiva só é habilitado se NÃO for extinta
-        // E se o checkbox principal estiver selecionado
-        // -------------------------------------------------------------
-        if (isExtinta) {
-            checkboxPositivo.disabled = true;
-        } else {
-            checkboxPositivo.disabled = !estado.quadrasSelecionadas.has(quadra);
-        }
-
-        checkboxPositivo.checked = estado.quadrasPositivas.has(quadra);
-
-        checkboxPositivo.addEventListener("change", () => {
-            if (checkboxPositivo.checked) {
-                estado.quadrasPositivas.add(quadra);
-            } else {
-                estado.quadrasPositivas.delete(quadra);
-            }
-            atualizarQuadrasPositivas();
-        });
-
-        // -------------------------------------------------------------
-        // NOVO: Adicionar a verificação 'isExtinta' ao listener
-        // Para evitar que o checkbox seja habilitado em quadras extintas
-        // -------------------------------------------------------------
-        checkbox.addEventListener("change", () => {
-            if (isExtinta) {
-                checkboxPositivo.disabled = true;
-            } else {
-                checkboxPositivo.disabled = !checkbox.checked;
-            }
+          <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
+    </header>
+    
+    <div class="container">
+        <div style="padding: 20px;">
+            <button type="button" id="salvarProcessoBtn">Salvar Processo</button>
+            <button type="button" id="carregarProcessoBtn">Carregar Processo</button>
+            <input type="file" id="inputArquivo" style="display: none;" accept=".json" />
             
-            if (!checkbox.checked) {
-                checkboxPositivo.checked = false;
-                estado.quadrasPositivas.delete(quadra);
-                atualizarQuadrasPositivas();
-            }
-        });
+            <div class="estratificacao-container">
+                <button id="abrirMapa" class="botao">Abrir Mapa</button>          
+                <label for="tipoEstratificacao">Tipo de Estratificação:</label>
+                <select id="tipoEstratificacao" name="tipoEstratificacao" required>
+                    <option value="" disabled selected>Selecione uma opção</option>
+                    <option value="estratificacaoDeArea">Estratificação de Área</option>
+                    <option value="mutiraoRegional">Mutirão Regional</option>
+                    <option value="mutiraoMunicipal">Mutirão Municipal</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
 
-        // === Label da quadra ===
-        const label = document.createElement("label");
-        label.htmlFor = checkbox.id;
+            <div id="outrosCampoContainer" class="oculto">
+                <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
+                <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
+            </div>
+        </div>
 
-        if (isExtinta) {
-            label.innerHTML = `<span class="extinta">${quadra} (extinta)</span>`;
-        } else {
-            label.innerHTML = `<span class="quadra-numero">${quadra}</span> <small>(${somaTotal} imóveis)</small>`;
-            wrapper.classList.add("destacada"); // aplica destaque a todas ativas
-        }
+        <div class="main-grid">
+            <!-- Seções do grid mantidas iguais -->
+            <div class="box">
+                <h3>Selecione o Bairro</h3>
+                <label for="bairro">Bairro:</label>
+                <select id="bairro">
+                    <option value="">-- Escolha um bairro --</option>
+                </select>
+                <div id="resumoGeral"></div>
+                <button id="limparTudo" class="secondary">Limpar tudo</button>
+            </div>
 
-        wrapper.appendChild(checkbox);
-        wrapper.appendChild(label);
-        wrapper.appendChild(checkboxPositivo);
-        wrapper.appendChild(labelPositivo);
-        listaQuadrasDiv.appendChild(wrapper);
-    });
-}
+       <div class="box">
+    <h3>Selecionar Quadras</h3>
+    <input type="text" id="entradaQuadras" placeholder="Ex: 1-3, 1/1, 27/9" />
+    <button id="aplicarTexto" class="primary">Aplicar seleção</button>
+    <div id="listaQuadras"></div>
+    <div id="resumoQuadras"></div>
+</div>
 
-
-// === FUNÇÃO: MOSTRAR APENAS QUADRAS SELECIONADAS ===
-// === FUNÇÃO: MOSTRAR APENAS QUADRAS SELECIONADAS ===
-function atualizarQuadrasSelecionadas() {
-    const textarea = document.getElementById("quadrasEstratificadas");
-    const detalhesDiv = document.getElementById("dadosDetalhes");
-
-    if (!textarea || !detalhesDiv) {
-        console.warn("⚠️ Elementos 'quadrasEstratificadas' ou 'dadosDetalhes' não existem no HTML.");
-        return;
-    }
-
-    if (estado.quadrasSelecionadas.size === 0) {
-        textarea.value = "";
-        detalhesDiv.innerHTML = "";
-        return;
-    }
-
-    // mantém só quadras válidas do bairro e que não sejam extintas
-    const quadrasValidas = Array.from(estado.quadrasSelecionadas).filter(q => {
-        const dados = bairros.find(b => b.BAIRRO === estado.bairroSelecionado && b.QT === q);
-        return dados && Number(dados.TOTAL) > 0;
-    });
-
-    textarea.value = quadrasValidas.join(", ");
-    detalhesDiv.innerHTML = ""; // pode ser expandido para mostrar dados detalhados
-}
-
-// Função para calcular e atualizar o campo 'Imóveis a Trabalhar'
-function calcularImoveisATrabalhar() {
-    // 1. Obter o valor de 'Imóveis Programados'
-    // Acessa o valor pelo ID, agora que ele foi adicionado no HTML gerado
-    const imoveisProgramados = Number(document.getElementById("imoveisProgramadosValue").textContent);
-
-    // 2. Obter o percentual de fechados. Se o campo não for encontrado, assume 0.
-    const inputFechados = document.getElementById("percentualFechados");
-    const percentualFechados = inputFechados ? Number(inputFechados.value) || 0 : 0;
-
-    // 3. O valor inicial para 'Imóveis a Trabalhar' é o mesmo que 'Imóveis Programados'
-    let imoveisTrabalhar = imoveisProgramados;
-
-    // 4. Se o percentual de fechados for maior que zero, recalcula o total a trabalhar
-    if (percentualFechados > 0) {
-        const fechados = imoveisProgramados * (percentualFechados / 100);
-        imoveisTrabalhar = imoveisProgramados - fechados;
-    }
-
-    // 5. Atualiza o campo 'Imóveis a Trabalhar' com o valor final, arredondado
-    const campoImoveisTrabalhar = document.getElementById("imoveisATrabalhar");
-    if (campoImoveisTrabalhar) {
-        campoImoveisTrabalhar.value = Math.round(imoveisTrabalhar);
-    }
-}
-
-// 7. CALCULAR TOTAIS DAS QUADRAS SELECIONADAS
-function calcularTotaisQuadrasSelecionadas(dadosBairro) {
-    const campos = [
-        'R', 'C', 'TB', 'OU', 'PE', 'TOTAL', 'AP. ACIMA DO TÉRREO', 'HABITANTES',
-        'TANQUE EXISTENTE', 'TAMBOR EXISTENTE', 'CISTERNA EXISTENTE', 'CACIMBA EXISTENTE',
-        "CAIXAS D'ÁGUA EXISTENTE", 'CÃO', 'GATO'
-    ];
+            <div class="box">
+                <h3>Programados</h3>
+                <div id="resumoProgramados">
+                    <em>Selecione quadras para ver os programados.</em>
+                </div>
+                <button id="compartilharWhatsapp" class="primary" style="margin-top: 20px;">
+                    Compartilhar no WhatsApp
+                </button>
+            </div>
+        </div>
+<div class="box" style="margin-top: 30px;">
+    <h3>ESTRATIFICAR</h3>
+    <label for="dataInicio">Data de Início Programado</label>
+    <input type="date" id="dataInicio">
     
-    const totais = {};
-    campos.forEach(campo => totais[campo] = 0);
+    <label for="quadrasEstratificadas">Quadras Estratificadas</label>
+    <textarea id="quadrasEstratificadas" rows="4" readonly></textarea>
+    <div id="contagemQuadrasEstratificadas" class="small"></div>
+
+    <!-- 🔹 Novo: detalhes das quadras -->
+    <div id="dadosDetalhes" class="small"></div>
     
-    estado.quadrasSelecionadas.forEach(quadra => {
-        const dadosQuadra = dadosBairro.find(b => b.QT === quadra);
-        if (dadosQuadra) {
-            campos.forEach(campo => {
-                let valor = dadosQuadra[campo];
-
-                if (typeof valor === "string") {
-                    valor = valor.trim();
-                    valor = valor === "" ? 0 : Number(valor);
-                }
-
-                if (isNaN(valor)) valor = 0;
-
-                totais[campo] += valor;
-            });
-        }
-    });
+    <label for="percentualFechados">% de Imóveis Fechados</label>
+    <input type="number" id="percentualFechados" placeholder="Ex: 30" min="0" max="100" />
     
-    return totais;
-}
-function atualizarQuadrasPositivas() {
-    const textarea = document.getElementById("quadrasPositivas");
-    textarea.value = Array.from(estado.quadrasPositivas).join(", ");
-}
-
-function limparTudo() {
-    estado.bairroSelecionado = null;
-    estado.quadrasSelecionadas.clear();
-    estado.quadrasPositivas.clear(); // ✅ limpa positivas também
-
-    // limpa campos da tela
-    document.getElementById("quadrasEstratificadas").value = "";
-    document.getElementById("quadrasPositivas").value = ""; // ✅ limpa textarea
-    document.getElementById("dadosDetalhes").innerHTML = "";
-
-    // atualiza telas
-    montarListaQuadras();
-    montarResumoGeral();
-    atualizarProgramados();
-}
-
-// 8. MOSTRAR DETALHES DAS QUADRAS SELECIONADAS
-function mostrarDetalhesQuadras() {
-    if (!dadosDetalhesDiv) return;
+    <label for="imoveisATrabalhar">Imóveis a Trabalhar</label>
+    <input type="number" id="imoveisATrabalhar" readonly />
     
-    if (estado.quadrasSelecionadas.size === 0) {
-        dadosDetalhesDiv.innerHTML = "";
-        return;
-    }
+    <label for="media">Média por Servidor</label>
+    <input type="number" id="media" placeholder="Ex: 20" min="1" />
     
-    const dadosBairro = bairros.filter(b => b.BAIRRO === estado.bairroSelecionado);
-    let detalhes = "🟢 QUADRAS SELECIONADAS:\n\n";
+    <label for="servidores">Servidores Programados</label>
+    <input type="number" id="servidores" placeholder="Ex: 2" min="1" />
     
-    estado.quadrasSelecionadas.forEach(quadra => {
-        const dados = dadosBairro.find(b => b.QT === quadra);
-        if (dados) {
-            detalhes += `📍 Quadra ${quadra}:\n`;
-            detalhes += `   • Imóveis: ${dados.TOTAL}\n`;
-            detalhes += `   • Habitantes: ${dados.HABITANTES}\n`;
-            detalhes += `   • PE: ${dados.PE}\n`;
-            detalhes += `   • Cães: ${dados.CÃO}, Gatos: ${dados.GATO}\n`;
-            detalhes += `   • Depósitos água: ${dados["CAIXAS D'ÁGUA EXISTENTE"] + dados.TANQUE_EXISTENTE + dados.TAMBOR_EXISTENTE}\n\n`;
-        }
-    });
+    <label for="dias">Dias Programados</label>
+    <input type="number" id="dias" />
+    <div id="obsDias" class="small"></div>
     
-    dadosDetalhesDiv.innerHTML = detalhes;
-}
+    <label for="dataTermino">Data de Término Programado</label>
+    <input type="date" id="dataTermino" readonly>
+    <span id="obsTermino" class="small" style="color:red;">Adicione a data de início programado</span>
+</div>
 
-// 9. INTERPRETAR ENTRADA DE TEXTO PARA QUADRAS
-// === FUNÇÃO: INTERPRETAR ENTRADA DE TEXTO PARA QUADRAS ===
-function interpretarEntrada(texto) {
-    const partes = texto.split(/[\s,;]+/).filter(Boolean);
-    const selecionadas = new Set();
+        <div class="box">
+            <h3>Informações Adicionais</h3>
+            <div class="form-group">
+                <label for="observacoes">Observações:</label>
+                <textarea id="observacoes" rows="3" placeholder="Insira aqui as observações (o campo se ajustará automaticamente)."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="responsavel">Responsável pela Informação:</label>
+                <input type="text" id="responsavel" placeholder="Insira o nome do responsável.">
+            </div>
+        </div>
 
-    partes.forEach(parte => {
-        if (/^\d+-\d+$/.test(parte)) {
-            // intervalo de quadras (ex: 1-10)
-            const [inicio, fim] = parte.split("-").map(Number);
-            if (!isNaN(inicio) && !isNaN(fim)) {
-                for (let i = inicio; i <= fim; i++) {
-                    selecionadas.add(String(i));
-                    // também adiciona filhos se existirem
-                    estado.quadrasDisponiveis.forEach(q => {
-                        if (q.startsWith(i + "/")) {
-                            selecionadas.add(q);
-                        }
-                    });
-                }
-            }
-        } else {
-            // quadra única
-            selecionadas.add(parte);
-            // também adiciona filhos se existirem
-            estado.quadrasDisponiveis.forEach(q => {
-                if (q.startsWith(parte + "/")) {
-                    selecionadas.add(q);
-                }
-            });
-        }
-    });
+        <div id="RESULTADO" class="box">
+            <h3>RESULTADO</h3>
+            <label for="quadrasPositivas">Quadras Positivas</label>
+            <textarea id="quadrasPositivas" rows="4" readonly></textarea>
+            <div id="contagemQuadrasPositivas" class="small"></div>
+            
+            <div class="form-group">
+                <label for="quadrasTrabalhadasInput">Total de Quadras Trabalhadas:</label>
+                <input type="number" id="quadrasTrabalhadasInput" value="0">
+                <p id="obsQuadrasTrabalhadas" class="obs-texto"></p>
+            </div>
+            
+            <label>HDP <input type="text" id="hdpInput" /></label>
+            <label>HDT <input type="text" id="hdtInput" /></label>
+            
+          <label>Semana Inicial
+    <select id="semanaInicial">
+        <option value="">Selecione</option>
+    </select>
+</label>
 
-    return selecionadas;
-}
-// 1. CALCULAR DIAS E DATA DE TÉRMINO PROGRAMADO
-function calcularDiasETermino() {
-    // 1. Obter os valores dos campos de entrada
-    const imoveisATrabalhar = Number(document.getElementById("imoveisATrabalhar").value) || 0;
-    const mediaPorServidor = Number(document.getElementById("media").value) || 0;
-    const servidoresProgramados = Number(document.getElementById("servidores").value) || 0;
-    const dataInicio = document.getElementById("dataInicio").value;
-
-    // 2. Calcular os "Dias Programados"
-    let diasProgramados = 0;
-    if (imoveisATrabalhar > 0 && mediaPorServidor > 0 && servidoresProgramados > 0) {
-        diasProgramados = imoveisATrabalhar / mediaPorServidor / servidoresProgramados;
-    }
-    
-    // Atualiza o campo "Dias Programados" com o valor arredondado para cima
-    document.getElementById("dias").value = Math.floor(diasProgramados);
-
-    // 3. Calcular a "Data de Término Programado"
-    const dataTerminoInput = document.getElementById("dataTermino");
-    if (!dataInicio) {
-        dataTerminoInput.value = "";
-        return;
-    }
-
-    const dataAtual = new Date(dataInicio + "T00:00:00");
-    
-    let diasUteisAdicionados = 0;
-    const diaInicioSemana = dataAtual.getDay();
-    if (diaInicioSemana !== 0 && diaInicioSemana !== 6) {
-        diasUteisAdicionados = 1; // O primeiro dia é útil
-    }
-
-    // CORREÇÃO: agora usa diasProgramados
-    if (diasProgramados <= 1) {
-        dataTerminoInput.value = `${dataAtual.getFullYear()}-${String(dataAtual.getMonth() + 1).padStart(2, '0')}-${String(dataAtual.getDate()).padStart(2, '0')}`;
-        return;
-    }
-
-   while (diasUteisAdicionados < (diasProgramados - 1)) {
-    dataAtual.setDate(dataAtual.getDate() + 1);
-    const diaDaSemana = dataAtual.getDay();
-    if (diaDaSemana !== 0 && diaDaSemana !== 6) {
-        diasUteisAdicionados++;
-    }
-}
-
-    
-    const dia = String(dataAtual.getDate()).padStart(2, '0');
-    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
-    const ano = dataAtual.getFullYear();
-    dataTerminoInput.value = `${ano}-${mes}-${dia}`;
-}
+<label>Semana Final
+    <select id="semanaFinal" disabled>
+        <option value="">Preencha a Semana Inicial primeiro</option>
+    </select>
+</label>
 
 
-// Sua função atualizarProgramados (aqui com a chamada para o novo cálculo)
-// 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
-function atualizarProgramados() {
-    const resumoProgramados = document.getElementById("resumoProgramados");
+            
+            <label>Ciclo
+                <select id="ciclo">
+                    <option value="">Selecione</option>
+                </select>
+            </label>
+            
+            <label>QTD De Imóveis Trabalhados <input type="number" id="imoveisTrabalhadosInput" /></label>
+            <div id="percImoveisTrabalhados" class="small"></div>
+            
+            <label>Fechados <input type="number" id="fechadosInput" /></label>
+            <div id="percFechados" class="small"></div>
+            
+            <label>QTD De Focos Por Imóvel <input type="number" step="any" id="focosPorImovelInput" /></label>
+            <label>QTD Imóveis Tratados Com BTI <input type="number" id="imoveisBtiInput" /></label>
+            <label>QTD Imóveis Tratados Com ESP <input type="number" id="imoveisEspInput" /></label>
+            
+            <label>Depósitos Positivos - A1 <input type="number" id="a1" /></label>
+            <label>Depósitos Positivos - A2 <input type="number" id="a2" /></label>
+            <label>Depósitos Positivos - B <input type="number" id="b" /></label>
+            <label>Depósitos Positivos - C <input type="number" id="c" /></label>
+            <label>Depósitos Positivos - D1 <input type="number" id="d1" /></label>
+            <label>Depósitos Positivos - D2 <input type="number" id="d2" /></label>
+            <label>Depósitos Positivos - E <input type="number" id="e" /></label>
+            
+            <label><strong>Total de Depósitos Positivos:</strong> <input type="number" id="totalDepositos" readonly /></label>
+            
+            <label>Depósitos Tratados Com BTI <input type="number" id="depositosBtiInput" /></label>
+            <label>Depósitos Tratados Com ESP <input type="number" id="depositosEspInput" /></label>
+            
+            <!-- CORREÇÃO: Use apenas um ID consistente -->
+            <label>Larvicida Total Gasto Com BTI <input type="number" step="any" id="larvicidaBtiInput" /></label>
+            <label>Larvicida Total Gasto Com ESP <input type="number" step="any" id="larvicidaEspInput" /></label>
+           
 
-    if (!estado.bairroSelecionado) {
-        resumoProgramados.innerHTML = "<em>Selecione um bairro para ver os programados.</em>";
-        return;
-    }
+            <label>Depósitos Eliminados <input type="number" id="depositosEliminadosInput" /></label>
+            
+            <label>Data de Início Real <input type="date" id="dataInicioReal" /></label>
+            <label>Data de Término Real <input type="date" id="dataTerminoReal" /></label>
+        </div>
 
-    const dadosBairro = bairros.filter(b => b.BAIRRO === estado.bairroSelecionado);
+        <button id="salvarTxt" class="botao">Salvar como TXT</button>
 
-    // Quadras selecionadas ativas
-    const quadrasSelecionadasAtivas = Array.from(estado.quadrasSelecionadas).filter(q => {
-        const dadosQuadra = dadosBairro.find(b => b.QT === q);
-        return dadosQuadra && Number(dadosQuadra.TOTAL) > 0;
-    });
+        <div class="box" style="margin-top: 30px;">
+            <label for="busca">BUSCA AVANÇADA (ex: bairro ancuri 10 gatos)</label>
+            <input type="text" id="busca" placeholder="Digite bairro, quadra, cães, gatos etc." />
+            <button id="botaoBusca" class="primary" style="margin-top: 5px;">Buscar</button>
+            <button id="limparBusca" class="secondary" style="margin-top: 5px;">Limpar Busca</button>
+        </div>
+        
+        <div id="resultadoBusca"><em>Aqui vai aparecer sua pesquisa</em></div>
 
-    const dadosQuadrasSelecionadas = dadosBairro.filter(b => quadrasSelecionadasAtivas.includes(b.QT));
-    const totalQuadrasSelecionadas = quadrasSelecionadasAtivas.length;
+        <button id="botaoProximo" class="primary" style="margin-top: 30px;">Próximo</button>
+    </div>
 
-    const getNumero = (valor) => {
-        const num = Number(valor);
-        return isNaN(num) ? 0 : num;
-    };
+    <!-- Script deve vir DEPOIS do HTML, não dentro dele -->
+<script src="script.js"></script>
 
-    // Totais
-    const totalImoveis = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TOTAL || 0), 0);
-    const residencias = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.R || 0), 0);
-    const comercios = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.C || 0), 0);
-    const terrenos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.TB || 0), 0);
-    const outros = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.OU || 0), 0);
-    const pontosEstrategicos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.PE || 0), 0);
-    const apartamentos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur['AP. ACIMA DO TÉRREO'] || 0), 0);
-    const habitantes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.HABITANTES || 0), 0);
-    const caes = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.CÃO || 0), 0);
-    const gatos = dadosQuadrasSelecionadas.reduce((acc, cur) => acc + getNumero(cur.GATO || 0), 0);
+</body>
+</html>
 
-    // Depósitos de água
-    const depositos = dadosQuadrasSelecionadas.reduce((acc, cur) => {
-        return acc
-            + getNumero(cur['TANQUE EXISTENTE'])
-            + getNumero(cur['TAMBOR EXISTENTE'])
-            + getNumero(cur['CISTERNA EXISTENTE'])
-            + getNumero(cur['CACIMBA EXISTENTE'])
-            + getNumero(cur["CAIXAS D'ÁGUA EXISTENTE"])
-            + getNumero(cur['FILTRO'])
-            + getNumero(cur["VASO C/PLANTA"])
-            + getNumero(cur['TINA'])
-            + getNumero(cur['POTE']);
-    }, 0);
-
-    const imoveisProgramados = totalImoveis - apartamentos;
-
-    // ✅ CORREÇÃO APLICADA AQUI: mudado de 'Ovitrampas' para 'dadosOvitrampas'
-    const totalOvitrampasSelecionadas = dadosOvitrampas
-        .filter(o => o["BAIRRO "]?.trim() === estado.bairroSelecionado.trim())
-        .filter(o => quadrasSelecionadasAtivas.includes(o.QT))
-        .reduce((acc, cur) => acc + (Number(cur.QT) || 0), 0);
-
-    resumoProgramados.innerHTML = `
-        <span><strong>Quadras Selecionadas:</strong> ${totalQuadrasSelecionadas}</span>
-        <span><strong>Total de Imóveis:</strong> ${totalImoveis}</span>
-        <span><strong>Residências (R):</strong> ${residencias}</span>
-        <span><strong>Comércios (C):</strong> ${comercios}</span>
-        <span><strong>Terrenos Baldios (TB):</strong> ${terrenos}</span>
-        <span><strong>Outros (OU):</strong> ${outros}</span>
-        <span><strong>Pontos Estratégicos (PE):</strong> ${pontosEstrategicos}</span>
-        <span><strong>Apartamentos Acima Térreo:</strong> ${apartamentos}</span>
-        <span><strong>Total de Habitantes:</strong> ${habitantes}</span>
-        <span>🏠 <strong>Imóveis Programados:</strong> <span id="imoveisProgramadosValue">${imoveisProgramados}</span></span>
-        <span>🐕 <strong>Cães:</strong> ${caes}</span>
-        <span>🐈 <strong>Gatos:</strong> ${gatos}</span>
-        <span>💧 <strong>Depósitos de Água:</strong> ${depositos}</span>
-        <span>🧪 <strong>Ovitrampas (palhetas):</strong> ${totalOvitrampasSelecionadas}</span>
-    `;
-
-    calcularImoveisATrabalhar();
-}
-
-// Sua função de cálculo de Imóveis a Trabalhar
-function calcularImoveisATrabalhar() {
-    const imoveisProgramados = Number(document.getElementById("imoveisProgramadosValue").textContent);
-    const inputFechados = document.getElementById("percentualFechados");
-    const percentualFechados = inputFechados ? Number(inputFechados.value) || 0 : 0;
-    let imoveisTrabalhar = imoveisProgramados;
-
-    if (percentualFechados > 0) {
-        const fechados = imoveisProgramados * (percentualFechados / 100);
-        imoveisTrabalhar = imoveisProgramados - fechados;
-    }
-
-    const campoImoveisTrabalhar = document.getElementById("imoveisATrabalhar");
-    if (campoImoveisTrabalhar) {
-        campoImoveisTrabalhar.value = Math.round(imoveisTrabalhar);
-        calcularDiasETermino(); // Chama o cálculo de dias aqui
-    }
-}
-
-
-// NOVO: Função de limpeza completa
-function limparTudo() {
-    estado.bairroSelecionado = null;
-    estado.quadrasSelecionadas.clear();
-    estado.quadrasPositivas.clear();
-    
-    // Limpa campos da tela
-    if (selectBairro) selectBairro.value = "";
-    if (entradaQuadras) entradaQuadras.value = "";
-    if (resumoGeralDiv) resumoGeralDiv.innerHTML = "";
-    if (listaQuadrasDiv) listaQuadrasDiv.innerHTML = "";
-    if (resumoProgramadosDiv) resumoProgramadosDiv.innerHTML = "<em>Selecione quadras para ver os programados.</em>";
-    if (dadosDetalhesDiv) dadosDetalhesDiv.innerHTML = "";
-    
-    // ✅ NOVO: Limpeza dos campos de cálculo
-    document.getElementById("dataInicio").value = "";
-    document.getElementById("media").value = "";
-    document.getElementById("servidores").value = "";
-    document.getElementById("imoveisATrabalhar").value = "";
-    document.getElementById("percentualFechados").value = "";
-    document.getElementById("dias").value = "";
-    document.getElementById("dataTermino").value = "";
-    
-    // Chama as funções de atualização para garantir que tudo seja resetado
-    montarListaQuadras();
-    montarResumoGeral();
-    atualizarProgramados();
-}
-document.addEventListener("DOMContentLoaded", () => {
-    // --- Função para preencher semanas ---
-    function preencherSemanas(selectId) {
-        const select = document.getElementById(selectId);
-        if (select) {
-            select.innerHTML = '<option value="">Selecione</option>'; // reset
-            for (let i = 1; i <= 52; i++) {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = `${i}ª Semana`;
-                select.appendChild(option);
-            }
-        }
-    }
-
-    // --- Função para preencher ciclos ---
-    function preencherCiclos() {
-        const select = document.getElementById("ciclo");
-        if (select) {
-            select.innerHTML = '<option value="">Selecione</option>'; // reset
-            for (let i = 1; i <= 8; i++) {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = `${i}º Ciclo`;
-                select.appendChild(option);
-            }
-        }
-    }
-
-    const semanaInicial = document.getElementById("semanaInicial");
-    const semanaFinal = document.getElementById("semanaFinal");
-
-    // Preenche listas na inicialização
-    preencherSemanas("semanaInicial");
-    preencherCiclos();
-
-    // Só habilita Semana Final depois de escolher Inicial
-    semanaInicial.addEventListener("change", () => {
-        if (semanaInicial.value) {
-            semanaFinal.disabled = false;
-            preencherSemanas("semanaFinal"); // libera todas
-        } else {
-            semanaFinal.disabled = true;
-            semanaFinal.innerHTML = '<option value="">Preencha a Semana Inicial primeiro</option>';
-        }
-    });
-});
-document.addEventListener("DOMContentLoaded", () => {
-    // Função que calcula a soma dos depósitos
-    function atualizarTotalDepositos() {
-        const ids = ["a1", "a2", "b", "c", "d1", "d2", "e"];
-        let total = 0;
-
-        ids.forEach(id => {
-            const campo = document.getElementById(id);
-            const valor = Number(campo.value) || 0; // se vazio vira 0
-            total += valor;
-
-            // sempre recalcula quando mudar
-            campo.addEventListener("input", atualizarTotalDepositos);
-        });
-
-        const totalCampo = document.getElementById("totalDepositos");
-        if (totalCampo) {
-            totalCampo.value = total;
-        }
-    }
-
-    // inicializa o cálculo na carga da página
-    atualizarTotalDepositos();
-});
-document.addEventListener("DOMContentLoaded", () => {
-
-    function atualizarPercentuais() {
-        // Pega valor de imóveis programados no painel
-        const resumo = document.querySelector("#resumoProgramados");
-        const match = resumo.innerText.match(/Imóveis Programados:\s*(\d+)/);
-        const imoveisProgramados = match ? parseInt(match[1], 10) : 0;
-
-        // Pega campos
-        const imoveisTrabalhados = Number(document.getElementById("imoveisTrabalhadosInput").value) || 0;
-        const fechados = Number(document.getElementById("fechadosInput").value) || 0;
-
-        // Calcula percentuais
-        const percTrabalhados = imoveisProgramados > 0 ? ((imoveisTrabalhados / imoveisProgramados) * 100).toFixed(1) : 0;
-        const percFechados = imoveisProgramados > 0 ? ((fechados / imoveisProgramados) * 100).toFixed(1) : 0;
-
-        // Atualiza na tela
-        document.getElementById("percImoveisTrabalhados").textContent = 
-            `(${percTrabalhados}% de ${imoveisProgramados} programados)`;
-
-        document.getElementById("percFechados").textContent = 
-            `(${percFechados}% de ${imoveisProgramados} programados)`;
-    }
-
-    // Eventos para recalcular
-    document.getElementById("imoveisTrabalhadosInput").addEventListener("input", atualizarPercentuais);
-    document.getElementById("fechadosInput").addEventListener("input", atualizarPercentuais);
-
-    // Atualiza ao carregar
-    atualizarPercentuais();
-});
-document.addEventListener("DOMContentLoaded", () => {
-    function verificarTratamentos() {
-        const imoveisBti = Number(document.getElementById("imoveisBtiInput").value) || 0;
-        const imoveisEsp = Number(document.getElementById("imoveisEspInput").value) || 0;
-
-        const depositosBti = document.getElementById("depositosBtiInput");
-        const depositosEsp = document.getElementById("depositosEspInput");
-        const larvicidaBti = document.getElementById("larvicidaBtiInput");
-        const larvicidaEsp = document.getElementById("larvicidaEspInput");
-
-        // --- BTI ---
-        if (imoveisBti > 0) {
-            depositosBti.disabled = false;
-            larvicidaBti.disabled = false;
-            depositosBti.placeholder = "";
-            larvicidaBti.placeholder = "";
-        } else {
-            depositosBti.disabled = true;
-            larvicidaBti.disabled = true;
-            depositosBti.value = "";
-            larvicidaBti.value = "";
-            depositosBti.placeholder = "Não é necessário preencher";
-            larvicidaBti.placeholder = "Não é necessário preencher";
-        }
-
-        // --- ESP ---
-        if (imoveisEsp > 0) {
-            depositosEsp.disabled = false;
-            larvicidaEsp.disabled = false;
-            depositosEsp.placeholder = "";
-            larvicidaEsp.placeholder = "";
-        } else {
-            depositosEsp.disabled = true;
-            larvicidaEsp.disabled = true;
-            depositosEsp.value = "";
-            larvicidaEsp.value = "";
-            depositosEsp.placeholder = "Não é necessário preencher";
-            larvicidaEsp.placeholder = "Não é necessário preencher";
-        }
-    }
-
-    // Observa mudanças nos campos principais
-    ["imoveisBtiInput", "imoveisEspInput",
-     "depositosBtiInput", "depositosEspInput",
-     "larvicidaBtiInput", "larvicidaEspInput"]
-    .forEach(id => {
-        document.getElementById(id).addEventListener("input", verificarTratamentos);
-    });
-
-    // Executa logo ao carregar
-    verificarTratamentos();
-});
-document.addEventListener("DOMContentLoaded", () => {
-    const quadrasTrabalhadasInput = document.getElementById("quadrasTrabalhadasInput");
-    const obsQuadrasTrabalhadas = document.getElementById("obsQuadrasTrabalhadas");
-
-    function atualizarQuadrasTrabalhadas() {
-        // Pega o total de quadras selecionadas em Programados
-        const totalSelecionadasElem = document.querySelector("#resumoProgramados span strong");
-        let totalSelecionadas = 0;
-
-        // Busca no HTML o valor certo (pelo texto "Quadras Selecionadas:")
-        document.querySelectorAll("#resumoProgramados span").forEach(span => {
-            if (span.textContent.includes("Quadras Selecionadas:")) {
-                totalSelecionadas = Number(span.textContent.replace(/\D/g, "")) || 0;
-            }
-        });
-
-        // Se já existir campo de Programados preenchido
-        if (totalSelecionadas > 0 && !quadrasTrabalhadasInput.dataset.editado) {
-            quadrasTrabalhadasInput.value = totalSelecionadas;
-        }
-
-        // Comparar valores
-        const trabalhadas = Number(quadrasTrabalhadasInput.value) || 0;
-        if (trabalhadas === totalSelecionadas && totalSelecionadas > 0) {
-            obsQuadrasTrabalhadas.innerHTML = "✔ Todas as quadras foram trabalhadas.";
-            obsQuadrasTrabalhadas.style.color = "orange";
-        } else if (trabalhadas < totalSelecionadas) {
-            const diferenca = totalSelecionadas - trabalhadas;
-            obsQuadrasTrabalhadas.innerHTML = `⚠ ${diferenca} quadra(s) não foram trabalhadas.`;
-            obsQuadrasTrabalhadas.style.color = "orange";
-        } else {
-            obsQuadrasTrabalhadas.innerHTML = "";
-        }
-    }
-
-    // Marca que o campo foi editado manualmente
-    quadrasTrabalhadasInput.addEventListener("input", () => {
-        quadrasTrabalhadasInput.dataset.editado = true;
-        atualizarQuadrasTrabalhadas();
-    });
-
-    // Sempre que atualizar Programados, atualiza também esse campo
-    const observer = new MutationObserver(atualizarQuadrasTrabalhadas);
-    observer.observe(document.getElementById("resumoProgramados"), { childList: true, subtree: true });
-
-    atualizarQuadrasTrabalhadas(); // rodar na inicialização
-});
-
-
-// --- INICIALIZAÇÃO ÚNICA ---
-document.addEventListener("DOMContentLoaded", function() {
-    console.log("Sistema de estratificação inicializando...");
-
-    carregarDados();
-
-    if (selectBairro) {
-        selectBairro.addEventListener("change", function() {
-            estado.bairroSelecionado = this.value;
-            estado.quadrasSelecionadas.clear();
-            montarResumoGeral();
-            montarListaQuadras();
-            atualizarProgramados();
-            atualizarQuadrasSelecionadas();
-        });
-    }
-
-    if (aplicarTextoBtn && entradaQuadras) {
-        aplicarTextoBtn.addEventListener("click", function() {
-            if (!estado.bairroSelecionado) {
-                alert("Selecione um bairro primeiro!");
-                return;
-            }
-            const texto = entradaQuadras.value;
-            const quadrasSelecionadas = interpretarEntrada(texto);
-            estado.quadrasSelecionadas = quadrasSelecionadas;
-            montarListaQuadras();
-            atualizarProgramados();
-            atualizarQuadrasSelecionadas();
-        });
-    }
-    
-    // Adiciona ouvintes de eventos para os campos de cálculo
-    const inputPercentual = document.getElementById("percentualFechados");
-    const inputMedia = document.getElementById("media");
-    const inputServidores = document.getElementById("servidores");
-    const inputDataInicio = document.getElementById("dataInicio");
-    
-    if (inputPercentual) inputPercentual.addEventListener("input", calcularImoveisATrabalhar);
-    if (inputMedia) inputMedia.addEventListener("input", calcularDiasETermino);
-    if (inputServidores) inputServidores.addEventListener("input", calcularDiasETermino);
-    if (inputDataInicio) inputDataInicio.addEventListener("input", calcularDiasETermino);
-
-    if (limparTudoBtn) {
-        limparTudoBtn.addEventListener("click", limparTudo);
-    }
-    
-    console.log("Sistema inicializado com sucesso!");
-});
 
 
 
