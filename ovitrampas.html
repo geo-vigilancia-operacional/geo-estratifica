@@ -125,136 +125,150 @@ body {
         </div>
     </div>
 
-    <script>
-        const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
-        const selecaoBairro = document.getElementById('selecaoBairro');
-        const semanasContainer = document.getElementById('semanasContainer');
-        const semanasLista = document.getElementById('semanasLista');
-        const resultadosContainer = document.getElementById('resultados-container');
-        const resultadosDiv = document.getElementById('resultados');
-        const somaTotalDiv = document.getElementById('somaTotal');
+<script>
+    const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
+    const selecaoBairro = document.getElementById('selecaoBairro');
+    const semanasContainer = document.getElementById('semanasContainer');
+    const semanasLista = document.getElementById('semanasLista');
+    const resultadosContainer = document.getElementById('resultados-container');
+    const resultadosDiv = document.getElementById('resultados');
+    const somaTotalDiv = document.getElementById('somaTotal');
 
-        let dadosCompletos = []; // Variável para guardar o JSON inteiro
+    let dadosCompletos = []; // Variável para guardar o JSON inteiro
 
-        // Função para carregar o JSON e popular a lista de bairros
-        async function carregarBairros() {
-            try {
-                const response = await fetch(urlDoJson);
-                dadosCompletos = await response.json();
+    // Função para carregar o JSON e popular a lista de bairros
+    async function carregarBairros() {
+        try {
+            const response = await fetch(urlDoJson);
+            dadosCompletos = await response.json();
 
-                const bairrosUnicos = new Set();
-                dadosCompletos.forEach(item => {
-                    if (item['BAIRRO ']) {
-                        bairrosUnicos.add(item['BAIRRO '].trim());
-                    }
-                });
+            const bairrosUnicos = new Set();
+            dadosCompletos.forEach(item => {
+                if (item['BAIRRO ']) {
+                    bairrosUnicos.add(item['BAIRRO '].trim());
+                }
+            });
 
-                const defaultOption = document.createElement('option');
-                defaultOption.textContent = 'Selecione um bairro';
-                defaultOption.value = '';
-                selecaoBairro.appendChild(defaultOption);
+            const defaultOption = document.createElement('option');
+            defaultOption.textContent = 'Selecione um bairro';
+            defaultOption.value = '';
+            selecaoBairro.appendChild(defaultOption);
 
-                Array.from(bairrosUnicos).sort().forEach(bairro => {
-                    const option = document.createElement('option');
-                    option.textContent = bairro;
-                    option.value = bairro;
-                    selecaoBairro.appendChild(option);
-                });
-
-            } catch (error) {
-                console.error('Erro ao buscar o JSON:', error);
+            Array.from(bairrosUnicos).sort().forEach(bairro => {
                 const option = document.createElement('option');
-                option.textContent = 'Erro ao carregar dados';
+                option.textContent = bairro;
+                option.value = bairro;
                 selecaoBairro.appendChild(option);
-            }
+            });
+
+        } catch (error) {
+            console.error('Erro ao buscar o JSON:', error);
+            const option = document.createElement('option');
+            option.textContent = 'Erro ao carregar dados';
+            selecaoBairro.appendChild(option);
         }
+    }
 
-        // Função para popular as semanas com base no bairro selecionado
-        function popularSemanas(bairroSelecionado) {
-            semanasLista.innerHTML = '';
-            
-            const dadosDoBairro = dadosCompletos.find(item => 
-                item['BAIRRO '].trim() === bairroSelecionado
-            );
+    // Função para popular as semanas com base no bairro selecionado
+    function popularSemanas(bairroSelecionado) {
+        semanasLista.innerHTML = '';
+        
+        const dadosDoBairro = dadosCompletos.filter(item => 
+            item['BAIRRO '].trim() === bairroSelecionado
+        );
 
-            if (!dadosDoBairro) return;
+        if (dadosDoBairro.length === 0) return;
 
-            const semanas = [];
-            for (const key in dadosDoBairro) {
+        const semanas = new Set();
+        dadosDoBairro.forEach(item => {
+            for (const key in item) {
                 if (key.startsWith('SEMANA ')) {
-                    semanas.push({
-                        numero: key.replace('SEMANA ', ''),
-                        valor: dadosDoBairro[key]
-                    });
+                    semanas.add(key.replace('SEMANA ', ''));
                 }
             }
-
-            semanas.sort((a, b) => parseInt(a.numero) - parseInt(b.numero)).forEach(semana => {
-                const label = document.createElement('label');
-                label.className = 'semana-item';
-                label.innerHTML = `<input type="checkbox" name="semanas" value="${semana.numero}"> Semana ${semana.numero}: ${semana.valor || 0} ovos`;
-                semanasLista.appendChild(label);
-            });
-        }
-        
-        // Função para exibir os valores e a soma das semanas selecionadas
-        function exibirResultados() {
-            resultadosDiv.innerHTML = '';
-            somaTotalDiv.innerHTML = '';
-
-            const bairroSelecionado = selecaoBairro.value;
-            if (!bairroSelecionado) return;
-
-            const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
-
-            if (semanasSelecionadas.length === 0) {
-                resultadosContainer.classList.add('oculto');
-                return;
-            }
-
-            resultadosContainer.classList.remove('oculto');
-
-            const dadosDoBairro = dadosCompletos.find(item => 
-                item['BAIRRO '].trim() === bairroSelecionado
-            );
-
-            let somaOvos = 0;
-            semanasSelecionadas.forEach(checkbox => {
-                const semanaNumero = checkbox.value;
-                const chaveSemana = `SEMANA ${semanaNumero}`;
-                const valor = parseInt(dadosDoBairro[chaveSemana]) || 0;
-                
-                somaOvos += valor;
-
-                const p = document.createElement('p');
-                p.innerHTML = `<strong>Semana ${semanaNumero}:</strong> ${valor} ovos`;
-                resultadosDiv.appendChild(p);
-            });
-
-            somaTotalDiv.innerHTML = `Soma Total: ${somaOvos} ovos`;
-        }
-
-        // Eventos que escutam as mudanças
-        selecaoBairro.addEventListener('change', (event) => {
-            const bairroSelecionado = event.target.value;
-            if (bairroSelecionado) {
-                semanasContainer.classList.remove('oculto');
-                popularSemanas(bairroSelecionado);
-            } else {
-                semanasContainer.classList.add('oculto');
-            }
-            // Garante que os resultados antigos são removidos
-            resultadosContainer.classList.add('oculto');
         });
 
-        semanasLista.addEventListener('change', exibirResultados);
+        Array.from(semanas).sort((a, b) => parseInt(a) - parseInt(b)).forEach(semana => {
+            const label = document.createElement('label');
+            label.className = 'semana-item';
+            
+            // Calculamos a soma total para essa semana em todas as linhas do bairro
+            let somaOvosSemana = 0;
+            dadosDoBairro.forEach(item => {
+                const valor = parseInt(item[`SEMANA ${semana}`]) || 0;
+                somaOvosSemana += valor;
+            });
 
-        // Inicia o processo carregando os bairros
-        document.addEventListener('DOMContentLoaded', carregarBairros);
-    </script>
+            label.innerHTML = `<input type="checkbox" name="semanas" value="${semana}"> Semana ${semana}: ${somaOvosSemana} ovos`;
+            semanasLista.appendChild(label);
+        });
+    }
+    
+    // Função para exibir os valores e a soma das semanas selecionadas
+    function exibirResultados() {
+        resultadosDiv.innerHTML = '';
+        somaTotalDiv.innerHTML = '';
+
+        const bairroSelecionado = selecaoBairro.value;
+        if (!bairroSelecionado) return;
+
+        const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
+
+        if (semanasSelecionadas.length === 0) {
+            resultadosContainer.classList.add('oculto');
+            return;
+        }
+
+        resultadosContainer.classList.remove('oculto');
+
+        // Filtra para pegar todos os registros do bairro selecionado
+        const dadosDoBairro = dadosCompletos.filter(item => 
+            item['BAIRRO '].trim() === bairroSelecionado
+        );
+        
+        let somaOvosTotal = 0;
+
+        semanasSelecionadas.forEach(checkbox => {
+            const semanaNumero = checkbox.value;
+            const chaveSemana = `SEMANA ${semanaNumero}`;
+            
+            let somaOvosSemana = 0;
+            dadosDoBairro.forEach(item => {
+                const valor = parseInt(item[chaveSemana]) || 0;
+                somaOvosSemana += valor;
+            });
+
+            somaOvosTotal += somaOvosSemana;
+
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>Semana ${semanaNumero}:</strong> ${somaOvosSemana} ovos`;
+            resultadosDiv.appendChild(p);
+        });
+
+        somaTotalDiv.innerHTML = `Soma Total: ${somaOvosTotal} ovos`;
+    }
+
+    // Eventos que escutam as mudanças
+    selecaoBairro.addEventListener('change', (event) => {
+        const bairroSelecionado = event.target.value;
+        if (bairroSelecionado) {
+            semanasContainer.classList.remove('oculto');
+            popularSemanas(bairroSelecionado);
+        } else {
+            semanasContainer.classList.add('oculto');
+        }
+        resultadosContainer.classList.add('oculto');
+    });
+
+    semanasLista.addEventListener('change', exibirResultados);
+
+    // Inicia o processo carregando os bairros
+    document.addEventListener('DOMContentLoaded', carregarBairros);
+</script>
 
 </body>
 </html>
+
 
 
 
