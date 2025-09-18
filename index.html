@@ -564,13 +564,10 @@ header h1 {
     
     <div class="container">
         <div style="padding: 20px;">
-            <button type="button" id="salvarProcessoBtn">Salvar Processo</button>
-            <button type="button" id="carregarProcessoBtn">Carregar Processo</button>
-            <input type="file" id="inputArquivo" style="display: none;" accept=".json" />
+           
             
             <div class="estratificacao-container">
-                <button id="abrirMapa" class="botao">Abrir Mapa</button>          
-                <label for="tipoEstratificacao">Tipo de Estratificação:</label>
+                    <label for="tipoEstratificacao">Tipo de Estratificação:</label>
                 <select id="tipoEstratificacao" name="tipoEstratificacao" required>
                     <option value="" disabled selected>Selecione uma opção</option>
                     <option value="estratificacaoDeArea">Estratificação de Área</option>
@@ -729,7 +726,9 @@ header h1 {
             <label>Data de Início Real <input type="date" id="dataInicioReal" /></label>
             <label>Data de Término Real <input type="date" id="dataTerminoReal" /></label>
         </div>
-
+            <button type="button" id="salvarProcessoBtn">Salvar Processo</button>
+            <button type="button" id="carregarProcessoBtn">Carregar Processo</button>
+            <input type="file" id="inputArquivo" style="display: none;" accept=".json" />
         <button id="salvarTxt" class="botao">Salvar como TXT</button>
 
         <div class="box" style="margin-top: 30px;">
@@ -749,6 +748,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
