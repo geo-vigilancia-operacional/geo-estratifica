@@ -86,7 +86,7 @@ body {
 }
 
 /* Estilo para a área de resultados */
-#resultados-container {
+#resumo-container, #resultados-detalhados-container {
     margin-top: 20px;
     padding: 15px;
     background: #111122;
@@ -128,20 +128,20 @@ body {
             <label for="selecaoBairro">Selecione o Bairro:</label>
             <select id="selecaoBairro" class="select-bairro"></select>
             
-            <div id="resultados-container" class="oculto">
+            <div id="resumo-container" class="oculto">
                 <h3>Resumo do Bairro</h3>
                 <div id="totalGeral" class="total-ovos"></div>
                 <div id="maximoOvos"></div>
-                
-                <div style="margin-top: 20px;">
-                    <h3>Resultados</h3>
-                    <div id="resultados"></div>
-                </div>
             </div>
 
             <div id="semanasContainer" class="oculto">
                 <label>Selecione a(s) Semana(s):</label>
                 <div id="semanasLista"></div>
+            </div>
+
+            <div id="resultados-detalhados-container" class="oculto">
+                <h3>Resultados</h3>
+                <div id="resultados"></div>
             </div>
         </div>
     </div>
@@ -151,9 +151,10 @@ body {
         const selecaoBairro = document.getElementById('selecaoBairro');
         const semanasContainer = document.getElementById('semanasContainer');
         const semanasLista = document.getElementById('semanasLista');
-        const resultadosContainer = document.getElementById('resultados-container');
+        const resumoContainer = document.getElementById('resumo-container');
         const totalGeralDiv = document.getElementById('totalGeral');
         const maximoOvosDiv = document.getElementById('maximoOvos');
+        const resultadosDetalhadosContainer = document.getElementById('resultados-detalhados-container');
         const resultadosDiv = document.getElementById('resultados');
 
         let dadosCompletos = [];
@@ -224,10 +225,9 @@ body {
         }
         
         function exibirResumoDoBairro(bairroSelecionado) {
-            resultadosContainer.classList.add('oculto');
+            resumoContainer.classList.add('oculto');
             totalGeralDiv.innerHTML = '';
             maximoOvosDiv.innerHTML = '';
-            resultadosDiv.innerHTML = '';
 
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
@@ -254,7 +254,7 @@ body {
                 }
             });
 
-            resultadosContainer.classList.remove('oculto');
+            resumoContainer.classList.remove('oculto');
             totalGeralDiv.innerHTML = `Total Geral do Bairro: ${somaOvosTotal} ovos`;
             
             if (maxOvos > 0) {
@@ -271,8 +271,11 @@ body {
             const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
 
             if (semanasSelecionadas.length === 0) {
+                resultadosDetalhadosContainer.classList.add('oculto');
                 return;
             }
+
+            resultadosDetalhadosContainer.classList.remove('oculto');
 
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
@@ -314,7 +317,8 @@ body {
                 exibirResumoDoBairro(bairroSelecionado);
             } else {
                 semanasContainer.classList.add('oculto');
-                resultadosContainer.classList.add('oculto');
+                resumoContainer.classList.add('oculto');
+                resultadosDetalhadosContainer.classList.add('oculto');
             }
         });
 
@@ -325,6 +329,7 @@ body {
 
 </body>
 </html>
+
 
 
 
