@@ -128,11 +128,6 @@ body {
             <label for="selecaoBairro">Selecione o Bairro:</label>
             <select id="selecaoBairro" class="select-bairro"></select>
             
-            <div id="semanasContainer" class="oculto">
-                <label>Selecione a(s) Semana(s):</label>
-                <div id="semanasLista"></div>
-            </div>
-
             <div id="resultados-container" class="oculto">
                 <h3>Resumo do Bairro</h3>
                 <div id="totalGeral" class="total-ovos"></div>
@@ -143,7 +138,11 @@ body {
                     <div id="resultados"></div>
                 </div>
             </div>
-            
+
+            <div id="semanasContainer" class="oculto">
+                <label>Selecione a(s) Semana(s):</label>
+                <div id="semanasLista"></div>
+            </div>
         </div>
     </div>
 
@@ -228,7 +227,7 @@ body {
             resultadosContainer.classList.add('oculto');
             totalGeralDiv.innerHTML = '';
             maximoOvosDiv.innerHTML = '';
-            resultadosDiv.innerHTML = ''; // Limpa os resultados detalhados também
+            resultadosDiv.innerHTML = '';
 
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
@@ -265,7 +264,6 @@ body {
             }
         }
         
-        // Função para exibir os detalhes das semanas selecionadas
         function exibirDetalhesSemanas() {
             resultadosDiv.innerHTML = '';
 
@@ -327,6 +325,7 @@ body {
 
 </body>
 </html>
+
 
 
 
