@@ -101,11 +101,21 @@ body {
     margin-top: 10px;
 }
 
-/* NOVO: Estilo para destacar o número do QT */
+/* Estilo para destacar o número do QT */
 .destaque-qt {
     font-weight: bold;
     color: #ff6b6b; /* Uma cor mais forte para destaque */
     margin-right: 5px;
+}
+
+/* NOVO: Estilo para o resultado de valor máximo */
+#maximo-ovos {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--border-color);
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--primary-color);
 }
     </style>
 </head>
@@ -127,6 +137,7 @@ body {
                 <h3>Resultados</h3>
                 <div id="resultados"></div>
                 <div id="somaTotal" class="total-ovos"></div>
+                <div id="maximoOvos"></div>
             </div>
             
         </div>
@@ -140,10 +151,10 @@ body {
         const resultadosContainer = document.getElementById('resultados-container');
         const resultadosDiv = document.getElementById('resultados');
         const somaTotalDiv = document.getElementById('somaTotal');
+        const maximoOvosDiv = document.getElementById('maximoOvos'); // NOVO
 
-        let dadosCompletos = []; // Variável para guardar o JSON inteiro
+        let dadosCompletos = [];
 
-        // Função para carregar o JSON e popular a lista de bairros
         async function carregarBairros() {
             try {
                 const response = await fetch(urlDoJson);
@@ -176,7 +187,6 @@ body {
             }
         }
 
-        // Função para popular as semanas com base no bairro selecionado
         function popularSemanas(bairroSelecionado) {
             semanasLista.innerHTML = '';
             
@@ -210,10 +220,10 @@ body {
             });
         }
         
-        // Função para exibir os valores e a soma das semanas selecionadas
         function exibirResultados() {
             resultadosDiv.innerHTML = '';
             somaTotalDiv.innerHTML = '';
+            maximoOvosDiv.innerHTML = ''; // Limpa o resultado anterior
 
             const bairroSelecionado = selecaoBairro.value;
             if (!bairroSelecionado) return;
@@ -232,17 +242,34 @@ body {
             );
             
             let somaOvosTotal = 0;
+            let maxOvos = 0;
+            let maxSemana = '';
+            let maxQt = '';
+
+            // Lógica para encontrar o valor máximo
+            dadosDoBairro.forEach(item => {
+                for (const key in item) {
+                    if (key.startsWith('SEMANA ')) {
+                        const valor = parseInt(item[key]) || 0;
+                        if (valor > maxOvos) {
+                            maxOvos = valor;
+                            maxSemana = key.replace('SEMANA ', '');
+                            maxQt = item['QT'];
+                        }
+                    }
+                }
+            });
 
             semanasSelecionadas.forEach(checkbox => {
                 const semanaNumero = checkbox.value;
                 const chaveSemana = `SEMANA ${semanaNumero}`;
                 
                 let somaOvosSemana = 0;
-                const qtsComOvos = []; // Array para guardar os QTs com ovos
+                const qtsComOvos = [];
 
                 dadosDoBairro.forEach(item => {
                     const valor = parseInt(item[chaveSemana]) || 0;
-                    if (valor > 0) { // Verifica se há ovos para registrar o QT
+                    if (valor > 0) {
                         qtsComOvos.push(item['QT']);
                     }
                     somaOvosSemana += valor;
@@ -262,9 +289,15 @@ body {
             });
 
             somaTotalDiv.innerHTML = `Soma Total: ${somaOvosTotal} ovos`;
+
+            // Exibe o valor máximo encontrado
+            if (maxOvos > 0) {
+                maximoOvosDiv.innerHTML = `Maior valor encontrado: <span class="destaque-qt"> ${maxOvos} ovos</span> na <br> Semana: <span class="destaque-qt">${maxSemana}</span> - QT: <span class="destaque-qt">${maxQt}</span>`;
+            } else {
+                maximoOvosDiv.innerHTML = `Não há registros de ovos neste bairro.`;
+            }
         }
 
-        // Eventos que escutam as mudanças
         selecaoBairro.addEventListener('change', (event) => {
             const bairroSelecionado = event.target.value;
             if (bairroSelecionado) {
@@ -278,12 +311,12 @@ body {
 
         semanasLista.addEventListener('change', exibirResultados);
 
-        // Inicia o processo carregando os bairros
         document.addEventListener('DOMContentLoaded', carregarBairros);
     </script>
 
 </body>
 </html>
+
 
 
 
