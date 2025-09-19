@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dados de Ovitrampas</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
 /* Estilos para ter a mesma aparência da sua página principal */
 :root {
@@ -86,7 +89,7 @@ body {
 }
 
 /* Estilo para a área de resultados */
-#resumo-container, #resultados-detalhados-container {
+#resumo-container, #resultados-detalhados-container, #grafico-container {
     margin-top: 20px;
     padding: 15px;
     background: #111122;
@@ -126,7 +129,7 @@ body {
 
     <div class="container">
         <div class="box">
-            <h1>Dados de Ovitrampas 2025</h1>
+            <h1>Dados de Ovitrampas</h1>
             
             <label for="selecaoBairro">Selecione o Bairro:</label>
             <select id="selecaoBairro" class="select-bairro"></select>
@@ -146,6 +149,11 @@ body {
                 <h3>Resultados</h3>
                 <div id="resultados"></div>
             </div>
+            
+            <div id="grafico-container" class="oculto">
+                <h3>Gráfico das Semanas Selecionadas</h3>
+                <canvas id="graficoOvos"></canvas>
+            </div>
         </div>
     </div>
 
@@ -159,8 +167,11 @@ body {
         const maximoOvosDiv = document.getElementById('maximoOvos');
         const resultadosDetalhadosContainer = document.getElementById('resultados-detalhados-container');
         const resultadosDiv = document.getElementById('resultados');
-
+        const graficoContainer = document.getElementById('grafico-container'); // NOVO
+        const canvasGrafico = document.getElementById('graficoOvos'); // NOVO
+        
         let dadosCompletos = [];
+        let graficoInstance; // Variável para a instância do gráfico (NOVO)
 
         async function carregarBairros() {
             try {
@@ -239,6 +250,7 @@ body {
 
             if (dadosDoBairro.length === 0) {
                 resultadosDetalhadosContainer.classList.add('oculto');
+                graficoContainer.classList.add('oculto'); // Esconde o gráfico (NOVO)
                 return;
             }
 
@@ -277,16 +289,22 @@ body {
 
             const bairroSelecionado = selecaoBairro.value;
             const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
+            
+            const labelsGrafico = []; // Array para os nomes das semanas no gráfico (NOVO)
+            const dadosGrafico = []; // Array para os valores dos ovos no gráfico (NOVO)
 
             if (semanasSelecionadas.length === 0) {
+                graficoContainer.classList.add('oculto'); // Esconde o gráfico se nada for selecionado
                 return;
             }
+            
+            graficoContainer.classList.remove('oculto'); // Mostra o gráfico (NOVO)
 
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
             );
-
-            let somaTotalSemanasSelecionadas = 0; // Variável para somar os ovos das semanas selecionadas
+            
+            let somaTotalSemanasSelecionadas = 0;
             
             semanasSelecionadas.forEach(checkbox => {
                 const semanaNumero = checkbox.value;
@@ -303,7 +321,11 @@ body {
                     somaOvosSemana += valor;
                 });
 
-                somaTotalSemanasSelecionadas += somaOvosSemana; // Adiciona a soma da semana atual ao total
+                somaTotalSemanasSelecionadas += somaOvosSemana;
+
+                // Adiciona os dados para o gráfico (NOVO)
+                labelsGrafico.push(`Semana ${semanaNumero}`);
+                dadosGrafico.push(somaOvosSemana);
 
                 const p = document.createElement('p');
                 let qtTexto = '';
@@ -316,13 +338,47 @@ body {
                 resultadosDiv.appendChild(p);
             });
 
-            // Cria um elemento para exibir a soma total das semanas selecionadas
             const somaFinal = document.createElement('p');
             somaFinal.innerHTML = `<strong>Soma Total das Semanas Selecionadas: ${somaTotalSemanasSelecionadas} ovos</strong>`;
             somaFinal.style.fontWeight = 'bold';
             somaFinal.style.marginTop = '15px';
             somaFinal.style.fontSize = '1.1em';
             resultadosDiv.prepend(somaFinal);
+            
+            // NOVO: Chama a função para criar ou atualizar o gráfico
+            atualizarGrafico(labelsGrafico, dadosGrafico);
+        }
+        
+        // NOVO: Função para criar ou atualizar o gráfico
+        function atualizarGrafico(labels, data) {
+            // Se o gráfico já existe, atualiza os dados
+            if (graficoInstance) {
+                graficoInstance.data.labels = labels;
+                graficoInstance.data.datasets[0].data = data;
+                graficoInstance.update();
+            } else {
+                // Se não, cria um novo gráfico
+                graficoInstance = new Chart(canvasGrafico, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Ovos Coletados',
+                            data: data,
+                            backgroundColor: 'rgba(0, 180, 216, 0.6)',
+                            borderColor: 'rgba(0, 180, 216, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         // Eventos que escutam as mudanças
@@ -332,10 +388,12 @@ body {
                 semanasContainer.classList.remove('oculto');
                 popularSemanas(bairroSelecionado);
                 exibirResumoDoBairro(bairroSelecionado);
+                graficoContainer.classList.add('oculto'); // Esconde o gráfico ao trocar o bairro
             } else {
                 semanasContainer.classList.add('oculto');
                 resumoContainer.classList.add('oculto');
                 resultadosDetalhadosContainer.classList.add('oculto');
+                graficoContainer.classList.add('oculto'); // Esconde tudo se nenhum bairro for selecionado
             }
         });
 
