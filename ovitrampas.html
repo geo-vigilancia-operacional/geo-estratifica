@@ -228,12 +228,16 @@ body {
             resumoContainer.classList.add('oculto');
             totalGeralDiv.innerHTML = '';
             maximoOvosDiv.innerHTML = '';
-
+            resultadosDiv.innerHTML = ''; // NOVO: Limpa os resultados detalhados
+            
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
             );
 
-            if (dadosDoBairro.length === 0) return;
+            if (dadosDoBairro.length === 0) {
+                resultadosDetalhadosContainer.classList.add('oculto');
+                return;
+            }
 
             let somaOvosTotal = 0;
             let maxOvos = 0;
@@ -255,6 +259,7 @@ body {
             });
 
             resumoContainer.classList.remove('oculto');
+            resultadosDetalhadosContainer.classList.remove('oculto'); // NOVO: Mostra o container de resultados
             totalGeralDiv.innerHTML = `Total Geral do Bairro: ${somaOvosTotal} ovos`;
             
             if (maxOvos > 0) {
@@ -271,11 +276,8 @@ body {
             const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
 
             if (semanasSelecionadas.length === 0) {
-                resultadosDetalhadosContainer.classList.add('oculto');
                 return;
             }
-
-            resultadosDetalhadosContainer.classList.remove('oculto');
 
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
@@ -329,6 +331,7 @@ body {
 
 </body>
 </html>
+
 
 
 
