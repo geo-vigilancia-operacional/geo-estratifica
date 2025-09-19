@@ -117,9 +117,6 @@ body {
     font-weight: bold;
     color: var(--primary-color);
 }
-  #selecaoBairro option {
-    color: var(--warning-color);
-}  
     </style>
 </head>
 <body>
@@ -231,7 +228,7 @@ body {
             resumoContainer.classList.add('oculto');
             totalGeralDiv.innerHTML = '';
             maximoOvosDiv.innerHTML = '';
-            resultadosDiv.innerHTML = ''; // NOVO: Limpa os resultados detalhados
+            resultadosDiv.innerHTML = '';
             
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
@@ -262,7 +259,7 @@ body {
             });
 
             resumoContainer.classList.remove('oculto');
-            resultadosDetalhadosContainer.classList.remove('oculto'); // NOVO: Mostra o container de resultados
+            resultadosDetalhadosContainer.classList.remove('oculto');
             totalGeralDiv.innerHTML = `Total Geral do Bairro: ${somaOvosTotal} ovos`;
             
             if (maxOvos > 0) {
@@ -285,6 +282,8 @@ body {
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
             );
+
+            let somaTotalSemanasSelecionadas = 0; // Variável para somar os ovos das semanas selecionadas
             
             semanasSelecionadas.forEach(checkbox => {
                 const semanaNumero = checkbox.value;
@@ -301,6 +300,8 @@ body {
                     somaOvosSemana += valor;
                 });
 
+                somaTotalSemanasSelecionadas += somaOvosSemana; // Adiciona a soma da semana atual ao total
+
                 const p = document.createElement('p');
                 let qtTexto = '';
 
@@ -311,6 +312,14 @@ body {
                 p.innerHTML = `<strong>Semana ${semanaNumero}:</strong> ${qtTexto}${somaOvosSemana} ovos`;
                 resultadosDiv.appendChild(p);
             });
+
+            // Cria um elemento para exibir a soma total das semanas selecionadas
+            const somaFinal = document.createElement('p');
+            somaFinal.innerHTML = `<strong>Soma Total das Semanas Selecionadas: ${somaTotalSemanasSelecionadas} ovos</strong>`;
+            somaFinal.style.fontWeight = 'bold';
+            somaFinal.style.marginTop = '15px';
+            somaFinal.style.fontSize = '1.1em';
+            resultadosDiv.prepend(somaFinal);
         }
 
         // Eventos que escutam as mudanças
