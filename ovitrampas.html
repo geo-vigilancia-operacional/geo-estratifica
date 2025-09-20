@@ -93,17 +93,21 @@ body {
 #resumo-container, #resultados-detalhados-container, #grafico-container {
     margin-top: 20px;
     padding: 15px;
-    background: var(--card-bg); /* Alterado para a variável CSS */
+    background: var(--card-bg);
     border-radius: 8px;
     border: 1px solid var(--border-color);
 }
 
-/* NOVO: Estilo para o container do gráfico, agora sem altura fixa */
+/* NOVO: Estilo para o container do gráfico, agora com altura máxima e barra de rolagem */
 #grafico-container {
-    padding-bottom: 25px;
+    max-height: 500px; /* Altura máxima para telas de celular */
+    overflow-y: auto; /* Adiciona barra de rolagem vertical quando o conteúdo excede a altura */
+    position: relative;
 }
 #graficoOvos {
+    /* Garante que o canvas se expanda para a largura e altura do seu container */
     width: 100% !important;
+    height: 100% !important;
 }
 
 .total-ovos {
@@ -353,15 +357,13 @@ body {
             somaFinal.style.fontSize = '1.1em';
             resultadosDiv.prepend(somaFinal);
             
-            // NOVO: Define a altura do canvas dinamicamente com base no número de barras
-            const alturaPorBarra = 35; // Altura ideal para cada barra
-            canvasGrafico.style.height = `${semanasSelecionadas.length * alturaPorBarra}px`;
+            // REMOVIDO: A altura dinâmica do gráfico foi removida
+            // canvasGrafico.style.height = `${semanasSelecionadas.length * alturaPorBarra}px`;
 
-            atualizarGrafico(labelsGrafico, dadosGrafico, somaTotalSemanasSelecionadas); // Adiciona a soma total como argumento
+            atualizarGrafico(labelsGrafico, dadosGrafico, somaTotalSemanasSelecionadas);
         }
         
         function atualizarGrafico(labels, data, somaTotal) {
-            // NOVO: Destrói a instância anterior do gráfico se ela existir
             if (graficoInstance) {
                 graficoInstance.destroy();
             }
@@ -386,7 +388,6 @@ body {
                     scales: {
                         x: {
                             beginAtZero: true,
-                            // NOVO: Fonte menor para o eixo X
                             ticks: {
                                 font: {
                                     size: 10
@@ -394,7 +395,6 @@ body {
                             }
                         },
                         y: {
-                            // NOVO: Fonte menor para o eixo Y
                             ticks: {
                                 font: {
                                     size: 10
@@ -403,11 +403,11 @@ body {
                         }
                     },
                     plugins: {
-                        datalabels: { // NOVO: Configurações do plugin
+                        datalabels: {
                             color: '#fff',
                             formatter: (value) => {
                                 const porcentagem = (value / somaTotal) * 100;
-                                return `${porcentagem.toFixed(1)}%`; // Formata como porcentagem
+                                return `${porcentagem.toFixed(1)}%`;
                             },
                             font: {
                                 weight: 'bold',
