@@ -1,129 +1,294 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gráficos - Estratificação de Áreas</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Gerador de Gráficos</title>
+    <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        body {
-            font-family: sans-serif;
+        /* Estilos CSS do seu projeto */
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            box-sizing: border-box;
         }
+
+        :root {
+            --bg-color: #1a1a2e;
+            --primary-color: #00b4d8;
+            --secondary-color: #89b4f0;
+            --text-color: #e0e0e0;
+            --card-bg: #21213e;
+            --border-color: #3e4a61;
+            --input-bg: #111122;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 10px;
+        }
+
         .container {
             max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            padding: 0 15px;
         }
-        nav {
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #1a1a2e, #111122);
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .nav-links {
             display: flex;
             gap: 17px;
             padding: 17px;
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
         }
-        nav a {
+
+        .nav-link {
             color: orange;
             text-decoration: none;
             font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
         }
-        .chart-box {
-            background-color: #fff;
-            padding: 20px;
+
+        .nav-link:hover {
+            background-color: rgba(255, 165, 0, 0.1);
+        }
+
+        .box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .box h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-shadow: 0 0 3px var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .input-area {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        #dadosEntrada {
+            width: 100%;
+            height: 150px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
+            font-size: 14px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            resize: vertical;
+        }
+
+        #gerarGraficoBtn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 15px;
+            background: linear-gradient(45deg, var(--primary-color), #0077b6);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #gerarGraficoBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .chart-area {
+            flex: 2;
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+        
+        .chart-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
-
+    <header>
+        <h1>Gerador de Gráficos</h1>
+    </header>
+    
     <div class="container">
-        <nav>
-            <a href="liraa.html">LIRAa</a>
-            <a href="ovitrampas.html">Ovitrampas</a>
-            <a href="outros.html">Outros</a>
-            <a href="graficos.html">Gráficos</a>
-            <a href="mapas.html">Mapas</a>
-        </nav>
+        <div class="nav-links">
+            <a href="liraa.html" class="nav-link">LIRAa</a>
+            <a href="ovitrampas.html" class="nav-link">Ovitrampas</a>
+            <a href="outros.html" class="nav-link">Outros</a>
+            <a href="graficos.html" class="nav-link">Gráficos</a>
+            <a href="mapas.html" class="nav-link">Mapas</a>
+        </div>
         
-        <h1>Gráficos e Estatísticas</h1>
-        <p>Análise visual dos dados de estratificação de áreas.</p>
+        <div class="main-content">
+            <div class="box input-area">
+                <h3>Dados para o Gráfico</h3>
+                <p>Cole seus dados aqui no formato: <strong>rótulo,valor;rótulo,valor</strong></p>
+                <p class="small">Ex: <code>Parangaba,1800;Mondubim,2200</code></p>
+                <textarea id="dadosEntrada" placeholder="Cole seus dados aqui..."></textarea>
+                <button id="gerarGraficoBtn">Gerar Gráfico</button>
+            </div>
 
-        <div class="chart-box">
-            <h2>Total de Imóveis por Bairro</h2>
-            <canvas id="imoveisChart"></canvas>
+            <div class="box chart-area">
+                <h3>Selecione o Tipo de Gráfico</h3>
+                <div class="chart-type-selector">
+                    <button class="btn-chart" data-chart-type="bar">Barra</button>
+                    <button class="btn-chart" data-chart-type="doughnut">Pizza</button>
+                    <button class="btn-chart" data-chart-type="line">Linha</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="meuGrafico"></canvas>
+                </div>
+            </div>
         </div>
-
-        <div class="chart-box">
-            <h2>Percentual de Imóveis Fechados</h2>
-            <canvas id="fechadosChart"></canvas>
-        </div>
-
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-        // Dados de exemplo (você pode substituir isso com dados do seu sistema)
-        const bairros = ['Ancuri', 'Jangurussu', 'Mondubim', 'Parangaba'];
-        const imoveisTrabalhados = [1500, 2200, 1800, 2500];
-        const imoveisFechados = [300, 450, 350, 550];
+        document.addEventListener('DOMContentLoaded', () => {
+            const dadosEntradaEl = document.getElementById('dadosEntrada');
+            const gerarGraficoBtn = document.getElementById('gerarGraficoBtn');
+            const chartTypeButtons = document.querySelectorAll('.btn-chart');
+            const ctx = document.getElementById('meuGrafico').getContext('2d');
+            let meuGrafico = null; // Variável para armazenar a instância do gráfico
 
-        // CONFIGURAÇÃO E CRIAÇÃO DO PRIMEIRO GRÁFICO (Imóveis por Bairro)
-        const ctxImoveis = document.getElementById('imoveisChart').getContext('2d');
-        const imoveisChart = new Chart(ctxImoveis, {
-            type: 'bar',
-            data: {
-                labels: bairros,
-                datasets: [{
-                    label: 'Imóveis Trabalhados',
-                    data: imoveisTrabalhados,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+            // Função para processar os dados da entrada
+            function processarDados(texto) {
+                const dados = { labels: [], valores: [] };
+                const pares = texto.split(';');
+                pares.forEach(par => {
+                    const partes = par.split(',');
+                    if (partes.length === 2) {
+                        const rotulo = partes[0].trim();
+                        const valor = parseFloat(partes[1].trim());
+                        if (!isNaN(valor)) {
+                            dados.labels.push(rotulo);
+                            dados.valores.push(valor);
+                        }
                     }
-                }
+                });
+                return dados;
             }
-        });
 
-        // CONFIGURAÇÃO E CRIAÇÃO DO SEGUNDO GRÁFICO (Fechados)
-        const ctxFechados = document.getElementById('fechadosChart').getContext('2d');
-        const fechadosChart = new Chart(ctxFechados, {
-            type: 'pie',
-            data: {
-                labels: bairros,
-                datasets: [{
-                    label: 'Imóveis Fechados',
-                    data: imoveisFechados,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true
+            // Função para gerar o gráfico
+            function gerarGrafico(tipoGrafico) {
+                const textoEntrada = dadosEntradaEl.value;
+                const dados = processarDados(textoEntrada);
+
+                // Destruir o gráfico anterior se ele existir
+                if (meuGrafico) {
+                    meuGrafico.destroy();
+                }
+
+                meuGrafico = new Chart(ctx, {
+                    type: tipoGrafico,
+                    data: {
+                        labels: dados.labels,
+                        datasets: [{
+                            label: 'Dados',
+                            data: dados.valores,
+                            backgroundColor: [
+                                'rgba(0, 180, 216, 0.8)',
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(255, 206, 86, 0.8)',
+                                'rgba(75, 192, 192, 0.8)',
+                                'rgba(153, 102, 255, 0.8)',
+                                'rgba(255, 159, 64, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(0, 180, 216, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
             }
+
+            // Evento para o botão "Gerar Gráfico"
+            gerarGraficoBtn.addEventListener('click', () => {
+                gerarGrafico('bar'); // Tipo padrão ao clicar no botão
+            });
+
+            // Eventos para os botões de tipo de gráfico
+            chartTypeButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const tipo = e.target.getAttribute('data-chart-type');
+                    gerarGrafico(tipo);
+                });
+            });
         });
     </script>
 </body>
