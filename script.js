@@ -512,7 +512,7 @@ function atualizarGraficoProgramados(totais) {
                     },
                     font: {
                         weight: 'bold',
-                        size: 10
+                        size: 14
                     }
                 }
             }
@@ -913,6 +913,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
