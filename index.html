@@ -568,7 +568,7 @@ header h1 {
 <header>
 
           <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
- </header>
+</header>
     
 <div class="container">
     <div style="padding: 20px;">
@@ -578,14 +578,34 @@ header h1 {
             <a href="mapas.html" style="color: orange;">Mapas</a>
         </div>
     </div>
-
-    <div id="resumoProgramados" class="dados-resumo">
-        </div>
     
-    <div id="graficoPizzaContainer">
+    <div id="resumoProgramados" class="dados-resumo">
+    </div>
+    
+    <button id="botaoProximo" class="primary" style="margin-top: 30px;">Próximo</button>
+
+    <div class="estratificacao-container">
+        <label for="tipoEstratificacao">Tipo de Estratificação:</label>
+        <select id="tipoEstratificacao" name="tipoEstratificacao" required>
+            <option value="" disabled selected>Selecione uma opção</option>
+            <option value="estratificacaoDeArea">Estratificação de Área</option>
+            <option value="mutiraoRegional">Mutirão Regional</option>
+            <option value="mutiraoMunicipal">Mutirão Municipal</option>
+            <option value="outros">Outros</option>
+        </select>
+    </div>
+
+    <div id="outrosCampoContainer" class="oculto">
+        <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
+        <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
+    </div>
+
+    <div class="chart-container" style="position: relative; height:40vh; width:100%; margin-top: 20px;">
         <h3>Distribuição de Locais Programados</h3>
         <canvas id="graficoPizza"></canvas>
     </div>
+
+</div>
 
     <button id="botaoProximo" class="primary" style="margin-top: 30px;">Próximo</button>
 
@@ -777,6 +797,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
