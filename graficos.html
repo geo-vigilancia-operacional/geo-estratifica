@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos - Estratificação de Áreas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        nav {
+            display: flex;
+            gap: 17px;
+            padding: 17px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+        nav a {
+            color: orange;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .chart-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav>
+            <a href="liraa.html">LIRAa</a>
+            <a href="ovitrampas.html">Ovitrampas</a>
+            <a href="outros.html">Outros</a>
+            <a href="graficos.html">Gráficos</a>
+            <a href="mapas.html">Mapas</a>
+        </nav>
+        
+        <h1>Gráficos e Estatísticas</h1>
+        <p>Análise visual dos dados de estratificação de áreas.</p>
+
+        <div class="chart-box">
+            <h2>Total de Imóveis por Bairro</h2>
+            <canvas id="imoveisChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h2>Percentual de Imóveis Fechados</h2>
+            <canvas id="fechadosChart"></canvas>
+        </div>
+
+    </div>
+
+    <script>
+        // Dados de exemplo (você pode substituir isso com dados do seu sistema)
+        const bairros = ['Ancuri', 'Jangurussu', 'Mondubim', 'Parangaba'];
+        const imoveisTrabalhados = [1500, 2200, 1800, 2500];
+        const imoveisFechados = [300, 450, 350, 550];
+
+        // CONFIGURAÇÃO E CRIAÇÃO DO PRIMEIRO GRÁFICO (Imóveis por Bairro)
+        const ctxImoveis = document.getElementById('imoveisChart').getContext('2d');
+        const imoveisChart = new Chart(ctxImoveis, {
+            type: 'bar',
+            data: {
+                labels: bairros,
+                datasets: [{
+                    label: 'Imóveis Trabalhados',
+                    data: imoveisTrabalhados,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // CONFIGURAÇÃO E CRIAÇÃO DO SEGUNDO GRÁFICO (Fechados)
+        const ctxFechados = document.getElementById('fechadosChart').getContext('2d');
+        const fechadosChart = new Chart(ctxFechados, {
+            type: 'pie',
+            data: {
+                labels: bairros,
+                datasets: [{
+                    label: 'Imóveis Fechados',
+                    data: imoveisFechados,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+</body>
+</html>
