@@ -98,14 +98,13 @@ body {
     border: 1px solid var(--border-color);
 }
 
-/* NOVO: Estilo para o container do gráfico, agora com altura máxima e barra de rolagem */
+/* Estilo para o container do gráfico, agora com altura máxima e barra de rolagem */
 #grafico-container {
-    max-height: 500px; /* Altura máxima para telas de celular */
-    overflow-y: auto; /* Adiciona barra de rolagem vertical quando o conteúdo excede a altura */
+    max-height: 500px;
+    overflow-y: auto;
     position: relative;
 }
 #graficoOvos {
-    /* Garante que o canvas se expanda para a largura e altura do seu container */
     width: 100% !important;
     height: 100% !important;
 }
@@ -328,10 +327,10 @@ body {
 
                 dadosDoBairro.forEach(item => {
                     const valor = parseInt(item[chaveSemana]) || 0;
+                    somaOvosSemana += valor;
                     if (valor > 0) {
                         qtsComOvos.push(item['QT']);
                     }
-                    somaOvosSemana += valor;
                 });
 
                 somaTotalSemanasSelecionadas += somaOvosSemana;
@@ -357,9 +356,6 @@ body {
             somaFinal.style.fontSize = '1.1em';
             resultadosDiv.prepend(somaFinal);
             
-            // REMOVIDO: A altura dinâmica do gráfico foi removida
-            // canvasGrafico.style.height = `${semanasSelecionadas.length * alturaPorBarra}px`;
-
             atualizarGrafico(labelsGrafico, dadosGrafico, somaTotalSemanasSelecionadas);
         }
         
@@ -396,13 +392,24 @@ body {
                         },
                         y: {
                             ticks: {
+                                // NOVO: Aumenta o tamanho da fonte e coloca em negrito para os nomes das semanas
                                 font: {
-                                    size: 10
+                                    size: 14,
+                                    weight: 'bold'
                                 }
                             }
                         }
                     },
                     plugins: {
+                        legend: {
+                            labels: {
+                                // NOVO: Aumenta o tamanho da fonte e coloca em negrito para a legenda
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
                         datalabels: {
                             color: '#fff',
                             formatter: (value) => {
@@ -410,8 +417,9 @@ body {
                                 return `${porcentagem.toFixed(1)}%`;
                             },
                             font: {
-                                weight: 'bold',
-                                size: 10
+                                // NOVO: Aumenta o tamanho da fonte e coloca em negrito para as porcentagens
+                                size: 12,
+                                weight: 'bold'
                             }
                         }
                     }
