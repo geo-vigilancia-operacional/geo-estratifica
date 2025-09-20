@@ -553,6 +553,25 @@ header h1 {
         max-height: 250px; /* altura menor no celular */
     }
 }
+/* Força links do menu sempre em laranja (todos os estados) */
+.menu a,
+.menu a:link,
+.menu a:visited,
+.menu a:hover,
+.menu a:active,
+.menu a:focus {
+  color: orange !important;
+  -webkit-text-fill-color: orange !important; /* compatibilidade iOS/Safari */
+  background: transparent !important;          /* evita fundos indesejados */
+  text-decoration: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;   /* remove o destaque azul no touch */
+}
+
+/* opcional: pequeno feedback visual no hover (desktop) */
+.menu a:hover {
+  text-decoration: underline;
+}
 
  
  </style>
@@ -754,6 +773,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
