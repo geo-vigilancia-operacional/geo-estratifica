@@ -59,9 +59,10 @@ header h1 {
 
 .main-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
     margin-bottom: 20px;
+    align-items: stretch; /* mantém todas as boxes alinhadas */
 }
 
 @media (max-width: 768px) {
@@ -69,6 +70,7 @@ header h1 {
         grid-template-columns: 1fr;
     }
 }
+
 
 .box {
     background: var(--card-bg);
@@ -566,8 +568,6 @@ header h1 {
 </head>
 <body>
 <header>
-<body>
-<body>
     <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
     <header>
         </header>
@@ -752,6 +752,7 @@ header h1 {
     </div> <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
