@@ -6,6 +6,7 @@
     <title>Dados de Ovitrampas</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
     <style>
 /* Estilos para ter a mesma aparência da sua página principal */
@@ -92,19 +93,17 @@ body {
 #resumo-container, #resultados-detalhados-container, #grafico-container {
     margin-top: 20px;
     padding: 15px;
-    background: #111122;
+    background: var(--card-bg); /* Alterado para a variável CSS */
     border-radius: 8px;
     border: 1px solid var(--border-color);
 }
 
-/* NOVO: Estilo para dar mais espaço ao gráfico */
+/* NOVO: Estilo para o container do gráfico, agora sem altura fixa */
 #grafico-container {
-    height: 400px; /* Ajuste a altura conforme preferir */
-    position: relative;
+    padding-bottom: 25px;
 }
 #graficoOvos {
     width: 100% !important;
-    height: 100% !important;
 }
 
 .total-ovos {
@@ -165,6 +164,9 @@ body {
     </div>
 
     <script>
+        // NOVO: Registra o plugin de rótulos de dados
+        Chart.register(ChartDataLabels);
+
         const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
         const selecaoBairro = document.getElementById('selecaoBairro');
         const semanasContainer = document.getElementById('semanasContainer');
@@ -351,38 +353,70 @@ body {
             somaFinal.style.fontSize = '1.1em';
             resultadosDiv.prepend(somaFinal);
             
-            atualizarGrafico(labelsGrafico, dadosGrafico);
+            // NOVO: Define a altura do canvas dinamicamente com base no número de barras
+            const alturaPorBarra = 35; // Altura ideal para cada barra
+            canvasGrafico.style.height = `${semanasSelecionadas.length * alturaPorBarra}px`;
+
+            atualizarGrafico(labelsGrafico, dadosGrafico, somaTotalSemanasSelecionadas); // Adiciona a soma total como argumento
         }
         
-        function atualizarGrafico(labels, data) {
+        function atualizarGrafico(labels, data, somaTotal) {
+            // NOVO: Destrói a instância anterior do gráfico se ela existir
             if (graficoInstance) {
-                graficoInstance.data.labels = labels;
-                graficoInstance.data.datasets[0].data = data;
-                graficoInstance.update();
-            } else {
-                const ctx = canvasGrafico.getContext('2d');
-                graficoInstance = new Chart(ctx, {
-                    type: 'bar', // Tipo de gráfico de barras
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Ovos Coletados',
-                            data: data,
-                            backgroundColor: 'rgba(0, 180, 216, 0.6)',
-                            borderColor: 'rgba(0, 180, 216, 1)',
-                            borderWidth: 1
-                        }]
+                graficoInstance.destroy();
+            }
+
+            const ctx = canvasGrafico.getContext('2d');
+            graficoInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ovos Coletados',
+                        data: data,
+                        backgroundColor: 'rgba(0, 180, 216, 0.6)',
+                        borderColor: 'rgba(0, 180, 216, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            // NOVO: Fonte menor para o eixo X
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        y: {
+                            // NOVO: Fonte menor para o eixo Y
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
                     },
-                    options: {
-                        indexAxis: 'y', // NOVO: Muda o eixo para o "y" para criar o gráfico horizontal
-                        scales: {
-                            x: { // Configuração do eixo X para barras horizontais
-                                beginAtZero: true
+                    plugins: {
+                        datalabels: { // NOVO: Configurações do plugin
+                            color: '#fff',
+                            formatter: (value) => {
+                                const porcentagem = (value / somaTotal) * 100;
+                                return `${porcentagem.toFixed(1)}%`; // Formata como porcentagem
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: 10
                             }
                         }
                     }
-                });
-            }
+                }
+            });
         }
 
         // Eventos que escutam as mudanças
@@ -408,6 +442,7 @@ body {
 
 </body>
 </html>
+
 
 
 
