@@ -534,7 +534,42 @@ header h1 {
     font-weight: bold;
     color: orange;  /* aviso em laranja */
 }
+.menu {
+    display: flex;
+    gap: 17px;
+    padding: 17px;
+    flex-wrap: wrap; /* permite quebrar linha */
+    justify-content: center; /* centraliza */
+  }
 
+  .menu a {
+    color: orange;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background 0.3s;
+  }
+
+  .menu a:hover {
+    background: rgba(255,165,0,0.1);
+  }
+
+  /* Ajuste para telas pequenas */
+  @media (max-width: 600px) {
+    .menu {
+      flex-direction: column;   /* links ficam empilhados */
+      align-items: center;
+      gap: 10px;
+    }
+
+    .menu a {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: #2c2c3c;
+    }
+  }
     #listaQuadras {
         flex: 1;           /* ocupa todo espaço vertical da box */
         min-height: 400px; /* garante altura mínima */
@@ -562,15 +597,15 @@ header h1 {
           <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
     </header>
     
-    <div class="container">
-        <div style="padding: 17px;">
-        <div style="display: flex; gap: 17px;">
-        <a href="liraa.html" style="color: orange;">LIRAa</a>
-        <a href="ovitrampas.html" style="color: orange;">Ovitrampas</a>
-        <a href="outros.html" style="color: orange;">Outros</a>
-        <a href="graficos.html" style="color: orange;">Gráficos</a>
-        <a href="mapas.html" style="color: orange;">Mapas</a>
-    </div>   
+ <div class="container">
+  <div class="menu">
+    <a href="liraa.html">LIRAa</a>
+    <a href="ovitrampas.html">Ovitrampas</a>
+    <a href="outros.html">Outros</a>
+    <a href="graficos.html">Gráficos</a>
+    <a href="mapas.html">Mapas</a>
+  </div>
+</div>
             <div class="main-grid">
             <!-- Seções do grid mantidas iguais -->
             <div class="box">
@@ -753,6 +788,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
