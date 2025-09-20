@@ -571,25 +571,7 @@ header h1 {
         <a href="graficos.html" style="color: orange;">Gráficos</a>
         <a href="mapas.html" style="color: orange;">Mapas</a>
     </div>   
-            
-            <div class="estratificacao-container">
-                    <label for="tipoEstratificacao">Tipo de Estratificação:</label>
-                <select id="tipoEstratificacao" name="tipoEstratificacao" required>
-                    <option value="" disabled selected>Selecione uma opção</option>
-                    <option value="estratificacaoDeArea">Estratificação de Área</option>
-                    <option value="mutiraoRegional">Mutirão Regional</option>
-                    <option value="mutiraoMunicipal">Mutirão Municipal</option>
-                    <option value="outros">Outros</option>
-                </select>
-            </div>
-
-            <div id="outrosCampoContainer" class="oculto">
-                <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
-                <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
-            </div>
-        </div>
-
-        <div class="main-grid">
+            <div class="main-grid">
             <!-- Seções do grid mantidas iguais -->
             <div class="box">
                 <h3>Selecione o Bairro</h3>
@@ -619,7 +601,25 @@ header h1 {
                 </button>
             </div>
         </div>
-<div class="box" style="margin-top: 30px;">
+  <div class="estratificacao-container">
+                    <label for="tipoEstratificacao">Tipo de Estratificação:</label>
+                <select id="tipoEstratificacao" name="tipoEstratificacao" required>
+                    <option value="" disabled selected>Selecione uma opção</option>
+                    <option value="estratificacaoDeArea">Estratificação de Área</option>
+                    <option value="mutiraoRegional">Mutirão Regional</option>
+                    <option value="mutiraoMunicipal">Mutirão Municipal</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
+
+            <div id="outrosCampoContainer" class="oculto">
+                <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
+                <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
+            </div>
+        </div>
+
+            
+    <div class="box" style="margin-top: 30px;">
     <h3>ESTRATIFICAR</h3>
     <label for="dataInicio">Data de Início Programado</label>
     <input type="date" id="dataInicio">
@@ -753,6 +753,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
