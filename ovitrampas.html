@@ -97,6 +97,16 @@ body {
     border: 1px solid var(--border-color);
 }
 
+/* NOVO: Estilo para dar mais espaço ao gráfico */
+#grafico-container {
+    height: 400px; /* Ajuste a altura conforme preferir */
+    position: relative;
+}
+#graficoOvos {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .total-ovos {
     font-size: 1.2em;
     font-weight: bold;
@@ -120,9 +130,6 @@ body {
     font-weight: bold;
     color: var(--primary-color);
 }
-#selecaoBairro option {
-    color: var(--warning-color);
-}   
     </style>
 </head>
 <body>
@@ -167,11 +174,11 @@ body {
         const maximoOvosDiv = document.getElementById('maximoOvos');
         const resultadosDetalhadosContainer = document.getElementById('resultados-detalhados-container');
         const resultadosDiv = document.getElementById('resultados');
-        const graficoContainer = document.getElementById('grafico-container'); // NOVO
-        const canvasGrafico = document.getElementById('graficoOvos'); // NOVO
+        const graficoContainer = document.getElementById('grafico-container');
+        const canvasGrafico = document.getElementById('graficoOvos');
         
         let dadosCompletos = [];
-        let graficoInstance; // Variável para a instância do gráfico (NOVO)
+        let graficoInstance;
 
         async function carregarBairros() {
             try {
@@ -250,7 +257,7 @@ body {
 
             if (dadosDoBairro.length === 0) {
                 resultadosDetalhadosContainer.classList.add('oculto');
-                graficoContainer.classList.add('oculto'); // Esconde o gráfico (NOVO)
+                graficoContainer.classList.add('oculto');
                 return;
             }
 
@@ -290,15 +297,15 @@ body {
             const bairroSelecionado = selecaoBairro.value;
             const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
             
-            const labelsGrafico = []; // Array para os nomes das semanas no gráfico (NOVO)
-            const dadosGrafico = []; // Array para os valores dos ovos no gráfico (NOVO)
+            const labelsGrafico = [];
+            const dadosGrafico = [];
 
             if (semanasSelecionadas.length === 0) {
-                graficoContainer.classList.add('oculto'); // Esconde o gráfico se nada for selecionado
+                graficoContainer.classList.add('oculto');
                 return;
             }
             
-            graficoContainer.classList.remove('oculto'); // Mostra o gráfico (NOVO)
+            graficoContainer.classList.remove('oculto');
 
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
@@ -323,7 +330,6 @@ body {
 
                 somaTotalSemanasSelecionadas += somaOvosSemana;
 
-                // Adiciona os dados para o gráfico (NOVO)
                 labelsGrafico.push(`Semana ${semanaNumero}`);
                 dadosGrafico.push(somaOvosSemana);
 
@@ -345,21 +351,18 @@ body {
             somaFinal.style.fontSize = '1.1em';
             resultadosDiv.prepend(somaFinal);
             
-            // NOVO: Chama a função para criar ou atualizar o gráfico
             atualizarGrafico(labelsGrafico, dadosGrafico);
         }
         
-        // NOVO: Função para criar ou atualizar o gráfico
         function atualizarGrafico(labels, data) {
-            // Se o gráfico já existe, atualiza os dados
             if (graficoInstance) {
                 graficoInstance.data.labels = labels;
                 graficoInstance.data.datasets[0].data = data;
                 graficoInstance.update();
             } else {
-                // Se não, cria um novo gráfico
-                graficoInstance = new Chart(canvasGrafico, {
-                    type: 'bar',
+                const ctx = canvasGrafico.getContext('2d');
+                graficoInstance = new Chart(ctx, {
+                    type: 'bar', // Tipo de gráfico de barras
                     data: {
                         labels: labels,
                         datasets: [{
@@ -371,8 +374,9 @@ body {
                         }]
                     },
                     options: {
+                        indexAxis: 'y', // NOVO: Muda o eixo para o "y" para criar o gráfico horizontal
                         scales: {
-                            y: {
+                            x: { // Configuração do eixo X para barras horizontais
                                 beginAtZero: true
                             }
                         }
@@ -388,12 +392,12 @@ body {
                 semanasContainer.classList.remove('oculto');
                 popularSemanas(bairroSelecionado);
                 exibirResumoDoBairro(bairroSelecionado);
-                graficoContainer.classList.add('oculto'); // Esconde o gráfico ao trocar o bairro
+                graficoContainer.classList.add('oculto');
             } else {
                 semanasContainer.classList.add('oculto');
                 resumoContainer.classList.add('oculto');
                 resultadosDetalhadosContainer.classList.add('oculto');
-                graficoContainer.classList.add('oculto'); // Esconde tudo se nenhum bairro for selecionado
+                graficoContainer.classList.add('oculto');
             }
         });
 
