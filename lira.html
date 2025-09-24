@@ -61,7 +61,7 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .select-bairro {
+        .select-bairro, .select-filtro {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -91,6 +91,15 @@
             
             <label for="selecaoBairro">Selecione o Bairro:</label>
             <select id="selecaoBairro" class="select-bairro"></select>
+
+            <label for="selecaoFiltro" id="labelFiltro" class="oculto">Selecione o Tipo de LIRAa:</label>
+            <select id="selecaoFiltro" class="select-filtro oculto">
+                <option value="">Selecione um filtro</option>
+                <option value="LIRA 1">LIRA 1</option>
+                <option value="LIRA 2">LIRA 2</option>
+                <option value="LIRA 3">LIRA 3</option>
+                <option value="LIRA 4">LIRA 4</option>
+            </select>
             
             <div id="resultadosContainer" class="oculto box">
                 <h3>Resultados do Bairro</h3>
@@ -102,6 +111,8 @@
     <script>
         const urlDoJson = 'LIRAa 2025.json';
         const selecaoBairro = document.getElementById('selecaoBairro');
+        const selecaoFiltro = document.getElementById('selecaoFiltro');
+        const labelFiltro = document.getElementById('labelFiltro');
         const resultadosContainer = document.getElementById('resultadosContainer');
         const resultadosLiraa = document.getElementById('resultadosLiraa');
         
@@ -142,11 +153,13 @@
             }
         }
 
-        function exibirResultados(bairroSelecionado) {
+        function exibirResultados(bairroSelecionado, filtroSelecionado) {
             resultadosLiraa.innerHTML = '';
             resultadosContainer.classList.add('oculto');
             
-            if (!bairroSelecionado) return;
+            if (!bairroSelecionado || !filtroSelecionado) {
+                return;
+            }
 
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO'].trim() === bairroSelecionado
@@ -160,17 +173,17 @@
             
             let resultadoTexto = '';
             dadosDoBairro.forEach(item => {
+                const LIRAaQtKey = `${filtroSelecionado} QT`;
+                const IIPLIRAaKey = `${filtroSelecionado} LIRAa `;
+
+                const qtValue = item[LIRAaQtKey];
+                const iipValue = item[IIPLIRAaKey];
+
                 resultadoTexto += `
                     <p><strong>BAIRRO:</strong> ${item['BAIRRO']}</p>
                     <p><strong>ANO:</strong> ${item['ANO ']}</p>
-                    <p><strong>LIRA 1 QT:</strong> ${item['LIRA 1 QT']}</p>
-                    <p><strong>LIRA 2 QT:</strong> ${item['LIRA 2 QT']}</p>
-                    <p><strong>LIRA 3 QT:</strong> ${item['LIRA 3 QT']}</p>
-                    <p><strong>LIRA 4 QT:</strong> ${item['LIRA 4 QT']}</p>
-                    <p><strong>IIP 1 LIRAa:</strong> ${item['IIP 1 LIRAa ']}</p>
-                    <p><strong>IIP 2 LIRAa:</strong> ${item['IIP 2 LIRAa ']}</p>
-                    <p><strong>IIP 3 LIRAa:</strong> ${item['IIP 3 LIRAa ']}</p>
-                    <p><strong>IIP 4 LIRAa:</strong> ${item['IIP 4 LIRAa ']}</p>
+                    <p><strong>${filtroSelecionado} QT:</strong> ${qtValue}</p>
+                    <p><strong>IIP ${filtroSelecionado} LIRAa:</strong> ${iipValue}</p>
                     <hr style="border-color: var(--border-color); margin: 15px 0;">
                 `;
             });
@@ -180,7 +193,27 @@
         }
 
         selecaoBairro.addEventListener('change', (event) => {
-            exibirResultados(event.target.value);
+            const bairroSelecionado = event.target.value;
+            if (bairroSelecionado) {
+                labelFiltro.classList.remove('oculto');
+                selecaoFiltro.classList.remove('oculto');
+                // Limpa os resultados e o filtro ao mudar de bairro
+                selecaoFiltro.value = '';
+                resultadosLiraa.innerHTML = '';
+                resultadosContainer.classList.add('oculto');
+            } else {
+                labelFiltro.classList.add('oculto');
+                selecaoFiltro.classList.add('oculto');
+                resultadosContainer.classList.add('oculto');
+            }
+        });
+
+        selecaoFiltro.addEventListener('change', (event) => {
+            const bairroSelecionado = selecaoBairro.value;
+            const filtroSelecionado = event.target.value;
+            if (bairroSelecionado && filtroSelecionado) {
+                exibirResultados(bairroSelecionado, filtroSelecionado);
+            }
         });
 
         document.addEventListener('DOMContentLoaded', carregarBairros);
