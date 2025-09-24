@@ -136,250 +136,247 @@
         </div>
     </div>
 
-    <script>
-        const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
-        const selecaoBairro = document.getElementById('selecaoBairro');
-        const selecaoQt = document.getElementById('selecaoQt');
-        const labelQt = document.getElementById('labelQt');
-        const semanasContainer = document.getElementById('semanasContainer');
-        const semanasLista = document.getElementById('semanasLista');
-        const resumoContainer = document.getElementById('resumo-container');
-        const totalGeralDiv = document.getElementById('totalGeral');
-        const maximoOvosDiv = document.getElementById('maximoOvos');
-        const resultadosDetalhadosContainer = document.getElementById('resultados-detalhados-container');
-        const resultadosDiv = document.getElementById('resultados');
-        
-        let dadosCompletos = [];
+ <script>
+    const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
+    const selecaoBairro = document.getElementById('selecaoBairro');
+    const selecaoQt = document.getElementById('selecaoQt');
+    const labelQt = document.getElementById('labelQt');
+    const semanasContainer = document.getElementById('semanasContainer');
+    const semanasLista = document.getElementById('semanasLista');
+    const resumoContainer = document.getElementById('resumo-container');
+    const totalGeralDiv = document.getElementById('totalGeral');
+    const maximoOvosDiv = document.getElementById('maximoOvos');
+    const resultadosDetalhadosContainer = document.getElementById('resultados-detalhados-container');
+    const resultadosDiv = document.getElementById('resultados');
+    
+    let dadosCompletos = [];
 
-        async function carregarBairros() {
-            try {
-                const response = await fetch(urlDoJson);
-                dadosCompletos = await response.json();
+    async function carregarBairros() {
+        try {
+            const response = await fetch(urlDoJson);
+            dadosCompletos = await response.json();
 
-                const bairrosUnicos = new Set();
-                dadosCompletos.forEach(item => {
-                    if (item['BAIRRO ']) {
-                        bairrosUnicos.add(item['BAIRRO '].trim());
-                    }
-                });
-
-                const defaultOption = document.createElement('option');
-                defaultOption.textContent = 'Selecione um bairro';
-                defaultOption.value = '';
-                selecaoBairro.appendChild(defaultOption);
-
-                Array.from(bairrosUnicos).sort().forEach(bairro => {
-                    const option = document.createElement('option');
-                    option.textContent = bairro;
-                    option.value = bairro;
-                    selecaoBairro.appendChild(option);
-                });
-
-            } catch (error) {
-                console.error('Erro ao buscar o JSON:', error);
-                const option = document.createElement('option');
-                option.textContent = 'Erro ao carregar dados';
-                selecaoBairro.appendChild(option);
-            }
-        }
-        
-        function popularQts(bairroSelecionado) {
-            selecaoQt.innerHTML = '';
-            
-            const dadosDoBairro = dadosCompletos.filter(item => 
-                item['BAIRRO '].trim() === bairroSelecionado
-            );
-
-            if (dadosDoBairro.length === 0) return;
-
-            const qtsUnicos = new Set();
-            dadosDoBairro.forEach(item => {
-                if (item['QT']) {
-                    qtsUnicos.add(item['QT'].trim());
+            const bairrosUnicos = new Set();
+            dadosCompletos.forEach(item => {
+                if (item['BAIRRO ']) {
+                    bairrosUnicos.add(item['BAIRRO '].trim());
                 }
             });
 
             const defaultOption = document.createElement('option');
-            defaultOption.textContent = 'Todos os QT';
+            defaultOption.textContent = 'Selecione um bairro';
             defaultOption.value = '';
-            selecaoQt.appendChild(defaultOption);
-            
-            Array.from(qtsUnicos).sort().forEach(qt => {
+            selecaoBairro.appendChild(defaultOption);
+
+            Array.from(bairrosUnicos).sort().forEach(bairro => {
                 const option = document.createElement('option');
-                option.textContent = qt;
-                option.value = qt;
-                selecaoQt.appendChild(option);
+                option.textContent = bairro;
+                option.value = bairro;
+                selecaoBairro.appendChild(option);
             });
 
-            labelQt.classList.remove('oculto');
-            selecaoQt.classList.remove('oculto');
+        } catch (error) {
+            console.error('Erro ao buscar o JSON:', error);
+            const option = document.createElement('option');
+            option.textContent = 'Erro ao carregar dados';
+            selecaoBairro.appendChild(option);
         }
-
-        function popularSemanas(bairroSelecionado) {
-            semanasLista.innerHTML = '';
-            
-            const dadosDoBairro = dadosCompletos.filter(item => 
-                item['BAIRRO '].trim() === bairroSelecionado
-            );
-
-            if (dadosDoBairro.length === 0) return;
-
-            const semanas = new Set();
-            dadosDoBairro.forEach(item => {
-                for (const key in item) {
-                    if (key.startsWith('SEMANA ')) {
-                        semanas.add(key.replace('SEMANA ', ''));
-                    }
-                }
-            });
-
-            Array.from(semanas).sort((a, b) => parseInt(a) - parseInt(b)).forEach(semana => {
-                const label = document.createElement('label');
-                label.className = 'semana-item';
-                
-                let somaOvosSemana = 0;
-                dadosDoBairro.forEach(item => {
-                    const valor = parseInt(item[`SEMANA ${semana}`]) || 0;
-                    somaOvosSemana += valor;
-                });
-
-                label.innerHTML = `<input type="checkbox" name="semanas" value="${semana}"> Semana ${semana}: ${somaOvosSemana} ovos`;
-                semanasLista.appendChild(label);
-            });
-        }
+    }
+    
+    function popularQts(bairroSelecionado) {
+        selecaoQt.innerHTML = '';
         
-        function exibirResumoDoBairro(bairroSelecionado) {
-            resumoContainer.classList.add('oculto');
-            totalGeralDiv.innerHTML = '';
-            maximoOvosDiv.innerHTML = '';
-            
-            const dadosDoBairro = dadosCompletos.filter(item => 
-                item['BAIRRO '].trim() === bairroSelecionado
-            );
+        const dadosDoBairro = dadosCompletos.filter(item => 
+            item['BAIRRO '].trim() === bairroSelecionado
+        );
 
-            if (dadosDoBairro.length === 0) {
-                resultadosDetalhadosContainer.classList.add('oculto');
-                return;
-            }
+        if (dadosDoBairro.length === 0) return;
 
-            let somaOvosTotal = 0;
-            let maxOvos = 0;
-            let maxSemana = '';
-            let maxQt = '';
-            
-            dadosDoBairro.forEach(item => {
-                for (const key in item) {
-                    if (key.startsWith('SEMANA ')) {
-                        const valor = parseInt(item[key]) || 0;
-                        somaOvosTotal += valor;
-                        if (valor > maxOvos) {
-                            maxOvos = valor;
-                            maxSemana = key.replace('SEMANA ', '');
-                            maxQt = item['QT'];
-                        }
-                    }
-                }
-            });
-
-            resumoContainer.classList.remove('oculto');
-            resultadosDetalhadosContainer.classList.remove('oculto');
-            totalGeralDiv.innerHTML = `Total Geral do Bairro: ${somaOvosTotal} ovos`;
-            
-            if (maxOvos > 0) {
-                maximoOvosDiv.innerHTML = `Maior valor encontrado: <span class="destaque-qt">${maxOvos} ovos</span> na <br> Semana: <span class="destaque-qt">${maxSemana}</span> - QT: <span class="destaque-qt">${maxQt}</span>`;
-            } else {
-                maximoOvosDiv.innerHTML = `Não há registros de ovos neste bairro.`;
-            }
-        }
-        
-        function exibirDetalhesSemanas() {
-            resultadosDiv.innerHTML = '';
-
-            const bairroSelecionado = selecaoBairro.value;
-            const qtSelecionado = selecaoQt.value;
-            const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
-            
-            if (semanasSelecionadas.length === 0) {
-                return;
-            }
-            
-            let dadosFiltrados = dadosCompletos.filter(item => 
-                item['BAIRRO '].trim() === bairroSelecionado
-            );
-
-            if (qtSelecionado) {
-                dadosFiltrados = dadosFiltrados.filter(item => item['QT'].trim() === qtSelecionado);
-            }
-            
-            let somaTotalSemanasSelecionadas = 0;
-            
-            semanasSelecionadas.forEach(checkbox => {
-                const semanaNumero = checkbox.value;
-                const chaveSemana = `SEMANA ${semanaNumero}`;
-                
-                let somaOvosSemana = 0;
-                const qtsComOvos = [];
-
-                dadosFiltrados.forEach(item => {
-                    const valor = parseInt(item[chaveSemana]) || 0;
-                    somaOvosSemana += valor;
-                    if (valor > 0) {
-                        qtsComOvos.push(item['QT']);
-                    }
-                });
-                
-                // Média de ovos
-                const numArmadilhas = qtsComOvos.length;
-                const mediaOvos = numArmadilhas > 0 ? (somaOvosSemana / numArmadilhas).toFixed(2) : 0;
-                
-                somaTotalSemanasSelecionadas += somaOvosSemana;
-
-                const p = document.createElement('p');
-                let qtTexto = '';
-
-                if (qtsComOvos.length > 0) {
-                    qtTexto = `QT(s): <span class="destaque-qt">${qtsComOvos.join(', ')}</span> - `;
-                }
-                
-                // Aplica a classe de alerta
-                const mediaClass = mediaOvos >= 100 ? 'alerta-alto' : '';
-
-                p.innerHTML = `<strong>Semana ${semanaNumero}:</strong> ${qtTexto}${somaOvosSemana} ovos | Média: <span class="${mediaClass}">${mediaOvos}</span>`;
-                resultadosDiv.appendChild(p);
-            });
-
-            const somaFinal = document.createElement('p');
-            somaFinal.innerHTML = `<strong>Soma Total das Semanas Selecionadas: ${somaTotalSemanasSelecionadas} ovos</strong>`;
-            somaFinal.style.fontWeight = 'bold';
-            somaFinal.style.marginTop = '15px';
-            somaFinal.style.fontSize = '1.1em';
-            resultadosDiv.prepend(somaFinal);
-        }
-        
-        // Eventos que escutam as mudanças
-        selecaoBairro.addEventListener('change', (event) => {
-            const bairroSelecionado = event.target.value;
-            if (bairroSelecionado) {
-                semanasContainer.classList.remove('oculto');
-                popularQts(bairroSelecionado);
-                popularSemanas(bairroSelecionado);
-                exibirResumoDoBairro(bairroSelecionado);
-            } else {
-                semanasContainer.classList.add('oculto');
-                resumoContainer.classList.add('oculto');
-                resultadosDetalhadosContainer.classList.add('oculto');
-                labelQt.classList.add('oculto');
-                selecaoQt.classList.add('oculto');
+        const qtsUnicos = new Set();
+        dadosDoBairro.forEach(item => {
+            if (item['QT']) {
+                qtsUnicos.add(item['QT'].trim());
             }
         });
-        
-        selecaoQt.addEventListener('change', exibirDetalhesSemanas);
-        semanasLista.addEventListener('change', exibirDetalhesSemanas);
 
-        document.addEventListener('DOMContentLoaded', carregarBairros);
-    </script>
+        const defaultOption = document.createElement('option');
+        defaultOption.textContent = 'Todos os QT';
+        defaultOption.value = '';
+        selecaoQt.appendChild(defaultOption);
+        
+        Array.from(qtsUnicos).sort().forEach(qt => {
+            const option = document.createElement('option');
+            option.textContent = qt;
+            option.value = qt;
+            selecaoQt.appendChild(option);
+        });
+
+        labelQt.classList.remove('oculto');
+        selecaoQt.classList.remove('oculto');
+    }
+
+    function popularSemanas(bairroSelecionado) {
+        semanasLista.innerHTML = '';
+        
+        const dadosDoBairro = dadosCompletos.filter(item => 
+            item['BAIRRO '].trim() === bairroSelecionado
+        );
+
+        if (dadosDoBairro.length === 0) return;
+
+        const semanas = new Set();
+        dadosDoBairro.forEach(item => {
+            for (const key in item) {
+                if (key.startsWith('SEMANA ')) {
+                    semanas.add(key.replace('SEMANA ', ''));
+                }
+            }
+        });
+
+        Array.from(semanas).sort((a, b) => parseInt(a) - parseInt(b)).forEach(semana => {
+            const label = document.createElement('label');
+            label.className = 'semana-item';
+            
+            let somaOvosSemana = 0;
+            dadosDoBairro.forEach(item => {
+                const valor = parseInt(item[`SEMANA ${semana}`]) || 0;
+                somaOvosSemana += valor;
+            });
+
+            label.innerHTML = `<input type="checkbox" name="semanas" value="${semana}"> Semana ${semana}: ${somaOvosSemana} ovos`;
+            semanasLista.appendChild(label);
+        });
+    }
+    
+    function exibirResumoDoBairro(bairroSelecionado) {
+        resumoContainer.classList.add('oculto');
+        totalGeralDiv.innerHTML = '';
+        maximoOvosDiv.innerHTML = '';
+        
+        const dadosDoBairro = dadosCompletos.filter(item => 
+            item['BAIRRO '].trim() === bairroSelecionado
+        );
+
+        if (dadosDoBairro.length === 0) {
+            resultadosDetalhadosContainer.classList.add('oculto');
+            return;
+        }
+
+        let somaOvosTotal = 0;
+        let maxOvos = 0;
+        let maxSemana = '';
+        let maxQt = '';
+        
+        dadosDoBairro.forEach(item => {
+            for (const key in item) {
+                if (key.startsWith('SEMANA ')) {
+                    const valor = parseInt(item[key]) || 0;
+                    somaOvosTotal += valor;
+                    if (valor > maxOvos) {
+                        maxOvos = valor;
+                        maxSemana = key.replace('SEMANA ', '');
+                        maxQt = item['QT'];
+                    }
+                }
+            }
+        });
+
+        resumoContainer.classList.remove('oculto');
+        resultadosDetalhadosContainer.classList.remove('oculto');
+        totalGeralDiv.innerHTML = `Total Geral do Bairro: ${somaOvosTotal} ovos`;
+        
+        if (maxOvos > 0) {
+            maximoOvosDiv.innerHTML = `Maior valor encontrado: <span class="destaque-qt">${maxOvos} ovos</span> na <br> Semana: <span class="destaque-qt">${maxSemana}</span> - QT: <span class="destaque-qt">${maxQt}</span>`;
+        } else {
+            maximoOvosDiv.innerHTML = `Não há registros de ovos neste bairro.`;
+        }
+    }
+    
+    function exibirDetalhesSemanas() {
+        resultadosDiv.innerHTML = '';
+
+        const bairroSelecionado = selecaoBairro.value;
+        const qtSelecionado = selecaoQt.value;
+        const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
+        
+        if (semanasSelecionadas.length === 0) {
+            return;
+        }
+        
+        let dadosFiltrados = dadosCompletos.filter(item => 
+            item['BAIRRO '].trim() === bairroSelecionado
+        );
+
+        if (qtSelecionado) {
+            dadosFiltrados = dadosFiltrados.filter(item => item['QT'].trim() === qtSelecionado);
+        }
+        
+        let somaTotalSemanasSelecionadas = 0;
+        
+        semanasSelecionadas.forEach(checkbox => {
+            const semanaNumero = checkbox.value;
+            const chaveSemana = `SEMANA ${semanaNumero}`;
+            
+            let somaOvosSemana = 0;
+            const qtsComOvos = [];
+
+            dadosFiltrados.forEach(item => {
+                const valor = parseInt(item[chaveSemana]) || 0;
+                somaOvosSemana += valor;
+                if (valor > 0) {
+                    qtsComOvos.push(item['QT']);
+                }
+            });
+            
+            somaTotalSemanasSelecionadas += somaOvosSemana;
+
+            const p = document.createElement('p');
+            let qtTexto = '';
+
+            if (qtsComOvos.length > 0) {
+                qtTexto = `QT(s): <span class="destaque-qt">${qtsComOvos.join(', ')}</span> - `;
+            }
+            
+            // Aplica a classe de alerta se a soma de ovos for >= 100
+            const somaClass = somaOvosSemana >= 100 ? 'alerta-alto' : '';
+
+            p.innerHTML = `<strong>Semana ${semanaNumero}:</strong> ${qtTexto}<span class="${somaClass}">${somaOvosSemana} ovos</span>`;
+            resultadosDiv.appendChild(p);
+        });
+
+        const somaFinal = document.createElement('p');
+        somaFinal.innerHTML = `<strong>Soma Total das Semanas Selecionadas: ${somaTotalSemanasSelecionadas} ovos</strong>`;
+        somaFinal.style.fontWeight = 'bold';
+        somaFinal.style.marginTop = '15px';
+        somaFinal.style.fontSize = '1.1em';
+        resultadosDiv.prepend(somaFinal);
+    }
+    
+    // Eventos que escutam as mudanças
+    selecaoBairro.addEventListener('change', (event) => {
+        const bairroSelecionado = event.target.value;
+        if (bairroSelecionado) {
+            semanasContainer.classList.remove('oculto');
+            popularQts(bairroSelecionado);
+            popularSemanas(bairroSelecionado);
+            exibirResumoDoBairro(bairroSelecionado);
+        } else {
+            semanasContainer.classList.add('oculto');
+            resumoContainer.classList.add('oculto');
+            resultadosDetalhadosContainer.classList.add('oculto');
+            labelQt.classList.add('oculto');
+            selecaoQt.classList.add('oculto');
+        }
+    });
+    
+    selecaoQt.addEventListener('change', exibirDetalhesSemanas);
+    semanasLista.addEventListener('change', exibirDetalhesSemanas);
+
+    document.addEventListener('DOMContentLoaded', carregarBairros);
+</script>
 </body>
 </html>
+
 
 
 
