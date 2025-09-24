@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIRAa</title>
+    <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilos CSS do seu projeto */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #1a1a2e;
+            --primary-color: #00b4d8;
+            --secondary-color: #89b4f0;
+            --text-color: #e0e0e0;
+            --card-bg: #21213e;
+            --border-color: #3e4a61;
+            --input-bg: #111122;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .box h1, .box h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-shadow: 0 0 3px var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .select-bairro {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        .resultados-liraa p {
+            margin-bottom: 10px;
+        }
+        
+        .resultados-liraa strong {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <h1>Dados LIRAa</h1>
+            
+            <label for="selecaoBairro">Selecione o Bairro:</label>
+            <select id="selecaoBairro" class="select-bairro"></select>
+            
+            <div id="resultadosContainer" class="oculto box">
+                <h3>Resultados do Bairro</h3>
+                <div id="resultadosLiraa" class="resultados-liraa"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlDoJson = 'LIRAa 2025.json';
+        const selecaoBairro = document.getElementById('selecaoBairro');
+        const resultadosContainer = document.getElementById('resultadosContainer');
+        const resultadosLiraa = document.getElementById('resultadosLiraa');
+        
+        let dadosCompletos = [];
+
+        async function carregarBairros() {
+            try {
+                const response = await fetch(urlDoJson);
+                if (!response.ok) {
+                    throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
+                }
+                dadosCompletos = await response.json();
+
+                const bairrosUnicos = new Set();
+                dadosCompletos.forEach(item => {
+                    if (item['BAIRRO']) {
+                        bairrosUnicos.add(item['BAIRRO'].trim());
+                    }
+                });
+
+                const defaultOption = document.createElement('option');
+                defaultOption.textContent = 'Selecione um bairro';
+                defaultOption.value = '';
+                selecaoBairro.appendChild(defaultOption);
+
+                Array.from(bairrosUnicos).sort().forEach(bairro => {
+                    const option = document.createElement('option');
+                    option.textContent = bairro;
+                    option.value = bairro;
+                    selecaoBairro.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Erro ao buscar o JSON:', error);
+                const option = document.createElement('option');
+                option.textContent = 'Erro ao carregar dados';
+                selecaoBairro.appendChild(option);
+            }
+        }
+
+        function exibirResultados(bairroSelecionado) {
+            resultadosLiraa.innerHTML = '';
+            resultadosContainer.classList.add('oculto');
+            
+            if (!bairroSelecionado) return;
+
+            const dadosDoBairro = dadosCompletos.filter(item => 
+                item['BAIRRO'].trim() === bairroSelecionado
+            );
+
+            if (dadosDoBairro.length === 0) {
+                resultadosLiraa.innerHTML = '<p>Nenhum dado encontrado para este bairro.</p>';
+                resultadosContainer.classList.remove('oculto');
+                return;
+            }
+            
+            let resultadoTexto = '';
+            dadosDoBairro.forEach(item => {
+                resultadoTexto += `
+                    <p><strong>BAIRRO:</strong> ${item['BAIRRO']}</p>
+                    <p><strong>ANO:</strong> ${item['ANO ']}</p>
+                    <p><strong>LIRA 1 QT:</strong> ${item['LIRA 1 QT']}</p>
+                    <p><strong>LIRA 2 QT:</strong> ${item['LIRA 2 QT']}</p>
+                    <p><strong>LIRA 3 QT:</strong> ${item['LIRA 3 QT']}</p>
+                    <p><strong>LIRA 4 QT:</strong> ${item['LIRA 4 QT']}</p>
+                    <p><strong>IIP 1 LIRAa:</strong> ${item['IIP 1 LIRAa ']}</p>
+                    <p><strong>IIP 2 LIRAa:</strong> ${item['IIP 2 LIRAa ']}</p>
+                    <p><strong>IIP 3 LIRAa:</strong> ${item['IIP 3 LIRAa ']}</p>
+                    <p><strong>IIP 4 LIRAa:</strong> ${item['IIP 4 LIRAa ']}</p>
+                    <hr style="border-color: var(--border-color); margin: 15px 0;">
+                `;
+            });
+
+            resultadosLiraa.innerHTML = resultadoTexto;
+            resultadosContainer.classList.remove('oculto');
+        }
+
+        selecaoBairro.addEventListener('change', (event) => {
+            exibirResultados(event.target.value);
+        });
+
+        document.addEventListener('DOMContentLoaded', carregarBairros);
+    </script>
+</body>
+</html>
