@@ -153,7 +153,7 @@
             }
         }
 
-         function exibirResultados(bairroSelecionado, filtroSelecionado) {
+     function exibirResultados(bairroSelecionado, filtroSelecionado) {
             resultadosLiraa.innerHTML = '';
             resultadosContainer.classList.add('oculto');
             
@@ -170,6 +170,28 @@
                 resultadosContainer.classList.remove('oculto');
                 return;
             }
+            
+            let resultadoTexto = '';
+            dadosDoBairro.forEach(item => {
+                // CORREÇÃO AQUI: Chave agora corresponde exatamente ao JSON.
+                const LIRAaQtKey = `${filtroSelecionado} QT`;
+                const IIPLIRAaKey = `IIP ${filtroSelecionado} LIRAa `;
+
+                const qtValue = item[LIRAaQtKey];
+                const iipValue = item[IIPLIRAaKey];
+
+                resultadoTexto += `
+                    <p><strong>BAIRRO:</strong> ${item['BAIRRO']}</p>
+                    <p><strong>ANO:</strong> ${item['ANO ']}</p>
+                    <p><strong>${filtroSelecionado} QT:</strong> ${qtValue}</p>
+                    <p><strong>IIP ${filtroSelecionado} LIRAa:</strong> ${iipValue}</p>
+                    <hr style="border-color: var(--border-color); margin: 15px 0;">
+                `;
+            });
+
+            resultadosLiraa.innerHTML = resultadoTexto;
+            resultadosContainer.classList.remove('oculto');
+        }
             
             let resultadoTexto = '';
             dadosDoBairro.forEach(item => {
@@ -243,4 +265,5 @@
     </script>
 </body>
 </html>
+
 
