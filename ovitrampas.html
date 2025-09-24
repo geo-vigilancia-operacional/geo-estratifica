@@ -19,6 +19,7 @@
             --text-color: #e0e0e0;
             --card-bg: #21213e;
             --border-color: #3e4a61;
+            --input-bg: #111122; /* Novo */
         }
 
         body {
@@ -70,11 +71,27 @@
             display: none;
         }
 
+        /* ESTILOS ADICIONADOS PARA A SELEÇÃO DE QUADRAS */
         .semana-item {
-            display: flex;
-            align-items: center;
+            display: block; /* Para que cada checkbox ocupe uma linha */
             margin-bottom: 8px;
             cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: transparent; /* Fundo transparente para harmonia */
+            transition: background-color 0.2s ease;
+        }
+
+        .semana-item:hover {
+            background-color: rgba(255, 255, 255, 0.05); /* Escurece no hover */
+        }
+        
+        .semana-item input[type="checkbox"] {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            margin-right: 10px; /* Adiciona espaçamento entre o checkbox e o texto */
+            vertical-align: middle;
         }
 
         /* Classes de alerta para a média de ovos */
@@ -106,8 +123,8 @@
                 <div id="totalGeral" class="total-ovos"></div>
                 <div id="maximoOvos"></div>
             </div>
-
-            <div id="semanasContainer" class="oculto">
+            
+            <div id="semanasContainer" class="oculto box">
                 <label>Selecione a(s) Semana(s):</label>
                 <div id="semanasLista"></div>
             </div>
@@ -363,7 +380,6 @@
     </script>
 </body>
 </html>
-
 
 
 
