@@ -3,139 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dados de Ovitrampas</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-
-    <style>
-/* Estilos para ter a mesma aparência da sua página principal */
-:root {
-    --bg-color: #1a1a2e;
-    --text-color: #e0e0e0;
-    --card-bg: #21213e;
-    --border-color: #3e4a61;
-    --primary-color: #00b4d8;
-    --warning-color: #ff9800; /* Laranja para a soma total */
-}
-
-body {
-    font-family: sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.6;
-    padding: 10px;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-.box {
-    background: var(--card-bg);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    padding: 25px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
-}
-
-.oculto {
-    display: none;
-}
-
-.box select, .box .select-bairro {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1em;
-    background-color: #111122;
-    color: var(--text-color);
-    cursor: pointer;
-}
-
-.box h1 {
-    color: var(--primary-color);
-}
-
-.box h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.3em;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-/* Estilo para a nova lista de checkboxes */
-#semanasLista {
-    margin-bottom: 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px;
-    background-color: #111122;
-}
-
-.semana-item {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 1em;
-}
-
-.semana-item input[type="checkbox"] {
-    margin-right: 10px;
-}
-
-/* Estilo para a área de resultados */
-#resumo-container, #resultados-detalhados-container, #grafico-container {
-    margin-top: 20px;
-    padding: 15px;
-    background: var(--card-bg);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-/* Estilo para o container do gráfico, agora com altura máxima e barra de rolagem */
-#grafico-container {
-    max-height: 500px;
-    overflow-y: auto;
-    position: relative;
-}
-#graficoOvos {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-.total-ovos {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: var(--warning-color);
-    margin-top: 10px;
-}
-
-/* Estilo para destacar o número do QT */
-.destaque-qt {
-    font-weight: bold;
-    color: #ff6b6b;
-    margin-right: 5px;
-}
-
-/* Estilo para o resultado de valor máximo */
-#maximo-ovos {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px dashed var(--border-color);
-    font-size: 1em;
-    font-weight: bold;
-    color: var(--primary-color);
-}
-    </style>
-</head>
+    <title>Ovitrampas</title>
+    </head>
 <body>
-
     <div class="container">
         <div class="box">
             <h1>Dados de Ovitrampas</h1>
@@ -158,10 +28,10 @@ body {
                 <h3>Resultados</h3>
                 <div id="resultados"></div>
             </div>
-             <script>
-        // NOVO: Registra o plugin de rótulos de dados
-        Chart.register(ChartDataLabels);
+        </div>
+    </div>
 
+    <script>
         const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
         const selecaoBairro = document.getElementById('selecaoBairro');
         const semanasContainer = document.getElementById('semanasContainer');
@@ -171,11 +41,8 @@ body {
         const maximoOvosDiv = document.getElementById('maximoOvos');
         const resultadosDetalhadosContainer = document.getElementById('resultados-detalhados-container');
         const resultadosDiv = document.getElementById('resultados');
-        const graficoContainer = document.getElementById('grafico-container');
-        const canvasGrafico = document.getElementById('graficoOvos');
         
         let dadosCompletos = [];
-        let graficoInstance;
 
         async function carregarBairros() {
             try {
@@ -254,7 +121,6 @@ body {
 
             if (dadosDoBairro.length === 0) {
                 resultadosDetalhadosContainer.classList.add('oculto');
-                graficoContainer.classList.add('oculto');
                 return;
             }
 
@@ -294,16 +160,10 @@ body {
             const bairroSelecionado = selecaoBairro.value;
             const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
             
-            const labelsGrafico = [];
-            const dadosGrafico = [];
-
             if (semanasSelecionadas.length === 0) {
-                graficoContainer.classList.add('oculto');
                 return;
             }
             
-            graficoContainer.classList.remove('oculto');
-
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
             );
@@ -327,9 +187,6 @@ body {
 
                 somaTotalSemanasSelecionadas += somaOvosSemana;
 
-                labelsGrafico.push(`Semana ${semanaNumero}`);
-                dadosGrafico.push(somaOvosSemana);
-
                 const p = document.createElement('p');
                 let qtTexto = '';
 
@@ -347,8 +204,6 @@ body {
             somaFinal.style.marginTop = '15px';
             somaFinal.style.fontSize = '1.1em';
             resultadosDiv.prepend(somaFinal);
-            
-            atualizarGrafico(labelsGrafico, dadosGrafico, somaTotalSemanasSelecionadas);
         }
         
         // Eventos que escutam as mudanças
@@ -358,12 +213,10 @@ body {
                 semanasContainer.classList.remove('oculto');
                 popularSemanas(bairroSelecionado);
                 exibirResumoDoBairro(bairroSelecionado);
-                graficoContainer.classList.add('oculto');
             } else {
                 semanasContainer.classList.add('oculto');
                 resumoContainer.classList.add('oculto');
                 resultadosDetalhadosContainer.classList.add('oculto');
-                graficoContainer.classList.add('oculto');
             }
         });
 
@@ -371,10 +224,8 @@ body {
 
         document.addEventListener('DOMContentLoaded', carregarBairros);
     </script>
-
 </body>
 </html>
-
 
 
 
