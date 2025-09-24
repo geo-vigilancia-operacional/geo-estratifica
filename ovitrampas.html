@@ -4,7 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ovitrampas</title>
-    </head>
+    <style>
+        /* Estilos básicos (mantidos do seu projeto) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #1a1a2e;
+            --primary-color: #00b4d8;
+            --secondary-color: #89b4f0;
+            --text-color: #e0e0e0;
+            --card-bg: #21213e;
+            --border-color: #3e4a61;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .box h1, .box h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-shadow: 0 0 3px var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Estilos do formulário e resultados */
+        .select-bairro, .select-qt {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        .semana-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        /* Classes de alerta para a média de ovos */
+        .alerta-alto {
+            color: #ff4d4d; /* Vermelho forte */
+            font-weight: bold;
+        }
+        
+        .destaque-qt {
+            color: #00b4d8; /* Cor de destaque */
+            font-weight: bold;
+        }
+
+    </style>
+</head>
 <body>
     <div class="container">
         <div class="box">
@@ -13,6 +98,9 @@
             <label for="selecaoBairro">Selecione o Bairro:</label>
             <select id="selecaoBairro" class="select-bairro"></select>
             
+            <label for="selecaoQt" id="labelQt" class="oculto">Selecione o QT:</label>
+            <select id="selecaoQt" class="select-qt oculto"></select>
+
             <div id="resumo-container" class="oculto">
                 <h3>Resumo do Bairro</h3>
                 <div id="totalGeral" class="total-ovos"></div>
@@ -34,6 +122,8 @@
     <script>
         const urlDoJson = 'ACOMPANHAMENTO_OVITRAMPAS.json';
         const selecaoBairro = document.getElementById('selecaoBairro');
+        const selecaoQt = document.getElementById('selecaoQt');
+        const labelQt = document.getElementById('labelQt');
         const semanasContainer = document.getElementById('semanasContainer');
         const semanasLista = document.getElementById('semanasLista');
         const resumoContainer = document.getElementById('resumo-container');
@@ -75,6 +165,38 @@
                 selecaoBairro.appendChild(option);
             }
         }
+        
+        function popularQts(bairroSelecionado) {
+            selecaoQt.innerHTML = '';
+            
+            const dadosDoBairro = dadosCompletos.filter(item => 
+                item['BAIRRO '].trim() === bairroSelecionado
+            );
+
+            if (dadosDoBairro.length === 0) return;
+
+            const qtsUnicos = new Set();
+            dadosDoBairro.forEach(item => {
+                if (item['QT']) {
+                    qtsUnicos.add(item['QT'].trim());
+                }
+            });
+
+            const defaultOption = document.createElement('option');
+            defaultOption.textContent = 'Todos os QT';
+            defaultOption.value = '';
+            selecaoQt.appendChild(defaultOption);
+            
+            Array.from(qtsUnicos).sort().forEach(qt => {
+                const option = document.createElement('option');
+                option.textContent = qt;
+                option.value = qt;
+                selecaoQt.appendChild(option);
+            });
+
+            labelQt.classList.remove('oculto');
+            selecaoQt.classList.remove('oculto');
+        }
 
         function popularSemanas(bairroSelecionado) {
             semanasLista.innerHTML = '';
@@ -113,7 +235,6 @@
             resumoContainer.classList.add('oculto');
             totalGeralDiv.innerHTML = '';
             maximoOvosDiv.innerHTML = '';
-            resultadosDiv.innerHTML = '';
             
             const dadosDoBairro = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
@@ -158,15 +279,20 @@
             resultadosDiv.innerHTML = '';
 
             const bairroSelecionado = selecaoBairro.value;
+            const qtSelecionado = selecaoQt.value;
             const semanasSelecionadas = Array.from(document.querySelectorAll('#semanasLista input[type="checkbox"]:checked'));
             
             if (semanasSelecionadas.length === 0) {
                 return;
             }
             
-            const dadosDoBairro = dadosCompletos.filter(item => 
+            let dadosFiltrados = dadosCompletos.filter(item => 
                 item['BAIRRO '].trim() === bairroSelecionado
             );
+
+            if (qtSelecionado) {
+                dadosFiltrados = dadosFiltrados.filter(item => item['QT'].trim() === qtSelecionado);
+            }
             
             let somaTotalSemanasSelecionadas = 0;
             
@@ -177,14 +303,18 @@
                 let somaOvosSemana = 0;
                 const qtsComOvos = [];
 
-                dadosDoBairro.forEach(item => {
+                dadosFiltrados.forEach(item => {
                     const valor = parseInt(item[chaveSemana]) || 0;
                     somaOvosSemana += valor;
                     if (valor > 0) {
                         qtsComOvos.push(item['QT']);
                     }
                 });
-
+                
+                // Média de ovos
+                const numArmadilhas = qtsComOvos.length;
+                const mediaOvos = numArmadilhas > 0 ? (somaOvosSemana / numArmadilhas).toFixed(2) : 0;
+                
                 somaTotalSemanasSelecionadas += somaOvosSemana;
 
                 const p = document.createElement('p');
@@ -193,8 +323,11 @@
                 if (qtsComOvos.length > 0) {
                     qtTexto = `QT(s): <span class="destaque-qt">${qtsComOvos.join(', ')}</span> - `;
                 }
+                
+                // Aplica a classe de alerta
+                const mediaClass = mediaOvos >= 100 ? 'alerta-alto' : '';
 
-                p.innerHTML = `<strong>Semana ${semanaNumero}:</strong> ${qtTexto}${somaOvosSemana} ovos`;
+                p.innerHTML = `<strong>Semana ${semanaNumero}:</strong> ${qtTexto}${somaOvosSemana} ovos | Média: <span class="${mediaClass}">${mediaOvos}</span>`;
                 resultadosDiv.appendChild(p);
             });
 
@@ -211,24 +344,25 @@
             const bairroSelecionado = event.target.value;
             if (bairroSelecionado) {
                 semanasContainer.classList.remove('oculto');
+                popularQts(bairroSelecionado);
                 popularSemanas(bairroSelecionado);
                 exibirResumoDoBairro(bairroSelecionado);
             } else {
                 semanasContainer.classList.add('oculto');
                 resumoContainer.classList.add('oculto');
                 resultadosDetalhadosContainer.classList.add('oculto');
+                labelQt.classList.add('oculto');
+                selecaoQt.classList.add('oculto');
             }
         });
-
+        
+        selecaoQt.addEventListener('change', exibirDetalhesSemanas);
         semanasLista.addEventListener('change', exibirDetalhesSemanas);
 
         document.addEventListener('DOMContentLoaded', carregarBairros);
     </script>
 </body>
 </html>
-
-
-
 
 
 
