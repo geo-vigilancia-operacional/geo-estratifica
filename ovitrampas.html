@@ -359,74 +359,6 @@ body {
             atualizarGrafico(labelsGrafico, dadosGrafico, somaTotalSemanasSelecionadas);
         }
         
-        function atualizarGrafico(labels, data, somaTotal) {
-            if (graficoInstance) {
-                graficoInstance.destroy();
-            }
-
-            const ctx = canvasGrafico.getContext('2d');
-            graficoInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Ovos Coletados',
-                        data: data,
-                        backgroundColor: 'rgba(0, 180, 216, 0.6)',
-                        borderColor: 'rgba(0, 180, 216, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            ticks: {
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                // NOVO: Aumenta o tamanho da fonte e coloca em negrito para os nomes das semanas
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                // NOVO: Aumenta o tamanho da fonte e coloca em negrito para a legenda
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            }
-                        },
-                        datalabels: {
-                            color: '#fff',
-                            formatter: (value) => {
-                                const porcentagem = (value / somaTotal) * 100;
-                                return `${porcentagem.toFixed(1)}%`;
-                            },
-                            font: {
-                                // NOVO: Aumenta o tamanho da fonte e coloca em negrito para as porcentagens
-                                size: 12,
-                                weight: 'bold'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
         // Eventos que escutam as mudanças
         selecaoBairro.addEventListener('change', (event) => {
             const bairroSelecionado = event.target.value;
@@ -450,6 +382,7 @@ body {
 
 </body>
 </html>
+
 
 
 
