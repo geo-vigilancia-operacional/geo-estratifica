@@ -82,6 +82,14 @@
         .resultados-liraa strong {
             color: var(--primary-color);
         }
+
+        .resultado-item {
+            background-color: var(--input-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -102,7 +110,7 @@
             </select>
             
             <div id="resultadosContainer" class="oculto box">
-                <h3>Resultados do Bairro</h3>
+                <h3>Resultados Detalhados</h3>
                 <div id="resultadosLiraa" class="resultados-liraa"></div>
             </div>
         </div>
@@ -172,6 +180,7 @@
             }
             
             let resultadoTexto = '';
+            
             dadosDoBairro.forEach(item => {
                 const LIRAaQtKey = `${filtroSelecionado} QT`;
                 const IIPLIRAaKey = `IIP ${filtroSelecionado} LIRAa `;
@@ -179,16 +188,24 @@
                 const qtValue = item[LIRAaQtKey];
                 const iipValue = item[IIPLIRAaKey];
 
-                resultadoTexto += `
-                    <p><strong>BAIRRO:</strong> ${item['BAIRRO']}</p>
-                    <p><strong>ANO:</strong> ${item['ANO ']}</p>
-                    <p><strong>${filtroSelecionado} QT:</strong> ${qtValue}</p>
-                    <p><strong>IIP ${filtroSelecionado} LIRAa:</strong> ${iipValue}</p>
-                    <hr style="border-color: var(--border-color); margin: 15px 0;">
-                `;
+                // Somente exibe o registro se houver valor para o tipo de LIRAa selecionado
+                if (qtValue !== undefined && iipValue !== undefined) {
+                     resultadoTexto += `
+                        <div class="resultado-item">
+                            <p><strong>BAIRRO:</strong> ${item['BAIRRO']}</p>
+                            <p><strong>IIP LIRAa:</strong> ${iipValue}</p>
+                            <p><strong>${filtroSelecionado} QT:</strong> ${qtValue}</p>
+                        </div>
+                    `;
+                }
             });
+            
+            if (resultadoTexto === '') {
+                 resultadosLiraa.innerHTML = `<p>Nenhum registro de ${filtroSelecionado} encontrado neste bairro.</p>`;
+            } else {
+                resultadosLiraa.innerHTML = resultadoTexto;
+            }
 
-            resultadosLiraa.innerHTML = resultadoTexto;
             resultadosContainer.classList.remove('oculto');
         }
 
@@ -197,8 +214,7 @@
             if (bairroSelecionado) {
                 labelFiltro.classList.remove('oculto');
                 selecaoFiltro.classList.remove('oculto');
-                // Limpa os resultados e o filtro ao mudar de bairro
-                selecaoFiltro.value = '';
+                selecaoFiltro.value = ''; // Limpa a seleção do filtro
                 resultadosLiraa.innerHTML = '';
                 resultadosContainer.classList.add('oculto');
             } else {
@@ -220,4 +236,5 @@
     </script>
 </body>
 </html>
+
 
