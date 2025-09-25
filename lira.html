@@ -161,7 +161,7 @@
             }
         }
 
-      function exibirResultados(bairroSelecionado, filtroSelecionado) {
+        function exibirResultados(bairroSelecionado, filtroSelecionado) {
             resultadosLiraa.innerHTML = '';
             resultadosContainer.classList.add('oculto');
             
@@ -180,43 +180,55 @@
             }
             
             let resultadoTexto = '';
-            
-            // Extrai o número da string "LIRA 1", "LIRA 2", etc.
             const numeroLira = filtroSelecionado.split(' ')[1];
+            const valoresAgrupados = {};
+            let encontrouRegistros = false;
 
             dadosDoBairro.forEach(item => {
-                // Monta as chaves do JSON com o número extraído
                 const LIRAaQtKey = `${filtroSelecionado} QT`;
                 const IIPLIRAaKey = `IIP ${numeroLira} LIRAa `;
 
                 const qtValue = item[LIRAaQtKey];
                 const iipValue = item[IIPLIRAaKey];
 
-                if (qtValue !== undefined && iipValue !== undefined) {
-                     resultadoTexto += `
-                        <div class="resultado-item">
-                            <p><strong>BAIRRO:</strong> ${item['BAIRRO']}</p>
-                            <p><strong>IIP LIRAa:</strong> ${iipValue}</p>
-                            <p><strong>${filtroSelecionado} QT:</strong> ${qtValue}</p>
-                        </div>
-                    `;
+                const qtAsNumber = parseInt(qtValue);
+
+                // Mostra somente registros com valores > 0
+                if (qtValue !== undefined && iipValue !== undefined && qtValue !== "0") {
+                    encontrouRegistros = true;
+                    // Agrupa e conta os valores
+                    if (valoresAgrupados[qtValue]) {
+                        valoresAgrupados[qtValue]++;
+                    } else {
+                        valoresAgrupados[qtValue] = 1;
+                    }
                 }
             });
-            
-            if (resultadoTexto === '') {
+
+            if (!encontrouRegistros) {
                  resultadosLiraa.innerHTML = `<p>Nenhum registro de ${filtroSelecionado} encontrado neste bairro.</p>`;
             } else {
-                resultadosLiraa.innerHTML = resultadoTexto;
+                let resumoTexto = '<p><strong>Resumo dos valores encontrados:</strong></p><ul>';
+                for (const valor in valoresAgrupados) {
+                    resumoTexto += `<li>${valor} - ${valoresAgrupados[valor]} registro(s)</li>`;
+                }
+                resumoTexto += '</ul>';
+                resultadosLiraa.innerHTML = resumoTexto;
+
+                // Aqui você pode adicionar a exibição dos registros detalhados se desejar.
+                // Exemplo:
+                // dadosDoBairro.forEach(item => { ... criar HTML para cada item ...});
             }
 
             resultadosContainer.classList.remove('oculto');
         }
+
         selecaoBairro.addEventListener('change', (event) => {
             const bairroSelecionado = event.target.value;
             if (bairroSelecionado) {
                 labelFiltro.classList.remove('oculto');
                 selecaoFiltro.classList.remove('oculto');
-                selecaoFiltro.value = ''; // Limpa a seleção do filtro
+                selecaoFiltro.value = '';
                 resultadosLiraa.innerHTML = '';
                 resultadosContainer.classList.add('oculto');
             } else {
@@ -238,6 +250,7 @@
     </script>
 </body>
 </html>
+
 
 
 
