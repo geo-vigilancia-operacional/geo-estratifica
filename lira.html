@@ -110,7 +110,7 @@
             </select>
             
             <div id="resultadosContainer" class="oculto box">
-                <h3>Resultados Detalhados</h3>
+                <h3>Resumo de Resultados</h3>
                 <div id="resultadosLiraa" class="resultados-liraa"></div>
             </div>
         </div>
@@ -180,44 +180,36 @@
             }
             
             let resultadoTexto = '';
+            let totalRegistros = 0;
+            let iipValueExibido = null;
+
             const numeroLira = filtroSelecionado.split(' ')[1];
-            const valoresAgrupados = {};
-            let encontrouRegistros = false;
+            const LIRAaQtKey = `${filtroSelecionado} QT`;
+            const IIPLIRAaKey = `IIP ${numeroLira} LIRAa `;
 
             dadosDoBairro.forEach(item => {
-                const LIRAaQtKey = `${filtroSelecionado} QT`;
-                const IIPLIRAaKey = `IIP ${numeroLira} LIRAa `;
-
                 const qtValue = item[LIRAaQtKey];
-                const iipValue = item[IIPLIRAaKey];
-
-                const qtAsNumber = parseInt(qtValue);
-
-                // Mostra somente registros com valores > 0
-                if (qtValue !== undefined && iipValue !== undefined && qtValue !== "0") {
-                    encontrouRegistros = true;
-                    // Agrupa e conta os valores
-                    if (valoresAgrupados[qtValue]) {
-                        valoresAgrupados[qtValue]++;
-                    } else {
-                        valoresAgrupados[qtValue] = 1;
+                
+                if (qtValue !== undefined && qtValue !== "0") {
+                    if (iipValueExibido === null) {
+                        iipValueExibido = item[IIPLIRAaKey];
                     }
+                    totalRegistros++;
+                    resultadoTexto += `<p><strong>${filtroSelecionado} QT:</strong> ${qtValue}</p>`;
                 }
             });
 
-            if (!encontrouRegistros) {
+            if (totalRegistros === 0) {
                  resultadosLiraa.innerHTML = `<p>Nenhum registro de ${filtroSelecionado} encontrado neste bairro.</p>`;
             } else {
-                let resumoTexto = '<p><strong>Resumo dos valores encontrados:</strong></p><ul>';
-                for (const valor in valoresAgrupados) {
-                    resumoTexto += `<li>${valor} - ${valoresAgrupados[valor]} registro(s)</li>`;
-                }
-                resumoTexto += '</ul>';
-                resultadosLiraa.innerHTML = resumoTexto;
-
-                // Aqui você pode adicionar a exibição dos registros detalhados se desejar.
-                // Exemplo:
-                // dadosDoBairro.forEach(item => { ... criar HTML para cada item ...});
+                let htmlFinal = `
+                    <p><strong>BAIRRO:</strong> ${bairroSelecionado}</p>
+                    <p><strong>IIP LIRAa:</strong> ${iipValueExibido}</p>
+                    <p><strong>Total de Registros:</strong> ${totalRegistros}</p>
+                    <hr style="border-color: var(--border-color); margin: 15px 0;">
+                    ${resultadoTexto}
+                `;
+                resultadosLiraa.innerHTML = htmlFinal;
             }
 
             resultadosContainer.classList.remove('oculto');
