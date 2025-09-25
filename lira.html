@@ -161,7 +161,7 @@
             }
         }
 
-        function exibirResultados(bairroSelecionado, filtroSelecionado) {
+      function exibirResultados(bairroSelecionado, filtroSelecionado) {
             resultadosLiraa.innerHTML = '';
             resultadosContainer.classList.add('oculto');
             
@@ -181,14 +181,17 @@
             
             let resultadoTexto = '';
             
+            // Extrai o número da string "LIRA 1", "LIRA 2", etc.
+            const numeroLira = filtroSelecionado.split(' ')[1];
+
             dadosDoBairro.forEach(item => {
+                // Monta as chaves do JSON com o número extraído
                 const LIRAaQtKey = `${filtroSelecionado} QT`;
-                const IIPLIRAaKey = `IIP ${filtroSelecionado} LIRAa `;
+                const IIPLIRAaKey = `IIP ${numeroLira} LIRAa `;
 
                 const qtValue = item[LIRAaQtKey];
                 const iipValue = item[IIPLIRAaKey];
 
-                // Somente exibe o registro se houver valor para o tipo de LIRAa selecionado
                 if (qtValue !== undefined && iipValue !== undefined) {
                      resultadoTexto += `
                         <div class="resultado-item">
@@ -208,7 +211,6 @@
 
             resultadosContainer.classList.remove('oculto');
         }
-
         selecaoBairro.addEventListener('change', (event) => {
             const bairroSelecionado = event.target.value;
             if (bairroSelecionado) {
@@ -236,5 +238,6 @@
     </script>
 </body>
 </html>
+
 
 
