@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Estilos CSS do seu projeto */
+        /* Estilos CSS do seu projeto (Mantidos) */
         * {
             margin: 0;
             padding: 0;
@@ -83,10 +83,10 @@
             color: var(--primary-color);
         }
 
-        /* Novo estilo para as estatísticas - layout em 2 colunas */
+        /* Estilo para as estatísticas - layout em 2 colunas */
         .grid-estatisticas {
             display: grid;
-            grid-template-columns: 1fr; /* Padrão 1 coluna */
+            grid-template-columns: 1fr;
             gap: 15px;
         }
         .grid-estatisticas > div {
@@ -95,7 +95,6 @@
             border-radius: 8px;
             border: 1px solid var(--border-color);
         }
-        /* Responsivo para telas maiores - 2 colunas */
         @media (min-width: 600px) {
             .grid-estatisticas {
                 grid-template-columns: 1fr 1fr; 
@@ -166,7 +165,7 @@
                 dadosLIRAa = await responseLIRAa.json();
                 dadosEstatisticos = await responseEstatisticas.json();
 
-                // Usar dados LIRAa para popular o filtro de bairros (pode usar o de estatísticas também)
+                // Usar dados LIRAa para popular o filtro de bairros
                 const bairrosUnicos = new Set();
                 dadosLIRAa.forEach(item => {
                     if (item['BAIRRO']) {
@@ -194,14 +193,13 @@
             }
         }
 
-        // NOVO: Função para exibir as estatísticas (4 linhas)
+        // Função para exibir as estatísticas (Mantida e Correta)
         function exibirEstatisticas(bairroSelecionado) {
             resultadosEstatisticos.innerHTML = '';
             estatisticasContainer.classList.add('oculto');
             
             if (!bairroSelecionado) return;
 
-            // Encontra a primeira (e única, presumivelmente) entrada para o bairro no JSON de estatísticas
             const dadosDoBairro = dadosEstatisticos.find(item => 
                 item['BAIRRO'].trim() === bairroSelecionado
             );
@@ -222,7 +220,7 @@
 
             let htmlEstatisticas = '';
             chavesMapeadas.forEach(item => {
-                const valor = dadosDoBairro[item.chave] || 'N/A'; // Usa N/A se a chave não existir
+                const valor = dadosDoBairro[item.chave] || 'N/A';
                 htmlEstatisticas += `
                     <div>
                         <p><strong>${item.rotulo}:</strong></p>
@@ -236,7 +234,7 @@
         }
 
 
-        // Função existente para filtro LIRAa (mantida)
+        // Função para filtro LIRAa (REVERTIDA E CORRIGIDA)
         function exibirResultadosLIRAa(bairroSelecionado, filtroSelecionado) {
             resultadosLiraa.innerHTML = '';
             resultadosContainer.classList.add('oculto');
@@ -255,29 +253,31 @@
 
             const numeroLira = filtroSelecionado.split(' ')[1];
             const LIRAaQtKey = `${filtroSelecionado} QT`;
-            const IIPLIRAaKey = `IIP ${numeroLira} LIRAa `;
+            const IIPLIRAaKey = `IIP ${numeroLira} LIRAa `; // Chave corrigida
 
             dadosFiltrados.forEach(item => {
                 const qtValue = item[LIRAaQtKey];
                 
+                // Filtra registros que não são "0" e que existem
                 if (qtValue !== undefined && qtValue !== "0") {
                     if (iipValueExibido === null) {
-                        iipValueExibido = item[IIPLIRAaKey];
+                        iipValueExibido = item[IIPLIRAaKey]; // Captura o IIP apenas na primeira vez
                     }
                     totalRegistros++;
-                    resultadoTexto += `<p>${qtValue}</p>`;
+                    // Gera o HTML simples para cada registro de QT
+                    resultadoTexto += `<p><strong>${filtroSelecionado} QT:</strong> ${qtValue}</p>`;
                 }
             });
 
             if (totalRegistros === 0) {
                  resultadosLiraa.innerHTML = `<p>Nenhum registro de ${filtroSelecionado} encontrado neste bairro.</p>`;
             } else {
+                // Conteúdo final no formato que você aprovou
                 let htmlFinal = `
                     <p><strong>BAIRRO:</strong> ${bairroSelecionado}</p>
                     <p><strong>IIP LIRAa:</strong> ${iipValueExibido}</p>
                     <p><strong>Total de Quarteirões:</strong> ${totalRegistros}</p>
                     <hr style="border-color: var(--border-color); margin: 15px 0;">
-                    <p><strong>Quarteirões por Tipo (${filtroSelecionado}):</strong></p>
                     ${resultadoTexto}
                 `;
                 resultadosLiraa.innerHTML = htmlFinal;
@@ -289,7 +289,6 @@
         selecaoBairro.addEventListener('change', (event) => {
             const bairroSelecionado = event.target.value;
             
-            // 1. Esconder tudo se nenhum bairro for selecionado
             if (!bairroSelecionado) {
                 labelFiltro.classList.add('oculto');
                 selecaoFiltro.classList.add('oculto');
@@ -298,14 +297,13 @@
                 return;
             }
             
-            // 2. Exibir o filtro LIRAa
             labelFiltro.classList.remove('oculto');
             selecaoFiltro.classList.remove('oculto');
-            selecaoFiltro.value = ''; // Limpa a seleção do filtro
+            selecaoFiltro.value = '';
             resultadosLiraa.innerHTML = '';
             resultadosContainer.classList.add('oculto');
             
-            // 3. Exibir as Estatísticas
+            // Exibe as Estatísticas (nova função)
             exibirEstatisticas(bairroSelecionado);
         });
 
@@ -313,7 +311,6 @@
             const bairroSelecionado = selecaoBairro.value;
             const filtroSelecionado = event.target.value;
             if (bairroSelecionado && filtroSelecionado) {
-                // Chama a função LIRAa, que é a mais detalhada
                 exibirResultadosLIRAa(bairroSelecionado, filtroSelecionado);
             } else {
                 resultadosContainer.classList.add('oculto');
