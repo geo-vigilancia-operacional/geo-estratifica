@@ -75,21 +75,33 @@
             display: none;
         }
 
-        .resultados-liraa p {
+        .resultados-liraa p, .resultados-estatisticos p {
             margin-bottom: 10px;
         }
         
-        .resultados-liraa strong {
+        .resultados-liraa strong, .resultados-estatisticos strong {
             color: var(--primary-color);
         }
 
-        .resultado-item {
+        /* Novo estilo para as estatísticas - layout em 2 colunas */
+        .grid-estatisticas {
+            display: grid;
+            grid-template-columns: 1fr; /* Padrão 1 coluna */
+            gap: 15px;
+        }
+        .grid-estatisticas > div {
             background-color: var(--input-bg);
             padding: 15px;
             border-radius: 8px;
-            margin-bottom: 10px;
             border: 1px solid var(--border-color);
         }
+        /* Responsivo para telas maiores - 2 colunas */
+        @media (min-width: 600px) {
+            .grid-estatisticas {
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+        
     </style>
 </head>
 <body>
@@ -99,6 +111,12 @@
             
             <label for="selecaoBairro">Selecione o Bairro:</label>
             <select id="selecaoBairro" class="select-bairro"></select>
+            
+            <div id="estatisticasContainer" class="oculto box">
+                <h3>Metas e Estatísticas do Bairro</h3>
+                <div id="resultadosEstatisticos" class="grid-estatisticas">
+                    </div>
+            </div>
 
             <label for="selecaoFiltro" id="labelFiltro" class="oculto">Selecione o Tipo de LIRAa:</label>
             <select id="selecaoFiltro" class="select-filtro oculto">
@@ -110,32 +128,47 @@
             </select>
             
             <div id="resultadosContainer" class="oculto box">
-                <h3>Resumo de Resultados</h3>
+                <h3>Resumo de Resultados LIRAa</h3>
                 <div id="resultadosLiraa" class="resultados-liraa"></div>
             </div>
         </div>
     </div>
 
     <script>
-        const urlDoJson = 'LIRAa 2025.json';
+        // URLs dos arquivos
+        const urlLIRAa = 'LIRAa 2025.json';
+        const urlEstatisticas = 'bairros_4ciclo_2025.json';
+
+        // Elementos da página
         const selecaoBairro = document.getElementById('selecaoBairro');
         const selecaoFiltro = document.getElementById('selecaoFiltro');
         const labelFiltro = document.getElementById('labelFiltro');
         const resultadosContainer = document.getElementById('resultadosContainer');
         const resultadosLiraa = document.getElementById('resultadosLiraa');
-        
-        let dadosCompletos = [];
+        const estatisticasContainer = document.getElementById('estatisticasContainer');
+        const resultadosEstatisticos = document.getElementById('resultadosEstatisticos');
 
-        async function carregarBairros() {
+        // Variáveis de dados
+        let dadosLIRAa = [];
+        let dadosEstatisticos = [];
+
+        async function carregarDadosIniciais() {
             try {
-                const response = await fetch(urlDoJson);
-                if (!response.ok) {
-                    throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
-                }
-                dadosCompletos = await response.json();
+                // Carregar ambos os arquivos JSON em paralelo
+                const [responseLIRAa, responseEstatisticas] = await Promise.all([
+                    fetch(urlLIRAa),
+                    fetch(urlEstatisticas)
+                ]);
 
+                if (!responseLIRAa.ok) throw new Error(`Erro ao carregar LIRAa: ${responseLIRAa.statusText}`);
+                if (!responseEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas: ${responseEstatisticas.statusText}`);
+
+                dadosLIRAa = await responseLIRAa.json();
+                dadosEstatisticos = await responseEstatisticas.json();
+
+                // Usar dados LIRAa para popular o filtro de bairros (pode usar o de estatísticas também)
                 const bairrosUnicos = new Set();
-                dadosCompletos.forEach(item => {
+                dadosLIRAa.forEach(item => {
                     if (item['BAIRRO']) {
                         bairrosUnicos.add(item['BAIRRO'].trim());
                     }
@@ -154,14 +187,57 @@
                 });
 
             } catch (error) {
-                console.error('Erro ao buscar o JSON:', error);
+                console.error('Erro ao buscar JSONs:', error);
                 const option = document.createElement('option');
                 option.textContent = 'Erro ao carregar dados';
                 selecaoBairro.appendChild(option);
             }
         }
 
-        function exibirResultados(bairroSelecionado, filtroSelecionado) {
+        // NOVO: Função para exibir as estatísticas (4 linhas)
+        function exibirEstatisticas(bairroSelecionado) {
+            resultadosEstatisticos.innerHTML = '';
+            estatisticasContainer.classList.add('oculto');
+            
+            if (!bairroSelecionado) return;
+
+            // Encontra a primeira (e única, presumivelmente) entrada para o bairro no JSON de estatísticas
+            const dadosDoBairro = dadosEstatisticos.find(item => 
+                item['BAIRRO'].trim() === bairroSelecionado
+            );
+
+            if (!dadosDoBairro) {
+                resultadosEstatisticos.innerHTML = '<p>Nenhuma estatística encontrada para este bairro.</p>';
+                estatisticasContainer.classList.remove('oculto');
+                return;
+            }
+
+            // Mapeamento das chaves do JSON para os rótulos solicitados
+            const chavesMapeadas = [
+                { rotulo: "Total de Imóveis / Estrato", chave: "total_imoveis_por_estrato" },
+                { rotulo: "Total de Quarteirões / Estrato", chave: "total_quarteiroes_por_estrato" },
+                { rotulo: "Total de Imóveis à Inspecionar", chave: "total_imoveis_a_inspecionar" },
+                { rotulo: "Total de Quarteirões Sorteados", chave: "total_quarteiroes_sorteados" }
+            ];
+
+            let htmlEstatisticas = '';
+            chavesMapeadas.forEach(item => {
+                const valor = dadosDoBairro[item.chave] || 'N/A'; // Usa N/A se a chave não existir
+                htmlEstatisticas += `
+                    <div>
+                        <p><strong>${item.rotulo}:</strong></p>
+                        <p>${valor}</p>
+                    </div>
+                `;
+            });
+
+            resultadosEstatisticos.innerHTML = htmlEstatisticas;
+            estatisticasContainer.classList.remove('oculto');
+        }
+
+
+        // Função existente para filtro LIRAa (mantida)
+        function exibirResultadosLIRAa(bairroSelecionado, filtroSelecionado) {
             resultadosLiraa.innerHTML = '';
             resultadosContainer.classList.add('oculto');
             
@@ -169,15 +245,9 @@
                 return;
             }
 
-            const dadosDoBairro = dadosCompletos.filter(item => 
+            const dadosFiltrados = dadosLIRAa.filter(item => 
                 item['BAIRRO'].trim() === bairroSelecionado
             );
-
-            if (dadosDoBairro.length === 0) {
-                resultadosLiraa.innerHTML = '<p>Nenhum dado encontrado para este bairro.</p>';
-                resultadosContainer.classList.remove('oculto');
-                return;
-            }
             
             let resultadoTexto = '';
             let totalRegistros = 0;
@@ -187,7 +257,7 @@
             const LIRAaQtKey = `${filtroSelecionado} QT`;
             const IIPLIRAaKey = `IIP ${numeroLira} LIRAa `;
 
-            dadosDoBairro.forEach(item => {
+            dadosFiltrados.forEach(item => {
                 const qtValue = item[LIRAaQtKey];
                 
                 if (qtValue !== undefined && qtValue !== "0") {
@@ -195,7 +265,7 @@
                         iipValueExibido = item[IIPLIRAaKey];
                     }
                     totalRegistros++;
-                    resultadoTexto += `<p><strong>${filtroSelecionado} QT:</strong> ${qtValue}</p>`;
+                    resultadoTexto += `<p>${qtValue}</p>`;
                 }
             });
 
@@ -205,8 +275,9 @@
                 let htmlFinal = `
                     <p><strong>BAIRRO:</strong> ${bairroSelecionado}</p>
                     <p><strong>IIP LIRAa:</strong> ${iipValueExibido}</p>
-                    <p><strong>Total de Registros:</strong> ${totalRegistros}</p>
+                    <p><strong>Total de Quarteirões:</strong> ${totalRegistros}</p>
                     <hr style="border-color: var(--border-color); margin: 15px 0;">
+                    <p><strong>Quarteirões por Tipo (${filtroSelecionado}):</strong></p>
                     ${resultadoTexto}
                 `;
                 resultadosLiraa.innerHTML = htmlFinal;
@@ -217,31 +288,43 @@
 
         selecaoBairro.addEventListener('change', (event) => {
             const bairroSelecionado = event.target.value;
-            if (bairroSelecionado) {
-                labelFiltro.classList.remove('oculto');
-                selecaoFiltro.classList.remove('oculto');
-                selecaoFiltro.value = '';
-                resultadosLiraa.innerHTML = '';
-                resultadosContainer.classList.add('oculto');
-            } else {
+            
+            // 1. Esconder tudo se nenhum bairro for selecionado
+            if (!bairroSelecionado) {
                 labelFiltro.classList.add('oculto');
                 selecaoFiltro.classList.add('oculto');
                 resultadosContainer.classList.add('oculto');
+                estatisticasContainer.classList.add('oculto');
+                return;
             }
+            
+            // 2. Exibir o filtro LIRAa
+            labelFiltro.classList.remove('oculto');
+            selecaoFiltro.classList.remove('oculto');
+            selecaoFiltro.value = ''; // Limpa a seleção do filtro
+            resultadosLiraa.innerHTML = '';
+            resultadosContainer.classList.add('oculto');
+            
+            // 3. Exibir as Estatísticas
+            exibirEstatisticas(bairroSelecionado);
         });
 
         selecaoFiltro.addEventListener('change', (event) => {
             const bairroSelecionado = selecaoBairro.value;
             const filtroSelecionado = event.target.value;
             if (bairroSelecionado && filtroSelecionado) {
-                exibirResultados(bairroSelecionado, filtroSelecionado);
+                // Chama a função LIRAa, que é a mais detalhada
+                exibirResultadosLIRAa(bairroSelecionado, filtroSelecionado);
+            } else {
+                resultadosContainer.classList.add('oculto');
             }
         });
 
-        document.addEventListener('DOMContentLoaded', carregarBairros);
+        document.addEventListener('DOMContentLoaded', carregarDadosIniciais);
     </script>
 </body>
 </html>
+
 
 
 
