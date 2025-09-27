@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Estilos CSS do seu projeto */
+        /* Estilos CSS do seu projeto (mantidos) */
         * {
             margin: 0;
             padding: 0;
@@ -61,7 +61,6 @@
             border-bottom: 1px solid var(--border-color);
         }
         
-        /* Estilo para a nova caixa de seleção e input */
         .select-personalizado, .input-personalizado {
             width: 100%;
             padding: 10px;
@@ -72,7 +71,6 @@
             border-radius: 8px;
         }
 
-        /* Container para os campos de quadras */
         #quadrasContainer {
             margin-top: 30px;
             padding-top: 20px;
@@ -104,7 +102,6 @@
             font-size: 0.9em;
         }
 
-        /* Área de Resultado */
         #resultadoContagem {
             margin-top: 15px;
             padding: 15px;
@@ -125,7 +122,6 @@
             border-top: 1px dashed var(--border-color);
         }
 
-        /* Estilo para as estatísticas - layout em 2 colunas */
         .grid-estatisticas {
             display: grid;
             grid-template-columns: 1fr; 
@@ -195,10 +191,11 @@
     </div>
     
     <script>
+        // Caminhos para os arquivos no GitHub Pages
         const urlEstatisticas = 'bairros_4ciclo_2025.json';
-        // ⚠️ ASSUMIMOS QUE ESTE SEGUNDO JSON TEM CHAVES 'BAIRRO', 'QUADRA' E 'IMOVEIS'
         const urlQuadras = 'quadras_a_inspecionar.json'; 
         
+        // Elementos do DOM
         const selecaoCodigo = document.getElementById('selecaoCodigo');
         const bairroDisplay = document.getElementById('bairroSelecionadoDisplay');
         const tituloEstatisticas = document.getElementById('tituloEstatisticas');
@@ -214,15 +211,15 @@
         let dadosQuadras = []; 
         let bairrosAtuais = []; 
 
-        // 🚨 NOVO MAPEAMENTO DE CHAVES BASEADO NO SEU TRECHO JSON
+        // 💡 Mapeamento de Chaves JSON para o Display
         const METRICAS = {
-            imoveisEstrato: 'TOTAL',             // Mapeado para TOTAL
-            quarteiroesEstrato: 'QT',           // Mapeado para QT
-            imoveisInspecionar: 'R',            // Mapeado para R
-            quarteiroesSorteados: 'C'           // Mapeado para C (Verificar chave correta para Sorteados)
+            imoveisEstrato: 'TOTAL',
+            quarteiroesEstrato: 'QT',
+            imoveisInspecionar: 'R',
+            quarteiroesSorteados: 'C' 
         };
 
-        // MAPEAMENTO DE CÓDIGOS E BAIRROS (MANTIDO CONFORME ÚLTIMA INTERAÇÃO)
+        // Mapeamento de Códigos e Bairros (Manter exatamente como está, a normalização cuidará da comparação)
         const CODIGOS_BAIRROS = {
             '85': ['PARQUE DOIS IRMAOS'],
             '86': ['PARQUE DOIS IRMAOS', 'PASSARÉ'],
@@ -246,16 +243,33 @@
            '104': ['CURIÓ', 'JOSE DE ALENCAR'],
            '105': ['LAGOA REDONDA'],
            '106': ['LAGOA REDONDA', 'SABIAGUABA'],
-           '107': ['EDSON QUEIROZ', 'SAPIRANGA  COITÉ'],
+           '107': ['EDSON QUEIROZ', 'SAPIRANGA COITÉ'],
            '108': ['EDSON QUEIROZ'],
-           '109': ['SAPIRANGA  COITÉ'],
+           '109': ['SAPIRANGA COITÉ'],
            '110': ['CAMBEBA', 'PARQUE IRACEMA', 'PARQUE MANIBURA', 'CIDADE DOS FUNCIONÁRIOS'],
            '111': ['AEROLÂNDIA', 'CIDADE DOS FUNCIONÁRIOS', 'JARDIM DAS OLIVEIRAS'],
            '112': ['JARDIM DAS OLIVEIRAS'],
            '113': ['AEROLÂNDIA', 'ALTO DA BALANÇA']
         };
 
-        // Função para carregar os dois JSONs
+        // 💡 NOVA FUNÇÃO: NORMALIZAÇÃO ROBUSTA DE STRINGS
+        // Remove acentos, caracteres especiais, múltiplos espaços e converte para maiúsculas.
+        function normalizarString(str) {
+            if (typeof str !== 'string') return '';
+            // 1. Remove acentos
+            // 2. Remove caracteres não alfanuméricos e não espaços
+            // 3. Remove múltiplos espaços
+            // 4. Converte para maiúsculas
+            return str
+                .normalize('NFD') // Decompõe em letra + acento
+                .replace(/[\u0300-\u036f]/g, "") // Remove os acentos
+                .replace(/[^a-zA-Z0-9\s]/g, "") // Remove pontuações
+                .replace(/\s+/g, ' ') // Substitui múltiplos espaços por um único
+                .trim()
+                .toUpperCase();
+        }
+
+        // Função para carregar os dois JSONs (mantida)
         async function carregarDados() {
             try {
                 const [resEstatisticas, resQuadras] = await Promise.all([
@@ -264,13 +278,17 @@
                 ]);
 
                 if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas (${urlEstatisticas}): ${resEstatisticas.statusText}`);
-                if (!resQuadras.ok) throw new Error(`Erro ao carregar Quadras (${urlQuadras}): ${resQuadras.statusText}`);
+                // Não falha se o quadras.json não for encontrado (apenas lança erro)
+                if (!resQuadras.ok) {
+                    console.warn(`Aviso: O arquivo de quadras (${urlQuadras}) não foi encontrado ou falhou ao carregar. O cálculo de quadras não funcionará.`);
+                    dadosQuadras = []; // Define como vazio para evitar erros
+                } else {
+                    dadosQuadras = await resQuadras.json();
+                }
 
                 dadosEstatisticos = await resEstatisticas.json();
-                dadosQuadras = await resQuadras.json();
             } catch (error) {
-                // Exibe o erro de forma clara no console
-                console.error('Erro fatal ao buscar arquivos JSON. Verifique os caminhos e o CORS:', error);
+                console.error('Erro fatal ao buscar arquivos JSON:', error);
             }
         }
 
@@ -293,10 +311,12 @@
             }
         }
 
-        // Função para gerar a(s) caixa(s) de seleção de quadras
+        // Função para gerar a(s) caixa(s) de seleção de quadras (mantida)
         function gerarSelecaoQuadras(nomesBairros) {
             quadrasContainer.innerHTML = ''; 
             resultadoContagem.style.display = 'none'; 
+            
+            if (nomesBairros.length === 0 || dadosQuadras.length === 0) return;
             
             quadrasContainer.innerHTML += '<h4>Selecione o Intervalo de Quadras por Bairro:</h4>';
 
@@ -329,13 +349,13 @@
             });
         }
 
-        // Função para calcular as quadras úteis e imóveis (Cálculo Automático)
+        // Função para calcular as quadras úteis e imóveis
         function calcularQuadrasUteis() {
             let totalQuadrasUteis = 0;
             let totalImoveisUteis = 0; 
             resultadoContagem.innerHTML = '';
             
-            if (bairrosAtuais.length === 0) return;
+            if (bairrosAtuais.length === 0 || dadosQuadras.length === 0) return;
 
             let resultadosHtml = '';
             let isAnyInputValid = false;
@@ -357,13 +377,16 @@
                 
                 isAnyInputValid = true; 
 
+                // 💡 Aplica a normalização ao nome do bairro do JSON para a comparação
+                const nomeBairroNormalizado = normalizarString(nomeBairroClean);
+
                 // 1. Filtra as quadras do JSON pelo Bairro, Intervalo e IMOVEIS > 0
                 const quadrasUteisBairro = dadosQuadras.filter(item => {
-                    const nomeItem = String(item['BAIRRO']).trim().toUpperCase();
+                    const nomeItemNormalizado = normalizarString(item['BAIRRO']); // Normaliza o nome do JSON
                     const quadra = parseInt(item['QUADRA']);
                     const imoveis = parseInt(item['IMOVEIS']) || 0; 
 
-                    return nomeItem === nomeBairroClean.toUpperCase() &&
+                    return nomeItemNormalizado === nomeBairroNormalizado &&
                            quadra >= inicio &&
                            quadra <= fim &&
                            imoveis > 0; // Apenas quadras com Imóveis > 0 (não extintas)
@@ -374,7 +397,6 @@
                 
                 // Soma os imóveis das quadras úteis encontradas
                 const imoveisBairro = quadrasUteisBairro.reduce((sum, item) => {
-                    // Garante que o valor é tratado como número (e lida com strings do JSON)
                     return sum + (parseInt(item['IMOVEIS']) || 0); 
                 }, 0);
                 totalImoveisUteis += imoveisBairro;
@@ -426,11 +448,15 @@
                 return;
             }
             
-            // --- 1. Lógica de Consolidação de Estatísticas (USANDO AS NOVAS CHAVES) ---
-            const bairrosParaFiltrar = nomesBairrosMapeados.map(b => String(b).trim().toUpperCase());
+            // --- 1. Lógica de Consolidação de Estatísticas (USANDO NORMALIZAÇÃO) ---
+            
+            // 💡 Normaliza a lista de bairros do código
+            const bairrosParaFiltrarNormalizados = nomesBairrosMapeados.map(normalizarString);
+            
             const registrosFiltrados = dadosEstatisticos.filter(item => {
-                const nomeBairroItem = String(item['BAIRRO']).trim().toUpperCase();
-                return bairrosParaFiltrar.includes(nomeBairroItem);
+                // 💡 Normaliza o nome do bairro do JSON antes de comparar
+                const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
+                return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
             });
 
             if (registrosFiltrados.length > 0) {
@@ -442,7 +468,6 @@
                 registrosFiltrados.forEach(item => {
                     for (const key in METRICAS) {
                         const jsonKey = METRICAS[key];
-                        // Soma o valor do JSON. Garante que é um número, mesmo que venha como string.
                         totais[key] += parseInt(item[jsonKey]) || 0; 
                     }
                 });
@@ -461,7 +486,8 @@
                 imoveisInspecionar.textContent = formatarValor(totais['imoveisInspecionar']);
                 quarteiroesSorteados.textContent = formatarValor(totais['quarteiroesSorteados']);
             } else {
-                bairroDisplay.textContent = `Erro: Nenhum dos bairros mapeados (${nomeDisplayBairros}) foi encontrado no JSON. As estatísticas estão vazias.`;
+                // Mensagem de erro alterada para refletir que a busca falhou APÓS a normalização
+                bairroDisplay.textContent = `AVISO: Nenhum registro encontrado para os bairros (${nomeDisplayBairros}). Verifique o JSON ou o mapeamento de nomes.`;
             }
 
             // --- 2. Lógica de Geração dos Campos de Quadras ---
@@ -481,4 +507,5 @@
     </script>
 </body>
 </html>
+
 
