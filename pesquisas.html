@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisas e Estatísticas</title>
+    <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilos CSS do seu projeto */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #1a1a2e;
+            --primary-color: #00b4d8;
+            --secondary-color: #89b4f0;
+            --text-color: #e0e0e0;
+            --card-bg: #21213e;
+            --border-color: #3e4a61;
+            --input-bg: #111122;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .box h1, .box h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-shadow: 0 0 3px var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Estilo para a nova caixa de seleção e input */
+        .select-personalizado, .input-personalizado {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        /* Container para os campos de quadras */
+        #quadrasContainer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .quadra-bloco {
+            background-color: #2a2a47; 
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .quadra-bloco h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .quadra-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .quadra-inputs label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        /* Área de Resultado */
+        #resultadoContagem {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1.0em;
+            font-weight: 700;
+        }
+        #resultadoContagem strong {
+            color: var(--primary-color);
+        }
+
+        .resultado-total {
+            font-size: 1.2em;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        /* Estilo para as estatísticas - layout em 2 colunas */
+        .grid-estatisticas {
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .grid-estatisticas > div {
+            background-color: var(--input-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .grid-estatisticas p {
+            margin: 0;
+        }
+        .grid-estatisticas strong {
+            color: var(--primary-color);
+        }
+        @media (min-width: 600px) {
+            .grid-estatisticas {
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <h1>Pesquisas e Estatísticas</h1>
+            
+            <div id="estatisticasContainer" class="box" style="margin-bottom: 0;">
+                <h3 id="tituloEstatisticas">Total Geral de Pesquisados</h3>
+                
+                <div id="resultadosEstatisticos" class="grid-estatisticas">
+                    <div>
+                        <p><strong>Total de Imóveis / Estrato:</strong></p>
+                        <p id="imoveisEstrato">--</p>
+                    </div>
+                    <div>
+                        <p><strong>Total de Quarteirões / Estrato:</strong></p>
+                        <p id="quarteiroesEstrato">--</p>
+                    </div>
+                    <div>
+                        <p><strong>Total de Imóveis à Inspecionar:</strong></p>
+                        <p id="imoveisInspecionar">--</p>
+                    </div>
+                    <div>
+                        <p><strong>Total de Quarteirões Sorteados:</strong></p>
+                        <p id="quarteiroesSorteados">--</p>
+                    </div>
+                </div>
+
+                <hr style="border-color: var(--border-color); margin-bottom: 20px;">
+
+                <p id="bairroSelecionadoDisplay" style="font-size: 1.1em; margin-bottom: 15px;">Selecione um código para filtrar por bairro.</p>
+                
+                <label for="selecaoCodigo">Selecione o Código:</label>
+                <select id="selecaoCodigo" class="select-personalizado"></select>
+
+                <div id="quadrasContainer">
+                    </div>
+
+                <div id="resultadoContagem" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const urlEstatisticas = 'bairros_4ciclo_2025.json';
+        const urlQuadras = 'quadras_a_inspecionar.json'; 
+        
+        const selecaoCodigo = document.getElementById('selecaoCodigo');
+        const bairroDisplay = document.getElementById('bairroSelecionadoDisplay');
+        const tituloEstatisticas = document.getElementById('tituloEstatisticas');
+        const quadrasContainer = document.getElementById('quadrasContainer'); 
+        const resultadoContagem = document.getElementById('resultadoContagem'); 
+        
+        const imoveisEstrato = document.getElementById('imoveisEstrato');
+        const quarteiroesEstrato = document.getElementById('quarteiroesEstrato');
+        const imoveisInspecionar = document.getElementById('imoveisInspecionar');
+        const quarteiroesSorteados = document.getElementById('quarteiroesSorteados');
+        
+        let dadosEstatisticos = [];
+        let dadosQuadras = []; 
+        let bairrosAtuais = []; 
+
+        // MAPEAR OS CÓDIGOS PARA UMA LISTA (ARRAY) DE NOMES DE BAIRROS
+        const CODIGOS_BAIRROS = {
+            '85': ['PARQUE DOIS IRMAOS'],
+            '86': ['PARQUE DOIS IRMAOS', 'PASSARÉ'],
+            '87': ['PASSARÉ'],
+            '88': ['PASSARÉ'], 
+            '89': ['BOA VISTA', 'DIAS MACEDO'],
+            '90': ['BOA VISTA', 'CAJAZEIRAS'],
+            '91': ['BARROSO'],
+            '92': ['BARROSO'],
+            '93': ['JANGURUSSU', 'CONJUNTO PALMEIRAS'],
+            '94': ['CONJUNTO PALMEIRAS'],
+            '95': ['JANGURUSSU'],
+            '96': ['JANGURUSSU'],
+            '97': ['JANGURUSSU'],
+            '98': ['PEDRAS', 'ANCURI'],
+            '99': ['PARQUE SANTA MARIA','PAUPINA'],
+           '100': ['PAUPINA', 'SÃO BENTO'],
+           '101': ['SÃO BENTO', 'COAÇU' , 'GUAJERU'],
+           '102': ['MESSEJANA'],
+           '103': ['MESSEJANA'],
+           '104': ['CURIÓ', 'JOSE DE ALENCAR'],
+           '105': ['LAGOA REDONDA'],
+           '106': ['LAGOA REDONDA', 'SABIAGUABA'],
+           '107': ['EDSON QUEIROZ', 'SAPIRANGA COITÉ'],
+           '108': ['EDSON QUEIROZ'],
+           '109': ['SAPIRANGA COITÉ'],
+           '110': ['CAMBEBA', 'PARQUE IRACEMA', 'PARQUE MANIBURA', 'CIDADE DOS FUNCIONÁRIOS'],
+           '111': ['AEROLÂNDIA', 'CIDADE DOS FUNCIONÁRIOS', 'JARDIM DAS OLIVEIRAS'],
+           '112': ['JARDIM DAS OLIVEIRAS'],
+           '113': ['AEROLÂNDIA', 'ALTO DA BALANÇA']
+        };
+
+        const METRICAS = [
+            'total_imoveis_por_estrato',
+            'total_quarteiroes_por_estrato',
+            'total_imoveis_a_inspecionar',
+            'total_quarteiroes_sorteados'
+        ];
+
+        // Função para carregar os dois JSONs
+        async function carregarDados() {
+            try {
+                const [resEstatisticas, resQuadras] = await Promise.all([
+                    fetch(urlEstatisticas),
+                    fetch(urlQuadras)
+                ]);
+
+                if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas: ${resEstatisticas.statusText}`);
+                if (!resQuadras.ok) throw new Error(`Erro ao carregar Quadras: ${resQuadras.statusText}`);
+
+                dadosEstatisticos = await resEstatisticas.json();
+                dadosQuadras = await resQuadras.json();
+            } catch (error) {
+                console.error('Erro ao buscar o JSON de Dados:', error);
+            }
+        }
+
+        // Função para popular a caixa de seleção (mantida)
+        function popularSeletor() {
+            const defaultOption = document.createElement('option');
+            defaultOption.textContent = 'Selecione um código';
+            defaultOption.value = '';
+            selecaoCodigo.appendChild(defaultOption);
+
+            for (let i = 85; i <= 113; i++) {
+                const codigo = String(i);
+                const nomesBairros = CODIGOS_BAIRROS[codigo] || [];
+                const nomeDisplay = nomesBairros.length > 0 ? nomesBairros.join(', ') : 'Bairro(s) Desconhecido(s)';
+
+                const option = document.createElement('option');
+                option.textContent = `${codigo} - ${nomeDisplay}`; 
+                option.value = codigo;
+                selecaoCodigo.appendChild(option);
+            }
+        }
+
+        // Função para gerar a(s) caixa(s) de seleção de quadras (Atualizada)
+        function gerarSelecaoQuadras(nomesBairros) {
+            quadrasContainer.innerHTML = ''; 
+            resultadoContagem.style.display = 'none'; 
+            
+            quadrasContainer.innerHTML += '<h4>Selecione o Intervalo de Quadras por Bairro:</h4>';
+
+            nomesBairros.forEach(bairro => {
+                const nomeBairroClean = String(bairro).trim();
+                const idPrefix = nomeBairroClean.replace(/\s/g, '_').replace(/[^a-z0-9_]/gi, '').toLowerCase(); 
+
+                const blocoHtml = `
+                    <div class="quadra-bloco" data-bairro="${nomeBairroClean}">
+                        <h4>${nomeBairroClean}</h4>
+                        <div class="quadra-inputs">
+                            <div>
+                                <label for="${idPrefix}_inicio">Quadra Inicial:</label>
+                                <input type="number" id="${idPrefix}_inicio" class="input-personalizado quadra-input-inicio" placeholder="Ex: 1" data-bairro-id="${idPrefix}">
+                            </div>
+                            <div>
+                                <label for="${idPrefix}_fim">Quadra Final:</label>
+                                <input type="number" id="${idPrefix}_fim" class="input-personalizado quadra-input-fim" placeholder="Ex: 100" data-bairro-id="${idPrefix}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                quadrasContainer.innerHTML += blocoHtml;
+            });
+            
+            // Adiciona o Event Listener para cálculo automático
+            const inputsFim = document.querySelectorAll('.quadra-input-fim');
+            inputsFim.forEach(input => {
+                input.addEventListener('input', calcularQuadrasUteis);
+            });
+            // Opcional: Adiciona listener no campo inicial também
+            const inputsInicio = document.querySelectorAll('.quadra-input-inicio');
+            inputsInicio.forEach(input => {
+                input.addEventListener('input', calcularQuadrasUteis);
+            });
+        }
+
+        // Função para calcular as quadras úteis (Atualizada com soma de Imóveis)
+        function calcularQuadrasUteis() {
+            let totalQuadrasUteis = 0;
+            let totalImoveisUteis = 0; // NOVO: Contador de imóveis
+            resultadoContagem.innerHTML = '';
+            
+            if (bairrosAtuais.length === 0) {
+                // Não deve acontecer, mas é uma segurança
+                resultadoContagem.innerHTML = '<strong>Erro:</strong> Nenhum bairro selecionado para cálculo.';
+                resultadoContagem.style.display = 'block';
+                return;
+            }
+
+            let resultadosHtml = '';
+            let isAnyInputValid = false;
+
+            bairrosAtuais.forEach(bairro => {
+                const nomeBairroClean = String(bairro).trim();
+                const idPrefix = nomeBairroClean.replace(/\s/g, '_').replace(/[^a-z0-9_]/gi, '').toLowerCase();
+
+                const inputInicio = document.getElementById(`${idPrefix}_inicio`);
+                const inputFim = document.getElementById(`${idPrefix}_fim`);
+
+                const inicio = parseInt(inputInicio.value);
+                const fim = parseInt(inputFim.value);
+                
+                // Validação de inputs
+                if (isNaN(inicio) || isNaN(fim) || inicio <= 0 || fim <= 0 || inicio > fim) {
+                    // Se o usuário está digitando (inputs incompletos), não exibe erro no bairro, apenas passa
+                    return; 
+                }
+                
+                isAnyInputValid = true; // Pelo menos um input é válido, podemos exibir o container de resultados
+
+                // 1. Filtra as quadras do JSON pelo Bairro, Intervalo e IMOVEIS > 0
+                const quadrasUteisBairro = dadosQuadras.filter(item => {
+                    const nomeItem = String(item['BAIRRO']).trim().toUpperCase();
+                    const quadra = parseInt(item['QUADRA']);
+                    const imoveis = parseInt(item['IMOVEIS']) || 0; 
+
+                    return nomeItem === nomeBairroClean.toUpperCase() &&
+                           quadra >= inicio &&
+                           quadra <= fim &&
+                           imoveis > 0; // Apenas quadras com Imóveis > 0 (não extintas)
+                });
+
+                const contagemBairro = quadrasUteisBairro.length;
+                totalQuadrasUteis += contagemBairro;
+                
+                // Soma os imóveis das quadras úteis encontradas
+                const imoveisBairro = quadrasUteisBairro.reduce((sum, item) => {
+                    return sum + (parseInt(item['IMOVEIS']) || 0);
+                }, 0);
+                totalImoveisUteis += imoveisBairro;
+
+                const formatarValor = (valor) => valor.toLocaleString('pt-BR');
+
+                resultadosHtml += `<p><strong>${nomeBairroClean}:</strong> 
+                                       ${formatarValor(contagemBairro)} quadra(s) útil(is). 
+                                       (${formatarValor(imoveisBairro)} imóveis)</p>`;
+            });
+            
+            // Só exibe o container de resultados se houver pelo menos um intervalo válido
+            if (isAnyInputValid) {
+                // Exibe o total geral
+                resultadoContagem.innerHTML = `${resultadosHtml}
+                                           <div class="resultado-total">
+                                           <p><strong>TOTAL GERAL DE QUADRAS ÚTEIS:</strong> <strong style="font-size: 1.2em;">${totalQuadrasUteis.toLocaleString('pt-BR')}</strong></p>
+                                           <p><strong>TOTAL GERAL DE IMÓVEIS (Intervalo):</strong> <strong style="font-size: 1.2em;">${totalImoveisUteis.toLocaleString('pt-BR')}</strong></p>
+                                           </div>`;
+                resultadoContagem.style.display = 'block';
+            } else {
+                 resultadoContagem.style.display = 'none';
+            }
+        }
+
+
+        // Função principal de exibição (mantida)
+        function exibirResultadosPorCodigo(codigoSelecionado) {
+            // Limpa o display
+            imoveisEstrato.textContent = '--';
+            quarteiroesEstrato.textContent = '--';
+            imoveisInspecionar.textContent = '--';
+            quarteiroesSorteados.textContent = '--';
+            bairroDisplay.textContent = 'Selecione um código para filtrar por bairro.';
+            tituloEstatisticas.textContent = 'Total Geral de Pesquisados';
+            quadrasContainer.innerHTML = '';
+            resultadoContagem.style.display = 'none';
+            bairrosAtuais = []; 
+
+            if (!codigoSelecionado) {
+                return;
+            }
+
+            const nomesBairrosMapeados = CODIGOS_BAIRROS[codigoSelecionado];
+            const nomeDisplayBairros = nomesBairrosMapeados ? nomesBairrosMapeados.join(', ') : '';
+            bairrosAtuais = nomesBairrosMapeados; 
+
+            if (!nomesBairrosMapeados || nomesBairrosMapeados.length === 0) {
+                bairroDisplay.textContent = `Código ${codigoSelecionado} não mapeado para nenhum bairro.`;
+                return;
+            }
+            
+            // --- 1. Lógica de Consolidação de Estatísticas ---
+            const bairrosParaFiltrar = nomesBairrosMapeados.map(b => String(b).trim().toUpperCase());
+            const registrosFiltrados = dadosEstatisticos.filter(item => {
+                const nomeBairroItem = String(item['BAIRRO']).trim().toUpperCase();
+                return bairrosParaFiltrar.includes(nomeBairroItem);
+            });
+
+            if (registrosFiltrados.length > 0) {
+                const totais = registrosFiltrados.reduce((acc, item) => {
+                    METRICAS.forEach(chave => {
+                        const valor = parseFloat(item[chave]) || 0;
+                        acc[chave] = (acc[chave] || 0) + valor;
+                    });
+                    return acc;
+                }, {});
+
+                bairroDisplay.innerHTML = `**Bairro(s) Selecionado(s):** ${nomeDisplayBairros}`;
+                tituloEstatisticas.textContent = `Estatísticas Consolidadas (Cód: ${codigoSelecionado})`;
+                
+                const formatarValor = (valor) => {
+                    const num = parseFloat(valor);
+                    return isNaN(num) ? '--' : num.toLocaleString('pt-BR');
+                };
+
+                imoveisEstrato.textContent = formatarValor(totais['total_imoveis_por_estrato']);
+                quarteiroesEstrato.textContent = formatarValor(totais['total_quarteiroes_por_estrato']);
+                imoveisInspecionar.textContent = formatarValor(totais['total_imoveis_a_inspecionar']);
+                quarteiroesSorteados.textContent = formatarValor(totais['total_quarteiroes_sorteados']);
+            } else {
+                bairroDisplay.textContent = `Erro: Nenhum dos bairros mapeados (${nomeDisplayBairros}) foi encontrado no JSON. As estatísticas estão vazias.`;
+            }
+
+            // --- 2. Lógica de Geração dos Campos de Quadras ---
+            gerarSelecaoQuadras(nomesBairrosMapeados);
+        }
+
+        // Event Listeners
+        selecaoCodigo.addEventListener('change', (event) => {
+            exibirResultadosPorCodigo(event.target.value);
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await carregarDados();
+            popularSeletor();
+            exibirResultadosPorCodigo(''); 
+        });
+    </script>
+</body>
+</html>
