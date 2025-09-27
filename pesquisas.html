@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Estilos CSS (mantidos) */
+        /* ESTILOS CSS (MANTIDOS DA ÚLTIMA VERSÃO) */
         * {
             margin: 0;
             padding: 0;
@@ -19,13 +19,13 @@
 
         :root {
             --bg-color: #1a1a2e;
-            --primary-color: #00b4d8; /* Azul claro para destaque */
-            --secondary-color: #89b4f0; /* Azul mais claro para títulos */
+            --primary-color: #00b4d8; 
+            --secondary-color: #89b4f0; 
             --text-color: #e0e0e0;
             --card-bg: #21213e;
             --border-color: #3e4a61;
             --input-bg: #111122;
-            --highlight-bg: #2a2a47; /* Fundo do detalhamento/bloco */
+            --highlight-bg: #2a2a47;
         }
 
         body {
@@ -172,7 +172,7 @@
         .detalhe-bairro {
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 1px dashed var(--border-color); /* Separador suave entre bairros */
+            border-bottom: 1px dashed var(--border-color); 
         }
         .detalhe-bairro:last-of-type {
             border-bottom: none;
@@ -187,7 +187,6 @@
         /* NOVO ESTILO PARA ORGANIZAÇÃO DA LISTA DE QUADRAS */
         .detalhe-grid {
             display: grid;
-            /* Layout: 2 colunas para telas menores, 3 ou 4 para telas maiores */
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
             gap: 10px;
             margin-top: 5px;
@@ -195,7 +194,7 @@
         
         .quadra-item {
             padding: 8px 12px;
-            background-color: #313158; /* Um tom um pouco mais escuro que o card principal */
+            background-color: #313158; 
             border-radius: 6px;
             display: flex;
             justify-content: space-between;
@@ -204,16 +203,14 @@
         }
         
         .quadra-identificacao {
-            /* ID X (QT Y) */
             color: var(--text-color);
         }
         
         .quadra-quantidade {
-            /* O VALOR NUMÉRICO (6, 8, 9...) */
             font-weight: 700;
-            color: var(--primary-color); /* COR DE DESTAQUE APLICADA */
+            color: var(--primary-color); 
             font-size: 1.1em;
-            padding-left: 8px; /* Espaçamento para separar do texto */
+            padding-left: 8px; 
         }
         
     </style>
@@ -450,16 +447,13 @@
         }
         
         /**
-         * NOVO: Atribui um ID sequencial a cada quadra útil no intervalo, ordenadamente.
-         * @param {Array} registros - Lista de registros do JSON.
-         * @returns {Array} Registros com o novo campo 'ID_SEQUENCIAL'
+         * Atribui um ID sequencial a cada quadra útil no intervalo, ordenadamente. (Mantida)
          */
         function gerarIdsSequenciais(registros) {
             let idCounter = 1;
             
-            // 1. Clonar e ordenar os registros antes de atribuir o ID
             const registrosOrdenados = registros
-                .map(item => ({ ...item })) // Clona o objeto para não alterar o dado original
+                .map(item => ({ ...item })) 
                 .sort((a, b) => {
                     const parseQuadraSort = (q_str) => {
                         const parts = String(q_str).split('/');
@@ -475,7 +469,6 @@
                     return qA - qB;
                 });
 
-            // 2. Atribuir o ID sequencial apenas se Imóveis Líquidos > 0
             registrosOrdenados.forEach(registro => {
                 const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
                 const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
@@ -485,7 +478,7 @@
                 if (imoveisLiquidos > 0) {
                     registro.ID_SEQUENCIAL = idCounter++;
                 } else {
-                    registro.ID_SEQUENCIAL = 0; // Quadra Extinta/Vazia não conta
+                    registro.ID_SEQUENCIAL = 0; 
                 }
             });
 
@@ -494,9 +487,7 @@
 
 
         /**
-         * FUNÇÃO ATUALIZADA: Gera a seção de detalhamento por quadra, com layout visual melhorado.
-         * @param {Array} detalhes - Array de objetos contendo: { nomeBairro, inicio, fim, quadrasUteisBairro }
-         * @param {Set} idsSorteados - Set de IDs (números) a serem filtrados.
+         * Gera a seção de detalhamento por quadra, com layout visual melhorado. (Mantida)
          */
         function gerarDetalhamentoPorQuadra(detalhes, idsSorteados) {
             detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis a Inspecionar (20% da Amostra):</h4>';
@@ -514,7 +505,6 @@
                 
                 if (quadrasUteisBairro.length === 0) return;
 
-                // Filtra as quadras que foram sorteadas (que tem um ID e o ID está na lista)
                 const quadrasFiltradas = quadrasUteisBairro.filter(registro => 
                     registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
                 );
@@ -523,7 +513,6 @@
 
                 let gridItensHtml = '';
                 
-                // --- NOVO LOOP PARA GERAR O LAYOUT EM GRID ---
                 quadrasFiltradas.forEach(registro => {
                     const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
                     const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
@@ -531,7 +520,6 @@
                     
                     const imoveisLiquidos = totalReg - apReg - peReg;
                     
-                    // CÁLCULO DE 20% E ARREDONDAMENTO PARA CIMA
                     const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
                     totalAmostraGeral += amostra20Pct;
                     
@@ -553,7 +541,6 @@
                 `;
             });
             
-            // Adiciona o total da amostra
             detalheHtml += `<div class="resultado-total" style="border-top: 1px solid var(--primary-color);">
                                 <p><strong>TOTAL GERAL DE IMÓVEIS A INSPECIONAR (20% da Amostra):</strong> 
                                 <strong style="font-size: 1.5em; color: var(--primary-color);">${totalAmostraGeral.toLocaleString('pt-BR')}</strong></p>
@@ -564,7 +551,7 @@
         }
 
 
-        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento (Lógica mantida)
+        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento (Mantida)
         function calcularQuadrasUteis() {
             let totalQuadrasUteis = 0;
             let totalImoveisUteis = 0; 
@@ -578,7 +565,6 @@
             
             if (bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) return;
             
-            // Processa a lista de IDs sorteadas
             const idsInput = inputIdsSorteados.value.trim();
             let idsSorteados = new Set();
             if (idsInput) {
@@ -595,7 +581,6 @@
             let isAnyInputValid = false;
             let detalhesParaDetalhamento = []; 
 
-            // Filtra os registros do JSON por CÓDIGO/BAIRRO antes de iterar
             const bairrosParaFiltrarNormalizados = bairrosAtuais.map(item => normalizarString(item.bairro));
             
             const todosRegistrosDoCodigo = dadosEstatisticos.filter(item => {
@@ -603,7 +588,6 @@
                 return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
             });
 
-            // Itera sobre CADA BAIRRO no CÓDIGO
             bairrosAtuais.forEach(itemBairro => { 
                 const nomeBairroClean = itemBairro.bairro;
                 const idPrefix = normalizarString(nomeBairroClean).replace(/\s/g, '_');
@@ -620,7 +604,6 @@
 
                 const nomeBairroNormalizado = normalizarString(nomeBairroClean);
 
-                // 1. Filtra os registros que pertencem ao bairro E estão dentro do intervalo QT
                 const quadrasNoIntervalo = todosRegistrosDoCodigo
                     .filter(registro => {
                         const nomeItemNormalizado = normalizarString(registro['BAIRRO']); 
@@ -629,10 +612,8 @@
                                compararQuadras(quadra, inicio, fim);
                     });
                 
-                // 2. GERA OS IDs SEQUENCIAIS para as quadras do intervalo
                 const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
 
-                // Variáveis para este bloco de bairro (soma todas as quadras úteis, independente do ID sorteado)
                 const quadrasUteisBairro = quadrasComIds.filter(q => q.ID_SEQUENCIAL > 0);
                 const contagemBairro = quadrasUteisBairro.length;
                 
@@ -640,7 +621,6 @@
                 let apAcimaTerreoBairro = 0;
                 let peBairro = 0;
 
-                // 3. Acumula os totais no INTERVALO (somente as quadras úteis)
                 quadrasUteisBairro.forEach(registro => {
                     const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
                     const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
@@ -651,7 +631,6 @@
                     peBairro += peReg;
                 });
                 
-                // 4. Soma os totais gerais (de todos os bairros no código)
                 totalQuadrasUteis += contagemBairro;
                 totalImoveisUteis += imoveisBairro;
                 totalApAcimaTerreo += apAcimaTerreoBairro;
@@ -667,7 +646,6 @@
                                        <span style="color: var(--secondary-color);">(${formatarValor(imoveisLiquidosBairro)} imóveis líquidos)</span>
                                    </p>`;
                                    
-                // 5. Armazena os dados para o Detalhamento (usamos quadrasComIds que tem o ID sequencial)
                 detalhesParaDetalhamento.push({ 
                     nomeBairro: nomeBairroClean, 
                     inicio: inicio, 
@@ -676,10 +654,8 @@
                 });
             });
             
-            // 6. CÁLCULO FINAL LÍQUIDO GERAL
             totalImoveisLiquidos = totalImoveisUteis - totalApAcimaTerreo - totalPE;
 
-            // Exibe o container de resultados
             if (isAnyInputValid) {
                 resultadoContagem.innerHTML = `${resultadosHtml}
                                            <div class="resultado-total">
@@ -692,10 +668,10 @@
                                            </div>`;
                 resultadoContagem.style.display = 'block';
                 
-                // 7. GERAÇÃO DO DETALHAMENTO (Amostra 20% + Filtro por ID)
                 if (idsSorteados.size > 0) {
                      gerarDetalhamentoPorQuadra(detalhesParaDetalhamento, idsSorteados);
                 } else {
+                    // Garante que o detalhamento de 20% desapareça se o campo de IDs estiver vazio
                     detalhamentoQuadras.style.display = 'none';
                 }
 
@@ -706,9 +682,12 @@
         }
 
 
-        // Função principal de exibição (mantida)
+        // Função principal de exibição (COM LIMPEZA DO INPUT DE IDS)
         function exibirResultsPorCodigo(codigoSelecionado) {
-            // Lógica de limpeza e re-execução do cálculo
+            // --- ADIÇÃO DE LIMPEZA DO CAMPO DE IDs ---
+            inputIdsSorteados.value = ''; 
+            // ----------------------------------------
+
             imoveisEstrato.textContent = '--';
             quarteiroesEstrato.textContent = '--';
             imoveisInspecionar.textContent = '--';
@@ -734,8 +713,7 @@
                 return;
             }
             
-            // --- 1. Lógica de Consolidação de Estatísticas (SOMA TUDO) ---
-            
+            // Lógica de Consolidação de Estatísticas (Mantida)
             const bairrosParaFiltrarNormalizados = nomesBairrosMapeados.map(normalizarString);
             
             const registrosFiltradosPorCodigo = dadosEstatisticos.filter(item => {
@@ -779,7 +757,7 @@
                 bairroDisplay.textContent = `AVISO: Nenhum registro de estatística encontrado para os bairros (${nomeDisplayBairros}). Verifique o JSON ou o mapeamento de nomes.`;
             }
 
-            // --- 2. Lógica de Geração dos Campos de Quadras ---
+            // Lógica de Geração dos Campos de Quadras
             gerarSelecaoQuadras(bairrosComIntervalo);
         }
 
