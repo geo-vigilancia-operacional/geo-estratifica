@@ -196,6 +196,7 @@
     
     <script>
         const urlEstatisticas = 'bairros_4ciclo_2025.json';
+        // ⚠️ ASSUMIMOS QUE ESTE SEGUNDO JSON TEM CHAVES 'BAIRRO', 'QUADRA' E 'IMOVEIS'
         const urlQuadras = 'quadras_a_inspecionar.json'; 
         
         const selecaoCodigo = document.getElementById('selecaoCodigo');
@@ -213,7 +214,15 @@
         let dadosQuadras = []; 
         let bairrosAtuais = []; 
 
-        // MAPEAR OS CÓDIGOS PARA UMA LISTA (ARRAY) DE NOMES DE BAIRROS
+        // 🚨 NOVO MAPEAMENTO DE CHAVES BASEADO NO SEU TRECHO JSON
+        const METRICAS = {
+            imoveisEstrato: 'TOTAL',             // Mapeado para TOTAL
+            quarteiroesEstrato: 'QT',           // Mapeado para QT
+            imoveisInspecionar: 'R',            // Mapeado para R
+            quarteiroesSorteados: 'C'           // Mapeado para C (Verificar chave correta para Sorteados)
+        };
+
+        // MAPEAMENTO DE CÓDIGOS E BAIRROS (MANTIDO CONFORME ÚLTIMA INTERAÇÃO)
         const CODIGOS_BAIRROS = {
             '85': ['PARQUE DOIS IRMAOS'],
             '86': ['PARQUE DOIS IRMAOS', 'PASSARÉ'],
@@ -246,13 +255,6 @@
            '113': ['AEROLÂNDIA', 'ALTO DA BALANÇA']
         };
 
-        const METRICAS = [
-            'total_imoveis_por_estrato',
-            'total_quarteiroes_por_estrato',
-            'total_imoveis_a_inspecionar',
-            'total_quarteiroes_sorteados'
-        ];
-
         // Função para carregar os dois JSONs
         async function carregarDados() {
             try {
@@ -261,13 +263,14 @@
                     fetch(urlQuadras)
                 ]);
 
-                if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas: ${resEstatisticas.statusText}`);
-                if (!resQuadras.ok) throw new Error(`Erro ao carregar Quadras: ${resQuadras.statusText}`);
+                if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas (${urlEstatisticas}): ${resEstatisticas.statusText}`);
+                if (!resQuadras.ok) throw new Error(`Erro ao carregar Quadras (${urlQuadras}): ${resQuadras.statusText}`);
 
                 dadosEstatisticos = await resEstatisticas.json();
                 dadosQuadras = await resQuadras.json();
             } catch (error) {
-                console.error('Erro ao buscar o JSON de Dados:', error);
+                // Exibe o erro de forma clara no console
+                console.error('Erro fatal ao buscar arquivos JSON. Verifique os caminhos e o CORS:', error);
             }
         }
 
@@ -290,7 +293,7 @@
             }
         }
 
-        // Função para gerar a(s) caixa(s) de seleção de quadras (Atualizada)
+        // Função para gerar a(s) caixa(s) de seleção de quadras
         function gerarSelecaoQuadras(nomesBairros) {
             quadrasContainer.innerHTML = ''; 
             resultadoContagem.style.display = 'none'; 
@@ -319,30 +322,20 @@
                 quadrasContainer.innerHTML += blocoHtml;
             });
             
-            // Adiciona o Event Listener para cálculo automático
-            const inputsFim = document.querySelectorAll('.quadra-input-fim');
-            inputsFim.forEach(input => {
-                input.addEventListener('input', calcularQuadrasUteis);
-            });
-            // Opcional: Adiciona listener no campo inicial também
-            const inputsInicio = document.querySelectorAll('.quadra-input-inicio');
-            inputsInicio.forEach(input => {
+            // Adiciona o Event Listener para cálculo automático em todos os inputs de quadra
+            const inputs = quadrasContainer.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
                 input.addEventListener('input', calcularQuadrasUteis);
             });
         }
 
-        // Função para calcular as quadras úteis (Atualizada com soma de Imóveis)
+        // Função para calcular as quadras úteis e imóveis (Cálculo Automático)
         function calcularQuadrasUteis() {
             let totalQuadrasUteis = 0;
-            let totalImoveisUteis = 0; // NOVO: Contador de imóveis
+            let totalImoveisUteis = 0; 
             resultadoContagem.innerHTML = '';
             
-            if (bairrosAtuais.length === 0) {
-                // Não deve acontecer, mas é uma segurança
-                resultadoContagem.innerHTML = '<strong>Erro:</strong> Nenhum bairro selecionado para cálculo.';
-                resultadoContagem.style.display = 'block';
-                return;
-            }
+            if (bairrosAtuais.length === 0) return;
 
             let resultadosHtml = '';
             let isAnyInputValid = false;
@@ -354,16 +347,15 @@
                 const inputInicio = document.getElementById(`${idPrefix}_inicio`);
                 const inputFim = document.getElementById(`${idPrefix}_fim`);
 
-                const inicio = parseInt(inputInicio.value);
-                const fim = parseInt(inputFim.value);
+                const inicio = parseInt(inputInicio ? inputInicio.value : '');
+                const fim = parseInt(inputFim ? inputFim.value : '');
                 
                 // Validação de inputs
                 if (isNaN(inicio) || isNaN(fim) || inicio <= 0 || fim <= 0 || inicio > fim) {
-                    // Se o usuário está digitando (inputs incompletos), não exibe erro no bairro, apenas passa
                     return; 
                 }
                 
-                isAnyInputValid = true; // Pelo menos um input é válido, podemos exibir o container de resultados
+                isAnyInputValid = true; 
 
                 // 1. Filtra as quadras do JSON pelo Bairro, Intervalo e IMOVEIS > 0
                 const quadrasUteisBairro = dadosQuadras.filter(item => {
@@ -382,7 +374,8 @@
                 
                 // Soma os imóveis das quadras úteis encontradas
                 const imoveisBairro = quadrasUteisBairro.reduce((sum, item) => {
-                    return sum + (parseInt(item['IMOVEIS']) || 0);
+                    // Garante que o valor é tratado como número (e lida com strings do JSON)
+                    return sum + (parseInt(item['IMOVEIS']) || 0); 
                 }, 0);
                 totalImoveisUteis += imoveisBairro;
 
@@ -390,12 +383,11 @@
 
                 resultadosHtml += `<p><strong>${nomeBairroClean}:</strong> 
                                        ${formatarValor(contagemBairro)} quadra(s) útil(is). 
-                                       (${formatarValor(imoveisBairro)} imóveis)</p>`;
+                                       <span style="color: var(--secondary-color);">(${formatarValor(imoveisBairro)} imóveis)</span></p>`;
             });
             
-            // Só exibe o container de resultados se houver pelo menos um intervalo válido
+            // Exibe o container de resultados
             if (isAnyInputValid) {
-                // Exibe o total geral
                 resultadoContagem.innerHTML = `${resultadosHtml}
                                            <div class="resultado-total">
                                            <p><strong>TOTAL GERAL DE QUADRAS ÚTEIS:</strong> <strong style="font-size: 1.2em;">${totalQuadrasUteis.toLocaleString('pt-BR')}</strong></p>
@@ -408,7 +400,7 @@
         }
 
 
-        // Função principal de exibição (mantida)
+        // Função principal de exibição
         function exibirResultadosPorCodigo(codigoSelecionado) {
             // Limpa o display
             imoveisEstrato.textContent = '--';
@@ -434,7 +426,7 @@
                 return;
             }
             
-            // --- 1. Lógica de Consolidação de Estatísticas ---
+            // --- 1. Lógica de Consolidação de Estatísticas (USANDO AS NOVAS CHAVES) ---
             const bairrosParaFiltrar = nomesBairrosMapeados.map(b => String(b).trim().toUpperCase());
             const registrosFiltrados = dadosEstatisticos.filter(item => {
                 const nomeBairroItem = String(item['BAIRRO']).trim().toUpperCase();
@@ -442,14 +434,19 @@
             });
 
             if (registrosFiltrados.length > 0) {
-                const totais = registrosFiltrados.reduce((acc, item) => {
-                    METRICAS.forEach(chave => {
-                        const valor = parseFloat(item[chave]) || 0;
-                        acc[chave] = (acc[chave] || 0) + valor;
-                    });
+                const totais = Object.keys(METRICAS).reduce((acc, key) => {
+                    acc[key] = 0;
                     return acc;
                 }, {});
 
+                registrosFiltrados.forEach(item => {
+                    for (const key in METRICAS) {
+                        const jsonKey = METRICAS[key];
+                        // Soma o valor do JSON. Garante que é um número, mesmo que venha como string.
+                        totais[key] += parseInt(item[jsonKey]) || 0; 
+                    }
+                });
+                
                 bairroDisplay.innerHTML = `**Bairro(s) Selecionado(s):** ${nomeDisplayBairros}`;
                 tituloEstatisticas.textContent = `Estatísticas Consolidadas (Cód: ${codigoSelecionado})`;
                 
@@ -458,10 +455,11 @@
                     return isNaN(num) ? '--' : num.toLocaleString('pt-BR');
                 };
 
-                imoveisEstrato.textContent = formatarValor(totais['total_imoveis_por_estrato']);
-                quarteiroesEstrato.textContent = formatarValor(totais['total_quarteiroes_por_estrato']);
-                imoveisInspecionar.textContent = formatarValor(totais['total_imoveis_a_inspecionar']);
-                quarteiroesSorteados.textContent = formatarValor(totais['total_quarteiroes_sorteados']);
+                // Exibe usando as novas chaves totais
+                imoveisEstrato.textContent = formatarValor(totais['imoveisEstrato']);
+                quarteiroesEstrato.textContent = formatarValor(totais['quarteiroesEstrato']);
+                imoveisInspecionar.textContent = formatarValor(totais['imoveisInspecionar']);
+                quarteiroesSorteados.textContent = formatarValor(totais['quarteiroesSorteados']);
             } else {
                 bairroDisplay.textContent = `Erro: Nenhum dos bairros mapeados (${nomeDisplayBairros}) foi encontrado no JSON. As estatísticas estão vazias.`;
             }
