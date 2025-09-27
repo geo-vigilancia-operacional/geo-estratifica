@@ -122,7 +122,6 @@
             border-top: 1px dashed var(--border-color);
         }
         
-        /* NOVO ESTILO PARA O RESULTADO LÍQUIDO */
         .resultado-liquido {
             font-size: 1.2em;
             margin-top: 10px;
@@ -133,6 +132,35 @@
         .resultado-liquido strong {
             color: var(--secondary-color);
         }
+
+        /* NOVO ESTILO PARA DETALHAMENTO */
+        #detalhamentoQuadras {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2a2a47;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        #detalhamentoQuadras h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #3e4a61;
+        }
+        .detalhe-bairro {
+            margin-bottom: 15px;
+        }
+        .detalhe-bairro p {
+            margin-top: 5px;
+            font-size: 0.95em;
+            line-height: 1.4;
+            white-space: pre-wrap; /* Permite quebras de linha */
+            word-break: break-word; /* Garante que palavras longas quebrem */
+        }
+        .detalhe-bairro strong {
+            color: var(--secondary-color);
+        }
+
 
         .grid-estatisticas {
             display: grid;
@@ -198,6 +226,10 @@
                     </div>
 
                 <div id="resultadoContagem" style="display: none;"></div>
+                
+                <div id="detalhamentoQuadras" style="display: none;">
+                    <h4>Detalhamento de Imóveis Líquidos por Quadra (Intervalo):</h4>
+                </div>
             </div>
         </div>
     </div>
@@ -205,12 +237,13 @@
     <script>
         const urlEstatisticas = 'bairros_4ciclo_2025.json';
         
-        // Elementos do DOM (mantidos)
+        // Elementos do DOM
         const selecaoCodigo = document.getElementById('selecaoCodigo');
         const bairroDisplay = document.getElementById('bairroSelecionadoDisplay');
         const tituloEstatisticas = document.getElementById('tituloEstatisticas');
         const quadrasContainer = document.getElementById('quadrasContainer'); 
         const resultadoContagem = document.getElementById('resultadoContagem'); 
+        const detalhamentoQuadras = document.getElementById('detalhamentoQuadras'); // Novo elemento
         
         const imoveisEstrato = document.getElementById('imoveisEstrato');
         const quarteiroesEstrato = document.getElementById('quarteiroesEstrato');
@@ -228,11 +261,9 @@
             quarteiroesSorteados: 'C' 
         };
         
-        // CHAVES CRUCIAIS PARA O FILTRO
+        // CHAVES CRUCIAIS PARA O FILTRO E CÁLCULO
         const CHAVE_QUADRA = 'QT'; 
         const CHAVE_IMOVEIS_QUADRA = 'TOTAL'; 
-        
-        // 💡 NOVAS CHAVES PARA SUBTRAÇÃO
         const CHAVE_SUBTRACAO_AP = 'AP. ACIMA DO TÉRREO';
         const CHAVE_SUBTRACAO_PE = 'PE';
 
@@ -285,9 +316,7 @@
         async function carregarDados() {
             try {
                 const resEstatisticas = await fetch(urlEstatisticas);
-
                 if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas (${urlEstatisticas}): ${resEstatisticas.statusText}`);
-                
                 dadosEstatisticos = await resEstatisticas.json();
             } catch (error) {
                 console.error('Erro fatal ao buscar arquivo JSON:', error);
@@ -296,6 +325,7 @@
         
         // Função para popular a caixa de seleção (mantida)
         function popularSeletor() {
+            // Lógica de popular seletor
             const defaultOption = document.createElement('option');
             defaultOption.textContent = 'Selecione um código';
             defaultOption.value = '';
@@ -315,13 +345,11 @@
         
         // FUNÇÃO: Compara quadras (mantida)
         function compararQuadras(quadraItem, inicio, fim) {
-            // Função para converter strings como '93/1' para um número (93.01)
             const parseQuadra = (q_str) => {
                 const parts = String(q_str).split('/');
                 let num = parseFloat(parts[0]);
-                
                 if (parts.length > 1) {
-                    const decimal = parseFloat(parts[1]) / 100; 
+                    const decimal = parseFloat(parts[1]) / 1000; // Alterei para /1000 para evitar conflito com quadras como 93 e 93/1
                     num += decimal;
                 }
                 return num;
@@ -338,6 +366,8 @@
         function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = ''; 
             resultadoContagem.style.display = 'none'; 
+            detalhamentoQuadras.style.display = 'none';
+            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis Líquidos por Quadra (Intervalo):</h4>';
             
             if (bairrosComIntervalo.length === 0) {
                 quadrasContainer.innerHTML += '<p>Nenhum bairro com intervalo definido para este código.</p>';
@@ -377,21 +407,77 @@
             
             calcularQuadrasUteis();
         }
+        
+        /**
+         * NOVO: Gera a seção de detalhamento por quadra.
+         * @param {Array} detalhes - Array de objetos contendo: { nomeBairro, inicio, fim, quadrasUteisBairro }
+         */
+        function gerarDetalhamentoPorQuadra(detalhes) {
+            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis Líquidos por Quadra (Intervalo):</h4>';
+            let detalheHtml = '';
+            
+            if (detalhes.length === 0) {
+                 detalhamentoQuadras.style.display = 'none';
+                 return;
+            }
 
-        // 💡 FUNÇÃO ATUALIZADA: Inclui a subtração de AP. ACIMA DO TÉRREO e PE
+            detalhes.forEach(item => {
+                const { nomeBairro, inicio, fim, quadrasUteisBairro } = item;
+                
+                if (quadrasUteisBairro.length === 0) return;
+
+                // Monta a string de detalhamento: "1: 52 ... 204: 26"
+                const quadrasFormatadas = quadrasUteisBairro.map(registro => {
+                    const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                    const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                    const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                    const imoveisLiquidos = totalReg - apReg - peReg;
+                    
+                    return `${registro[CHAVE_QUADRA]}: ${imoveisLiquidos.toLocaleString('pt-BR')}`;
+                });
+                
+                let detalheString = '';
+
+                if (quadrasFormatadas.length > 5) {
+                    // Mostra a primeira e a última quadra, como você sugeriu
+                    const primeira = quadrasFormatadas[0];
+                    const ultima = quadrasFormatadas[quadrasFormatadas.length - 1];
+                    detalheString = `${primeira} ... ${ultima}`;
+                } else {
+                    // Se houver poucas quadras, lista todas
+                    detalheString = quadrasFormatadas.join(' | ');
+                }
+
+                detalheHtml += `
+                    <div class="detalhe-bairro">
+                        <strong>${nomeBairro} (QT ${inicio} a ${fim}):</strong>
+                        <p>${detalheString}</p>
+                    </div>
+                `;
+            });
+
+            detalhamentoQuadras.innerHTML += detalheHtml;
+            detalhamentoQuadras.style.display = 'block';
+        }
+
+
+        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento
         function calcularQuadrasUteis() {
             let totalQuadrasUteis = 0;
             let totalImoveisUteis = 0; 
-            let totalApAcimaTerreo = 0; // Novo total para subtração
-            let totalPE = 0; // Novo total para subtração
-            let totalImoveisLiquidos = 0; // O resultado final
+            let totalApAcimaTerreo = 0; 
+            let totalPE = 0; 
+            let totalImoveisLiquidos = 0; 
             
             resultadoContagem.innerHTML = '';
+            detalhamentoQuadras.style.display = 'none';
+            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis Líquidos por Quadra (Intervalo):</h4>';
             
             if (bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) return;
 
             let resultadosHtml = '';
             let isAnyInputValid = false;
+            let detalhesParaDetalhamento = []; // NOVO: Armazena dados para a função de detalhamento
 
             // Filtra os registros do JSON por CÓDIGO/BAIRRO antes de iterar
             const bairrosParaFiltrarNormalizados = bairrosAtuais.map(item => normalizarString(item.bairro));
@@ -411,24 +497,27 @@
                 const inicio = inputInicio ? inputInicio.value : '';
                 const fim = inputFim ? inputFim.value : '';
                 
-                if (!inicio || !fim) {
-                    return; 
-                }
+                if (!inicio || !fim) return; 
                 
                 isAnyInputValid = true; 
 
                 const nomeBairroNormalizado = normalizarString(nomeBairroClean);
 
                 // 1. Filtra os registros que pertencem ao bairro E estão dentro do intervalo QT
-                const quadrasUteisBairro = todosRegistrosDoCodigo.filter(registro => {
-                    const nomeItemNormalizado = normalizarString(registro['BAIRRO']); 
-                    const quadra = registro[CHAVE_QUADRA]; 
-                    const imoveis = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0; 
-                    
-                    return nomeItemNormalizado === nomeBairroNormalizado &&
-                           compararQuadras(quadra, inicio, fim) && 
-                           imoveis > 0; // Considera útil apenas se TOTAL > 0
-                });
+                // NOTA: O Array quadrasUteisBairro contém os DADOS BRUTOS, que serão usados tanto para o TOTAL quanto para o DETALHAMENTO
+                const quadrasUteisBairro = todosRegistrosDoCodigo
+                    .filter(registro => {
+                        const nomeItemNormalizado = normalizarString(registro['BAIRRO']); 
+                        const quadra = registro[CHAVE_QUADRA]; 
+                        const imoveis = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0; 
+                        
+                        return nomeItemNormalizado === nomeBairroNormalizado &&
+                               compararQuadras(quadra, inicio, fim) && 
+                               imoveis > 0; // Considera útil apenas se TOTAL > 0
+                    })
+                    // Opcional: ordenar pelo número da quadra para exibir corretamente o detalhe
+                    .sort((a, b) => compararQuadras(a[CHAVE_QUADRA], '0', b[CHAVE_QUADRA]) ? -1 : 1); 
+
                 
                 // Variáveis para este bloco de bairro
                 const contagemBairro = quadrasUteisBairro.length;
@@ -453,7 +542,6 @@
                 totalApAcimaTerreo += apAcimaTerreoBairro;
                 totalPE += peBairro;
                 
-                // Cálculo líquido por bairro (apenas para exibição detalhada)
                 const imoveisLiquidosBairro = imoveisBairro - apAcimaTerreoBairro - peBairro;
 
                 const formatarValor = (valor) => valor.toLocaleString('pt-BR');
@@ -463,9 +551,17 @@
                                        ${formatarValor(contagemBairro)} quadra(s) útil(is). 
                                        <span style="color: var(--secondary-color);">(${formatarValor(imoveisLiquidosBairro)} imóveis líquidos)</span>
                                    </p>`;
+                                   
+                // 4. Armazena os dados para o Detalhamento
+                detalhesParaDetalhamento.push({ 
+                    nomeBairro: nomeBairroClean, 
+                    inicio: inicio, 
+                    fim: fim, 
+                    quadrasUteisBairro: quadrasUteisBairro 
+                });
             });
             
-            // 4. CÁLCULO FINAL LÍQUIDO GERAL
+            // 5. CÁLCULO FINAL LÍQUIDO GERAL
             totalImoveisLiquidos = totalImoveisUteis - totalApAcimaTerreo - totalPE;
 
             // Exibe o container de resultados
@@ -480,15 +576,20 @@
                                            <p><strong>TOTAL GERAL DE IMÓVEIS LÍQUIDOS:</strong> <strong style="font-size: 1.5em;">${totalImoveisLiquidos.toLocaleString('pt-BR')}</strong></p>
                                            </div>`;
                 resultadoContagem.style.display = 'block';
+                
+                // 6. GERAÇÃO DO DETALHAMENTO
+                gerarDetalhamentoPorQuadra(detalhesParaDetalhamento);
+
             } else {
                  resultadoContagem.style.display = 'none';
+                 detalhamentoQuadras.style.display = 'none';
             }
         }
 
 
         // Função principal de exibição (mantida)
         function exibirResultadosPorCodigo(codigoSelecionado) {
-            // ... (Lógica de consolidação das estatísticas do topo mantida) ...
+            // ... (Lógica de consolidação das estatísticas do topo e limpeza mantida) ...
 
             imoveisEstrato.textContent = '--';
             quarteiroesEstrato.textContent = '--';
@@ -498,6 +599,7 @@
             tituloEstatisticas.textContent = 'Total Geral de Pesquisados';
             quadrasContainer.innerHTML = '';
             resultadoContagem.style.display = 'none';
+            detalhamentoQuadras.style.display = 'none';
             bairrosAtuais = []; 
 
             if (!codigoSelecionado) {
@@ -576,6 +678,7 @@
     </script>
 </body>
 </html>
+
 
 
 
