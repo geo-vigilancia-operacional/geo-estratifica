@@ -209,9 +209,9 @@
         
         let dadosEstatisticos = [];
         let dadosQuadras = []; 
-        let bairrosAtuais = []; 
+        let bairrosAtuais = []; // Guarda os bairros e seus intervalos padrão
 
-        // 💡 Mapeamento de Chaves JSON para o Display
+        // Mapeamento de Chaves JSON para o Display
         const METRICAS = {
             imoveisEstrato: 'TOTAL',
             quarteiroesEstrato: 'QT',
@@ -219,52 +219,48 @@
             quarteiroesSorteados: 'C' 
         };
 
-        // Mapeamento de Códigos e Bairros (Manter exatamente como está, a normalização cuidará da comparação)
+        // 💡 NOVO OBJETO: Mapeamento de Códigos para Bairros e Intervalos de Quadras
         const CODIGOS_BAIRROS = {
-            '85': ['PARQUE DOIS IRMAOS'],
-            '86': ['PARQUE DOIS IRMAOS', 'PASSARÉ'],
-            '87': ['PASSARÉ'],
-            '88': ['PASSARÉ'], 
-            '89': ['BOA VISTA', 'DIAS MACEDO'],
-            '90': ['BOA VISTA', 'CAJAZEIRAS'],
-            '91': ['BARROSO'],
-            '92': ['BARROSO'],
-            '93': ['JANGURUSSU', 'CONJUNTO PALMEIRAS'],
-            '94': ['CONJUNTO PALMEIRAS'],
-            '95': ['JANGURUSSU'],
-            '96': ['JANGURUSSU'],
-            '97': ['JANGURUSSU'],
-            '98': ['PEDRAS', 'ANCURI'],
-            '99': ['PARQUE SANTA MARIA','PAUPINA'],
-           '100': ['PAUPINA', 'SÃO BENTO'],
-           '101': ['SÃO BENTO', 'COAÇU' , 'GUAJERU'],
-           '102': ['MESSEJANA'],
-           '103': ['MESSEJANA'],
-           '104': ['CURIÓ', 'JOSE DE ALENCAR'],
-           '105': ['LAGOA REDONDA'],
-           '106': ['LAGOA REDONDA', 'SABIAGUABA'],
-           '107': ['EDSON QUEIROZ', 'SAPIRANGA COITÉ'],
-           '108': ['EDSON QUEIROZ'],
-           '109': ['SAPIRANGA COITÉ'],
-           '110': ['CAMBEBA', 'PARQUE IRACEMA', 'PARQUE MANIBURA', 'CIDADE DOS FUNCIONÁRIOS'],
-           '111': ['AEROLÂNDIA', 'CIDADE DOS FUNCIONÁRIOS', 'JARDIM DAS OLIVEIRAS'],
-           '112': ['JARDIM DAS OLIVEIRAS'],
-           '113': ['AEROLÂNDIA', 'ALTO DA BALANÇA']
+            // Estrutura: 'código': [{bairro: 'NOME', inicio: 'X', fim: 'Y'}]
+            '85': [{bairro: 'PARQUE DOIS IRMAOS', inicio: '1', fim: '180'}],
+            '86': [{bairro: 'PARQUE DOIS IRMAOS', inicio: '181', fim: '278'}, {bairro: 'PASSARÉ', inicio: '1', fim: '93/1'}],
+            '87': [{bairro: 'PASSARÉ', inicio: '94', fim: '236'}],
+            '88': [{bairro: 'PASSARÉ', inicio: '237', fim: '413'}],
+            '89': [{bairro: 'BOA VISTA', inicio: '1', fim: '59'}, {bairro: 'DIAS MACEDO', inicio: '1', fim: '73'}],
+            '90': [{bairro: 'BOA VISTA', inicio: '60', fim: '104'}, {bairro: 'CAJAZEIRAS', inicio: '1', fim: '107'}],
+            '91': [{bairro: 'BARROSO', inicio: '163', fim: '318'}],
+            '92': [{bairro: 'BARROSO', inicio: '1', fim: '162'}],
+            '93': [{bairro: 'JANGURUSSU', inicio: '1', fim: '69'}, {bairro: 'CONJUNTO PALMEIRAS', inicio: '1', fim: '116'}],
+            '94': [{bairro: 'CONJUNTO PALMEIRAS', inicio: '117', fim: '245'}],
+            '95': [{bairro: 'JANGURUSSU', inicio: '70', fim: '195'}],
+            '96': [{bairro: 'JANGURUSSU', inicio: '196', fim: '366'}],
+            '97': [{bairro: 'JANGURUSSU', inicio: '368', fim: '565'}],
+            '98': [{bairro: 'PEDRAS', inicio: '1', fim: '90/3'}, {bairro: 'ANCURI', inicio: '1', fim: '90'}],
+            '99': [{bairro: 'PARQUE SANTA MARIA', inicio: '1', fim: '88'}, {bairro: 'PAUPINA', inicio: '1', fim: '19'}],
+           '100': [{bairro: 'PAUPINA', inicio: '20', fim: '116'}, {bairro: 'SÃO BENTO', inicio: '1', fim: '24'}],
+           '101': [{bairro: 'SÃO BENTO', inicio: '25', fim: '151'}, {bairro: 'COAÇU', inicio: '1', fim: '64'}, {bairro: 'GUAJERU', inicio: '1', fim: '60'}],
+           '102': [{bairro: 'MESSEJANA', inicio: '1', fim: '196'}],
+           '103': [{bairro: 'MESSEJANA', inicio: '197', fim: '343'}],
+           '104': [{bairro: 'CURIÓ', inicio: '1', fim: '48'}, {bairro: 'JOSE DE ALENCAR', inicio: '1', fim: '163'}],
+           '105': [{bairro: 'LAGOA REDONDA', inicio: '1', fim: '132'}],
+           '106': [{bairro: 'LAGOA REDONDA', inicio: '132/1', fim: '204'}, {bairro: 'SABIAGUABA', inicio: '1', fim: '82'}],
+           '107': [{bairro: 'EDSON QUEIROZ', inicio: '1', fim: '62'}, {bairro: 'SAPIRANGA COITÉ', inicio: '206', fim: '304'}],
+           '108': [{bairro: 'EDSON QUEIROZ', inicio: '65', fim: '284'}],
+           '109': [{bairro: 'SAPIRANGA COITÉ', inicio: '1', fim: '205'}],
+           '110': [{bairro: 'CAMBEBA', inicio: '1', fim: '72'}, {bairro: 'PARQUE IRACEMA', inicio: '1', fim: '46'}, {bairro: 'PARQUE MANIBURA', inicio: '1', fim: '87'}, {bairro: 'CIDADE DOS FUNCIONÁRIOS', inicio: '143', fim: '162'}],
+           '111': [{bairro: 'AEROLÂNDIA', inicio: '57', fim: '81'}, {bairro: 'CIDADE DOS FUNCIONÁRIOS', inicio: '1', fim: '142/1'}, {bairro: 'JARDIM DAS OLIVEIRAS', inicio: '1', fim: '30'}],
+           '112': [{bairro: 'JARDIM DAS OLIVEIRAS', inicio: '31', fim: '213'}],
+           '113': [{bairro: 'AEROLÂNDIA', inicio: '1', fim: '56'}, {bairro: 'ALTO DA BALANÇA', inicio: '1', fim: '90'}]
         };
 
-        // 💡 NOVA FUNÇÃO: NORMALIZAÇÃO ROBUSTA DE STRINGS
-        // Remove acentos, caracteres especiais, múltiplos espaços e converte para maiúsculas.
+        // Função: NORMALIZAÇÃO ROBUSTA DE STRINGS (mantida)
         function normalizarString(str) {
             if (typeof str !== 'string') return '';
-            // 1. Remove acentos
-            // 2. Remove caracteres não alfanuméricos e não espaços
-            // 3. Remove múltiplos espaços
-            // 4. Converte para maiúsculas
             return str
-                .normalize('NFD') // Decompõe em letra + acento
-                .replace(/[\u0300-\u036f]/g, "") // Remove os acentos
-                .replace(/[^a-zA-Z0-9\s]/g, "") // Remove pontuações
-                .replace(/\s+/g, ' ') // Substitui múltiplos espaços por um único
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-zA-Z0-9\s]/g, "")
+                .replace(/\s+/g, ' ')
                 .trim()
                 .toUpperCase();
         }
@@ -278,10 +274,9 @@
                 ]);
 
                 if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas (${urlEstatisticas}): ${resEstatisticas.statusText}`);
-                // Não falha se o quadras.json não for encontrado (apenas lança erro)
                 if (!resQuadras.ok) {
                     console.warn(`Aviso: O arquivo de quadras (${urlQuadras}) não foi encontrado ou falhou ao carregar. O cálculo de quadras não funcionará.`);
-                    dadosQuadras = []; // Define como vazio para evitar erros
+                    dadosQuadras = [];
                 } else {
                     dadosQuadras = await resQuadras.json();
                 }
@@ -291,8 +286,8 @@
                 console.error('Erro fatal ao buscar arquivos JSON:', error);
             }
         }
-
-        // Função para popular a caixa de seleção (mantida)
+        
+        // Função para popular a caixa de seleção (atualizada para usar o novo CODIGOS_BAIRROS)
         function popularSeletor() {
             const defaultOption = document.createElement('option');
             defaultOption.textContent = 'Selecione um código';
@@ -301,7 +296,8 @@
 
             for (let i = 85; i <= 113; i++) {
                 const codigo = String(i);
-                const nomesBairros = CODIGOS_BAIRROS[codigo] || [];
+                // Mapeia para pegar apenas os nomes dos bairros para o display
+                const nomesBairros = CODIGOS_BAIRROS[codigo] ? CODIGOS_BAIRROS[codigo].map(item => item.bairro) : [];
                 const nomeDisplay = nomesBairros.length > 0 ? nomesBairros.join(', ') : 'Bairro(s) Desconhecido(s)';
 
                 const option = document.createElement('option');
@@ -311,17 +307,20 @@
             }
         }
 
-        // Função para gerar a(s) caixa(s) de seleção de quadras (mantida)
-        function gerarSelecaoQuadras(nomesBairros) {
+        // 💡 FUNÇÃO ATUALIZADA: Gera campos, preenche AUTOMATICAMENTE e chama o CÁLCULO
+        function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = ''; 
             resultadoContagem.style.display = 'none'; 
             
-            if (nomesBairros.length === 0 || dadosQuadras.length === 0) return;
+            if (bairrosComIntervalo.length === 0 || dadosQuadras.length === 0) {
+                if (dadosQuadras.length > 0) quadrasContainer.innerHTML += '<p>Nenhum bairro com intervalo definido para este código.</p>';
+                return;
+            }
             
-            quadrasContainer.innerHTML += '<h4>Selecione o Intervalo de Quadras por Bairro:</h4>';
+            quadrasContainer.innerHTML += '<h4>Intervalo de Quadras Padrão (Edite se necessário):</h4>';
 
-            nomesBairros.forEach(bairro => {
-                const nomeBairroClean = String(bairro).trim();
+            bairrosComIntervalo.forEach(item => {
+                const nomeBairroClean = String(item.bairro).trim();
                 const idPrefix = nomeBairroClean.replace(/\s/g, '_').replace(/[^a-z0-9_]/gi, '').toLowerCase(); 
 
                 const blocoHtml = `
@@ -330,11 +329,13 @@
                         <div class="quadra-inputs">
                             <div>
                                 <label for="${idPrefix}_inicio">Quadra Inicial:</label>
-                                <input type="number" id="${idPrefix}_inicio" class="input-personalizado quadra-input-inicio" placeholder="Ex: 1" data-bairro-id="${idPrefix}">
+                                <input type="text" id="${idPrefix}_inicio" class="input-personalizado quadra-input-inicio" 
+                                       placeholder="Ex: 1" data-bairro-id="${idPrefix}" value="${item.inicio}">
                             </div>
                             <div>
                                 <label for="${idPrefix}_fim">Quadra Final:</label>
-                                <input type="number" id="${idPrefix}_fim" class="input-personalizado quadra-input-fim" placeholder="Ex: 100" data-bairro-id="${idPrefix}">
+                                <input type="text" id="${idPrefix}_fim" class="input-personalizado quadra-input-fim" 
+                                       placeholder="Ex: 100" data-bairro-id="${idPrefix}" value="${item.fim}">
                             </div>
                         </div>
                     </div>
@@ -342,13 +343,50 @@
                 quadrasContainer.innerHTML += blocoHtml;
             });
             
-            // Adiciona o Event Listener para cálculo automático em todos os inputs de quadra
-            const inputs = quadrasContainer.querySelectorAll('input[type="number"]');
+            // Adiciona o Event Listener para cálculo em todos os inputs (permite ajuste manual)
+            const inputs = quadrasContainer.querySelectorAll('input[type="text"]');
             inputs.forEach(input => {
                 input.addEventListener('input', calcularQuadrasUteis);
             });
+            
+            // 💡 Chama a função de cálculo imediatamente APÓS preencher os campos
+            calcularQuadrasUteis();
         }
 
+        // Função para comparar quadras (agora aceita strings com '/')
+        function compararQuadras(quadraItem, inicio, fim) {
+            // Se a quadra contém '/', trata como string. Caso contrário, trata como número.
+            const isNumeric = !String(quadraItem).includes('/') && !String(inicio).includes('/') && !String(fim).includes('/');
+            
+            if (isNumeric) {
+                const q = parseFloat(quadraItem);
+                const i = parseFloat(inicio);
+                const f = parseFloat(fim);
+                return q >= i && q <= f;
+            } else {
+                // Se não for puramente numérico (ex: 93/1), compara as strings.
+                // Esta é uma simplificação e pode ser imprecisa, mas é necessária se as quadras não forem inteiras.
+                // Para uma comparação precisa de strings complexas (93/1 até 100), o JSON precisa ser ordenado.
+                // Como não podemos ordenar o JSON, vamos manter a comparação simples, mas alertar sobre a complexidade.
+                
+                // Conversão para string e comparação léxica:
+                const q_str = String(quadraItem).toUpperCase();
+                const i_str = String(inicio).toUpperCase();
+                const f_str = String(fim).toUpperCase();
+                
+                // Assumimos que a ordem léxica é suficiente, o que é um risco para números.
+                // Ex: "100" < "2" é FALSO em léxico, mas TRUE em numérico. 
+                // Usaremos a regra simples: se o número do início estiver no intervalo. 
+                // A ÚNICA FORMA SEGURA é usando parseInt/parseFloat. Vamos tentar extrair apenas a parte numérica.
+                const q_num = parseFloat(q_str.split('/')[0]);
+                const i_num = parseFloat(i_str.split('/')[0]);
+                const f_num = parseFloat(f_str.split('/')[0]);
+                
+                // Se a parte numérica estiver no intervalo, consideramos válido.
+                return q_num >= i_num && q_num <= f_num;
+            }
+        }
+        
         // Função para calcular as quadras úteis e imóveis
         function calcularQuadrasUteis() {
             let totalQuadrasUteis = 0;
@@ -360,35 +398,35 @@
             let resultadosHtml = '';
             let isAnyInputValid = false;
 
-            bairrosAtuais.forEach(bairro => {
-                const nomeBairroClean = String(bairro).trim();
+            bairrosAtuais.forEach(item => { // 'item' agora contém {bairro, inicio, fim}
+                const nomeBairroClean = String(item.bairro).trim();
                 const idPrefix = nomeBairroClean.replace(/\s/g, '_').replace(/[^a-z0-9_]/gi, '').toLowerCase();
 
+                // Recupera os valores preenchidos (que podem ter sido alterados pelo usuário)
                 const inputInicio = document.getElementById(`${idPrefix}_inicio`);
                 const inputFim = document.getElementById(`${idPrefix}_fim`);
 
-                const inicio = parseInt(inputInicio ? inputInicio.value : '');
-                const fim = parseInt(inputFim ? inputFim.value : '');
+                const inicio = inputInicio ? inputInicio.value : '';
+                const fim = inputFim ? inputFim.value : '';
                 
-                // Validação de inputs
-                if (isNaN(inicio) || isNaN(fim) || inicio <= 0 || fim <= 0 || inicio > fim) {
+                // 💡 Validação de inputs (simples)
+                if (!inicio || !fim) {
                     return; 
                 }
                 
                 isAnyInputValid = true; 
 
-                // 💡 Aplica a normalização ao nome do bairro do JSON para a comparação
+                // Aplica a normalização ao nome do bairro do JS
                 const nomeBairroNormalizado = normalizarString(nomeBairroClean);
 
                 // 1. Filtra as quadras do JSON pelo Bairro, Intervalo e IMOVEIS > 0
-                const quadrasUteisBairro = dadosQuadras.filter(item => {
-                    const nomeItemNormalizado = normalizarString(item['BAIRRO']); // Normaliza o nome do JSON
-                    const quadra = parseInt(item['QUADRA']);
-                    const imoveis = parseInt(item['IMOVEIS']) || 0; 
+                const quadrasUteisBairro = dadosQuadras.filter(quadraItem => {
+                    const nomeItemNormalizado = normalizarString(quadraItem['BAIRRO']); // Normaliza o nome do JSON
+                    const quadra = quadraItem['QUADRA'];
+                    const imoveis = parseInt(quadraItem['IMOVEIS']) || 0; 
 
                     return nomeItemNormalizado === nomeBairroNormalizado &&
-                           quadra >= inicio &&
-                           quadra <= fim &&
+                           compararQuadras(quadra, inicio, fim) && // Usa a nova função de comparação
                            imoveis > 0; // Apenas quadras com Imóveis > 0 (não extintas)
                 });
 
@@ -403,7 +441,7 @@
 
                 const formatarValor = (valor) => valor.toLocaleString('pt-BR');
 
-                resultadosHtml += `<p><strong>${nomeBairroClean}:</strong> 
+                resultadosHtml += `<p><strong>${nomeBairroClean} (${inicio} a ${fim}):</strong> 
                                        ${formatarValor(contagemBairro)} quadra(s) útil(is). 
                                        <span style="color: var(--secondary-color);">(${formatarValor(imoveisBairro)} imóveis)</span></p>`;
             });
@@ -439,22 +477,23 @@
                 return;
             }
 
-            const nomesBairrosMapeados = CODIGOS_BAIRROS[codigoSelecionado];
+            const bairrosComIntervalo = CODIGOS_BAIRROS[codigoSelecionado];
+            // Mapeia para pegar apenas os nomes dos bairros para o display (sem os intervalos)
+            const nomesBairrosMapeados = bairrosComIntervalo ? bairrosComIntervalo.map(item => item.bairro) : [];
             const nomeDisplayBairros = nomesBairrosMapeados ? nomesBairrosMapeados.join(', ') : '';
-            bairrosAtuais = nomesBairrosMapeados; 
+            bairrosAtuais = bairrosComIntervalo; // 💡 Armazena a lista de objetos {bairro, inicio, fim}
 
-            if (!nomesBairrosMapeados || nomesBairrosMapeados.length === 0) {
-                bairroDisplay.textContent = `Código ${codigoSelecionado} não mapeado para nenhum bairro.`;
+            if (!bairrosComIntervalo || bairrosComIntervalo.length === 0) {
+                bairroDisplay.textContent = `Código ${codigoSelecionado} não mapeado para nenhum bairro ou intervalo.`;
                 return;
             }
             
-            // --- 1. Lógica de Consolidação de Estatísticas (USANDO NORMALIZAÇÃO) ---
+            // --- 1. Lógica de Consolidação de Estatísticas ---
             
-            // 💡 Normaliza a lista de bairros do código
+            // Normaliza a lista de bairros do código
             const bairrosParaFiltrarNormalizados = nomesBairrosMapeados.map(normalizarString);
             
             const registrosFiltrados = dadosEstatisticos.filter(item => {
-                // 💡 Normaliza o nome do bairro do JSON antes de comparar
                 const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
                 return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
             });
@@ -480,18 +519,16 @@
                     return isNaN(num) ? '--' : num.toLocaleString('pt-BR');
                 };
 
-                // Exibe usando as novas chaves totais
                 imoveisEstrato.textContent = formatarValor(totais['imoveisEstrato']);
                 quarteiroesEstrato.textContent = formatarValor(totais['quarteiroesEstrato']);
                 imoveisInspecionar.textContent = formatarValor(totais['imoveisInspecionar']);
                 quarteiroesSorteados.textContent = formatarValor(totais['quarteiroesSorteados']);
             } else {
-                // Mensagem de erro alterada para refletir que a busca falhou APÓS a normalização
-                bairroDisplay.textContent = `AVISO: Nenhum registro encontrado para os bairros (${nomeDisplayBairros}). Verifique o JSON ou o mapeamento de nomes.`;
+                bairroDisplay.textContent = `AVISO: Nenhum registro de estatística encontrado para os bairros (${nomeDisplayBairros}). Verifique o JSON ou o mapeamento de nomes.`;
             }
 
             // --- 2. Lógica de Geração dos Campos de Quadras ---
-            gerarSelecaoQuadras(nomesBairrosMapeados);
+            gerarSelecaoQuadras(bairrosComIntervalo);
         }
 
         // Event Listeners
@@ -507,5 +544,6 @@
     </script>
 </body>
 </html>
+
 
 
