@@ -154,11 +154,14 @@
             margin-top: 5px;
             font-size: 0.95em;
             line-height: 1.4;
-            white-space: pre-wrap; /* Permite quebras de linha */
-            word-break: break-word; /* Garante que palavras longas quebrem */
+            /* Estilo para que o texto flua em linha (sem quebra) e se for muito longo, quebre. */
+            white-space: normal; 
+            word-break: break-word; 
         }
         .detalhe-bairro strong {
             color: var(--secondary-color);
+            display: block; /* Garante que o nome do bairro comece em uma nova linha */
+            margin-bottom: 5px;
         }
 
 
@@ -243,7 +246,7 @@
         const tituloEstatisticas = document.getElementById('tituloEstatisticas');
         const quadrasContainer = document.getElementById('quadrasContainer'); 
         const resultadoContagem = document.getElementById('resultadoContagem'); 
-        const detalhamentoQuadras = document.getElementById('detalhamentoQuadras'); // Novo elemento
+        const detalhamentoQuadras = document.getElementById('detalhamentoQuadras'); 
         
         const imoveisEstrato = document.getElementById('imoveisEstrato');
         const quarteiroesEstrato = document.getElementById('quarteiroesEstrato');
@@ -349,7 +352,8 @@
                 const parts = String(q_str).split('/');
                 let num = parseFloat(parts[0]);
                 if (parts.length > 1) {
-                    const decimal = parseFloat(parts[1]) / 1000; // Alterei para /1000 para evitar conflito com quadras como 93 e 93/1
+                    // Divide por 1000 para manter a ordenação correta: 93 < 93/1 < 93/2 < 94
+                    const decimal = parseFloat(parts[1]) / 1000; 
                     num += decimal;
                 }
                 return num;
@@ -409,7 +413,7 @@
         }
         
         /**
-         * NOVO: Gera a seção de detalhamento por quadra.
+         * FUNÇÃO ATUALIZADA: Gera a seção de detalhamento por quadra, listando TODAS.
          * @param {Array} detalhes - Array de objetos contendo: { nomeBairro, inicio, fim, quadrasUteisBairro }
          */
         function gerarDetalhamentoPorQuadra(detalhes) {
@@ -426,7 +430,7 @@
                 
                 if (quadrasUteisBairro.length === 0) return;
 
-                // Monta a string de detalhamento: "1: 52 ... 204: 26"
+                // Monta a string de detalhamento: "1: 52 | 2: 25 | 3: 10 ..."
                 const quadrasFormatadas = quadrasUteisBairro.map(registro => {
                     const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
                     const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
@@ -436,17 +440,8 @@
                     return `${registro[CHAVE_QUADRA]}: ${imoveisLiquidos.toLocaleString('pt-BR')}`;
                 });
                 
-                let detalheString = '';
-
-                if (quadrasFormatadas.length > 5) {
-                    // Mostra a primeira e a última quadra, como você sugeriu
-                    const primeira = quadrasFormatadas[0];
-                    const ultima = quadrasFormatadas[quadrasFormatadas.length - 1];
-                    detalheString = `${primeira} ... ${ultima}`;
-                } else {
-                    // Se houver poucas quadras, lista todas
-                    detalheString = quadrasFormatadas.join(' | ');
-                }
+                // 💡 MUDANÇA AQUI: Lista TODAS as quadras separadas por " | "
+                const detalheString = quadrasFormatadas.join(' | ');
 
                 detalheHtml += `
                     <div class="detalhe-bairro">
@@ -461,7 +456,7 @@
         }
 
 
-        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento
+        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento (Mantida a lógica de cálculo)
         function calcularQuadrasUteis() {
             let totalQuadrasUteis = 0;
             let totalImoveisUteis = 0; 
@@ -477,7 +472,7 @@
 
             let resultadosHtml = '';
             let isAnyInputValid = false;
-            let detalhesParaDetalhamento = []; // NOVO: Armazena dados para a função de detalhamento
+            let detalhesParaDetalhamento = []; 
 
             // Filtra os registros do JSON por CÓDIGO/BAIRRO antes de iterar
             const bairrosParaFiltrarNormalizados = bairrosAtuais.map(item => normalizarString(item.bairro));
@@ -504,7 +499,6 @@
                 const nomeBairroNormalizado = normalizarString(nomeBairroClean);
 
                 // 1. Filtra os registros que pertencem ao bairro E estão dentro do intervalo QT
-                // NOTA: O Array quadrasUteisBairro contém os DADOS BRUTOS, que serão usados tanto para o TOTAL quanto para o DETALHAMENTO
                 const quadrasUteisBairro = todosRegistrosDoCodigo
                     .filter(registro => {
                         const nomeItemNormalizado = normalizarString(registro['BAIRRO']); 
@@ -515,9 +509,22 @@
                                compararQuadras(quadra, inicio, fim) && 
                                imoveis > 0; // Considera útil apenas se TOTAL > 0
                     })
-                    // Opcional: ordenar pelo número da quadra para exibir corretamente o detalhe
-                    .sort((a, b) => compararQuadras(a[CHAVE_QUADRA], '0', b[CHAVE_QUADRA]) ? -1 : 1); 
-
+                    // Ordena pelo número da quadra para a exibição sequencial
+                    .sort((a, b) => {
+                         // Adaptação da lógica de comparação para ordenação
+                         const parseQuadraSort = (q_str) => {
+                             const parts = String(q_str).split('/');
+                             let num = parseFloat(parts[0]);
+                             if (parts.length > 1) {
+                                 const decimal = parseFloat(parts[1]) / 1000;
+                                 num += decimal;
+                             }
+                             return num;
+                         };
+                         const qA = parseQuadraSort(a[CHAVE_QUADRA]);
+                         const qB = parseQuadraSort(b[CHAVE_QUADRA]);
+                         return qA - qB;
+                     });
                 
                 // Variáveis para este bloco de bairro
                 const contagemBairro = quadrasUteisBairro.length;
@@ -588,7 +595,7 @@
 
 
         // Função principal de exibição (mantida)
-        function exibirResultadosPorCodigo(codigoSelecionado) {
+        function exibirResultsPorCodigo(codigoSelecionado) {
             // ... (Lógica de consolidação das estatísticas do topo e limpeza mantida) ...
 
             imoveisEstrato.textContent = '--';
@@ -667,13 +674,13 @@
 
         // Event Listeners (mantidos)
         selecaoCodigo.addEventListener('change', (event) => {
-            exibirResultadosPorCodigo(event.target.value);
+            exibirResultsPorCodigo(event.target.value);
         });
 
         document.addEventListener('DOMContentLoaded', async () => {
             await carregarDados();
             popularSeletor();
-            exibirResultadosPorCodigo(''); 
+            exibirResultsPorCodigo(''); 
         });
     </script>
 </body>
