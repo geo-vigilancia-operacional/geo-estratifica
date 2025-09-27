@@ -133,6 +133,27 @@
             color: var(--secondary-color);
         }
 
+        /* ESTILO NOVO PARA INPUT DE IDS */
+        .input-ids-bloco {
+             margin-top: 20px;
+             padding: 15px;
+             background-color: #2a2a47;
+             border-radius: 8px;
+             border: 1px solid var(--border-color);
+        }
+        .input-ids-bloco label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        .input-ids-bloco small {
+            display: block;
+            margin-top: 5px;
+            color: #ccc;
+            font-weight: 400;
+            font-size: 0.85em;
+        }
+
         /* NOVO ESTILO PARA DETALHAMENTO */
         #detalhamentoQuadras {
             margin-top: 20px;
@@ -154,13 +175,12 @@
             margin-top: 5px;
             font-size: 0.95em;
             line-height: 1.4;
-            /* Estilo para que o texto flua em linha (sem quebra) e se for muito longo, quebre. */
             white-space: normal; 
             word-break: break-word; 
         }
         .detalhe-bairro strong {
             color: var(--secondary-color);
-            display: block; /* Garante que o nome do bairro comece em uma nova linha */
+            display: block; 
             margin-bottom: 5px;
         }
 
@@ -228,10 +248,17 @@
                 <div id="quadrasContainer">
                     </div>
 
+                <div class="input-ids-bloco">
+                    <label for="inputIdsSorteados">IDs das Quadras Sorteadas (Separe por hífen ou vírgula):</label>
+                    <input type="text" id="inputIdsSorteados" class="input-personalizado" 
+                           placeholder="Ex: 1-5-11-17-21 ou 1, 5, 11, 17">
+                    <small>Quadras com Imóveis Líquidos = 0 não recebem ID sequencial.</small>
+                </div>
+
                 <div id="resultadoContagem" style="display: none;"></div>
                 
                 <div id="detalhamentoQuadras" style="display: none;">
-                    <h4>Detalhamento de Imóveis Líquidos por Quadra (Intervalo):</h4>
+                    <h4>Detalhamento de Imóveis a Inspecionar (20% da Amostra):</h4>
                 </div>
             </div>
         </div>
@@ -247,6 +274,7 @@
         const quadrasContainer = document.getElementById('quadrasContainer'); 
         const resultadoContagem = document.getElementById('resultadoContagem'); 
         const detalhamentoQuadras = document.getElementById('detalhamentoQuadras'); 
+        const inputIdsSorteados = document.getElementById('inputIdsSorteados'); // Novo Elemento
         
         const imoveisEstrato = document.getElementById('imoveisEstrato');
         const quarteiroesEstrato = document.getElementById('quarteiroesEstrato');
@@ -352,7 +380,6 @@
                 const parts = String(q_str).split('/');
                 let num = parseFloat(parts[0]);
                 if (parts.length > 1) {
-                    // Divide por 1000 para manter a ordenação correta: 93 < 93/1 < 93/2 < 94
                     const decimal = parseFloat(parts[1]) / 1000; 
                     num += decimal;
                 }
@@ -369,9 +396,13 @@
         // Função para gerar campos (mantida)
         function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = ''; 
+            // Garante que o input de IDs também chame o cálculo
+            inputIdsSorteados.removeEventListener('input', calcularQuadrasUteis); 
+            inputIdsSorteados.addEventListener('input', calcularQuadrasUteis);
+            
             resultadoContagem.style.display = 'none'; 
             detalhamentoQuadras.style.display = 'none';
-            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis Líquidos por Quadra (Intervalo):</h4>';
+            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis a Inspecionar (20% da Amostra):</h4>';
             
             if (bairrosComIntervalo.length === 0) {
                 quadrasContainer.innerHTML += '<p>Nenhum bairro com intervalo definido para este código.</p>';
@@ -413,11 +444,56 @@
         }
         
         /**
-         * FUNÇÃO ATUALIZADA: Gera a seção de detalhamento por quadra, listando TODAS.
-         * @param {Array} detalhes - Array de objetos contendo: { nomeBairro, inicio, fim, quadrasUteisBairro }
+         * NOVO: Atribui um ID sequencial a cada quadra útil no intervalo, ordenadamente.
+         * @param {Array} registros - Lista de registros do JSON.
+         * @returns {Array} Registros com o novo campo 'ID_SEQUENCIAL'
          */
-        function gerarDetalhamentoPorQuadra(detalhes) {
-            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis Líquidos por Quadra (Intervalo):</h4>';
+        function gerarIdsSequenciais(registros) {
+            let idCounter = 1;
+            
+            // 1. Clonar e ordenar os registros antes de atribuir o ID
+            const registrosOrdenados = registros
+                .map(item => ({ ...item })) // Clona o objeto para não alterar o dado original
+                .sort((a, b) => {
+                    const parseQuadraSort = (q_str) => {
+                        const parts = String(q_str).split('/');
+                        let num = parseFloat(parts[0]);
+                        if (parts.length > 1) {
+                            const decimal = parseFloat(parts[1]) / 1000;
+                            num += decimal;
+                        }
+                        return num;
+                    };
+                    const qA = parseQuadraSort(a[CHAVE_QUADRA]);
+                    const qB = parseQuadraSort(b[CHAVE_QUADRA]);
+                    return qA - qB;
+                });
+
+            // 2. Atribuir o ID sequencial apenas se Imóveis Líquidos > 0
+            registrosOrdenados.forEach(registro => {
+                const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                const imoveisLiquidos = totalReg - apReg - peReg;
+                
+                if (imoveisLiquidos > 0) {
+                    registro.ID_SEQUENCIAL = idCounter++;
+                } else {
+                    registro.ID_SEQUENCIAL = 0; // Quadra Extinta/Vazia não conta
+                }
+            });
+
+            return registrosOrdenados;
+        }
+
+
+        /**
+         * Gera a seção de detalhamento por quadra, aplicando filtro por ID e cálculo de 20%.
+         * @param {Array} detalhes - Array de objetos contendo: { nomeBairro, inicio, fim, quadrasUteisBairro }
+         * @param {Set} idsSorteados - Set de IDs (números) a serem filtrados.
+         */
+        function gerarDetalhamentoPorQuadra(detalhes, idsSorteados) {
+            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis a Inspecionar (20% da Amostra):</h4>';
             let detalheHtml = '';
             
             if (detalhes.length === 0) {
@@ -425,22 +501,34 @@
                  return;
             }
 
+            let totalAmostraGeral = 0;
+
             detalhes.forEach(item => {
                 const { nomeBairro, inicio, fim, quadrasUteisBairro } = item;
                 
                 if (quadrasUteisBairro.length === 0) return;
 
-                // Monta a string de detalhamento: "1: 52 | 2: 25 | 3: 10 ..."
-                const quadrasFormatadas = quadrasUteisBairro.map(registro => {
+                // Filtra as quadras que foram sorteadas (que tem um ID e o ID está na lista)
+                const quadrasFiltradas = quadrasUteisBairro.filter(registro => 
+                    registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
+                );
+                
+                if (quadrasFiltradas.length === 0) return; // Não exibe se não houver quadras sorteadas neste bairro
+
+                const quadrasFormatadas = quadrasFiltradas.map(registro => {
                     const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
                     const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
                     const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                    
                     const imoveisLiquidos = totalReg - apReg - peReg;
                     
-                    return `${registro[CHAVE_QUADRA]}: ${imoveisLiquidos.toLocaleString('pt-BR')}`;
+                    // CÁLCULO DE 20% E ARREDONDAMENTO PARA CIMA
+                    const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
+                    totalAmostraGeral += amostra20Pct;
+                    
+                    return `ID ${registro.ID_SEQUENCIAL} (QT ${registro[CHAVE_QUADRA]}): ${amostra20Pct.toLocaleString('pt-BR')}`;
                 });
                 
-                // 💡 MUDANÇA AQUI: Lista TODAS as quadras separadas por " | "
                 const detalheString = quadrasFormatadas.join(' | ');
 
                 detalheHtml += `
@@ -450,13 +538,19 @@
                     </div>
                 `;
             });
+            
+            // Adiciona o total da amostra
+            detalheHtml += `<div class="resultado-total" style="border-top: 1px solid var(--primary-color);">
+                                <p><strong>TOTAL GERAL DE IMÓVEIS A INSPECIONAR (20% da Amostra):</strong> 
+                                <strong style="font-size: 1.5em;">${totalAmostraGeral.toLocaleString('pt-BR')}</strong></p>
+                            </div>`;
 
             detalhamentoQuadras.innerHTML += detalheHtml;
             detalhamentoQuadras.style.display = 'block';
         }
 
 
-        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento (Mantida a lógica de cálculo)
+        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento
         function calcularQuadrasUteis() {
             let totalQuadrasUteis = 0;
             let totalImoveisUteis = 0; 
@@ -466,9 +560,23 @@
             
             resultadoContagem.innerHTML = '';
             detalhamentoQuadras.style.display = 'none';
-            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis Líquidos por Quadra (Intervalo):</h4>';
+            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis a Inspecionar (20% da Amostra):</h4>';
             
             if (bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) return;
+            
+            // Processa a lista de IDs sorteadas (1-5-11-17 ou 1, 5, 11)
+            const idsInput = inputIdsSorteados.value.trim();
+            let idsSorteados = new Set();
+            if (idsInput) {
+                // Remove espaços e substitui hífens por vírgulas, depois separa
+                const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
+                idsArray.forEach(idStr => {
+                    const idNum = parseInt(idStr);
+                    if (!isNaN(idNum) && idNum > 0) {
+                        idsSorteados.add(idNum);
+                    }
+                });
+            }
 
             let resultadosHtml = '';
             let isAnyInputValid = false;
@@ -476,6 +584,7 @@
 
             // Filtra os registros do JSON por CÓDIGO/BAIRRO antes de iterar
             const bairrosParaFiltrarNormalizados = bairrosAtuais.map(item => normalizarString(item.bairro));
+            
             const todosRegistrosDoCodigo = dadosEstatisticos.filter(item => {
                 const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
                 return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
@@ -499,40 +608,26 @@
                 const nomeBairroNormalizado = normalizarString(nomeBairroClean);
 
                 // 1. Filtra os registros que pertencem ao bairro E estão dentro do intervalo QT
-                const quadrasUteisBairro = todosRegistrosDoCodigo
+                const quadrasNoIntervalo = todosRegistrosDoCodigo
                     .filter(registro => {
                         const nomeItemNormalizado = normalizarString(registro['BAIRRO']); 
                         const quadra = registro[CHAVE_QUADRA]; 
-                        const imoveis = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0; 
-                        
                         return nomeItemNormalizado === nomeBairroNormalizado &&
-                               compararQuadras(quadra, inicio, fim) && 
-                               imoveis > 0; // Considera útil apenas se TOTAL > 0
-                    })
-                    // Ordena pelo número da quadra para a exibição sequencial
-                    .sort((a, b) => {
-                         // Adaptação da lógica de comparação para ordenação
-                         const parseQuadraSort = (q_str) => {
-                             const parts = String(q_str).split('/');
-                             let num = parseFloat(parts[0]);
-                             if (parts.length > 1) {
-                                 const decimal = parseFloat(parts[1]) / 1000;
-                                 num += decimal;
-                             }
-                             return num;
-                         };
-                         const qA = parseQuadraSort(a[CHAVE_QUADRA]);
-                         const qB = parseQuadraSort(b[CHAVE_QUADRA]);
-                         return qA - qB;
-                     });
+                               compararQuadras(quadra, inicio, fim);
+                    });
                 
-                // Variáveis para este bloco de bairro
+                // 2. GERA OS IDs SEQUENCIAIS para as quadras do intervalo
+                const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+
+                // Variáveis para este bloco de bairro (soma todas as quadras úteis, independente do ID sorteado)
+                const quadrasUteisBairro = quadrasComIds.filter(q => q.ID_SEQUENCIAL > 0);
                 const contagemBairro = quadrasUteisBairro.length;
+                
                 let imoveisBairro = 0;
                 let apAcimaTerreoBairro = 0;
                 let peBairro = 0;
 
-                // 2. Acumula os totais no INTERVALO
+                // 3. Acumula os totais no INTERVALO (somente as quadras úteis)
                 quadrasUteisBairro.forEach(registro => {
                     const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
                     const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
@@ -543,7 +638,7 @@
                     peBairro += peReg;
                 });
                 
-                // 3. Soma os totais gerais (de todos os bairros no código)
+                // 4. Soma os totais gerais (de todos os bairros no código)
                 totalQuadrasUteis += contagemBairro;
                 totalImoveisUteis += imoveisBairro;
                 totalApAcimaTerreo += apAcimaTerreoBairro;
@@ -559,16 +654,16 @@
                                        <span style="color: var(--secondary-color);">(${formatarValor(imoveisLiquidosBairro)} imóveis líquidos)</span>
                                    </p>`;
                                    
-                // 4. Armazena os dados para o Detalhamento
+                // 5. Armazena os dados para o Detalhamento (usamos quadrasComIds que tem o ID sequencial)
                 detalhesParaDetalhamento.push({ 
                     nomeBairro: nomeBairroClean, 
                     inicio: inicio, 
                     fim: fim, 
-                    quadrasUteisBairro: quadrasUteisBairro 
+                    quadrasUteisBairro: quadrasComIds 
                 });
             });
             
-            // 5. CÁLCULO FINAL LÍQUIDO GERAL
+            // 6. CÁLCULO FINAL LÍQUIDO GERAL
             totalImoveisLiquidos = totalImoveisUteis - totalApAcimaTerreo - totalPE;
 
             // Exibe o container de resultados
@@ -584,8 +679,12 @@
                                            </div>`;
                 resultadoContagem.style.display = 'block';
                 
-                // 6. GERAÇÃO DO DETALHAMENTO
-                gerarDetalhamentoPorQuadra(detalhesParaDetalhamento);
+                // 7. GERAÇÃO DO DETALHAMENTO (Amostra 20% + Filtro por ID)
+                if (idsSorteados.size > 0) {
+                     gerarDetalhamentoPorQuadra(detalhesParaDetalhamento, idsSorteados);
+                } else {
+                    detalhamentoQuadras.style.display = 'none';
+                }
 
             } else {
                  resultadoContagem.style.display = 'none';
@@ -596,8 +695,7 @@
 
         // Função principal de exibição (mantida)
         function exibirResultsPorCodigo(codigoSelecionado) {
-            // ... (Lógica de consolidação das estatísticas do topo e limpeza mantida) ...
-
+            // Lógica de limpeza e re-execução do cálculo
             imoveisEstrato.textContent = '--';
             quarteiroesEstrato.textContent = '--';
             imoveisInspecionar.textContent = '--';
@@ -685,6 +783,7 @@
     </script>
 </body>
 </html>
+
 
 
 
