@@ -19,12 +19,13 @@
 
         :root {
             --bg-color: #1a1a2e;
-            --primary-color: #00b4d8;
-            --secondary-color: #89b4f0;
+            --primary-color: #00b4d8; /* Azul claro para destaque */
+            --secondary-color: #89b4f0; /* Azul mais claro para títulos */
             --text-color: #e0e0e0;
             --card-bg: #21213e;
             --border-color: #3e4a61;
             --input-bg: #111122;
+            --highlight-bg: #2a2a47; /* Fundo do detalhamento/bloco */
         }
 
         body {
@@ -78,7 +79,7 @@
         }
 
         .quadra-bloco {
-            background-color: #2a2a47; 
+            background-color: var(--highlight-bg); 
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 15px;
@@ -137,7 +138,7 @@
         .input-ids-bloco {
              margin-top: 20px;
              padding: 15px;
-             background-color: #2a2a47;
+             background-color: var(--highlight-bg);
              border-radius: 8px;
              border: 1px solid var(--border-color);
         }
@@ -158,7 +159,7 @@
         #detalhamentoQuadras {
             margin-top: 20px;
             padding: 15px;
-            background-color: #2a2a47;
+            background-color: var(--highlight-bg);
             border-radius: 8px;
             border: 1px solid var(--border-color);
         }
@@ -170,43 +171,49 @@
         }
         .detalhe-bairro {
             margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--border-color); /* Separador suave entre bairros */
         }
-        .detalhe-bairro p {
-            margin-top: 5px;
-            font-size: 0.95em;
-            line-height: 1.4;
-            white-space: normal; 
-            word-break: break-word; 
+        .detalhe-bairro:last-of-type {
+            border-bottom: none;
         }
         .detalhe-bairro strong {
             color: var(--secondary-color);
             display: block; 
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
         }
-
-
-        .grid-estatisticas {
+        
+        /* NOVO ESTILO PARA ORGANIZAÇÃO DA LISTA DE QUADRAS */
+        .detalhe-grid {
             display: grid;
-            grid-template-columns: 1fr; 
-            gap: 15px;
-            margin-bottom: 20px;
+            /* Layout: 2 colunas para telas menores, 3 ou 4 para telas maiores */
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 10px;
+            margin-top: 5px;
         }
-        .grid-estatisticas > div {
-            background-color: var(--input-bg);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+        
+        .quadra-item {
+            padding: 8px 12px;
+            background-color: #313158; /* Um tom um pouco mais escuro que o card principal */
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
         }
-        .grid-estatisticas p {
-            margin: 0;
+        
+        .quadra-identificacao {
+            /* ID X (QT Y) */
+            color: var(--text-color);
         }
-        .grid-estatisticas strong {
-            color: var(--primary-color);
-        }
-        @media (min-width: 600px) {
-            .grid-estatisticas {
-                grid-template-columns: 1fr 1fr; 
-            }
+        
+        .quadra-quantidade {
+            /* O VALOR NUMÉRICO (6, 8, 9...) */
+            font-weight: 700;
+            color: var(--primary-color); /* COR DE DESTAQUE APLICADA */
+            font-size: 1.1em;
+            padding-left: 8px; /* Espaçamento para separar do texto */
         }
         
     </style>
@@ -274,7 +281,7 @@
         const quadrasContainer = document.getElementById('quadrasContainer'); 
         const resultadoContagem = document.getElementById('resultadoContagem'); 
         const detalhamentoQuadras = document.getElementById('detalhamentoQuadras'); 
-        const inputIdsSorteados = document.getElementById('inputIdsSorteados'); // Novo Elemento
+        const inputIdsSorteados = document.getElementById('inputIdsSorteados'); 
         
         const imoveisEstrato = document.getElementById('imoveisEstrato');
         const quarteiroesEstrato = document.getElementById('quarteiroesEstrato');
@@ -396,7 +403,6 @@
         // Função para gerar campos (mantida)
         function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = ''; 
-            // Garante que o input de IDs também chame o cálculo
             inputIdsSorteados.removeEventListener('input', calcularQuadrasUteis); 
             inputIdsSorteados.addEventListener('input', calcularQuadrasUteis);
             
@@ -488,7 +494,7 @@
 
 
         /**
-         * Gera a seção de detalhamento por quadra, aplicando filtro por ID e cálculo de 20%.
+         * FUNÇÃO ATUALIZADA: Gera a seção de detalhamento por quadra, com layout visual melhorado.
          * @param {Array} detalhes - Array de objetos contendo: { nomeBairro, inicio, fim, quadrasUteisBairro }
          * @param {Set} idsSorteados - Set de IDs (números) a serem filtrados.
          */
@@ -513,9 +519,12 @@
                     registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
                 );
                 
-                if (quadrasFiltradas.length === 0) return; // Não exibe se não houver quadras sorteadas neste bairro
+                if (quadrasFiltradas.length === 0) return; 
 
-                const quadrasFormatadas = quadrasFiltradas.map(registro => {
+                let gridItensHtml = '';
+                
+                // --- NOVO LOOP PARA GERAR O LAYOUT EM GRID ---
+                quadrasFiltradas.forEach(registro => {
                     const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
                     const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
                     const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
@@ -526,15 +535,20 @@
                     const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
                     totalAmostraGeral += amostra20Pct;
                     
-                    return `ID ${registro.ID_SEQUENCIAL} (QT ${registro[CHAVE_QUADRA]}): ${amostra20Pct.toLocaleString('pt-BR')}`;
+                    gridItensHtml += `
+                        <div class="quadra-item">
+                            <span class="quadra-identificacao">ID ${registro.ID_SEQUENCIAL} (QT ${registro[CHAVE_QUADRA]})</span>
+                            <span class="quadra-quantidade">${amostra20Pct.toLocaleString('pt-BR')}</span>
+                        </div>
+                    `;
                 });
                 
-                const detalheString = quadrasFormatadas.join(' | ');
-
                 detalheHtml += `
                     <div class="detalhe-bairro">
                         <strong>${nomeBairro} (QT ${inicio} a ${fim}):</strong>
-                        <p>${detalheString}</p>
+                        <div class="detalhe-grid">
+                            ${gridItensHtml}
+                        </div>
                     </div>
                 `;
             });
@@ -542,7 +556,7 @@
             // Adiciona o total da amostra
             detalheHtml += `<div class="resultado-total" style="border-top: 1px solid var(--primary-color);">
                                 <p><strong>TOTAL GERAL DE IMÓVEIS A INSPECIONAR (20% da Amostra):</strong> 
-                                <strong style="font-size: 1.5em;">${totalAmostraGeral.toLocaleString('pt-BR')}</strong></p>
+                                <strong style="font-size: 1.5em; color: var(--primary-color);">${totalAmostraGeral.toLocaleString('pt-BR')}</strong></p>
                             </div>`;
 
             detalhamentoQuadras.innerHTML += detalheHtml;
@@ -550,7 +564,7 @@
         }
 
 
-        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento
+        // FUNÇÃO ATUALIZADA: Calcula Totais e Gera Detalhamento (Lógica mantida)
         function calcularQuadrasUteis() {
             let totalQuadrasUteis = 0;
             let totalImoveisUteis = 0; 
@@ -564,11 +578,10 @@
             
             if (bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) return;
             
-            // Processa a lista de IDs sorteadas (1-5-11-17 ou 1, 5, 11)
+            // Processa a lista de IDs sorteadas
             const idsInput = inputIdsSorteados.value.trim();
             let idsSorteados = new Set();
             if (idsInput) {
-                // Remove espaços e substitui hífens por vírgulas, depois separa
                 const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
                 idsArray.forEach(idStr => {
                     const idNum = parseInt(idStr);
