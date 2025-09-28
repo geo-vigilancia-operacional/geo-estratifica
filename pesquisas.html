@@ -407,8 +407,11 @@
         let totalImoveisLiquidosGeral = 0;
         let totalQuadrasUteisGeral = 0;
         
-        let quadrasSorteioGlobal = {}; 
+        let quadrasSorteioGlobal = {}; // Objeto que armazena os IDs por código/bairro
         
+        // NOVO: Chave para persistência no localStorage
+        const LOCAL_STORAGE_KEY = 'inspecaoQuadrasSorteio'; 
+
         const CHAVE_QUADRA = 'QT'; 
         const CHAVE_IMOVEIS_QUADRA = 'TOTAL'; 
         const CHAVE_SUBTRACAO_AP = 'AP. ACIMA DO TÉRREO';
@@ -446,6 +449,33 @@
            '112': [{bairro: 'JARDIM DAS OLIVEIRAS', inicio: '31', fim: '213'}],
            '113': [{bairro: 'AEROLÂNDIA', inicio: '1', fim: '56'}, {bairro: 'ALTO DA BALANÇA', inicio: '1', fim: '90'}]
         };
+        
+        // NOVO: Função para carregar dados do localStorage
+        function carregarDadosPersistidos() {
+            const dadosSalvos = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (dadosSalvos) {
+                try {
+                    // Tenta restaurar o estado global de quadras sorteadas
+                    quadrasSorteioGlobal = JSON.parse(dadosSalvos); 
+                    console.log('Dados de sorteio carregados do localStorage.');
+                } catch (e) {
+                    console.error('Erro ao parsear dados do localStorage:', e);
+                    quadrasSorteioGlobal = {};
+                }
+            }
+        }
+        
+        // NOVO: Função para salvar dados no localStorage
+        function salvarDadosPersistidos() {
+            try {
+                // Salva o estado global de quadras sorteadas
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(quadrasSorteioGlobal));
+                // console.log('Dados de sorteio salvos no localStorage.');
+            } catch (e) {
+                console.error('Erro ao salvar dados no localStorage:', e);
+            }
+        }
+
 
         // Função: NORMALIZAÇÃO ROBUSTA DE STRINGS (Mantida)
         function normalizarString(str) {
@@ -466,13 +496,16 @@
         };
 
         /**
-         * Lógica: Salva o ID do bairro atual no armazenamento global
+         * Lógica: Salva o ID do bairro atual no armazenamento global E PERSISTE NO LOCALSTORAGE
          */
         function salvarIDsNoGlobal(bairroNormalizado, ids) {
             if (!quadrasSorteioGlobal[codigoAtual]) {
                 quadrasSorteioGlobal[codigoAtual] = {};
             }
             quadrasSorteioGlobal[codigoAtual][bairroNormalizado] = ids;
+            
+            // NOVO: Salva no localStorage após alteração
+            salvarDadosPersistidos(); 
             
             // Re-executa o cálculo global após a alteração
             calcularTotaisConsolidados(true); 
@@ -729,6 +762,7 @@
                 const nomeBairroClean = itemBairro.bairro;
                 const idPrefix = normalizarString(nomeBairroClean).replace(/\s/g, '_');
 
+                // Inputs de intervalo não salvamos no localStorage, então lemos do DOM (ou padrão)
                 const inputInicio = document.getElementById(`${idPrefix}_inicio`);
                 const inputFim = document.getElementById(`${idPrefix}_fim`);
 
@@ -739,6 +773,7 @@
                 if (!inicio || !fim) return; 
 
                 const nomeBairroNormalizado = normalizarString(nomeBairroClean);
+                // Leitura dos IDs Sorteados: Vêm do estado global, que foi carregado do localStorage
                 const idsInput = idsSorteadosDoCodigo[nomeBairroNormalizado] || '';
 
                 const quadrasNoIntervalo = todosRegistrosDoCodigo
@@ -889,7 +924,7 @@
                 const idPrefix = nomeBairroNormalizado.replace(/\s/g, '_'); 
                 const inputIdName = `ids_sorteadas_${idPrefix}_${index}`; 
                 
-                // Pega o valor persistido
+                // Pega o valor persistido (do estado global, que foi carregado do localStorage)
                 const idsPersistidos = quadrasSorteioGlobal[codigoAtual] ? quadrasSorteioGlobal[codigoAtual][nomeBairroNormalizado] || '' : '';
                 
                 // Determina se o campo de IDs deve ser desabilitado
@@ -1018,6 +1053,9 @@
             if (!codigoSelecionado) {
                 resultadoContagem.innerHTML = '';
                 detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>';
+                
+                // NOVO: Garantir que o seletor esteja resetado no valor correto
+                selecaoCodigo.value = ''; 
                 return;
             }
 
@@ -1032,6 +1070,9 @@
             }
             
             bairroDisplay.innerHTML = `**Bairro(s) Selecionado(s) para Cód. ${codigoSelecionado}:** ${nomeDisplayBairros}`;
+            
+            // NOVO: Selecionar o código correto se veio de um carregamento persistido (embora o listener já faça isso)
+            selecaoCodigo.value = codigoSelecionado;
 
             // Gera os campos e anexa listeners (vai acionar calcularResultadosDoCodigoAtual)
             gerarSelecaoQuadras(bairrosComIntervalo);
@@ -1084,21 +1125,42 @@
         });
 
         document.addEventListener('DOMContentLoaded', async () => {
+            // NOVO: 1. Tenta carregar os dados salvos ANTES de carregar o JSON
+            carregarDadosPersistidos();
+            
+            // 2. Carrega o arquivo JSON e calcula os totais gerais
             await carregarDados();
             popularSeletor();
             
-            // Preenche os TOTAIS GERAIS FIXOS
+            // 3. Preenche os TOTAIS GERAIS FIXOS
             imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
             quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
             
-            // Calcula e preenche os totais CONSOLIDADOS (vão ser 0 inicialmente)
+            // 4. Calcula os totais CONSOLIDADOS (usando dados recuperados do localStorage, se houver)
             calcularTotaisConsolidados();
 
-            exibirResultsPorCodigo(''); // Inicia sem seleção
+            // 5. NOVO: Tenta carregar a seleção de código salva
+            const codigoSalvo = localStorage.getItem('codigoSelecionado');
+            if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
+                 selecaoCodigo.value = codigoSalvo;
+                 exibirResultsPorCodigo(codigoSalvo);
+            } else {
+                 exibirResultsPorCodigo(''); // Inicia sem seleção
+            }
+
+            // NOVO: Adiciona listener para salvar o código selecionado (se ele for válido)
+            selecaoCodigo.addEventListener('change', (event) => {
+                if (event.target.value) {
+                    localStorage.setItem('codigoSelecionado', event.target.value);
+                } else {
+                    localStorage.removeItem('codigoSelecionado');
+                }
+            });
         });
     </script>
 </body>
 </html>
+
 
 
 
