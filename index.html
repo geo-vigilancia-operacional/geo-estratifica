@@ -330,8 +330,7 @@ input[readonly] {
 
 .estratificacao-container,
 #outrosCampoContainer {
-    /* 1. AJUSTE: Reduzido de 20px para 8px para aproximar o bloco do Mutirão */
-    margin-bottom: 8px;
+    margin-bottom: 20px;
 }
 
 .estratificacao-container label {
@@ -339,7 +338,7 @@ input[readonly] {
     font-weight: bold;
     color: var(--primary-color);
     display: block;
-    /* Ajuste anterior para diminuir o espaço entre o rótulo e a caixa de seleção */
+    /* Ajuste para diminuir o espaço entre o rótulo e a caixa de seleção */
     margin-bottom: 4px; 
 }
 
@@ -574,15 +573,14 @@ header h1 {
     gap: 10px;
     align-items: end;
     width: 100%;
-    /* 2. AJUSTE: Reduzido de 10px para 5px para aproximar do dropdown */
-    margin-top: 5px;
+    margin-top: 10px;
     /* Adaptação para celular: volta para coluna única */
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 }
 
 #mutiraoCamposContainer p {
     grid-column: 1 / -1; /* Título Detalhes do Mutirão na largura total */
-    /* Este já estava 2px para compactar o título do aviso */
+    /* Ajuste para diminuir o espaço após o título */
     margin-bottom: 2px; 
 }
 
@@ -856,6 +854,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
