@@ -885,27 +885,16 @@ function validarHDT() {
     }
 }
 
-// 1. Atrela a função de validação ao evento 'input' em AMBOS os campos
-if (hdpInput && hdtInput) {
+// Verifica se os elementos existem ANTES de adicionar o listener ou chamar a função.
+if (hdpInput && hdtInput && avisoHDT) {
+    // 1. Atrela a função de validação ao evento 'input' em AMBOS os campos
     hdpInput.addEventListener('input', validarHDT);
     hdtInput.addEventListener('input', validarHDT);
     
     // 2. CHAMA A FUNÇÃO PARA VALIDAR OS VALORES INICIAIS NO CARREGAMENTO
-    validarHDT(); // <-- Esta é a correção que faltava!
-}
-
-// --- Fim: Lógica de Validação HDP/HDT ---
-
-    // Só adicionamos o listener se os elementos existirem (boa prática)
-    if (hdpInput && hdtInput) {
-        hdpInput.addEventListener('input', validarHDT);
-        hdtInput.addEventListener('input', validarHDT);
-    }
-    
-    // --- Fim: Lógica de Validação HDP/HDT ---
-
-}); // Fecha o document.addEventListener('DOMContentLoaded', ...
-
+    validarHDT(); 
+} 
+// O restante do seu código JavaScript principal continua aqui...
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
@@ -955,6 +944,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
