@@ -831,10 +831,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <label for="quadrasTrabalhadasInput">Total de Quadras Trabalhadas:</label>
                 <input type="number" id="quadrasTrabalhadasInput" value="0">
                 <p id="obsQuadrasTrabalhadas" class="obs-texto"></p>
-            </div>
-            
-            <label>HDP <input type="text" id="hdpInput" /></label>
-            <label>HDT <input type="text" id="hdtInput" /></label>
+          <div id="camposHD">
+    <label>HDP 
+        <input type="number" id="hdpInput" min="0" value="0" />
+    </label>
+    <label>HDT 
+        <input type="number" id="hdtInput" min="0" value="0" />
+    </label>
+    
+    <p id="avisoHDT" class="aviso-obrigatorio oculto"></p>
+</div>
             
           <label>Semana Inicial
     <select id="semanaInicial">
@@ -910,6 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
