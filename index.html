@@ -664,15 +664,13 @@ header h1 {
 <div class="estratificacao-container">
     <label for="tipoSelect">Tipo:</label>
     <select id="tipoSelect" name="tipoEstratificacao">
-        <!-- Estratificação de Área como valor inicial -->
         <option value="estratificacaoDeArea" selected>Estratificação de Área</option> 
-        <option value="mutiraoRegional">Mutirão Regional</option>
-        <option value="mutiraoMunicipal">Mutirão Municipal</option>
+        <option value="mutiraoRegional">Mutirão Reg.</option>
+        <option value="mutiraoMunicipal">Mutirão Mun.</option>
         <option value="outros">Outros</option>
     </select>
 </div>
 
-<!-- campo "Outros" -->
 <div id="outrosContainer" class="oculto grupo">
     <label>Especifique:
         <input type="text" id="inputOutros" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
@@ -680,23 +678,20 @@ header h1 {
     <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span> 
 </div>
 
-<!-- campos "Mutirão" -->
 <div id="mutiraoContainer" class="oculto grupo">
-    <div id="mutiraoCamposContainer">
+    <div id="mutiraoCamposContainer" class="mutirao-campos-flex">
         <label>Endereço:
-            <input type="text" id="inputEndereco" name="enderecoLocal" placeholder="Endereço do Local">
+            <input type="text" id="inputEndereco" name="enderecoLocal" placeholder="Local de Referência ou Ponto Fixo">
         </label>
         <label>Quadra:
             <input type="text" id="inputQuadra" name="quadra" placeholder="Quadra">
         </label>
         <label>UAPS:
-            <input type="text" id="inputUAPS" name="uaps" placeholder="UAPS de Referência">
+            <input type="text" id="inputUAPS" name="uaps" placeholder="UAPS de Ref.">
         </label>
     </div>
     <span id="avisoMutirao" class="aviso-obrigatorio oculto">Obrigatório: Preencha Endereço, Quadra e UAPS.</span>
 </div>
-<!-- FIM: NOVO TRECHO -->
-        
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // Novos IDs dos elementos
@@ -770,7 +765,6 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleFields(selectTipo.value);
 });
 </script>
-
 
 
     <div class="box" style="margin-top: 30px;">
@@ -895,6 +889,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
