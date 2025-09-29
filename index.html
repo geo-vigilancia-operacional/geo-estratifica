@@ -623,21 +623,99 @@ header h1 {
             </div>
         </div>
   <div class="estratificacao-container">
-                    <label for="tipoEstratificacao">Tipo de Estratificação:</label>
-                <select id="tipoEstratificacao" name="tipoEstratificacao" required>
-                    <option value="" disabled selected>Selecione uma opção</option>
-                    <option value="estratificacaoDeArea">Estratificação de Área</option>
-                    <option value="mutiraoRegional">Mutirão Regional</option>
-                    <option value="mutiraoMunicipal">Mutirão Municipal</option>
-                    <option value="outros">Outros</option>
-                </select>
-            </div>
+                    <label for="tipoEstratificacao">Tipo de Estratificação:</label>
+                <select id="tipoEstratificacao" name="tipoEstratificacao" required>
+                    <option value="" disabled selected>Selecione uma opção</option>
+                    <option value="estratificacaoDeArea">Estratificação de Área</option>
+                    <option value="mutiraoRegional">Mutirão Regional</option>
+                    <option value="mutiraoMunicipal">Mutirão Municipal</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
 
-            <div id="outrosCampoContainer" class="oculto">
-                <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
-                <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
+            <div id="outrosCampoContainer" class="oculto">
+                <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
+                <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
+            </div>
+
+            <!-- INÍCIO DA ADIÇÃO SOLICITADA: CAMPOS DE DETALHES DO MUTIRÃO -->
+            <div id="mutiraoCamposContainer" class="oculto">
+                <p>Detalhes do Mutirão (Obrigatórios):</p>
+                <input type="text" id="enderecoLocal" name="enderecoLocal" placeholder="Endereço do Local">
+                <input type="text" id="quadra" name="quadra" placeholder="Quadra">
+                <input type="text" id="uaps" name="uaps" placeholder="UAPS de Referência">
+                <span id="avisoMutirao" class="aviso-obrigatorio oculto">Obrigatório: Preencha Endereço, Quadra e UAPS.</span>
             </div>
-        </div>
+            <!-- FIM DA ADIÇÃO SOLICITADA -->
+        </div>
+        
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Obtenção dos elementos DOM
+        const selectTipo = document.getElementById('tipoEstratificacao');
+        const outrosContainer = document.getElementById('outrosCampoContainer');
+        const mutiraoContainer = document.getElementById('mutiraoCamposContainer'); // Novo container
+
+        // Campos de "Outros"
+        const inputOutros = document.getElementById('outrosTipoEstratificacao');
+        const avisoOutros = document.getElementById('avisoOutros');
+        
+        // Campos de "Mutirão"
+        const inputEndereco = document.getElementById('enderecoLocal');
+        const inputQuadra = document.getElementById('quadra');
+        const inputUAPS = document.getElementById('uaps');
+        const avisoMutirao = document.getElementById('avisoMutirao');
+
+        /**
+         * Função que controla a visibilidade e o atributo 'required' dos campos.
+         * Usa a classe 'oculto' do seu CSS.
+         * @param {string} selectedValue - O valor selecionado no dropdown.
+         */
+        function toggleFields(selectedValue) {
+            // 1. Esconder e remover required de todos os campos adicionais
+            outrosContainer.classList.add('oculto');
+            mutiraoContainer.classList.add('oculto'); // Ocultar o Mutirão
+            avisoOutros.classList.add('oculto');
+            avisoMutirao.classList.add('oculto');
+
+            // Remove o atributo 'required' de todos os campos para evitar validação invisível
+            inputOutros.required = false;
+            inputEndereco.required = false;
+            inputQuadra.required = false;
+            inputUAPS.required = false;
+            
+            // Opcional: Limpa os valores quando os campos são escondidos
+            inputOutros.value = '';
+            inputEndereco.value = '';
+            inputQuadra.value = '';
+            inputUAPS.value = '';
+
+            // 2. Lógica condicional para mostrar o container correto
+            if (selectedValue === 'outros') {
+                // Mostrar campo "Outros" e torná-lo obrigatório
+                outrosContainer.classList.remove('oculto');
+                avisoOutros.classList.remove('oculto');
+                inputOutros.required = true;
+
+            } else if (selectedValue === 'mutiraoRegional' || selectedValue === 'mutiraoMunicipal') {
+                // Mostrar campos de "Mutirão" (Endereço, Quadra, UAPS) e torná-los obrigatórios
+                mutiraoContainer.classList.remove('oculto');
+                avisoMutirao.classList.remove('oculto');
+                
+                inputEndereco.required = true;
+                inputQuadra.required = true; 
+                inputUAPS.required = true;
+            }
+        }
+
+        // Listener para o evento de mudança no dropdown
+        selectTipo.addEventListener('change', (event) => {
+            toggleFields(event.target.value);
+        });
+
+        // Chama a função ao carregar para garantir o estado inicial correto
+        toggleFields(selectTipo.value);
+    });
 
             
     <div class="box" style="margin-top: 30px;">
@@ -762,6 +840,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
