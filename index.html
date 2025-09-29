@@ -348,10 +348,11 @@ input[readonly] {
     font-weight: bold;
     color: var(--primary-color);
     display: block;
-    margin-bottom: 8px;
+    /* Ajuste para diminuir o espaço entre o rótulo e a caixa de seleção */
+    margin-bottom: 4px; 
 }
 
-/* <<<<<<< MUDANÇA CRÍTICA: REMOÇÃO DE MAX-WIDTH: 300PX e INCLUSÃO DOS CAMPOS DO MUTIRÃO >>>>>>> */
+/* Alterações de largura e inclusão de campos do Mutirão (MANTIDAS) */
 #tipoEstratificacao,
 #outrosTipoEstratificacao,
 #mutiraoCamposContainer input[type="text"] {
@@ -362,13 +363,12 @@ input[readonly] {
     border: 1px solid var(--primary-color);
     border-radius: 8px;
     padding: 10px;
-    width: 100%; /* Garante largura total */
-    max-width: 100%; /* Removendo o limite fixo (300px) que causava o problema */
+    width: 100%;
+    max-width: 100%; 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     transition: all 0.3s ease;
 }
-/* <<<<<<< FIM DA MUDANÇA CRÍTICA >>>>>>> */
 
 .aviso-obrigatorio {
     font-size: 0.8em;
@@ -576,7 +576,7 @@ header h1 {
     text-decoration: underline;
 }
 
-/* <<<<<<< NOVAS REGRAS PARA LAYOUT DE MUTIRÃO (GRID) >>>>>>> */
+/* Regras de Layout do Mutirão (GRID) */
 #mutiraoCamposContainer {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr; /* Três colunas iguais */
@@ -590,16 +590,15 @@ header h1 {
 
 #mutiraoCamposContainer p {
     grid-column: 1 / -1; /* Título Detalhes do Mutirão na largura total */
-    margin-bottom: 5px;
+    /* Ajuste para diminuir o espaço após o título */
+    margin-bottom: 2px; 
 }
 
 #avisoMutirao {
     grid-column: 1 / -1; /* Aviso Obrigatório na largura total */
     text-align: left; 
 }
-/* <<<<<<< FIM DAS NOVAS REGRAS >>>>>>> */
 </style>
-
 </head>
 <body>
 <header>
@@ -865,6 +864,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
