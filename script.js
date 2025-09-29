@@ -861,40 +861,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 outrosCampoInput.removeAttribute('required');
          }
     });
-  // --- Início: Lógica de Validação HDP/HDT (Inserir DENTRO do DOMContentLoaded) ---
+});
 
-const hdpInput = document.getElementById("hdpInput");
-const hdtInput = document.getElementById("hdtInput");
-const avisoHDT = document.getElementById("avisoHDT");
 
-function validarHDT() {
-    // Converte os valores para números (ou 0 se estiverem vazios/inválidos)
-    const hdp = parseFloat(hdpInput.value) || 0;
-    const hdt = parseFloat(hdtInput.value) || 0;
-
-    // Lógica: HDT deve ser MENOR ou IGUAL a HDP (HDT <= HDP)
-    if (hdt > hdp) {
-        // ALERTA: Exibe a mensagem de erro
-        avisoHDT.textContent = "ALERTA: O HDT não pode ser maior que o HDP.";
-        avisoHDT.classList.remove('oculto');
-        hdtInput.style.borderColor = 'var(--warning-color)'; // Destaque visual
-    } else {
-        // TUDO CERTO: Esconde a mensagem
-        avisoHDT.classList.add('oculto');
-        hdtInput.style.borderColor = 'var(--border-color)'; // Volta ao normal
-    }
-}
-
-// Verifica se os elementos existem ANTES de adicionar o listener ou chamar a função.
-if (hdpInput && hdtInput && avisoHDT) {
-    // 1. Atrela a função de validação ao evento 'input' em AMBOS os campos
-    hdpInput.addEventListener('input', validarHDT);
-    hdtInput.addEventListener('input', validarHDT);
-    
-    // 2. CHAMA A FUNÇÃO PARA VALIDAR OS VALORES INICIAIS NO CARREGAMENTO
-    validarHDT(); 
-} 
-// O restante do seu código JavaScript principal continua aqui...
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
@@ -944,6 +913,8 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
+
 
 
 
