@@ -611,68 +611,6 @@ function calcularImoveisATrabalhar() {
         calcularDiasETermino(); // Chama o cálculo de dias aqui
     }
 }
-// =========================================================
-// 1. FUNÇÃO DE VALIDAÇÃO (Pode ser definida em qualquer lugar do seu script)
-// =========================================================
-// SUBSTITUIR: Substitua a função validarHDT inteira por esta.
-function validarHDT() {
-    // 1. Mapeamento (Leitura em tempo real)
-    const hdpInput = document.getElementById("hdpInput");
-    const hdtInput = document.getElementById("hdtInput");
-    const avisoHDT = document.getElementById("avisoHDT");
-
-    if (!hdpInput || !hdtInput || !avisoHDT) {
-        return; 
-    }
-
-    const hdpValue = hdpInput.value.trim();
-    const hdtValue = hdtInput.value.trim();
-
-    // 2. TRATAMENTO PARA CAMPOS VAZIOS: Oculta o aviso se ambos estiverem vazios.
-    if (hdpValue === '' && hdtValue === '') {
-        avisoHDT.classList.add('oculto'); 
-        hdtInput.style.borderColor = 'var(--border-color)';
-        hdpInput.style.borderColor = 'var(--border-color)'; 
-        return; 
-    }
-
-    // 3. VALIDAÇÃO NUMÉRICA
-    const hdp = parseFloat(hdpValue) || 0;
-    const hdt = parseFloat(hdtValue) || 0;
-
-    // Condição de ERRO: HDT é MAIOR que HDP
-    if (hdt > hdp) {
-        // MOSTRA o alerta
-        avisoHDT.textContent = "ALERTA: O HDT não pode ser maior que o HDP.";
-        avisoHDT.classList.remove('oculto'); 
-        hdtInput.style.borderColor = 'var(--warning-color)'; 
-        hdpInput.style.borderColor = 'var(--border-color)'; 
-    } else {
-        // Condição de SUCESSO: HDT é menor ou igual a HDP
-        // ESCONDE o alerta e limpa o destaque
-        avisoHDT.classList.add('oculto'); 
-        hdtInput.style.borderColor = 'var(--border-color)'; 
-        hdpInput.style.borderColor = 'var(--border-color)'; 
-    }
-}
-// =========================================================
-// 2. FUNÇÃO DE INICIALIZAÇÃO HDT (Chama listeners)
-// =========================================================
-function inicializarHDT() {
-    const hdpInput = document.getElementById("hdpInput");
-    const hdtInput = document.getElementById("hdtInput");
-    const avisoHDT = document.getElementById("avisoHDT");
-
-    // Verifica se todos os elementos existem ANTES de adicionar listeners
-    if (hdpInput && hdtInput && avisoHDT) {
-        // 1. Atrela a função de validação ao evento 'input' em AMBOS os campos
-        hdpInput.addEventListener('input', validarHDT);
-        hdtInput.addEventListener('input', validarHDT);
-        
-        // 2. CHAMA A FUNÇÃO PARA VALIDAR OS VALORES INICIAIS NO CARREGAMENTO
-        validarHDT(); 
-    }
-}
 
 
 // =========================================================
@@ -987,6 +925,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
