@@ -611,7 +611,70 @@ function calcularImoveisATrabalhar() {
         calcularDiasETermino(); // Chama o cálculo de dias aqui
     }
 }
+// =========================================================
+// 1. FUNÇÃO DE VALIDAÇÃO (Pode ser definida em qualquer lugar do seu script)
+// =========================================================
+function validarHDT() {
+    // Estas constantes são definidas DENTRO da função de inicialização,
+    // mas o código aqui precisa se referir a elas. Vamos refatorar:
+    
+    // Pega as referências dentro da função para ser robusto
+    const hdpInput = document.getElementById("hdpInput");
+    const hdtInput = document.getElementById("hdtInput");
+    const avisoHDT = document.getElementById("avisoHDT");
 
+    if (!hdpInput || !hdtInput || !avisoHDT) {
+        // Se faltar algum elemento, a função termina aqui sem causar erro
+        return; 
+    }
+
+    // Converte os valores para números (ou 0 se estiverem vazios/inválidos)
+    const hdp = parseFloat(hdpInput.value) || 0;
+    const hdt = parseFloat(hdtInput.value) || 0;
+
+    // Lógica: HDT deve ser MENOR ou IGUAL a HDP (HDT <= HDP)
+    if (hdt > hdp) {
+        avisoHDT.textContent = "ALERTA: O HDT não pode ser maior que o HDP.";
+        avisoHDT.classList.remove('oculto');
+        hdtInput.style.borderColor = 'var(--warning-color)'; // Destaque visual
+    } else {
+        avisoHDT.classList.add('oculto');
+        hdtInput.style.borderColor = 'var(--border-color)'; // Volta ao normal
+    }
+}
+
+
+// =========================================================
+// 2. FUNÇÃO DE INICIALIZAÇÃO HDT (Chama listeners)
+// =========================================================
+function inicializarHDT() {
+    const hdpInput = document.getElementById("hdpInput");
+    const hdtInput = document.getElementById("hdtInput");
+    const avisoHDT = document.getElementById("avisoHDT");
+
+    // Verifica se todos os elementos existem ANTES de adicionar listeners
+    if (hdpInput && hdtInput && avisoHDT) {
+        // 1. Atrela a função de validação ao evento 'input' em AMBOS os campos
+        hdpInput.addEventListener('input', validarHDT);
+        hdtInput.addEventListener('input', validarHDT);
+        
+        // 2. CHAMA A FUNÇÃO PARA VALIDAR OS VALORES INICIAIS NO CARREGAMENTO
+        validarHDT(); 
+    }
+}
+
+
+// =========================================================
+// 3. Chamada no DOMContentLoaded PRINCIPAL
+// =========================================================
+document.addEventListener('DOMContentLoaded', (event) => {
+    // ... Seu código de Estratificação/Mutirão continua aqui ...
+    
+    // Chama a nova função de inicialização
+    inicializarHDT();
+    
+    // ... O resto do seu código principal continua e fecha aqui ...
+});
 
 // NOVO: Função de limpeza completa
 function limparTudo() {
@@ -913,6 +976,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
