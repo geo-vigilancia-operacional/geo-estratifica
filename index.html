@@ -340,7 +340,7 @@ input[readonly] {
 
 .estratificacao-container,
 #outrosCampoContainer {
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 
 .estratificacao-container label {
@@ -580,10 +580,10 @@ header h1 {
 #mutiraoCamposContainer {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr; /* Três colunas iguais */
-    gap: 10px;
+    gap: 8px;
     align-items: end;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 5px;
     /* Adaptação para celular: volta para coluna única */
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 }
@@ -695,47 +695,44 @@ header h1 {
          * Usa a classe 'oculto' do seu CSS.
          * @param {string} selectedValue - O valor selecionado no dropdown.
          */
-        function toggleFields(selectedValue) {
-            // 1. Esconder e remover required de todos os campos adicionais
-            outrosContainer.classList.add('oculto');
-            mutiraoContainer.classList.add('oculto'); // Ocultar o Mutirão
-            avisoOutros.classList.add('oculto');
-            avisoMutirao.classList.add('oculto');
+      function toggleFields(selectedValue) {
+    // Esconde tudo antes
+    outrosContainer.classList.add('oculto');
+    mutiraoContainer.classList.add('oculto');
+    avisoOutros.classList.add('oculto');
+    avisoMutirao.classList.add('oculto');
 
-            // Remove o atributo 'required' de todos os campos para evitar validação invisível
-            inputOutros.required = false;
-            inputEndereco.required = false;
-            inputQuadra.required = false;
-            inputUAPS.required = false;
-            
-            // Opcional: Limpa os valores quando os campos são escondidos
-            inputOutros.value = '';
-            inputEndereco.value = '';
-            inputQuadra.value = '';
-            inputUAPS.value = '';
+    // Remove required de todos
+    inputOutros.required = false;
+    inputEndereco.required = false;
+    inputQuadra.required = false;
+    inputUAPS.required = false;
 
-            // 2. Lógica condicional para mostrar o container correto
-            if (selectedValue === 'outros') {
-                // Mostrar campo "Outros" e torná-lo obrigatório
-                outrosContainer.classList.remove('oculto');
-                avisoOutros.classList.remove('oculto');
-                inputOutros.required = true;
+    // Limpa valores
+    inputOutros.value = '';
+    inputEndereco.value = '';
+    inputQuadra.value = '';
+    inputUAPS.value = '';
 
-            } else if (selectedValue === 'mutiraoRegional' || selectedValue === 'mutiraoMunicipal') {
-                // Mostrar campos de "Mutirão" (Endereço, Quadra, UAPS) e torná-los obrigatórios
-                mutiraoContainer.classList.remove('oculto');
-                avisoMutirao.classList.remove('oculto');
-                
-                inputEndereco.required = true;
-                inputQuadra.required = true; 
-                inputUAPS.required = true;
-            }
-        }
+    // Mostra conforme escolha
+    if (selectedValue === 'outros') {
+        outrosContainer.classList.remove('oculto');
+        avisoOutros.classList.remove('oculto');
+        inputOutros.required = true;
+    } 
+    else if (selectedValue === 'mutiraoRegional' || selectedValue === 'mutiraoMunicipal') {
+        mutiraoContainer.classList.remove('oculto');
+        avisoMutirao.classList.remove('oculto');
+        inputEndereco.required = true;
+        inputQuadra.required = true;
+        inputUAPS.required = true;
+    }
+}
 
-        // Listener para o evento de mudança no dropdown
-        selectTipo.addEventListener('change', (event) => {
-            toggleFields(event.target.value);
-        });
+// Evento no select
+selectTipo.addEventListener('change', (e) => {
+    toggleFields(e.target.value);
+});
 
         // Chama a função ao carregar para garantir o estado inicial correto
         toggleFields(selectTipo.value);
@@ -864,6 +861,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
