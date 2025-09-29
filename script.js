@@ -615,31 +615,30 @@ function calcularImoveisATrabalhar() {
 // 1. FUNÇÃO DE VALIDAÇÃO (Pode ser definida em qualquer lugar do seu script)
 // =========================================================
 function validarHDT() {
-    // Estas constantes são definidas DENTRO da função de inicialização,
-    // mas o código aqui precisa se referir a elas. Vamos refatorar:
-    
-    // Pega as referências dentro da função para ser robusto
-    const hdpInput = document.getElementById("hdpInput");
-    const hdtInput = document.getElementById("hdtInput");
-    const avisoHDT = document.getElementById("avisoHDT");
+    const hdpValue = hdpInput.value.trim(); // Pega o valor original (string)
+    const hdtValue = hdtInput.value.trim(); // Pega o valor original (string)
 
-    if (!hdpInput || !hdtInput || !avisoHDT) {
-        // Se faltar algum elemento, a função termina aqui sem causar erro
-        return; 
+    // Se ambos os campos estiverem vazios, apenas oculta o aviso e sai.
+    if (hdpValue === '' && hdtValue === '') {
+        avisoHDT.classList.add('oculto');
+        hdtInput.style.borderColor = 'var(--border-color)';
+        return; // Sai da função
     }
 
-    // Converte os valores para números (ou 0 se estiverem vazios/inválidos)
-    const hdp = parseFloat(hdpInput.value) || 0;
-    const hdt = parseFloat(hdtInput.value) || 0;
+    // Continua a validação numérica se pelo menos um campo tiver valor
+    const hdp = parseFloat(hdpValue) || 0;
+    const hdt = parseFloat(hdtValue) || 0;
 
     // Lógica: HDT deve ser MENOR ou IGUAL a HDP (HDT <= HDP)
     if (hdt > hdp) {
+        // ... (código para mostrar o alerta) ...
         avisoHDT.textContent = "ALERTA: O HDT não pode ser maior que o HDP.";
         avisoHDT.classList.remove('oculto');
-        hdtInput.style.borderColor = 'var(--warning-color)'; // Destaque visual
+        hdtInput.style.borderColor = 'var(--warning-color)'; 
     } else {
+        // ... (código para esconder o alerta) ...
         avisoHDT.classList.add('oculto');
-        hdtInput.style.borderColor = 'var(--border-color)'; // Volta ao normal
+        hdtInput.style.borderColor = 'var(--border-color)'; 
     }
 }
 
@@ -976,6 +975,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
