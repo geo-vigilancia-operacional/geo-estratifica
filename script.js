@@ -619,37 +619,43 @@ function validarHDT() {
     const hdtInput = document.getElementById("hdtInput");
     const avisoHDT = document.getElementById("avisoHDT");
 
-    // Checa se algum elemento está faltando antes de prosseguir
     if (!hdpInput || !hdtInput || !avisoHDT) {
         return; 
     }
 
-    const hdpValue = hdpInput.value.trim(); // Valor como string
-    const hdtValue = hdtInput.value.trim(); // Valor como string
+    const hdpValue = hdpInput.value.trim();
+    const hdtValue = hdtInput.value.trim();
 
-    // 1. REGRA PARA CAMPOS VAZIOS: Se ambos estão vazios, OCULTA e sai.
+    // 1. TRATAMENTO PARA CAMPOS VAZIOS: Oculta o aviso se ambos estiverem vazios.
     if (hdpValue === '' && hdtValue === '') {
-        avisoHDT.classList.add('oculto'); // Garante que está escondido
+        avisoHDT.classList.add('oculto'); 
         hdtInput.style.borderColor = 'var(--border-color)';
+        hdpInput.style.borderColor = 'var(--border-color)'; // Limpa a borda do HDP também
         return; 
     }
 
-    // 2. VALIDAÇÃO NUMÉRICA: Converte para número e aplica a regra de negócio
+    // 2. VALIDAÇÃO NUMÉRICA
     const hdp = parseFloat(hdpValue) || 0;
     const hdt = parseFloat(hdtValue) || 0;
 
+    // Condição de ERRO: HDT é MAIOR que HDP
     if (hdt > hdp) {
-        // ERRO: HDT maior que HDP
+        // MOSTRA o alerta e destaca o HDT (pois ele é o valor "inválido")
         avisoHDT.textContent = "ALERTA: O HDT não pode ser maior que o HDP.";
-        avisoHDT.classList.remove('oculto'); // MOSTRA o alerta
+        avisoHDT.classList.remove('oculto'); 
         hdtInput.style.borderColor = 'var(--warning-color)'; 
+        hdpInput.style.borderColor = 'var(--border-color)'; // HDP fica normal
     } else {
-        // SUCESSO OU IGUALDADE
-        avisoHDT.classList.add('oculto'); // ESCONDE o alerta
+        // Condição de SUCESSO: HDT é menor ou igual a HDP
+        
+        // ESCONDE o alerta! <-- O SEGREDO ESTÁ AQUI
+        avisoHDT.classList.add('oculto'); 
+        
+        // Limpa qualquer destaque visual
         hdtInput.style.borderColor = 'var(--border-color)'; 
+        hdpInput.style.borderColor = 'var(--border-color)'; 
     }
 }
-
 
 // =========================================================
 // 2. FUNÇÃO DE INICIALIZAÇÃO HDT (Chama listeners)
@@ -983,6 +989,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
