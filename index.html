@@ -8,7 +8,7 @@
    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
- <style>
+<style>
 /* Reset básico */
 * {
     margin: 0;
@@ -351,8 +351,10 @@ input[readonly] {
     margin-bottom: 8px;
 }
 
+/* <<<<<<< MUDANÇA CRÍTICA: REMOÇÃO DE MAX-WIDTH: 300PX e INCLUSÃO DOS CAMPOS DO MUTIRÃO >>>>>>> */
 #tipoEstratificacao,
-#outrosTipoEstratificacao {
+#outrosTipoEstratificacao,
+#mutiraoCamposContainer input[type="text"] {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     color: var(--text-color);
@@ -360,12 +362,13 @@ input[readonly] {
     border: 1px solid var(--primary-color);
     border-radius: 8px;
     padding: 10px;
-    width: 100%;
-    max-width: 300px;
+    width: 100%; /* Garante largura total */
+    max-width: 100%; /* Removendo o limite fixo (300px) que causava o problema */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     transition: all 0.3s ease;
 }
+/* <<<<<<< FIM DA MUDANÇA CRÍTICA >>>>>>> */
 
 .aviso-obrigatorio {
     font-size: 0.8em;
@@ -433,7 +436,7 @@ header h1 {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 #percImoveisTrabalhados, #percFechados {
-    color: #ff9800;   /* laranja */
+    color: #ff9800;    /* laranja */
     font-weight: bold;
     margin-top: 4px;
 }
@@ -536,7 +539,7 @@ header h1 {
 }
 
     #listaQuadras {
-        flex: 1;           /* ocupa todo espaço vertical da box */
+        flex: 1;            /* ocupa todo espaço vertical da box */
         min-height: 400px; /* garante altura mínima */
         overflow-y: auto;  /* scroll se passar */
     }
@@ -560,21 +563,43 @@ header h1 {
 .menu a:hover,
 .menu a:active,
 .menu a:focus {
-  color: orange !important;
-  -webkit-text-fill-color: orange !important; /* compatibilidade iOS/Safari */
-  background: transparent !important;          /* evita fundos indesejados */
-  text-decoration: none;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;   /* remove o destaque azul no touch */
+    color: orange !important;
+    -webkit-text-fill-color: orange !important; /* compatibilidade iOS/Safari */
+    background: transparent !important;          /* evita fundos indesejados */
+    text-decoration: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;    /* remove o destaque azul no touch */
 }
 
 /* opcional: pequeno feedback visual no hover (desktop) */
 .menu a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
- 
- </style>
+/* <<<<<<< NOVAS REGRAS PARA LAYOUT DE MUTIRÃO (GRID) >>>>>>> */
+#mutiraoCamposContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* Três colunas iguais */
+    gap: 10px;
+    align-items: end;
+    width: 100%;
+    margin-top: 10px;
+    /* Adaptação para celular: volta para coluna única */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}
+
+#mutiraoCamposContainer p {
+    grid-column: 1 / -1; /* Título Detalhes do Mutirão na largura total */
+    margin-bottom: 5px;
+}
+
+#avisoMutirao {
+    grid-column: 1 / -1; /* Aviso Obrigatório na largura total */
+    text-align: left; 
+}
+/* <<<<<<< FIM DAS NOVAS REGRAS >>>>>>> */
+</style>
+
 </head>
 <body>
 <header>
@@ -840,6 +865,7 @@ header h1 {
 
 </body>
 </html>
+
 
 
 
