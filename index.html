@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estratificação de Áreas</title>
-   <link rel="icon" href="data:,">
-   <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -338,8 +338,12 @@ input[readonly] {
     display: none;
 }
 
+/* --- AJUSTES DE ESTILOS PARA NOVOS IDS/ESTRUTURA (INÍCIO) --- */
+
+/* Novo: Define a margem para os novos containers ocultáveis */
 .estratificacao-container,
-#outrosCampoContainer {
+#outrosContainer, 
+#mutiraoContainer { 
     margin-bottom: 8px;
 }
 
@@ -352,10 +356,11 @@ input[readonly] {
     margin-bottom: 4px; 
 }
 
-/* Alterações de largura e inclusão de campos do Mutirão (MANTIDAS) */
-#tipoEstratificacao,
-#outrosTipoEstratificacao,
-#mutiraoCamposContainer input[type="text"] {
+/* Alteração de largura e inclusão de campos do Mutirão: 
+   Atualizando seletores para os novos IDs */
+#tipoSelect,
+#inputOutros,
+#mutiraoContainer input[type="text"] {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     color: var(--text-color);
@@ -369,6 +374,36 @@ input[readonly] {
     box-sizing: border-box;
     transition: all 0.3s ease;
 }
+
+/* Regras de Layout do Mutirão (GRID) - Mantido, mas otimizado */
+#mutiraoCamposContainer {
+    display: grid;
+    /* Adaptação para celular/desktop: colunas flexíveis */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+    align-items: end;
+    width: 100%;
+    margin-top: 5px;
+}
+
+/* Estilo para os labels dentro do container do Mutirão */
+#mutiraoContainer label {
+    margin-bottom: 0;
+}
+
+#avisoMutirao {
+    grid-column: 1 / -1; /* Aviso Obrigatório na largura total */
+    text-align: left; 
+}
+
+/* Removendo a regra antiga do p dentro do container, pois o p foi removido
+#mutiraoCamposContainer p {
+     grid-column: 1 / -1;
+     margin-bottom: 2px;
+} */
+
+/* --- AJUSTES DE ESTILOS PARA NOVOS IDS/ESTRUTURA (FIM) --- */
+
 
 .aviso-obrigatorio {
     font-size: 0.8em;
@@ -565,10 +600,10 @@ header h1 {
 .menu a:focus {
     color: orange !important;
     -webkit-text-fill-color: orange !important; /* compatibilidade iOS/Safari */
-    background: transparent !important;          /* evita fundos indesejados */
+    background: transparent !important;         /* evita fundos indesejados */
     text-decoration: none;
     outline: none;
-    -webkit-tap-highlight-color: transparent;    /* remove o destaque azul no touch */
+    -webkit-tap-highlight-color: transparent;   /* remove o destaque azul no touch */
 }
 
 /* opcional: pequeno feedback visual no hover (desktop) */
@@ -576,143 +611,139 @@ header h1 {
     text-decoration: underline;
 }
 
-/* Regras de Layout do Mutirão (GRID) */
-#mutiraoCamposContainer {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* Três colunas iguais */
-    gap: 8px;
-    align-items: end;
-    width: 100%;
-    margin-top: 5px;
-    /* Adaptação para celular: volta para coluna única */
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-}
-
-#mutiraoCamposContainer p {
-    grid-column: 1 / -1; /* Título Detalhes do Mutirão na largura total */
-    /* Ajuste para diminuir o espaço após o título */
-    margin-bottom: 2px; 
-}
-
-#avisoMutirao {
-    grid-column: 1 / -1; /* Aviso Obrigatório na largura total */
-    text-align: left; 
-}
 </style>
 </head>
 <body>
 <header>
 
 
-          <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
+            <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
     </header>
     
- <div class="container">
-  <div class="menu">
-    <a href="lira.html">LIRA</a>
-    <a href="ovitrampas.html">Ovitrampas</a>
-    <a href="pesquisas.html">Pesquisas</a>
-    <a href="graficos.html">Gráficos</a>
-    <a href="mapas.html">Mapas</a>
-  </div>
-</div>
-            <div class="main-grid">
-            <!-- Seções do grid mantidas iguais -->
-            <div class="box">
-                <h3>Selecione o Bairro</h3>
-                <label for="bairro">Bairro:</label>
-                <select id="bairro">
-                    <option value="">-- Escolha um bairro --</option>
-                </select>
-                <div id="resumoGeral"></div>
-                <button id="limparTudo" class="secondary">Limpar tudo</button>
-            </div>
-
-       <div class="box">
-    <h3>Selecionar Quadras</h3>
-    <input type="text" id="entradaQuadras" placeholder="Ex: 1-3, 1/1, 27/9" />
-    <button id="aplicarTexto" class="primary">Aplicar seleção</button>
-    <div id="listaQuadras"></div>
-    <div id="resumoQuadras"></div>
-</div>
-
-            <div class="box">
-                <h3>Programados</h3>
-                <div id="resumoProgramados">
-                    <em>Selecione quadras para ver os programados.</em>
+    <div class="container">
+     <div class="menu">
+        <a href="lira.html">LIRA</a>
+        <a href="ovitrampas.html">Ovitrampas</a>
+        <a href="pesquisas.html">Pesquisas</a>
+        <a href="graficos.html">Gráficos</a>
+        <a href="mapas.html">Mapas</a>
+     </div>
+    </div>
+                <div class="main-grid">
+                <!-- Seções do grid mantidas iguais -->
+                <div class="box">
+                    <h3>Selecione o Bairro</h3>
+                    <label for="bairro">Bairro:</label>
+                    <select id="bairro">
+                        <option value="">-- Escolha um bairro --</option>
+                    </select>
+                    <div id="resumoGeral"></div>
+                    <button id="limparTudo" class="secondary">Limpar tudo</button>
                 </div>
-                <button id="compartilharWhatsapp" class="primary" style="margin-top: 20px;">
-                    Compartilhar no WhatsApp
-                </button>
+
+            <div class="box">
+        <h3>Selecionar Quadras</h3>
+        <input type="text" id="entradaQuadras" placeholder="Ex: 1-3, 1/1, 27/9" />
+        <button id="aplicarTexto" class="primary">Aplicar seleção</button>
+        <div id="listaQuadras"></div>
+        <div id="resumoQuadras"></div>
+    </div>
+
+                <div class="box">
+                    <h3>Programados</h3>
+                    <div id="resumoProgramados">
+                        <em>Selecione quadras para ver os programados.</em>
+                    </div>
+                    <button id="compartilharWhatsapp" class="primary" style="margin-top: 20px;">
+                        Compartilhar no WhatsApp
+                    </button>
+                </div>
             </div>
-        </div>
+
+<!-- INÍCIO: NOVO TRECHO DE HTML E CAMPOS DE ESTRATIFICAÇÃO (SIMPLIFICADO) -->
 <div class="estratificacao-container">
-    <label for="tipoEstratificacao">Tipo de Estratificação:</label>
-    <select id="tipoEstratificacao" name="tipoEstratificacao" required>
-        <option value="" disabled selected>Selecione uma opção</option>
-        <option value="estratificacaoDeArea">Estratificação de Área</option>
+    <label for="tipoSelect">Tipo:</label>
+    <select id="tipoSelect" name="tipoEstratificacao">
+        <!-- Estratificação de Área como valor inicial -->
+        <option value="estratificacaoDeArea" selected>Estratificação de Área</option> 
         <option value="mutiraoRegional">Mutirão Regional</option>
         <option value="mutiraoMunicipal">Mutirão Municipal</option>
         <option value="outros">Outros</option>
     </select>
 </div>
 
-<div id="outrosCampoContainer" class="oculto">
-    <input type="text" id="outrosTipoEstratificacao" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
-    <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span>
+<!-- campo "Outros" -->
+<div id="outrosContainer" class="oculto grupo">
+    <label>Especifique:
+        <input type="text" id="inputOutros" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
+    </label>
+    <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span> 
 </div>
 
-<!-- INÍCIO: CAMPOS DE DETALHES DO MUTIRÃO -->
-<div id="mutiraoCamposContainer" class="oculto">
-    <p>Detalhes do Mutirão (Obrigatórios):</p>
-    <input type="text" id="enderecoLocal" name="enderecoLocal" placeholder="Endereço do Local">
-    <input type="text" id="quadra" name="quadra" placeholder="Quadra">
-    <input type="text" id="uaps" name="uaps" placeholder="UAPS de Referência">
+<!-- campos "Mutirão" -->
+<div id="mutiraoContainer" class="oculto grupo">
+    <div id="mutiraoCamposContainer">
+        <label>Endereço:
+            <input type="text" id="inputEndereco" name="enderecoLocal" placeholder="Endereço do Local">
+        </label>
+        <label>Quadra:
+            <input type="text" id="inputQuadra" name="quadra" placeholder="Quadra">
+        </label>
+        <label>UAPS:
+            <input type="text" id="inputUAPS" name="uaps" placeholder="UAPS de Referência">
+        </label>
+    </div>
     <span id="avisoMutirao" class="aviso-obrigatorio oculto">Obrigatório: Preencha Endereço, Quadra e UAPS.</span>
 </div>
-<!-- FIM -->
+<!-- FIM: NOVO TRECHO -->
         
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const selectTipo = document.getElementById('tipoEstratificacao');
-    const outrosContainer = document.getElementById('outrosCampoContainer');
-    const mutiraoContainer = document.getElementById('mutiraoCamposContainer');
-
-    const inputOutros = document.getElementById('outrosTipoEstratificacao');
-    const avisoOutros = document.getElementById('avisoOutros');
+    // Novos IDs dos elementos
+    const selectTipo = document.getElementById("tipoSelect");
+    const outrosContainer = document.getElementById("outrosContainer");
+    const mutiraoContainer = document.getElementById("mutiraoContainer");
     
-    const inputEndereco = document.getElementById('enderecoLocal');
-    const inputQuadra = document.getElementById('quadra');
-    const inputUAPS = document.getElementById('uaps');
-    const avisoMutirao = document.getElementById('avisoMutirao');
+    const inputOutros = document.getElementById("inputOutros");
+    const avisoOutros = document.getElementById('avisoOutros'); 
+    
+    const inputEndereco = document.getElementById("inputEndereco");
+    const inputQuadra = document.getElementById("inputQuadra");
+    const inputUAPS = document.getElementById("inputUAPS");
+    const avisoMutirao = document.getElementById('avisoMutirao'); 
 
     function toggleFields(selectedValue) {
-        outrosContainer.classList.add('oculto');
-        mutiraoContainer.classList.add('oculto');
+        // 1. Esconde tudo e limpa avisos
+        outrosContainer.classList.add("oculto");
+        mutiraoContainer.classList.add("oculto");
         avisoOutros.classList.add('oculto');
         avisoMutirao.classList.add('oculto');
 
+
+        // 2. Limpa required
         inputOutros.required = false;
         inputEndereco.required = false;
         inputQuadra.required = false;
         inputUAPS.required = false;
 
+        // Opcional: Limpa os valores quando os campos são escondidos
         inputOutros.value = '';
         inputEndereco.value = '';
         inputQuadra.value = '';
         inputUAPS.value = '';
 
-        if (selectedValue === 'outros') {
-            outrosContainer.classList.remove('oculto');
-            avisoOutros.classList.remove('oculto');
+        // 3. Mostra conforme a escolha
+        if (selectedValue === "outros") {
+            outrosContainer.classList.remove("oculto");
+            avisoOutros.classList.remove('oculto'); // Mostra aviso
             inputOutros.required = true;
-        } 
-        else if (selectedValue === 'mutiraoRegional' || selectedValue === 'mutiraoMunicipal') {
-            mutiraoContainer.classList.remove('oculto');
+        } else if (selectedValue === "mutiraoRegional" || selectedValue === "mutiraoMunicipal") {
+            mutiraoContainer.classList.remove("oculto");
+            
             inputEndereco.required = true;
             inputQuadra.required = true;
             inputUAPS.required = true;
-            validarMutirao(); // já chama validação ao abrir
+            validarMutirao(); // Já chama validação ao abrir para mostrar o aviso se estiver vazio
         }
     }
 
@@ -721,7 +752,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inputEndereco.value.trim() && inputQuadra.value.trim() && inputUAPS.value.trim()) {
             avisoMutirao.classList.add('oculto');
         } else {
-            avisoMutirao.classList.remove('oculto');
+            // Só mostra o aviso se o container do mutirão estiver visível
+            if (!mutiraoContainer.classList.contains('oculto')) {
+                avisoMutirao.classList.remove('oculto');
+            }
         }
     }
 
@@ -730,10 +764,9 @@ document.addEventListener('DOMContentLoaded', () => {
         campo.addEventListener('input', validarMutirao);
     });
 
-    selectTipo.addEventListener('change', (e) => {
-        toggleFields(e.target.value);
-    });
+    selectTipo.addEventListener("change", (e) => toggleFields(e.target.value));
 
+    // Garante que o estado inicial (Estratificação de Área) está correto
     toggleFields(selectTipo.value);
 });
 </script>
@@ -862,6 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
