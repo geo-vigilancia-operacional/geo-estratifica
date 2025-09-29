@@ -337,7 +337,38 @@ input[readonly] {
 .oculto {
     display: none;
 }
+/* Estilo para colocar os campos Endereço, Quadra e UAPS em linha (Flexbox) */
+.mutirao-campos-flex {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo se não houver espaço */
+    gap: 10px; /* Espaço entre os campos */
+}
 
+.mutirao-campos-flex label {
+    /* Define o Endereço para ocupar mais espaço e os outros menos */
+    /* Exemplo: Endereço 100%, Quadra e UAPS 45% cada (para caber em 2 colunas em telas médias) */
+    flex: 1 1 100%; /* Por padrão, ocupa a largura total (ótimo para celular) */
+}
+
+/* Media Query para telas maiores que um celular (por exemplo, tablets ou desktops) */
+@media (min-width: 600px) {
+    /* Em telas maiores, Endereço ocupa mais espaço, e Quadra/UAPS ficam em 2 colunas */
+    .mutirao-campos-flex label:nth-child(1) { /* Endereço */
+        flex: 1 1 100%; /* Ocupa 100% da linha */
+    }
+    
+    .mutirao-campos-flex label:nth-child(2), /* Quadra */
+    .mutirao-campos-flex label:nth-child(3) { /* UAPS */
+        flex: 1 1 calc(50% - 10px); /* Ocupa cerca de metade da linha, ajustando o 'gap' */
+        min-width: 150px; /* Garante uma largura mínima */
+    }
+}
+
+/* Garante que os inputs dentro dos labels em flex ocupem o espaço total do label */
+.mutirao-campos-flex input[type="text"] {
+    width: 100%;
+    box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
+}
 /* --- AJUSTES DE ESTILOS PARA NOVOS IDS/ESTRUTURA (INÍCIO) --- */
 
 /* Novo: Define a margem para os novos containers ocultáveis */
@@ -889,6 +920,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
