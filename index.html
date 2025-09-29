@@ -832,12 +832,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="number" id="quadrasTrabalhadasInput" value="0">
                 <p id="obsQuadrasTrabalhadas" class="obs-texto"></p>
           <div id="camposHD">
-  <label>HDP <input type="text" id="hdpInput" /></label>
-<label>HDT <input type="text" id="hdtInput" /></label>
-
-<small style="display: block; color: #a0a0a0; margin-top: 5px;">
-    * A regra é: HDT não pode ser maior que HDP.
-</small>
+<label>HDP 
+    <input type="text" id="hdpInput" placeholder="Deve ser >= HDT" />
+</label>
+<label>HDT 
+    <input type="text" id="hdtInput" />
+</label>
             
           <label>Semana Inicial
     <select id="semanaInicial">
@@ -913,6 +913,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
