@@ -615,29 +615,37 @@ function calcularImoveisATrabalhar() {
 // 1. FUNÇÃO DE VALIDAÇÃO (Pode ser definida em qualquer lugar do seu script)
 // =========================================================
 function validarHDT() {
-    const hdpValue = hdpInput.value.trim(); // Pega o valor original (string)
-    const hdtValue = hdtInput.value.trim(); // Pega o valor original (string)
+    const hdpInput = document.getElementById("hdpInput");
+    const hdtInput = document.getElementById("hdtInput");
+    const avisoHDT = document.getElementById("avisoHDT");
 
-    // Se ambos os campos estiverem vazios, apenas oculta o aviso e sai.
-    if (hdpValue === '' && hdtValue === '') {
-        avisoHDT.classList.add('oculto');
-        hdtInput.style.borderColor = 'var(--border-color)';
-        return; // Sai da função
+    // Checa se algum elemento está faltando antes de prosseguir
+    if (!hdpInput || !hdtInput || !avisoHDT) {
+        return; 
     }
 
-    // Continua a validação numérica se pelo menos um campo tiver valor
+    const hdpValue = hdpInput.value.trim(); // Valor como string
+    const hdtValue = hdtInput.value.trim(); // Valor como string
+
+    // 1. REGRA PARA CAMPOS VAZIOS: Se ambos estão vazios, OCULTA e sai.
+    if (hdpValue === '' && hdtValue === '') {
+        avisoHDT.classList.add('oculto'); // Garante que está escondido
+        hdtInput.style.borderColor = 'var(--border-color)';
+        return; 
+    }
+
+    // 2. VALIDAÇÃO NUMÉRICA: Converte para número e aplica a regra de negócio
     const hdp = parseFloat(hdpValue) || 0;
     const hdt = parseFloat(hdtValue) || 0;
 
-    // Lógica: HDT deve ser MENOR ou IGUAL a HDP (HDT <= HDP)
     if (hdt > hdp) {
-        // ... (código para mostrar o alerta) ...
+        // ERRO: HDT maior que HDP
         avisoHDT.textContent = "ALERTA: O HDT não pode ser maior que o HDP.";
-        avisoHDT.classList.remove('oculto');
+        avisoHDT.classList.remove('oculto'); // MOSTRA o alerta
         hdtInput.style.borderColor = 'var(--warning-color)'; 
     } else {
-        // ... (código para esconder o alerta) ...
-        avisoHDT.classList.add('oculto');
+        // SUCESSO OU IGUALDADE
+        avisoHDT.classList.add('oculto'); // ESCONDE o alerta
         hdtInput.style.borderColor = 'var(--border-color)'; 
     }
 }
@@ -975,6 +983,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
