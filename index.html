@@ -337,39 +337,47 @@ input[readonly] {
 .oculto {
     display: none;
 }
-/* Estilo para colocar os campos Endereço, Quadra e UAPS em linha (Flexbox) */
+
+/* ------------------------------------------- */
+/* --- REGRAS DE LAYOUT CORRIGIDAS/NOVAS --- */
+/* ------------------------------------------- */
+
+/* 1. Estilo para colocar os campos Endereço, Quadra e UAPS em linha (Flexbox) */
 .mutirao-campos-flex {
     display: flex;
     flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo se não houver espaço */
     gap: 10px; /* Espaço entre os campos */
+    margin-top: 5px; /* Adiciona margem superior para espaçamento */
 }
 
 .mutirao-campos-flex label {
-    /* Define o Endereço para ocupar mais espaço e os outros menos */
-    /* Exemplo: Endereço 100%, Quadra e UAPS 45% cada (para caber em 2 colunas em telas médias) */
-    flex: 1 1 100%; /* Por padrão, ocupa a largura total (ótimo para celular) */
+    /* Por padrão, em telas pequenas (celular), ocupa a largura total */
+    flex: 1 1 100%;
 }
 
-/* Media Query para telas maiores que um celular (por exemplo, tablets ou desktops) */
+/* 2. Media Query para telas maiores que um celular (Tablet/Desktop) */
 @media (min-width: 600px) {
-    /* Em telas maiores, Endereço ocupa mais espaço, e Quadra/UAPS ficam em 2 colunas */
+    /* Em telas maiores, Endereço ocupa 100%, e Quadra/UAPS ficam em 2 colunas */
     .mutirao-campos-flex label:nth-child(1) { /* Endereço */
-        flex: 1 1 100%; /* Ocupa 100% da linha */
+        flex: 1 1 100%; 
     }
     
     .mutirao-campos-flex label:nth-child(2), /* Quadra */
     .mutirao-campos-flex label:nth-child(3) { /* UAPS */
-        flex: 1 1 calc(50% - 10px); /* Ocupa cerca de metade da linha, ajustando o 'gap' */
-        min-width: 150px; /* Garante uma largura mínima */
+        /* Calcula a largura para caber em 2 colunas com o gap */
+        flex: 1 1 calc(50% - 5px); 
+        min-width: 150px; 
     }
 }
 
-/* Garante que os inputs dentro dos labels em flex ocupem o espaço total do label */
+/* 3. Garante que os inputs dentro dos labels em flex ocupem o espaço total do label */
 .mutirao-campos-flex input[type="text"] {
     width: 100%;
-    box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
+    box-sizing: border-box; 
 }
-/* --- AJUSTES DE ESTILOS PARA NOVOS IDS/ESTRUTURA (INÍCIO) --- */
+
+
+/* --- AJUSTES DE ESTILOS PARA NOVOS IDS/ESTRUTURA (ADICIONAIS) --- */
 
 /* Novo: Define a margem para os novos containers ocultáveis */
 .estratificacao-container,
@@ -383,12 +391,10 @@ input[readonly] {
     font-weight: bold;
     color: var(--primary-color);
     display: block;
-    /* Ajuste para diminuir o espaço entre o rótulo e a caixa de seleção */
     margin-bottom: 4px; 
 }
 
-/* Alteração de largura e inclusão de campos do Mutirão: 
-   Atualizando seletores para os novos IDs */
+/* Estilos gerais para inputs/selects do novo bloco */
 #tipoSelect,
 #inputOutros,
 #mutiraoContainer input[type="text"] {
@@ -406,34 +412,18 @@ input[readonly] {
     transition: all 0.3s ease;
 }
 
-/* Regras de Layout do Mutirão (GRID) - Mantido, mas otimizado */
-#mutiraoCamposContainer {
-    display: grid;
-    /* Adaptação para celular/desktop: colunas flexíveis */
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 8px;
-    align-items: end;
-    width: 100%;
-    margin-top: 5px;
-}
-
 /* Estilo para os labels dentro do container do Mutirão */
 #mutiraoContainer label {
     margin-bottom: 0;
 }
 
+/* O aviso fica abaixo do container flex, ocupando a largura total */
 #avisoMutirao {
-    grid-column: 1 / -1; /* Aviso Obrigatório na largura total */
     text-align: left; 
+    margin-top: 10px; /* Adiciona um espaço do bloco de inputs */
 }
 
-/* Removendo a regra antiga do p dentro do container, pois o p foi removido
-#mutiraoCamposContainer p {
-     grid-column: 1 / -1;
-     margin-bottom: 2px;
-} */
-
-/* --- AJUSTES DE ESTILOS PARA NOVOS IDS/ESTRUTURA (FIM) --- */
+/* --- FIM DOS AJUSTES DE ESTILOS --- */
 
 
 .aviso-obrigatorio {
@@ -443,6 +433,7 @@ input[readonly] {
     margin-top: 5px;
     font-weight: normal;
 }
+/* ... (Resto do CSS Original) ... */
 
 header {
     text-align: center;
@@ -527,7 +518,6 @@ header h1 {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Estilo para o aviso de quadras restantes */
 /* Estilo para o aviso de quadras restantes */
 .aviso-quadras {
     font-size: 1.1em;
@@ -631,10 +621,10 @@ header h1 {
 .menu a:focus {
     color: orange !important;
     -webkit-text-fill-color: orange !important; /* compatibilidade iOS/Safari */
-    background: transparent !important;         /* evita fundos indesejados */
+    background: transparent !important;          /* evita fundos indesejados */
     text-decoration: none;
     outline: none;
-    -webkit-tap-highlight-color: transparent;   /* remove o destaque azul no touch */
+    -webkit-tap-highlight-color: transparent;    /* remove o destaque azul no touch */
 }
 
 /* opcional: pequeno feedback visual no hover (desktop) */
@@ -920,6 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
