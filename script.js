@@ -861,8 +861,33 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 outrosCampoInput.removeAttribute('required');
          }
     });
-});
+   const hdpInput = document.getElementById("hdpInput");
+    const hdtInput = document.getElementById("hdtInput");
+    const avisoHDT = document.getElementById("avisoHDT");
 
+    function validarHDT() {
+        const hdp = parseFloat(hdpInput.value) || 0;
+        const hdt = parseFloat(hdtInput.value) || 0;
+
+        if (hdt > hdp) {
+            avisoHDT.textContent = "ALERTA: O HDT não pode ser maior que o HDP.";
+            avisoHDT.classList.remove('oculto');
+            hdtInput.style.borderColor = 'var(--warning-color)';
+        } else {
+            avisoHDT.classList.add('oculto');
+            hdtInput.style.borderColor = 'var(--border-color)'; 
+        }
+    }
+
+    // Só adicionamos o listener se os elementos existirem (boa prática)
+    if (hdpInput && hdtInput) {
+        hdpInput.addEventListener('input', validarHDT);
+        hdtInput.addEventListener('input', validarHDT);
+    }
+    
+    // --- Fim: Lógica de Validação HDP/HDT ---
+
+}); // Fecha o document.addEventListener('DOMContentLoaded', ...
 
 // --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
@@ -913,6 +938,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
