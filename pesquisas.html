@@ -724,6 +724,36 @@
             return { html: detalheHtml, totalAmostra: totalAmostraBairro };
         }
 
+        /**
+         * NOVO: Soma todos os valores exibidos em elementos .quadra-quantidade dentro do detalhamento
+         * e exibe o total em verde no topo do bloco de detalhamento.
+         */
+        function atualizarSomaValoresVerdes() {
+            // seleciona apenas os .quadra-quantidade presentes no detalhamento (visíveis)
+            const elementos = detalhamentoQuadras.querySelectorAll('.quadra-quantidade');
+            let soma = 0;
+            elementos.forEach(el => {
+                // remove pontos e espaços, mantêm apenas dígitos
+                const texto = (el.textContent || '').replace(/\./g, '').replace(/\s/g, '');
+                const numero = parseInt(texto.replace(/[^0-9\-]/g, '')) || 0;
+                soma += numero;
+            });
+
+            // cria ou atualiza o elemento de exibição do total
+            let elTotal = document.getElementById('somaValoresVerdes');
+            if (!elTotal) {
+                elTotal = document.createElement('div');
+                elTotal.id = 'somaValoresVerdes';
+                elTotal.className = 'resultado-total';
+                // insere como primeiro filho (após o título)
+                if (detalhamentoQuadras.firstChild) {
+                    detalhamentoQuadras.insertBefore(elTotal, detalhamentoQuadras.firstChild.nextSibling);
+                } else {
+                    detalhamentoQuadras.appendChild(elTotal);
+                }
+            }
+            elTotal.innerHTML = `<p><strong>SOMA DOS VALORES EM VERDE (Visível):</strong> <strong style="font-size:1.3em;color:var(--sucess-color)">${soma.toLocaleString('pt-BR')}</strong></p>`;
+        }
 
         /**
          * FUNÇÃO DE CÁLCULO LOCAL: Calcula os resultados da TABELA INFERIOR para o CÓDIGO ATUAL (Mantida)
@@ -867,6 +897,9 @@
                             </div>`;
                     detalhamentoQuadras.innerHTML += detalhamentoHtml;
                     detalhamentoQuadras.style.display = 'block';
+
+                    // Atualiza a soma de TODOS os valores verdes exibidos no detalhamento
+                    atualizarSomaValoresVerdes();
                 } else {
                     detalhamentoQuadras.style.display = 'none';
                 }
@@ -1160,6 +1193,7 @@
     </script>
 </body>
 </html>
+
 
 
 
