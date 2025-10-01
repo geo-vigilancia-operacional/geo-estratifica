@@ -265,6 +265,7 @@
             border-left: 3px solid var(--primary-color);
         }
         
+        /* NOVO ESTILO: Cor para a alocação proporcional */
         .bairro-item.sample-alloc {
             border-left: 3px solid var(--sucess-color);
         }
@@ -375,6 +376,7 @@
             </div>
 
             <!-- NOVO BLOCO 2: Alocação da Amostra de Quadras (27+1) -->
+            <!-- Este é o bloco que exibe a distribuição proporcional que você solicitou -->
             <div id="resultsSampleAllocation" style="display: none;">
                 <div class="section-divider"></div>
                 <p class="subtitle" style="color: var(--sucess-color);">Distribuição de Amostra de Quadras (28 QT)</p>
@@ -404,8 +406,9 @@
     </div>
 
     <script>
+        // Variável de controle para a alocação proporcional (27 + 1)
+        const TARGET_SAMPLE_QUADRAS = 28; 
         const urlEstatisticas = 'bairros_4ciclo_2025.json';
-        const TARGET_SAMPLE_QUADRAS = 28; // O valor 27 + 1
 
         // --- Referências do DOM ---
         const selecaoCodigo = document.getElementById('selecaoCodigo');
@@ -423,6 +426,7 @@
         const resultsBairrosDiv = document.getElementById('resultsBairros');
         const bairrosListDiv = document.getElementById('bairrosList');
         
+        // Novos elementos para a alocação proporcional
         const resultsSampleAllocationDiv = document.getElementById('resultsSampleAllocation');
         const sampleAllocationListDiv = document.getElementById('sampleAllocationList');
 
@@ -435,28 +439,28 @@
         const SENHA_SECRETA = 'inspecao2025';
         let isInputUnlocked = false; 
         
-        let dadosEstatisticos = []; // Dados carregados do JSON
-        let dadosFiltradosCodigo = []; // Dados filtrados para o código atual
+        let dadosEstatisticos = []; 
+        let dadosFiltradosCodigo = []; 
         let codigoAtual = ''; 
 
         // Totais gerais para o Estrato
         let totalImoveisLiquidosGeral = 0;
         let totalQuadrasUteisGeral = 0;
         
-        // Armazenamento persistido dos IDs sorteados {codigo: {bairro_normalizado: [ids]}}
+        // Armazenamento persistido dos IDs sorteados
         let quadrasSorteioGlobal = {}; 
         const LOCAL_STORAGE_KEY = 'inspecaoQuadrasSorteio'; 
 
-        // Chaves do JSON (baseado nos seus snippets)
+        // Chaves do JSON
         const CHAVE_QUADRA = 'QT'; 
         const CHAVE_IMOVEIS_QUADRA = 'TOTAL'; 
         const CHAVE_SUBTRACAO_AP = 'AP. ACIMA DO TÉRREO';
         const CHAVE_SUBTRACAO_PE = 'PE';
-        const CHAVE_BAIRRO = 'NOME BAIRRO'; // Assumindo esta chave no JSON
-        const CHAVE_CODIGO = 'CODIGO BAIRRO'; // Assumindo esta chave no JSON
+        const CHAVE_BAIRRO = 'NOME BAIRRO'; 
+        const CHAVE_CODIGO = 'CODIGO BAIRRO'; 
 
 
-        // Mapeamento de Códigos para Bairros e Intervalos de Quadras
+        // Mapeamento de Códigos para Bairros e Intervalos de Quadras (Mantido o do usuário)
         const CODIGOS_BAIRROS = {
             '85': [{bairro: 'PARQUE DOIS IRMAOS', inicio: '1', fim: '180'}],
             '86': [{bairro: 'PARQUE DOIS IRMAOS', inicio: '181', fim: '278'}, {bairro: 'PASSARÉ', inicio: '1', fim: '93/1'}],
@@ -489,7 +493,7 @@
             '113': [{bairro: 'AEROLÂNDIA', inicio: '1', fim: '56'}, {bairro: 'ALTO DA BALANÇA', inicio: '1', fim: '90'}]
         };
 
-        // --- FUNÇÕES UTILITÁRIAS DE DADOS E PERSISTÊNCIA ---
+        // --- FUNÇÕES UTILITÁRIAS DE DADOS E PERSISTÊNCIA (EXISTENTES) ---
         
         function carregarDadosPersistidos() {
             const dadosSalvos = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -546,10 +550,11 @@
             calcularResultadosDoCodigoAtual();
         }
         
-        // --- FUNÇÃO CENTRAL DE ALOCAÇÃO DE AMOSTRA (28 QUADRAS) ---
+        // --- FUNÇÃO ADICIONADA: ALOCAÇÃO PROPORCIONAL DE 28 QUADRAS ---
         /**
-         * Aloca o total de 28 quadras proporcionalmente entre os bairros do código
-         * com base no total de Imóveis Líquidos (IL) de cada bairro.
+         * Aloca o total de 28 quadras (TARGET_SAMPLE_QUADRAS) proporcionalmente entre 
+         * os bairros do código, usando o método do maior resto para garantir que 
+         * o total alocado seja exatamente 28.
          * @param {Object} totaisPorBairro - Objeto com {bairro: {imoveisLiquidos: number}}
          * @param {number} totalILLimpo - Total de Imóveis Líquidos do Código
          * @returns {Object} Um objeto contendo {bairro: {quadrasAlocadas: number, percentualIL: string}}
@@ -592,7 +597,10 @@
                 // Adiciona uma quadra para as maiores frações até que o total seja 28
                 for (let i = 0; i < quadrasRestantes; i++) {
                     const bairroGanhador = fracoes[i].bairro;
-                    alocacao[bairroGanhador].quadrasAlocadas += 1;
+                    // Proteção simples para garantir que o índice i exista, embora o sort resolva a maioria dos casos.
+                    if(alocacao[bairroGanhador]) { 
+                       alocacao[bairroGanhador].quadrasAlocadas += 1;
+                    }
                 }
             }
 
@@ -600,7 +608,7 @@
         }
 
 
-        // --- FUNÇÕES PRINCIPAIS DE CARREGAMENTO E LÓGICA ---
+        // --- FUNÇÕES PRINCIPAIS DE CARREGAMENTO E LÓGICA (EXISTENTES) ---
         
         /**
          * Carrega o JSON, normaliza os dados e calcula os totais gerais do Estrato.
@@ -672,13 +680,11 @@
                     const parseQuadraSort = (q_str) => {
                         const parts = String(q_str).split('/');
                         let num = parseFloat(parts[0]);
-                        // Prioriza o número antes da barra para ordenar
                         return num;
                     };
                     const qA = parseQuadraSort(a.quadraUtil);
                     const qB = parseQuadraSort(b.quadraUtil);
                     
-                    // Se os números principais forem iguais, ordena pela string completa
                     if (qA === qB) {
                         return a.quadraUtil.localeCompare(b.quadraUtil, undefined, { numeric: true });
                     }
@@ -709,8 +715,10 @@
             resultsContent.innerHTML = '';
             bairrosListDiv.innerHTML = '';
             resultsBairrosDiv.style.display = 'none';
+            // Limpeza e ocultamento dos novos blocos de alocação
             sampleAllocationListDiv.innerHTML = '';
-            resultsSampleAllocationDiv.style.display = 'none';
+            resultsSampleAllocationDiv.style.display = 'none'; 
+            
             quadrasContainer.style.display = 'none'; 
             resultadoContagem.style.display = 'none';
             detalhamentoQuadras.style.display = 'none';
@@ -783,7 +791,7 @@
                 });
             }
 
-            // 5. NOVO: Alocação e Exibição da Amostra de Quadras (28)
+            // 5. CHAMADA DA NOVA FUNÇÃO E EXIBIÇÃO: Alocação e Exibição da Amostra de Quadras (28)
             const alocacaoQuadras = alocarAmostraQuadras(totaisPorBairro, totalILCodigo);
             
             if (Object.keys(alocacaoQuadras).length > 0) {
@@ -820,7 +828,7 @@
         }
         
         /**
-         * Gera os campos de input de quadras para cada bairro mapeado.
+         * Gera os campos de input de quadras para cada bairro mapeado. (EXISTENTE)
          */
         function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = '';
@@ -870,7 +878,7 @@
         }
 
         /**
-         * Calcula os resultados da amostra e detalhamento para o código atualmente selecionado.
+         * Calcula os resultados da amostra e detalhamento para o código atualmente selecionado. (EXISTENTE)
          */
         function calcularResultadosDoCodigoAtual() {
             if (!codigoAtual || dadosFiltradosCodigo.length === 0) {
@@ -941,8 +949,7 @@
         }
 
         /**
-         * Calcula e atualiza os totais consolidados (Imóveis à Inspecionar e Quarteirões Sorteados)
-         * somando todos os códigos no estado global (localStorage).
+         * Calcula e atualiza os totais consolidados (Imóveis à Inspecionar e Quarteirões Sorteados). (EXISTENTE)
          */
         function calcularTotaisConsolidados() {
             let totalImoveisInspecionar = 0;
@@ -950,7 +957,6 @@
             
             if (dadosEstatisticos.length === 0) return; 
 
-            // Itera sobre todos os códigos com dados salvos no localStorage
             Object.keys(quadrasSorteioGlobal).forEach(codigo => {
                 const codigoData = quadrasSorteioGlobal[codigo];
                 const dadosCodigo = dadosEstatisticos.filter(item => item.codigoBairro === codigo);
@@ -961,13 +967,11 @@
                     if (ids && ids.length > 0) {
                         totalQuadrasSorteados += ids.length;
                         
-                        // Encontra as quadras sorteadas neste bairro/código
                         const quadrasSorteadas = dadosCodigoComSequencial.filter(item => 
                             normalizarString(item.nomeBairro) === bairroNormalizado && 
                             ids.includes(String(item.ID_SEQUENCIAL))
                         );
                         
-                        // Soma os 20% de IL de cada quadra sorteada para o total geral
                         quadrasSorteadas.forEach(quadra => {
                             totalImoveisInspecionar += Math.ceil(quadra.imoveisLiquidos * 0.20); 
                         });
@@ -980,7 +984,7 @@
             quarteiroesSorteados.textContent = formatarValor(totalQuadrasSorteados);
         }
         
-        // --- FUNÇÕES DE INTERAÇÃO E SENHA ---
+        // --- FUNÇÕES DE INTERAÇÃO E SENHA (EXISTENTES) ---
 
         function mostrarModalSenha() {
             modalSenha.style.display = 'flex';
@@ -997,7 +1001,6 @@
             if (inputSenha.value === SENHA_SECRETA) {
                 isInputUnlocked = true;
                 esconderModalSenha();
-                // Habilita todos os inputs de ID e atualiza o botão
                 document.querySelectorAll('.input-ids-sorteados').forEach(input => input.disabled = false);
                 btnDesbloquear.classList.add('unlocked');
                 btnDesbloquear.textContent = 'Edição Desbloqueada (Clique para Bloquear Novamente)';
@@ -1019,48 +1022,38 @@
             const idsString = inputElement.value;
             const bairroNormalizado = inputElement.dataset.bairro;
             
-            // Converte a string de IDs em um array limpo de strings de números
             const idsArray = idsString.split(',')
                 .map(id => normalizarString(id))
                 .filter(id => id.length > 0);
             
-            // Salva no estado global e dispara o salvamento/recalculo
             salvarIDsNoGlobal(bairroNormalizado, idsArray);
         }
         
-        // --- INICIALIZAÇÃO DA APLICAÇÃO ---
+        // --- INICIALIZAÇÃO DA APLICAÇÃO (EXISTENTE) ---
         
         window.addEventListener('DOMContentLoaded', async () => {
             
-            // 1. Carrega inputs de ID salvos no localStorage (se houver)
             carregarDadosPersistidos();
-            
-            // 2. Carrega o arquivo JSON, normaliza e calcula os totais gerais (AGUARDA O CARREGAMENTO)
             await carregarDados();
             popularSeletor();
             
-            // 3. Preenche os TOTAIS GERAIS FIXOS (do JSON)
             imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
             quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
             
-            // 4. Calcula os totais CONSOLIDADOS (usando dados recuperados do localStorage, se houver)
             calcularTotaisConsolidados();
 
-            // 5. Tenta carregar a seleção de código salva
             const codigoSalvo = localStorage.getItem('codigoSelecionado');
             if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
                  selecaoCodigo.value = codigoSalvo;
                  exibirResultsPorCodigo(codigoSalvo);
             } else {
-                 exibirResultsPorCodigo(''); // Inicia sem seleção
+                 exibirResultsPorCodigo('');
             }
 
-            // Listener principal para o seletor de código
             selecaoCodigo.addEventListener('change', (event) => {
                 const codigo = event.target.value;
                 exibirResultsPorCodigo(codigo);
                 
-                // Salva o código selecionado
                 if (codigo) {
                     localStorage.setItem('codigoSelecionado', codigo);
                 } else {
@@ -1068,11 +1061,9 @@
                 }
             });
             
-            // Listener para o botão de desbloqueio (agora ele também pode bloquear)
             btnDesbloquear.addEventListener('click', () => {
                 if (isInputUnlocked) {
                     isInputUnlocked = false;
-                    // Bloqueia inputs
                     document.querySelectorAll('.input-ids-sorteados').forEach(input => input.disabled = true);
                     btnDesbloquear.classList.remove('unlocked');
                     btnDesbloquear.textContent = 'Clique para Desbloquear a Edição dos IDs';
@@ -1085,6 +1076,7 @@
     </script>
 </body>
 </html>
+
 
 
 
