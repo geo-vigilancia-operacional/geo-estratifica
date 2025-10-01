@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* CSS fornecido pelo usuário (Parte 1) e aprimorado */
+        /* Estilos CSS */
         * {
             margin: 0;
             padding: 0;
@@ -28,291 +28,286 @@
             --highlight-bg: #2a2a47;
             --sucess-color: #4CAF50;
             --danger-color: #ef4444;
-            --font-family: 'Roboto', sans-serif;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         body {
-            font-family: var(--font-family);
+            font-family: 'Roboto', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            min-height: 100vh;
-            padding: 20px;
+            line-height: 1.6;
+            padding: 10px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            padding: 0 15px;
         }
 
         .box {
-            background-color: var(--card-bg);
-            padding: 25px;
+            background: var(--card-bg);
             border-radius: 12px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            margin-bottom: 20px;
             border: 1px solid var(--border-color);
         }
-
-        h1 {
-            color: var(--primary-color);
-            font-size: 1.8em;
-            margin-bottom: 5px;
-            text-align: center;
+        
+        .box h1, .box h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-shadow: 0 0 3px var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
         }
         
-        h3 {
-             color: var(--secondary-color);
-             font-size: 1.3em;
-             margin-top: 10px;
-             margin-bottom: 15px;
-             text-align: center;
-        }
-
-        h4 {
-            color: var(--secondary-color);
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 5px;
-        }
-
-        p {
-            margin-bottom: 10px;
-            line-height: 1.5;
-        }
-
-        .grid-estatisticas {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .grid-estatisticas > div {
-            padding: 10px;
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
-            background-color: var(--highlight-bg);
-        }
-
-        .grid-estatisticas p {
-            margin: 0;
-            font-size: 0.95em;
-        }
-
-        #imoveisEstrato, #quarteiroesEstrato, #imoveisInspecionar, #quarteiroesSorteados {
-            font-size: 1.6em;
-            font-weight: 700;
-            color: var(--primary-color);
-            display: block;
-            margin-top: 5px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: var(--secondary-color);
-        }
-
         .select-personalizado, .input-personalizado {
             width: 100%;
-            padding: 10px 15px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
+            padding: 10px;
+            margin-top: 10px;
             background-color: var(--input-bg);
             color: var(--text-color);
-            font-size: 1em;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: border-color 0.3s;
         }
 
-        .select-personalizado:focus, .input-personalizado:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.5);
+        .input-personalizado:disabled {
+            background-color: #2a2a47; /* Cor diferente para desabilitado */
+            color: #999;
+            cursor: not-allowed;
         }
-        
+
+        #quadrasContainer {
+            padding-top: 20px;
+        }
+
         .quadra-bloco {
-            background-color: var(--highlight-bg);
+            background-color: var(--highlight-bg); 
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 15px;
-            border-left: 5px solid var(--primary-color);
         }
 
-        .input-ids-bairro-bloco {
+        .quadra-bloco h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .quadra-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .quadra-inputs label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        #resultadoContagem {
+            /* Já tem a classe .box */
+        }
+        #resultadoContagem strong {
+            color: var(--primary-color);
+        }
+
+        .resultado-total {
+            font-size: 1.2em;
             margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
         }
         
-        .input-ids-sorteados[disabled] {
-            background-color: #333355;
-            cursor: not-allowed;
+        .resultado-liquido {
+            font-size: 1.2em;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+            color: var(--secondary-color);
+        }
+        .resultado-liquido strong {
+            color: var(--secondary-color);
+        }
+
+        /* ESTILOS DE BLOQUEIO/DESBLOQUEIO */
+        .input-ids-bairro-bloco { 
+             margin-top: 20px;
+             padding: 15px;
+             background-color: var(--input-bg); 
+             border-radius: 8px;
+             border: 1px solid var(--border-color);
+        }
+        .input-ids-bairro-bloco label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--sucess-color);
+            font-weight: 700;
+        }
+        .input-ids-bairro-bloco small {
+            display: block;
+            margin-top: 5px;
             color: #ccc;
+            font-weight: 400;
+            font-size: 0.85em;
+        }
+        .input-ids-bairro-bloco input:disabled {
+            border: 1px dashed var(--danger-color);
         }
         
-        /* BOTÕES */
-        button {
-            background-color: var(--primary-color);
-            color: var(--bg-color);
-            padding: 10px 20px;
+        /* BOTÃO DE DESBLOQUEIO */
+        .btn-desbloquear {
+            padding: 10px 15px;
+            background-color: var(--danger-color);
+            color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
-            transition: background-color 0.3s, transform 0.1s;
-            margin-right: 10px;
-        }
-
-        button:hover {
-            background-color: #008cba;
-            transform: translateY(-1px);
-        }
-
-        .btn-desbloquear {
-            background-color: var(--danger-color);
-            margin-top: 10px;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+            display: block;
             width: 100%;
         }
-
         .btn-desbloquear:hover {
-            background-color: #cc3333;
+            background-color: #c53030;
         }
-        
         .btn-desbloquear.unlocked {
             background-color: var(--sucess-color);
         }
 
-        .btn-desbloquear.unlocked:hover {
-            background-color: #3e8e41;
+        /* DETALHAMENTO E ESTATÍSTICAS */
+        #detalhamentoQuadras {
+            /* Já tem a classe .box */
+        }
+        #detalhamentoQuadras h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #3e4a61;
+        }
+        .detalhe-bairro {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--border-color); 
+        }
+        .detalhe-bairro:last-of-type {
+            border-bottom: none;
+        }
+        .detalhe-bairro strong {
+            color: var(--secondary-color);
+            display: block; 
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .detalhe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .quadra-item {
+            padding: 8px 12px;
+            background-color: #313158; 
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+        }
+        
+        .quadra-quantidade {
+            font-weight: 700;
+            color: var(--sucess-color); 
+            font-size: 1.1em;
+            padding-left: 8px; 
         }
 
-        /* MODAL */
+        .grid-estatisticas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .grid-estatisticas > div {
+            padding: 10px;
+            background-color: var(--highlight-bg);
+            border-radius: 6px;
+        }
+        
+        #imoveisEstrato, #quarteiroesEstrato {
+            color: #ff9800; /* Laranja para destaque */
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+        
+        #imoveisInspecionar, #quarteiroesSorteados {
+            color: var(--sucess-color); /* Verde para destaque */
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+        
+        /* MODAL DE SENHA */
         .modal-overlay {
-            display: none;
             position: fixed;
-            z-index: 100;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
-            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none; /* Inicia oculto */
             justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
         .modal-content {
             background-color: var(--card-bg);
             padding: 30px;
             border-radius: 12px;
-            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             width: 90%;
+            max-width: 400px;
             text-align: center;
-            box-shadow: var(--shadow);
+            border: 2px solid var(--primary-color);
+        }
+
+        .modal-content h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
         .modal-content button {
             margin-top: 15px;
-            width: auto;
-            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+        .modal-content button:hover {
+            background-color: #008c9e;
         }
 
         #erroSenha {
             color: var(--danger-color);
             margin-top: 10px;
-            min-height: 20px;
-        }
-        
-        .empty-selection-message {
-            text-align: center;
-            color: #aaa;
-            padding: 20px 0;
-            font-style: italic;
-        }
-        
-        .section-divider {
-            border-top: 1px solid var(--border-color);
-            margin: 20px 0;
-        }
-
-        .subtitle {
-            font-size: 1.2em;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        /* Estilos para a lista de bairros (Resultados e Amostra Alocada) */
-        .bairros-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .bairro-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
-            background-color: var(--input-bg);
-            border-radius: 6px;
-            border-left: 3px solid var(--primary-color);
-        }
-        
-        /* NOVO ESTILO: Cor para a alocação proporcional */
-        .bairro-item.sample-alloc {
-            border-left: 3px solid var(--sucess-color);
-        }
-
-        .bairro-item-name {
-            font-weight: 400;
-            color: var(--text-color);
-        }
-
-        .bairro-item-value {
             font-weight: 700;
-            color: var(--primary-color);
+            height: 20px; /* Evitar CLS */
         }
         
-        .bairro-item.sample-alloc .bairro-item-value {
-            color: var(--sucess-color);
-        }
-        
-        .result-value {
-            font-size: 1.2em;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-            .box {
-                padding: 15px;
-            }
-            h1 {
-                font-size: 1.5em;
-            }
-            .grid-estatisticas {
-                grid-template-columns: 1fr;
-            }
-            .modal-content {
-                width: 95%;
-            }
-            .bairro-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .bairro-item-value {
-                margin-top: 5px;
-                font-size: 1.1em;
-            }
-        }
     </style>
 </head>
 <body>
@@ -325,6 +320,7 @@
             <!-- RESULTADOS GERAIS E CONSOLIDADOS (SEMPRE VISÍVEIS) -->
             <div id="resultadosEstatisticos" class="grid-estatisticas">
                 <div>
+            <div id="totaisPorBairroContainer" class="box" style="display: none; margin-top: 20px;"></div>
                     <p><strong>Total de Imóveis Líquidos / Estrato:</strong></p>
                     <p id="imoveisEstrato">--</p>
                 </div>
@@ -350,7 +346,7 @@
             <label for="selecaoCodigo">Selecione o Código:</label>
             <select id="selecaoCodigo" class="select-personalizado"></select>
 
-            <button id="btnDesbloquear" class="btn-desbloquear" style="display: none;">
+            <button id="btnDesbloquear" class="btn-desbloquear" style="display: none;" onclick="mostrarModalSenha()">
                 Clique para Desbloquear a Edição dos IDs
             </button>
         </div>
@@ -360,36 +356,12 @@
             <!-- Blocos de bairro/intervalo/input ID serão injetados aqui -->
         </div>
 
-        <!-- RESULTADO CONTAGEM - TOTAIS LÍQUIDOS E ALOCAÇÃO DE AMOSTRA (DISPLAY HABILITADO POR JS) -->
-        <div id="resultadoContagem" class="box" style="display: none;">
-            <div id="resultsContent">
-                <p class="empty-selection-message">Selecione um código acima para visualizar os resultados.</p>
-            </div>
-
-            <!-- BLOCO 1: Detalhes por Bairro (Imóveis Líquidos) -->
-            <div id="resultsBairros" style="display: none;">
-                <div class="section-divider"></div>
-                <p class="subtitle">Detalhe de Imóveis Líquidos por Bairro:</p>
-                <div id="bairrosList" class="bairros-list">
-                    <!-- Conteúdo dinâmico da soma por bairro (IL) será inserido aqui -->
-                </div>
-            </div>
-
-            <!-- NOVO BLOCO 2: Alocação da Amostra de Quadras (27+1) -->
-            <!-- Este é o bloco que exibe a distribuição proporcional que você solicitou -->
-            <div id="resultsSampleAllocation" style="display: none;">
-                <div class="section-divider"></div>
-                <p class="subtitle" style="color: var(--sucess-color);">Distribuição de Amostra de Quadras (28 QT)</p>
-                <div id="sampleAllocationList" class="bairros-list">
-                    <!-- Conteúdo dinâmico da alocação de amostra (QT) será inserido aqui -->
-                </div>
-            </div>
-        </div>
+        <!-- RESULTADO CONTAGEM - TOTAIS LÍQUIDOS PARA O CÓDIGO SELECIONADO (DISPLAY HABILITADO POR JS) -->
+        <div id="resultadoContagem" class="box" style="display: none;"></div>
         
         <!-- DETALHAMENTO DE AMOSTRA (DISPLAY HABILITADO POR JS) -->
         <div id="detalhamentoQuadras" class="box" style="display: none;">
             <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
-            <!-- Conteúdo de detalhamento será injetado aqui -->
         </div>
     </div>
     
@@ -406,61 +378,47 @@
     </div>
 
     <script>
-        // Variável de controle para a alocação proporcional (27 + 1)
-        const TARGET_SAMPLE_QUADRAS = 28; 
         const urlEstatisticas = 'bairros_4ciclo_2025.json';
-
-        // --- Referências do DOM ---
+        
+        // Elementos do DOM
         const selecaoCodigo = document.getElementById('selecaoCodigo');
         const bairroDisplay = document.getElementById('bairroSelecionadoDisplay');
         const quadrasContainer = document.getElementById('quadrasContainer'); 
         const resultadoContagem = document.getElementById('resultadoContagem'); 
         const detalhamentoQuadras = document.getElementById('detalhamentoQuadras'); 
-        const resultsContent = document.getElementById('resultsContent');
         
         const imoveisEstrato = document.getElementById('imoveisEstrato');
         const quarteiroesEstrato = document.getElementById('quarteiroesEstrato');
         const imoveisInspecionar = document.getElementById('imoveisInspecionar');
         const quarteiroesSorteados = document.getElementById('quarteiroesSorteados');
         
-        const resultsBairrosDiv = document.getElementById('resultsBairros');
-        const bairrosListDiv = document.getElementById('bairrosList');
-        
-        // Novos elementos para a alocação proporcional
-        const resultsSampleAllocationDiv = document.getElementById('resultsSampleAllocation');
-        const sampleAllocationListDiv = document.getElementById('sampleAllocationList');
-
         const modalSenha = document.getElementById('modalSenha');
         const inputSenha = document.getElementById('inputSenha');
         const erroSenha = document.getElementById('erroSenha');
         const btnDesbloquear = document.getElementById('btnDesbloquear');
         
-        // --- VARIÁVEIS DE ESTADO E DADOS GLOBAIS ---
-        const SENHA_SECRETA = 'inspecao2025';
-        let isInputUnlocked = false; 
+        // VARIÁVEIS DE ESTADO E SENHA
+        const SENHA_SECRETA = 'inspecao2025'; // A senha de acesso
+        let isInputUnlocked = false; // Estado de desbloqueio dos inputs de ID
         
         let dadosEstatisticos = []; 
-        let dadosFiltradosCodigo = []; 
+        let bairrosAtuais = []; 
         let codigoAtual = ''; 
 
-        // Totais gerais para o Estrato
         let totalImoveisLiquidosGeral = 0;
         let totalQuadrasUteisGeral = 0;
         
-        // Armazenamento persistido dos IDs sorteados
-        let quadrasSorteioGlobal = {}; 
+        let quadrasSorteioGlobal = {}; // Objeto que armazena os IDs por código/bairro
+        
+        // NOVO: Chave para persistência no localStorage
         const LOCAL_STORAGE_KEY = 'inspecaoQuadrasSorteio'; 
 
-        // Chaves do JSON
         const CHAVE_QUADRA = 'QT'; 
         const CHAVE_IMOVEIS_QUADRA = 'TOTAL'; 
         const CHAVE_SUBTRACAO_AP = 'AP. ACIMA DO TÉRREO';
         const CHAVE_SUBTRACAO_PE = 'PE';
-        const CHAVE_BAIRRO = 'NOME BAIRRO'; 
-        const CHAVE_CODIGO = 'CODIGO BAIRRO'; 
 
-
-        // Mapeamento de Códigos para Bairros e Intervalos de Quadras (Mantido o do usuário)
+        // Mapeamento de Códigos para Bairros e Intervalos de Quadras (Mantido)
         const CODIGOS_BAIRROS = {
             '85': [{bairro: 'PARQUE DOIS IRMAOS', inicio: '1', fim: '180'}],
             '86': [{bairro: 'PARQUE DOIS IRMAOS', inicio: '181', fim: '278'}, {bairro: 'PASSARÉ', inicio: '1', fim: '93/1'}],
@@ -477,29 +435,30 @@
             '97': [{bairro: 'JANGURUSSU', inicio: '368', fim: '565'}],
             '98': [{bairro: 'PEDRAS', inicio: '1', fim: '90/3'}, {bairro: 'ANCURI', inicio: '1', fim: '90'}],
             '99': [{bairro: 'PARQUE SANTA MARIA', inicio: '1', fim: '88'}, {bairro: 'PAUPINA', inicio: '1', fim: '19'}],
-            '100': [{bairro: 'PAUPINA', inicio: '20', fim: '116'}, {bairro: 'SÃO BENTO', inicio: '1', fim: '24'}],
-            '101': [{bairro: 'SÃO BENTO', inicio: '25', fim: '151'}, {bairro: 'COAÇU', inicio: '1', fim: '64'}, {bairro: 'GUAJERU', inicio: '1', fim: '60'}],
-            '102': [{bairro: 'MESSEJANA', inicio: '1', fim: '196'}],
-            '103': [{bairro: 'MESSEJANA', inicio: '197', fim: '343'}],
-            '104': [{bairro: 'CURIÓ', inicio: '1', fim: '48'}, {bairro: 'JOSE DE ALENCAR', inicio: '1', fim: '163'}],
-            '105': [{bairro: 'LAGOA REDONDA', inicio: '1', fim: '132'}],
-            '106': [{bairro: 'LAGOA REDONDA', inicio: '132/1', fim: '204'}, {bairro: 'SABIAGUABA', inicio: '1', fim: '82'}],
-            '107': [{bairro: 'EDSON QUEIROZ', inicio: '1', fim: '62'}, {bairro: 'SAPIRANGA COITÉ', inicio: '206', fim: '304'}],
-            '108': [{bairro: 'EDSON QUEIROZ', inicio: '65', fim: '284'}],
-            '109': [{bairro: 'SAPIRANGA COITÉ', inicio: '1', fim: '205'}],
-            '110': [{bairro: 'CAMBEBA', inicio: '1', fim: '72'}, {bairro: 'PARQUE IRACEMA', inicio: '1', fim: '46'}, {bairro: 'PARQUE MANIBURA', inicio: '1', fim: '87'}, {bairro: 'CIDADE DOS FUNCIONÁRIOS', inicio: '143', fim: '162'}],
-            '111': [{bairro: 'AEROLÂNDIA', inicio: '57', fim: '81'}, {bairro: 'CIDADE DOS FUNCIONÁRIOS', inicio: '1', fim: '142/1'}, {bairro: 'JARDIM DAS OLIVEIRAS', inicio: '1', fim: '30'}],
-            '112': [{bairro: 'JARDIM DAS OLIVEIRAS', inicio: '31', fim: '213'}],
-            '113': [{bairro: 'AEROLÂNDIA', inicio: '1', fim: '56'}, {bairro: 'ALTO DA BALANÇA', inicio: '1', fim: '90'}]
+           '100': [{bairro: 'PAUPINA', inicio: '20', fim: '116'}, {bairro: 'SÃO BENTO', inicio: '1', fim: '24'}],
+           '101': [{bairro: 'SÃO BENTO', inicio: '25', fim: '151'}, {bairro: 'COAÇU', inicio: '1', fim: '64'}, {bairro: 'GUAJERU', inicio: '1', fim: '60'}],
+           '102': [{bairro: 'MESSEJANA', inicio: '1', fim: '196'}],
+           '103': [{bairro: 'MESSEJANA', inicio: '197', fim: '343'}],
+           '104': [{bairro: 'CURIÓ', inicio: '1', fim: '48'}, {bairro: 'JOSE DE ALENCAR', inicio: '1', fim: '163'}],
+           '105': [{bairro: 'LAGOA REDONDA', inicio: '1', fim: '132'}],
+           '106': [{bairro: 'LAGOA REDONDA', inicio: '132/1', fim: '204'}, {bairro: 'SABIAGUABA', inicio: '1', fim: '82'}],
+           '107': [{bairro: 'EDSON QUEIROZ', inicio: '1', fim: '62'}, {bairro: 'SAPIRANGA COITÉ', inicio: '206', fim: '304'}],
+           '108': [{bairro: 'EDSON QUEIROZ', inicio: '65', fim: '284'}],
+           '109': [{bairro: 'SAPIRANGA COITÉ', inicio: '1', fim: '205'}],
+           '110': [{bairro: 'CAMBEBA', inicio: '1', fim: '72'}, {bairro: 'PARQUE IRACEMA', inicio: '1', fim: '46'}, {bairro: 'PARQUE MANIBURA', inicio: '1', fim: '87'}, {bairro: 'CIDADE DOS FUNCIONÁRIOS', inicio: '143', fim: '162'}],
+           '111': [{bairro: 'AEROLÂNDIA', inicio: '57', fim: '81'}, {bairro: 'CIDADE DOS FUNCIONÁRIOS', inicio: '1', fim: '142/1'}, {bairro: 'JARDIM DAS OLIVEIRAS', inicio: '1', fim: '30'}],
+           '112': [{bairro: 'JARDIM DAS OLIVEIRAS', inicio: '31', fim: '213'}],
+           '113': [{bairro: 'AEROLÂNDIA', inicio: '1', fim: '56'}, {bairro: 'ALTO DA BALANÇA', inicio: '1', fim: '90'}]
         };
-
-        // --- FUNÇÕES UTILITÁRIAS DE DADOS E PERSISTÊNCIA (EXISTENTES) ---
         
+        // NOVO: Função para carregar dados do localStorage
         function carregarDadosPersistidos() {
             const dadosSalvos = localStorage.getItem(LOCAL_STORAGE_KEY);
             if (dadosSalvos) {
                 try {
+                    // Tenta restaurar o estado global de quadras sorteadas
                     quadrasSorteioGlobal = JSON.parse(dadosSalvos); 
+                    console.log('Dados de sorteio carregados do localStorage.');
                 } catch (e) {
                     console.error('Erro ao parsear dados do localStorage:', e);
                     quadrasSorteioGlobal = {};
@@ -507,14 +466,19 @@
             }
         }
         
+        // NOVO: Função para salvar dados no localStorage
         function salvarDadosPersistidos() {
             try {
+                // Salva o estado global de quadras sorteadas
                 localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(quadrasSorteioGlobal));
+                // console.log('Dados de sorteio salvos no localStorage.');
             } catch (e) {
                 console.error('Erro ao salvar dados no localStorage:', e);
             }
         }
 
+
+        // Função: NORMALIZAÇÃO ROBUSTA DE STRINGS (Mantida)
         function normalizarString(str) {
             if (typeof str !== 'string') return '';
             return str
@@ -526,148 +490,28 @@
                 .toUpperCase();
         }
 
+        // Função de formatação de valores (Mantida)
         const formatarValor = (valor) => {
             const num = parseFloat(valor);
             return isNaN(num) ? '--' : num.toLocaleString('pt-BR');
         };
 
-        const calcularPorcentagem = (parcial, total) => {
-            if (total === 0 || isNaN(total) || parcial === 0 || isNaN(parcial)) return '0.00%';
-            return ((parcial / total) * 100).toFixed(2) + '%';
-        };
-
+        /**
+         * Lógica: Salva o ID do bairro atual no armazenamento global E PERSISTE NO LOCALSTORAGE
+         */
         function salvarIDsNoGlobal(bairroNormalizado, ids) {
             if (!quadrasSorteioGlobal[codigoAtual]) {
                 quadrasSorteioGlobal[codigoAtual] = {};
             }
             quadrasSorteioGlobal[codigoAtual][bairroNormalizado] = ids;
             
+            // NOVO: Salva no localStorage após alteração
             salvarDadosPersistidos(); 
             
-            // Recalcula os totais consolidados após alteração local
-            calcularTotaisConsolidados(); 
-            // Atualiza o detalhamento de quadras para o código atual
-            calcularResultadosDoCodigoAtual();
-        }
-        
-        // --- FUNÇÃO ADICIONADA: ALOCAÇÃO PROPORCIONAL DE 28 QUADRAS ---
-        /**
-         * Aloca o total de 28 quadras (TARGET_SAMPLE_QUADRAS) proporcionalmente entre 
-         * os bairros do código, usando o método do maior resto para garantir que 
-         * o total alocado seja exatamente 28.
-         * @param {Object} totaisPorBairro - Objeto com {bairro: {imoveisLiquidos: number}}
-         * @param {number} totalILLimpo - Total de Imóveis Líquidos do Código
-         * @returns {Object} Um objeto contendo {bairro: {quadrasAlocadas: number, percentualIL: string}}
-         */
-        function alocarAmostraQuadras(totaisPorBairro, totalILLimpo) {
-            if (totalILLimpo === 0) return {};
-
-            const bairros = Object.keys(totaisPorBairro);
-            const alocacao = {};
-            let somaAlocada = 0;
-            let fracoes = [];
-
-            // 1. Calcula a alocação fracionária para cada bairro e armazena a fração
-            bairros.forEach(bairro => {
-                const il = totaisPorBairro[bairro].imoveisLiquidos;
-                const percentual = il / totalILLimpo;
-                const alocacaoFracionaria = percentual * TARGET_SAMPLE_QUADRAS;
-                
-                const parteInteira = Math.floor(alocacaoFracionaria);
-                const parteFracionaria = alocacaoFracionaria - parteInteira;
-                
-                alocacao[bairro] = {
-                    quadrasAlocadas: parteInteira,
-                    percentualIL: calcularPorcentagem(il, totalILLimpo)
-                };
-                
-                somaAlocada += parteInteira;
-                
-                // Guarda a fração para o método do maior resto (Largest Remainder Method)
-                fracoes.push({ bairro, fracao: parteFracionaria });
-            });
-
-            // 2. Distribui as quadras restantes (o "resto") com base nas maiores frações
-            let quadrasRestantes = TARGET_SAMPLE_QUADRAS - somaAlocada;
-
-            if (quadrasRestantes > 0) {
-                // Ordena as frações da maior para a menor
-                fracoes.sort((a, b) => b.fracao - a.fracao);
-
-                // Adiciona uma quadra para as maiores frações até que o total seja 28
-                for (let i = 0; i < quadrasRestantes; i++) {
-                    const bairroGanhador = fracoes[i].bairro;
-                    // Proteção simples para garantir que o índice i exista, embora o sort resolva a maioria dos casos.
-                    if(alocacao[bairroGanhador]) { 
-                       alocacao[bairroGanhador].quadrasAlocadas += 1;
-                    }
-                }
-            }
-
-            return alocacao;
+            // Re-executa o cálculo global após a alteração
+            calcularTotaisConsolidados(true); 
         }
 
-
-        // --- FUNÇÕES PRINCIPAIS DE CARREGAMENTO E LÓGICA (EXISTENTES) ---
-        
-        /**
-         * Carrega o JSON, normaliza os dados e calcula os totais gerais do Estrato.
-         */
-        async function carregarDados() {
-            try {
-                const response = await fetch(urlEstatisticas); 
-                
-                if (!response.ok) {
-                    throw new Error(`Erro ao carregar dados: ${response.status} - ${response.statusText}`);
-                }
-                
-                let rawData = await response.json(); 
-                
-                // 1. Normaliza e calcula Imóveis Líquidos para cada registro
-                dadosEstatisticos = rawData.map(item => {
-                    const totalReg = parseInt(item[CHAVE_IMOVEIS_QUADRA]) || 0;
-                    const apReg = parseInt(item[CHAVE_SUBTRACAO_AP]) || 0;
-                    const peReg = parseInt(item[CHAVE_SUBTRACAO_PE]) || 0;
-                    
-                    const imoveisLiquidos = totalReg - apReg - peReg;
-                    
-                    return {
-                        ...item,
-                        imoveisLiquidos: imoveisLiquidos,
-                        quadraUtil: String(item[CHAVE_QUADRA]).trim(),
-                        nomeBairro: String(item[CHAVE_BAIRRO]).trim(),
-                        codigoBairro: String(item[CHAVE_CODIGO]).trim(),
-                    };
-                }).filter(item => item.imoveisLiquidos > 0); // Filtra apenas quadras úteis (IL > 0)
-                
-                // 2. Cálculo dos Totais Gerais
-                totalImoveisLiquidosGeral = dadosEstatisticos.reduce((acc, item) => acc + (item.imoveisLiquidos || 0), 0);
-                
-                // Contar quadras úteis únicas (apenas as que têm imoveisLiquidos > 0)
-                const quadrasUnicas = new Set(dadosEstatisticos.map(item => item.quadraUtil));
-                totalQuadrasUteisGeral = quadrasUnicas.size;
-
-            } catch (error) {
-                console.error("Falha ao carregar ou processar dados:", error);
-            }
-        }
-
-        /**
-         * Preenche o seletor <select> com os códigos disponíveis.
-         */
-        function popularSeletor() {
-            selecaoCodigo.innerHTML = '<option value="">-- Selecione um Código --</option>';
-            Object.keys(CODIGOS_BAIRROS).sort((a, b) => parseInt(a) - parseInt(b)).forEach(codigo => {
-                const option = document.createElement('option');
-                option.value = codigo;
-                
-                const nomesBairros = CODIGOS_BAIRROS[codigo].map(item => item.bairro).join(', ');
-                
-                option.textContent = `Cód. ${codigo} (${nomesBairros})`;
-                selecaoCodigo.appendChild(option);
-            });
-        }
-        
         /**
          * Gera a lista de registros com um ID sequencial para cada quadra útil
          */
@@ -680,20 +524,24 @@
                     const parseQuadraSort = (q_str) => {
                         const parts = String(q_str).split('/');
                         let num = parseFloat(parts[0]);
+                        if (parts.length > 1) {
+                            const decimal = parseFloat(parts[1]) / 1000;
+                            num += decimal;
+                        }
                         return num;
                     };
-                    const qA = parseQuadraSort(a.quadraUtil);
-                    const qB = parseQuadraSort(b.quadraUtil);
-                    
-                    if (qA === qB) {
-                        return a.quadraUtil.localeCompare(b.quadraUtil, undefined, { numeric: true });
-                    }
+                    const qA = parseQuadraSort(a[CHAVE_QUADRA]);
+                    const qB = parseQuadraSort(b[CHAVE_QUADRA]);
                     return qA - qB;
                 });
 
-            // Adiciona o ID sequencial APENAS para registros com Imóveis Líquidos > 0
             registrosOrdenados.forEach(registro => {
-                if (registro.imoveisLiquidos > 0) {
+                const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                const imoveisLiquidos = totalReg - apReg - peReg;
+                
+                if (imoveisLiquidos > 0) {
                     registro.ID_SEQUENCIAL = idCounter++;
                 } else {
                     registro.ID_SEQUENCIAL = 0; 
@@ -704,287 +552,534 @@
         }
         
         /**
-         * Exibe os resultados detalhados para o código de bairro selecionado e 
-         * inicia a geração dos campos de input.
+         * FUNÇÃO CORE DE CÁLCULO: Calcula Imóveis Líquidos (Total * 20%) e Quadras Sorteadas (Mantida)
          */
-        function exibirResultsPorCodigo(codigoSelecionado) {
+        function calcularTotaisDeSorteio(registros, idsSorteadosPorBairro, bairrosComIntervalo) {
+            let totalImoveisInspecionar = 0;
+            let totalQuarteiroesSorteados = 0;
+
+            const bairrosParaProcessar = bairrosComIntervalo || Object.values(CODIGOS_BAIRROS).flat();
+
+            bairrosParaProcessar.forEach(itemBairro => {
+                const nomeBairroClean = itemBairro.bairro;
+                const nomeBairroNormalizado = normalizarString(nomeBairroClean);
+                const inicio = itemBairro.inicio;
+                const fim = itemBairro.fim;
+                
+                const idsInput = idsSorteadosPorBairro ? idsSorteadosPorBairro[nomeBairroNormalizado] || '' : '';
+                
+                let idsSorteados = new Set();
+                if (idsInput) {
+                    const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
+                    idsArray.forEach(idStr => {
+                        const idNum = parseInt(idStr);
+                        if (!isNaN(idNum) && idNum > 0) {
+                            idsSorteados.add(idNum);
+                        }
+                    });
+                }
+
+                if (idsSorteados.size === 0) return;
+
+                const quadrasNoIntervalo = registros.filter(registro => {
+                    const nomeItemNormalizado = normalizarString(registro['BAIRRO']);
+                    const quadra = registro[CHAVE_QUADRA];
+                    return nomeItemNormalizado === nomeBairroNormalizado &&
+                           compararQuadras(quadra, inicio, fim);
+                });
+                
+                const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+
+                const quadrasSorteadas = quadrasComIds.filter(registro => 
+                    registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
+                );
+
+                totalQuarteiroesSorteados += quadrasSorteadas.length; 
+
+                quadrasSorteadas.forEach(registro => {
+                    const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                    const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                    const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                    const imoveisLiquidos = totalReg - apReg - peReg;
+                    
+                    const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
+                    totalImoveisInspecionar += amostra20Pct;
+                });
+            });
+
+            return { totalImoveisInspecionar, totalQuarteiroesSorteados };
+        }
+
+
+        /**
+         * FUNÇÃO CRÍTICA: Calcula os totais de inspeção e sorteio para TODOS os códigos (Mantida)
+         */
+        function calcularTotaisConsolidados(recalcularTudo = false) {
+            if (dadosEstatisticos.length === 0) {
+                 imoveisInspecionar.textContent = '--';
+                 quarteiroesSorteados.textContent = '--';
+                 return;
+            }
             
-            codigoAtual = codigoSelecionado; 
+            let totalImoveisConsolidado = 0;
+            let totalQuarteiroesConsolidado = 0;
+
+            for (const cod of Object.keys(quadrasSorteioGlobal)) {
+                
+                const idsSorteados = quadrasSorteioGlobal[cod];
+                if (!idsSorteados || Object.keys(idsSorteados).length === 0) continue;
+
+                const bairrosMapeados = CODIGOS_BAIRROS[cod];
+                if (!bairrosMapeados) continue;
+
+                const bairrosParaFiltrarNormalizados = bairrosMapeados.map(item => normalizarString(item.bairro));
+                const registrosDoCodigo = dadosEstatisticos.filter(item => {
+                    const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
+                    return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
+                });
+                
+                const resultados = calcularTotaisDeSorteio(registrosDoCodigo, idsSorteados, bairrosMapeados);
+                
+                totalImoveisConsolidado += resultados.totalImoveisInspecionar;
+                totalQuarteiroesConsolidado += resultados.totalQuarteiroesSorteados;
+            }
             
-            // Limpeza inicial
-            resultsContent.innerHTML = '';
-            bairrosListDiv.innerHTML = '';
-            resultsBairrosDiv.style.display = 'none';
-            // Limpeza e ocultamento dos novos blocos de alocação
-            sampleAllocationListDiv.innerHTML = '';
-            resultsSampleAllocationDiv.style.display = 'none'; 
+            imoveisInspecionar.textContent = formatarValor(totalImoveisConsolidado);
+            quarteiroesSorteados.textContent = formatarValor(totalQuarteiroesConsolidado);
             
-            quadrasContainer.style.display = 'none'; 
-            resultadoContagem.style.display = 'none';
+            if (recalcularTudo && codigoAtual) {
+                calcularResultadosDoCodigoAtual();
+            }
+        }
+
+
+        /**
+         * FUNÇÃO AUXILIAR: Compara quadras (Mantida)
+         */
+        function compararQuadras(quadraItem, inicio, fim) {
+            const parseQuadra = (q_str) => {
+                const parts = String(q_str).split('/');
+                let num = parseFloat(parts[0]);
+                if (parts.length > 1) {
+                    const decimal = parseFloat(parts[1]) / 1000; 
+                    num += decimal;
+                }
+                return num;
+            };
+
+            const q_num = parseQuadra(quadraItem);
+            const i_num = parseQuadra(inicio);
+            const f_num = parseQuadra(fim);
+            
+            return q_num >= i_num && q_num <= f_num;
+        }
+
+
+        /**
+         * Gera a seção de detalhamento por quadra segmentada para o CÓDIGO ATUAL. (Mantida)
+         */
+        function gerarDetalhamentoPorQuadraSegmentado(detalhe) {
+            const { nomeBairro, inicio, fim, quadrasUteisBairro, idsSorteados } = detalhe;
+            let totalAmostraBairro = 0;
+            let detalheHtml = '';
+            
+            if (quadrasUteisBairro.length === 0 || idsSorteados.size === 0) {
+                 return { html: '', totalAmostra: 0 };
+            }
+
+            const quadrasFiltradas = quadrasUteisBairro.filter(registro => 
+                registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
+            );
+            
+            if (quadrasFiltradas.length === 0) return { html: '', totalAmostra: 0 }; 
+
+            let gridItensHtml = '';
+            
+            quadrasFiltradas.forEach(registro => {
+                const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                
+                const imoveisLiquidos = totalReg - apReg - peReg;
+                
+                const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
+                totalAmostraBairro += amostra20Pct;
+                
+                gridItensHtml += `
+                    <div class="quadra-item">
+                        <span class="quadra-identificacao">ID ${registro.ID_SEQUENCIAL} (QT ${registro[CHAVE_QUADRA]})</span>
+                        <span class="quadra-quantidade">${amostra20Pct.toLocaleString('pt-BR')}</span>
+                    </div>
+                `;
+            });
+            
+            detalheHtml = `
+                <div class="detalhe-bairro">
+                    <strong>${nomeBairro} (QT ${inicio} a ${fim}):</strong>
+                    <div class="detalhe-grid">
+                        ${gridItensHtml}
+                    </div>
+                </div>
+            `;
+            
+            return { html: detalheHtml, totalAmostra: totalAmostraBairro };
+        }
+
+
+        /**
+         * FUNÇÃO DE CÁLCULO LOCAL: Calcula os resultados da TABELA INFERIOR para o CÓDIGO ATUAL (Mantida)
+         */
+        function calcularResultadosDoCodigoAtual() {
+            let totalQuadrasUteisCodigo = 0; 
+            let totalImoveisUteisCodigo = 0; 
+            let totalApAcimaTerreoCodigo = 0; 
+            let totalPECodigo = 0; 
+            let totalImoveisLiquidosCodigo = 0; 
+            let totalAmostraGeralCodigo = 0; 
+            let totalQuarteiroesSorteadosCodigo = 0;
+            
+            resultadoContagem.innerHTML = '';
             detalhamentoQuadras.style.display = 'none';
-            btnDesbloquear.style.display = 'none';
-            bairroDisplay.textContent = 'Selecione um código para filtrar por bairro.';
+            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>';
+            
+            if (!codigoAtual || bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) {
+                 return;
+            }
+            
+            let resultadosHtml = '';
+            let detalhamentoHtml = '';
+            let isAnyInputValid = true; // Mantemos true, pois os intervalos têm valores padrão.
+
+            const idsSorteadosDoCodigo = quadrasSorteioGlobal[codigoAtual] || {};
+            const bairrosParaFiltrarNormalizados = bairrosAtuais.map(item => normalizarString(item.bairro));
+            
+            // Registros pertencentes ao CÓDIGO ATUAL
+            const todosRegistrosDoCodigo = dadosEstatisticos.filter(item => {
+                const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
+                return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
+            });
+
+            bairrosAtuais.forEach((itemBairro, index) => { 
+                const nomeBairroClean = itemBairro.bairro;
+                const idPrefix = normalizarString(nomeBairroClean).replace(/\s/g, '_');
+
+                // Inputs de intervalo não salvamos no localStorage, então lemos do DOM (ou padrão)
+                const inputInicio = document.getElementById(`${idPrefix}_inicio`);
+                const inputFim = document.getElementById(`${idPrefix}_fim`);
+
+                // Usa o valor do input, se existir, senão usa o padrão
+                const inicio = inputInicio ? inputInicio.value : itemBairro.inicio; 
+                const fim = inputFim ? inputFim.value : itemBairro.fim; 
+                
+                if (!inicio || !fim) return; 
+
+                const nomeBairroNormalizado = normalizarString(nomeBairroClean);
+                // Leitura dos IDs Sorteados: Vêm do estado global, que foi carregado do localStorage
+                const idsInput = idsSorteadosDoCodigo[nomeBairroNormalizado] || '';
+
+                const quadrasNoIntervalo = todosRegistrosDoCodigo
+                    .filter(registro => {
+                        const nomeItemNormalizado = normalizarString(registro['BAIRRO']); 
+                        const quadra = registro[CHAVE_QUADRA]; 
+                        return nomeItemNormalizado === nomeBairroNormalizado &&
+                               compararQuadras(quadra, inicio, fim);
+                    });
+                
+                const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+
+                let idsSorteados = new Set();
+                if (idsInput) {
+                    const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
+                    idsArray.forEach(idStr => {
+                        const idNum = parseInt(idStr);
+                        if (!isNaN(idNum) && idNum > 0) {
+                            idsSorteados.add(idNum);
+                        }
+                    });
+                }
+                
+                totalQuarteiroesSorteadosCodigo += idsSorteados.size;
+
+                const quadrasUteisBairro = quadrasComIds.filter(q => q.ID_SEQUENCIAL > 0);
+                const contagemBairro = quadrasUteisBairro.length;
+                
+                let imoveisBairro = 0;
+                let apAcimaTerreoBairro = 0;
+                let peBairro = 0;
+
+                quadrasUteisBairro.forEach(registro => {
+                    const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                    const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                    const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                    
+                    imoveisBairro += totalReg;
+                    apAcimaTerreoBairro += apReg;
+                    peBairro += peReg;
+                });
+                
+                totalQuadrasUteisCodigo += contagemBairro;
+                totalImoveisUteisCodigo += imoveisBairro;
+                totalApAcimaTerreoCodigo += apAcimaTerreoBairro;
+                totalPECodigo += peBairro;
+                
+                const imoveisLiquidosBairro = imoveisBairro - apAcimaTerreoBairro - peBairro;
+
+                const formatarValoresLocais = (valor) => valor.toLocaleString('pt-BR');
+
+                resultadosHtml += `<p>
+                                       <strong>${nomeBairroClean} (QT ${inicio} a ${fim}):</strong> 
+                                       ${formatarValoresLocais(contagemBairro)} quadra(s) útil(is). 
+                                       <span style="color: var(--secondary-color);">(${formatarValoresLocais(imoveisLiquidosBairro)} imóveis líquidos)</span>
+                                   </p>`;
+                                   
+                if (idsSorteados.size > 0) {
+                     const detalhe = { 
+                        nomeBairro: nomeBairroClean, 
+                        inicio: inicio, 
+                        fim: fim, 
+                        quadrasUteisBairro: quadrasComIds,
+                        idsSorteados: idsSorteados
+                    };
+
+                    const resultadoDetalhamento = gerarDetalhamentoPorQuadraSegmentado(detalhe);
+                    detalhamentoHtml += resultadoDetalhamento.html;
+                    totalAmostraGeralCodigo += resultadoDetalhamento.totalAmostra;
+                }
+            });
+            
+            totalImoveisLiquidosCodigo = totalImoveisUteisCodigo - totalApAcimaTerreoCodigo - totalPECodigo;
+
+            if (isAnyInputValid) { // Sempre true aqui, já que há código selecionado
+                resultadoContagem.innerHTML = `${resultadosHtml}
+                                           <div class="resultado-total">
+                                           <p><strong>TOTAL GERAL DE QUADRAS ÚTEIS (Cód. ${codigoAtual}):</strong> <strong style="font-size: 1.2em;">${totalQuadrasUteisCodigo.toLocaleString('pt-BR')}</strong></p>
+                                           <p>TOTAL DE IMÓVEIS (Bruto): ${totalImoveisUteisCodigo.toLocaleString('pt-BR')}</p>
+                                           <p>Subtração (AP. ACIMA DO TÉRREO + PE): ${totalApAcimaTerreoCodigo.toLocaleString('pt-BR')} + ${totalPECodigo.toLocaleString('pt-BR')} = ${(totalApAcimaTerreoCodigo + totalPECodigo).toLocaleString('pt-BR')}</p>
+                                           </div>
+                                           <div class="resultado-liquido">
+                                           <p><strong>TOTAL GERAL DE IMÓVEIS LÍQUIDOS (Cód. ${codigoAtual}):</strong> <strong style="font-size: 1.5em;">${totalImoveisLiquidosCodigo.toLocaleString('pt-BR')}</strong></p>
+                                           </div>`;
+                resultadoContagem.style.display = 'block';
+                
+                if (detalhamentoHtml.length > 0) {
+                    detalhamentoHtml += `<div class="resultado-total" style="border-top: 1px solid var(--sucess-color);">
+                                <p><strong>IMÓVEIS À INSPECIONAR (20% Amostra p/ Cód. ${codigoAtual}):</strong> 
+                                <strong style="font-size: 1.5em; color: var(--sucess-color);">${totalAmostraGeralCodigo.toLocaleString('pt-BR')}</strong></p>
+                            </div>`;
+                    detalhamentoQuadras.innerHTML += detalhamentoHtml;
+                    detalhamentoQuadras.style.display = 'block';
+                } else {
+                    detalhamentoQuadras.style.display = 'none';
+                }
+
+            } else {
+                 // Este bloco só deve ser executado se o códigoAtual for nulo, mas isso é tratado no início da função.
+                 resultadoContagem.style.display = 'none';
+                 detalhamentoQuadras.style.display = 'none';
+            }
+        }
 
 
-            if (!codigoSelecionado) {
+        /**
+         * Lógica: Gera os campos e anexa listeners de input para salvamento e recálculo
+         */
+        function gerarSelecaoQuadras(bairrosComIntervalo) {
+            quadrasContainer.innerHTML = ''; 
+            
+            // Remove listeners antigos (se houvesse)
+            const oldInputs = quadrasContainer.querySelectorAll('.quadra-input-inicio, .quadra-input-fim, .input-ids-bairro');
+            oldInputs.forEach(input => input.removeEventListener('input', calcularResultadosDoCodigoAtual));
+            
+            resultadoContagem.style.display = 'none'; 
+            detalhamentoQuadras.style.display = 'none';
+            detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>';
+            
+            if (bairrosComIntervalo.length === 0) {
+                quadrasContainer.innerHTML += '<p>Nenhum bairro com intervalo definido para este código.</p>';
+                quadrasContainer.style.display = 'block';
                 return;
             }
             
-            // 1. Filtrar, Normalizar e Ordenar os dados para o código
-            const rawDadosFiltrados = dadosEstatisticos.filter(item => 
-                item.codigoBairro === codigoSelecionado
-            );
-            
-            dadosFiltradosCodigo = gerarIdsSequenciais(rawDadosFiltrados);
+            quadrasContainer.innerHTML += '<h4>Intervalos de Quadras e Sorteio (Edite se necessário):</h4>';
 
-
-            // 2. Determinar Bairros Mapeados
-            const bairrosComIntervalo = CODIGOS_BAIRROS[codigoSelecionado];
-            const nomesBairrosMapeados = bairrosComIntervalo.map(item => item.bairro).join(', ');
-            
-            bairroDisplay.innerHTML = `**Bairro(s) Selecionado(s) para Cód. ${codigoSelecionado}:** ${nomesBairrosMapeados}`;
-            selecaoCodigo.value = codigoSelecionado;
-
-            // 3. AGRUPAMENTO PRINCIPAL: Agrupar e Calcular por Bairro (IL)
-            const totaisPorBairro = {};
-            dadosFiltradosCodigo.forEach(item => {
-                const bairro = item.nomeBairro;
-                
-                if (!totaisPorBairro[bairro]) {
-                    totaisPorBairro[bairro] = { imoveisLiquidos: 0 };
-                }
-                totaisPorBairro[bairro].imoveisLiquidos += item.imoveisLiquidos; 
-            });
-            
-            const totalILCodigo = dadosFiltradosCodigo.reduce((acc, item) => acc + item.imoveisLiquidos, 0);
-            const quadrasUnicasCodigo = new Set(dadosFiltradosCodigo.map(item => item.quadraUtil)).size;
-            const percentualIL = calcularPorcentagem(totalILCodigo, totalImoveisLiquidosGeral);
-            const percentualQT = calcularPorcentagem(quadrasUnicasCodigo, totalQuadrasUteisGeral);
-
-            resultsContent.innerHTML = `
-                <p>Total de Imóveis Líquidos (IL) no Código: 
-                    <strong class="result-value" style="color: var(--primary-color);">${formatarValor(totalILCodigo)}</strong> 
-                    <span style="font-size: 0.9em; color: var(--secondary-color);">(${percentualIL} do Geral)</span>
-                </p>
-                <p>Total de Quadras Úteis (QT) Únicas no Código: 
-                    <strong class="result-value" style="color: var(--primary-color);">${formatarValor(quadrasUnicasCodigo)}</strong>
-                    <span style="font-size: 0.9em; color: var(--secondary-color);">(${percentualQT} do Geral)</span>
-                </p>
-            `;
-            resultadoContagem.style.display = 'block';
-
-
-            // 4. Exibição Detalhe IL por Bairro
-            if (Object.keys(totaisPorBairro).length > 0) {
-                resultsBairrosDiv.style.display = 'block';
-                bairrosListDiv.innerHTML = '';
-                Object.keys(totaisPorBairro).forEach(bairro => {
-                    const data = totaisPorBairro[bairro];
-                    
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'bairro-item';
-                    itemDiv.innerHTML = `
-                        <span class="bairro-item-name">${bairro}:</span>
-                        <span class="bairro-item-value">${formatarValor(data.imoveisLiquidos)} Imóveis</span>
-                    `;
-                    bairrosListDiv.appendChild(itemDiv);
-                });
+            // ATUALIZA O ESTADO DO BOTÃO DE DESBLOQUEIO
+            if (isInputUnlocked) {
+                 btnDesbloquear.classList.add('unlocked');
+                 btnDesbloquear.textContent = 'IDs Desbloqueados. Clique para Bloquear.';
+                 btnDesbloquear.onclick = function() {
+                    isInputUnlocked = false; 
+                    gerarSelecaoQuadras(bairrosComIntervalo); // Recarrega os campos bloqueados
+                 }
+            } else {
+                btnDesbloquear.classList.remove('unlocked');
+                btnDesbloquear.textContent = 'Clique para Desbloquear a Edição dos IDs';
+                btnDesbloquear.onclick = mostrarModalSenha;
             }
-
-            // 5. CHAMADA DA NOVA FUNÇÃO E EXIBIÇÃO: Alocação e Exibição da Amostra de Quadras (28)
-            const alocacaoQuadras = alocarAmostraQuadras(totaisPorBairro, totalILCodigo);
-            
-            if (Object.keys(alocacaoQuadras).length > 0) {
-                resultsSampleAllocationDiv.style.display = 'block';
-                sampleAllocationListDiv.innerHTML = '';
-                
-                Object.keys(alocacaoQuadras).forEach(bairro => {
-                    const data = alocacaoQuadras[bairro];
-                    
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'bairro-item sample-alloc';
-                    itemDiv.innerHTML = `
-                        <span class="bairro-item-name">${bairro}: (${data.percentualIL} de IL total)</span>
-                        <span class="bairro-item-value">${data.quadrasAlocadas} Quadras a Sortear</span>
-                    `;
-                    sampleAllocationListDiv.appendChild(itemDiv);
-                });
-                
-                // Adiciona o total de 28
-                const totalAlocadoDiv = document.createElement('div');
-                totalAlocadoDiv.className = 'bairro-item sample-alloc';
-                totalAlocadoDiv.style.marginTop = '15px';
-                totalAlocadoDiv.innerHTML = `
-                    <span class="bairro-item-name" style="font-weight: bold;">TOTAL GERAL ALOCADO:</span>
-                    <span class="bairro-item-value" style="font-size: 1.3em;">${TARGET_SAMPLE_QUADRAS} QT</span>
-                `;
-                sampleAllocationListDiv.appendChild(totalAlocadoDiv);
-
-            }
-
-
-            // 6. Gera os campos de input e chama o cálculo dos resultados
-            gerarSelecaoQuadras(bairrosComIntervalo);
-        }
-        
-        /**
-         * Gera os campos de input de quadras para cada bairro mapeado. (EXISTENTE)
-         */
-        function gerarSelecaoQuadras(bairrosComIntervalo) {
-            quadrasContainer.innerHTML = '';
-            quadrasContainer.style.display = 'block';
             btnDesbloquear.style.display = 'block';
-            
-            bairrosComIntervalo.forEach(bairroData => {
-                const bairroNome = bairroData.bairro;
-                const bairroNormalizado = normalizarString(bairroNome);
+            quadrasContainer.style.display = 'block';
+
+
+            bairrosComIntervalo.forEach((item, index) => {
+                const nomeBairroClean = item.bairro;
+                const nomeBairroNormalizado = normalizarString(nomeBairroClean);
+                const idPrefix = nomeBairroNormalizado.replace(/\s/g, '_'); 
+                const inputIdName = `ids_sorteadas_${idPrefix}_${index}`; 
                 
-                const idsSalvos = (quadrasSorteioGlobal[codigoAtual] && quadrasSorteioGlobal[codigoAtual][bairroNormalizado]) ? 
-                                  quadrasSorteioGlobal[codigoAtual][bairroNormalizado].join(', ') : '';
+                // Pega o valor persistido (do estado global, que foi carregado do localStorage)
+                const idsPersistidos = quadrasSorteioGlobal[codigoAtual] ? quadrasSorteioGlobal[codigoAtual][nomeBairroNormalizado] || '' : '';
                 
-                const quadraBloco = document.createElement('div');
-                quadraBloco.className = 'quadra-bloco';
-                
-                const inputHtml = `<input type="text" id="ids-${bairroNormalizado}" 
-                               class="input-personalizado input-ids-sorteados" 
-                               value="${idsSalvos}" 
-                               data-bairro="${bairroNormalizado}" 
-                               oninput="handleInputIds(this)" 
-                               disabled>`;
-                               
-                quadraBloco.innerHTML = `
-                    <h4>${bairroNome} (QT: ${bairroData.inicio} - ${bairroData.fim})</h4>
-                    <div class="input-ids-bairro-bloco">
-                        <label for="ids-${bairroNormalizado}">IDs de Quadras a Inspecionar (Insira aqui as quadras sorteadas):</label>
-                        ${inputHtml}
-                        <small>Insira os IDs sequenciais separados por vírgula (Ex: 1, 5, 8, 12)</small>
+                // Determina se o campo de IDs deve ser desabilitado
+                const isDisabledAttribute = isInputUnlocked ? '' : 'disabled';
+
+                const blocoHtml = `
+                    <div class="quadra-bloco" data-bairro="${nomeBairroClean}">
+                        <h4>${nomeBairroClean}</h4>
+                        <div class="quadra-inputs">
+                            <div>
+                                <label for="${idPrefix}_inicio">Quadra Inicial (QT):</label>
+                                <input type="text" id="${idPrefix}_inicio" class="input-personalizado quadra-input-inicio" 
+                                       placeholder="Ex: 1" value="${item.inicio}">
+                            </div>
+                            <div>
+                                <label for="${idPrefix}_fim">Quadra Final (QT):</label>
+                                <input type="text" id="${idPrefix}_fim" class="input-personalizado quadra-input-fim" 
+                                       placeholder="Ex: 180" value="${item.fim}">
+                            </div>
+                        </div>
+                        
+                        <div class="input-ids-bairro-bloco">
+                            <label for="${inputIdName}">IDs das Quadras Sorteadas (Para este Bairro):</label>
+                            <input type="text" id="${inputIdName}" class="input-personalizado input-ids-bairro" 
+                                   placeholder="Ex: 1-5-11-17-21 ou 1, 5, 11, 17" 
+                                   data-bairro-normalizado="${nomeBairroNormalizado}"
+                                   value="${idsPersistidos}"
+                                   ${isDisabledAttribute}>
+                            <small>Quadras com Imóveis Líquidos = 0 não recebem ID sequencial.</small>
+                        </div>
                     </div>
                 `;
-                quadrasContainer.appendChild(quadraBloco);
+                quadrasContainer.innerHTML += blocoHtml;
             });
             
-            // Define o estado de desbloqueio
-            if (isInputUnlocked) {
-                 document.querySelectorAll('.input-ids-sorteados').forEach(input => input.disabled = false);
-                 btnDesbloquear.classList.add('unlocked');
-                 btnDesbloquear.textContent = 'Edição Desbloqueada (Clique para Bloquear Novamente)';
-            } else {
-                 btnDesbloquear.classList.remove('unlocked');
-                 btnDesbloquear.textContent = 'Clique para Desbloquear a Edição dos IDs';
-            }
+            // ANEXA LISTENERS:
+            const inputsIntervalo = quadrasContainer.querySelectorAll('.quadra-input-inicio, .quadra-input-fim');
+            inputsIntervalo.forEach(input => {
+                input.addEventListener('input', calcularResultadosDoCodigoAtual); 
+            });
+
+            const inputsIDs = quadrasContainer.querySelectorAll('.input-ids-bairro');
+            inputsIDs.forEach(input => {
+                // Apenas inputs DE ID desbloqueados podem salvar e recalcular globalmente
+                if (!input.disabled) { 
+                    input.addEventListener('input', (e) => {
+                        const bairroNormalizado = e.target.getAttribute('data-bairro-normalizado');
+                        salvarIDsNoGlobal(bairroNormalizado, e.target.value);
+                    });
+                }
+            });
             
-            // Chama o cálculo inicial após carregar os inputs
             calcularResultadosDoCodigoAtual();
         }
 
         /**
-         * Calcula os resultados da amostra e detalhamento para o código atualmente selecionado. (EXISTENTE)
+         * Lógica: Carrega o JSON e calcula os totais FIXOS GERAIS do estrato (Mantida)
          */
-        function calcularResultadosDoCodigoAtual() {
-            if (!codigoAtual || dadosFiltradosCodigo.length === 0) {
-                 detalhamentoQuadras.style.display = 'none';
-                 return;
-            }
-            
-            detalhamentoQuadras.style.display = 'block';
-            
-            const idsSorteadosPorBairro = quadrasSorteioGlobal[codigoAtual] || {};
-            let imoveisInspecionarCodigo = 0;
-            const detalhes = [];
-
-            // 1. Processa os IDs sorteados
-            Object.keys(idsSorteadosPorBairro).forEach(bairroNormalizado => {
-                const ids = idsSorteadosPorBairro[bairroNormalizado];
+        async function carregarDados() {
+            try {
+                const resEstatisticas = await fetch(urlEstatisticas);
+                if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas (${urlEstatisticas}): ${resEstatisticas.statusText}`);
+                dadosEstatisticos = await resEstatisticas.json();
                 
-                // Filtra as quadras que correspondem aos IDs sorteados neste bairro
-                const quadrasSorteadas = dadosFiltradosCodigo.filter(item => 
-                    normalizarString(item.nomeBairro) === bairroNormalizado && 
-                    ids.includes(String(item.ID_SEQUENCIAL))
-                );
+                let imoveisBrutosTotal = 0;
+                let apAcimaTerreoTotal = 0;
+                let peTotal = 0;
+                const quadrasUteisSet = new Set();
                 
-                let imoveisInspecionarBairro = 0;
-                let bairroNomeFormatado = dadosFiltradosCodigo.find(d => normalizarString(d.nomeBairro) === bairroNormalizado)?.nomeBairro || bairroNormalizado;
-                
-                let detalheBairro = `
-                    <div class="quadra-bloco">
-                        <h4>${bairroNomeFormatado}</h4>
-                        <ul style="list-style: none; padding-left: 0;">
-                `;
-
-                if (quadrasSorteadas.length === 0) {
-                    detalheBairro += `<li style="color: #aaa;">Nenhuma quadra sorteada inserida.</li>`;
-                }
-                
-                quadrasSorteadas.forEach(quadra => {
-                    // O imóvel a inspecionar é 20% do IL da quadra, arredondado para cima.
-                    const inspecionar = Math.ceil(quadra.imoveisLiquidos * 0.20); 
-                    imoveisInspecionarBairro += inspecionar;
+                dadosEstatisticos.forEach(item => {
+                    const totalReg = parseInt(item[CHAVE_IMOVEIS_QUADRA]) || 0;
+                    const apReg = parseInt(item[CHAVE_SUBTRACAO_AP]) || 0;
+                    const peReg = parseInt(item[CHAVE_SUBTRACAO_PE]) || 0;
                     
-                    detalheBairro += `<li style="margin-bottom: 5px; border-bottom: 1px dotted var(--border-color); padding-bottom: 5px;">
-                        <strong>ID ${quadra.ID_SEQUENCIAL}</strong> (QT ${quadra.quadraUtil}, IL: ${formatarValor(quadra.imoveisLiquidos)}) -> 
-                        <strong style="color: var(--secondary-color);">${formatarValor(inspecionar)} imóveis à inspecionar.</strong>
-                    </li>`;
-                });
-                
-                detalheBairro += `
-                        </ul>
-                        <p style="font-weight: bold; margin-top: 10px;">TOTAL DE IMÓVEIS INSPECIONAR NESTE BAIRRO: ${formatarValor(imoveisInspecionarBairro)}</p>
-                    </div>
-                `;
-                
-                detalhes.push(detalheBairro);
-                imoveisInspecionarCodigo += imoveisInspecionarBairro;
-            });
-
-            // 2. Atualiza o bloco de detalhamento e o total de imóveis a inspecionar
-            detalhamentoQuadras.innerHTML = `
-                <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
-                <p style="font-size: 1.2em; font-weight: bold; color: var(--primary-color);">Total de Imóveis a Inspecionar no Cód. ${codigoAtual}: ${formatarValor(imoveisInspecionarCodigo)}</p>
-                <div class="section-divider"></div>
-                ${detalhes.join('')}
-            `;
-            
-            // 3. Atualiza o contador de Imóveis à Inspecionar no bloco Geral 
-            calcularTotaisConsolidados();
-        }
-
-        /**
-         * Calcula e atualiza os totais consolidados (Imóveis à Inspecionar e Quarteirões Sorteados). (EXISTENTE)
-         */
-        function calcularTotaisConsolidados() {
-            let totalImoveisInspecionar = 0;
-            let totalQuadrasSorteados = 0;
-            
-            if (dadosEstatisticos.length === 0) return; 
-
-            Object.keys(quadrasSorteioGlobal).forEach(codigo => {
-                const codigoData = quadrasSorteioGlobal[codigo];
-                const dadosCodigo = dadosEstatisticos.filter(item => item.codigoBairro === codigo);
-                const dadosCodigoComSequencial = gerarIdsSequenciais(dadosCodigo);
-                
-                Object.keys(codigoData).forEach(bairroNormalizado => {
-                    const ids = codigoData[bairroNormalizado];
-                    if (ids && ids.length > 0) {
-                        totalQuadrasSorteados += ids.length;
-                        
-                        const quadrasSorteadas = dadosCodigoComSequencial.filter(item => 
-                            normalizarString(item.nomeBairro) === bairroNormalizado && 
-                            ids.includes(String(item.ID_SEQUENCIAL))
-                        );
-                        
-                        quadrasSorteadas.forEach(quadra => {
-                            totalImoveisInspecionar += Math.ceil(quadra.imoveisLiquidos * 0.20); 
-                        });
+                    imoveisBrutosTotal += totalReg;
+                    apAcimaTerreoTotal += apReg;
+                    peTotal += peReg;
+                    
+                    const imoveisLiquidos = totalReg - apReg - peReg;
+                    
+                    if (imoveisLiquidos > 0) {
+                        quadrasUteisSet.add(item[CHAVE_QUADRA] + item['BAIRRO']); 
                     }
                 });
-            });
-
-            // Atualiza o display dos totais (globais)
-            imoveisInspecionar.textContent = formatarValor(totalImoveisInspecionar);
-            quarteiroesSorteados.textContent = formatarValor(totalQuadrasSorteados);
+                
+                totalImoveisLiquidosGeral = imoveisBrutosTotal - apAcimaTerreoTotal - peTotal;
+                totalQuadrasUteisGeral = quadrasUteisSet.size;
+                
+            } catch (error) {
+                console.error('Erro fatal ao buscar arquivo JSON:', error);
+            }
         }
         
-        // --- FUNÇÕES DE INTERAÇÃO E SENHA (EXISTENTES) ---
+        // Função para popular a caixa de seleção (Mantida)
+        function popularSeletor() {
+            const defaultOption = document.createElement('option');
+            defaultOption.textContent = 'Selecione um código';
+            defaultOption.value = '';
+            selecaoCodigo.appendChild(defaultOption);
+
+            for (let i = 85; i <= 113; i++) {
+                const codigo = String(i);
+                const nomesBairros = CODIGOS_BAIRROS[codigo] ? CODIGOS_BAIRROS[codigo].map(item => item.bairro) : [];
+                const nomeDisplay = nomesBairros.length > 0 ? nomesBairros.join(', ') : 'Bairro(s) Desconhecido(s)';
+
+                const option = document.createElement('option');
+                option.textContent = `${codigo} - ${nomeDisplay}`; 
+                option.value = codigo;
+                selecaoCodigo.appendChild(option);
+            }
+        }
+        
+        // Função principal de exibição (Atualizada)
+        function exibirResultsPorCodigo(codigoSelecionado) {
+            
+            codigoAtual = codigoSelecionado; // Salva o código selecionado globalmente
+
+            bairrosAtuais = []; 
+            bairroDisplay.textContent = 'Selecione um código para filtrar por bairro.';
+            quadrasContainer.innerHTML = '';
+            quadrasContainer.style.display = 'none'; // Novo
+            resultadoContagem.style.display = 'none';
+            detalhamentoQuadras.style.display = 'none';
+            btnDesbloquear.style.display = 'none'; // Esconde se nada estiver selecionado
+
+            if (!codigoSelecionado) {
+                resultadoContagem.innerHTML = '';
+                detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>';
+                
+                // NOVO: Garantir que o seletor esteja resetado no valor correto
+                selecaoCodigo.value = ''; 
+                return;
+            }
+
+            const bairrosComIntervalo = CODIGOS_BAIRROS[codigoSelecionado];
+            const nomesBairrosMapeados = bairrosComIntervalo ? bairrosComIntervalo.map(item => item.bairro) : [];
+            const nomeDisplayBairros = nomesBairrosMapeados ? nomesBairrosMapeados.join(', ') : '';
+            bairrosAtuais = bairrosComIntervalo; 
+
+            if (!bairrosComIntervalo || bairrosComIntervalo.length === 0) {
+                bairroDisplay.textContent = `Código ${codigoSelecionado} não mapeado para nenhum bairro ou intervalo.`;
+                return;
+            }
+            
+            bairroDisplay.innerHTML = `**Bairro(s) Selecionado(s) para Cód. ${codigoSelecionado}:** ${nomeDisplayBairros}`;
+            
+            // NOVO: Selecionar o código correto se veio de um carregamento persistido (embora o listener já faça isso)
+            selecaoCodigo.value = codigoSelecionado;
+
+            // Gera os campos e anexa listeners (vai acionar calcularResultadosDoCodigoAtual)
+            gerarSelecaoQuadras(bairrosComIntervalo);
+        }
+        
+        // --- LÓGICA DO MODAL DE SENHA ---
 
         function mostrarModalSenha() {
             modalSenha.style.display = 'flex';
@@ -992,90 +1087,180 @@
             erroSenha.textContent = '';
             inputSenha.focus();
         }
-        
+
         function esconderModalSenha() {
             modalSenha.style.display = 'none';
         }
+        
+        function verificarEnter(event) {
+            if (event.key === "Enter") {
+                verificarSenha();
+            }
+        }
 
         function verificarSenha() {
-            if (inputSenha.value === SENHA_SECRETA) {
+            const senhaDigitada = inputSenha.value;
+            
+            if (senhaDigitada === SENHA_SECRETA) {
                 isInputUnlocked = true;
                 esconderModalSenha();
-                document.querySelectorAll('.input-ids-sorteados').forEach(input => input.disabled = false);
-                btnDesbloquear.classList.add('unlocked');
-                btnDesbloquear.textContent = 'Edição Desbloqueada (Clique para Bloquear Novamente)';
+                // Recarrega os inputs para remover o atributo 'disabled'
+                gerarSelecaoQuadras(bairrosAtuais); 
                 
             } else {
                 erroSenha.textContent = 'Senha incorreta. Tente novamente.';
                 inputSenha.value = '';
                 inputSenha.focus();
+                
+                // Exibe a mensagem de erro temporariamente
+                setTimeout(() => {
+                    erroSenha.textContent = '';
+                }, 3000);
             }
         }
         
-        function verificarEnter(event) {
-             if (event.key === 'Enter') {
-                 verificarSenha();
-             }
-        }
+        // --- INICIALIZAÇÃO E EVENT LISTENERS ---
 
-        function handleInputIds(inputElement) {
-            const idsString = inputElement.value;
-            const bairroNormalizado = inputElement.dataset.bairro;
-            
-            const idsArray = idsString.split(',')
-                .map(id => normalizarString(id))
-                .filter(id => id.length > 0);
-            
-            salvarIDsNoGlobal(bairroNormalizado, idsArray);
-        }
-        
-        // --- INICIALIZAÇÃO DA APLICAÇÃO (EXISTENTE) ---
-        
-        window.addEventListener('DOMContentLoaded', async () => {
-            
+        selecaoCodigo.addEventListener('change', (event) => {
+            exibirResultsPorCodigo(event.target.value);
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // NOVO: 1. Tenta carregar os dados salvos ANTES de carregar o JSON
             carregarDadosPersistidos();
+            
+            // 2. Carrega o arquivo JSON e calcula os totais gerais
             await carregarDados();
             popularSeletor();
             
+            // 3. Preenche os TOTAIS GERAIS FIXOS
             imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
             quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
             
+            // 4. Calcula os totais CONSOLIDADOS (usando dados recuperados do localStorage, se houver)
             calcularTotaisConsolidados();
 
+            // 5. NOVO: Tenta carregar a seleção de código salva
             const codigoSalvo = localStorage.getItem('codigoSelecionado');
             if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
                  selecaoCodigo.value = codigoSalvo;
                  exibirResultsPorCodigo(codigoSalvo);
             } else {
-                 exibirResultsPorCodigo('');
+                 exibirResultsPorCodigo(''); // Inicia sem seleção
             }
 
+            // NOVO: Adiciona listener para salvar o código selecionado (se ele for válido)
             selecaoCodigo.addEventListener('change', (event) => {
-                const codigo = event.target.value;
-                exibirResultsPorCodigo(codigo);
-                
-                if (codigo) {
-                    localStorage.setItem('codigoSelecionado', codigo);
+                if (event.target.value) {
+                    localStorage.setItem('codigoSelecionado', event.target.value);
                 } else {
                     localStorage.removeItem('codigoSelecionado');
                 }
             });
-            
-            btnDesbloquear.addEventListener('click', () => {
-                if (isInputUnlocked) {
-                    isInputUnlocked = false;
-                    document.querySelectorAll('.input-ids-sorteados').forEach(input => input.disabled = true);
-                    btnDesbloquear.classList.remove('unlocked');
-                    btnDesbloquear.textContent = 'Clique para Desbloquear a Edição dos IDs';
-                } else {
-                    mostrarModalSenha();
-                }
-            });
-            
         });
+           // --- NOVA FUNÇÃO: Calcular e exibir totais por bairro individual ---
+        function calcularTotaisPorBairro() {
+            if (dadosEstatisticos.length === 0) return;
+
+            const totaisPorBairro = {};
+
+            // Percorre todos os códigos com dados salvos
+            for (const cod of Object.keys(quadrasSorteioGlobal)) {
+                const idsSorteadosPorBairro = quadrasSorteioGlobal[cod];
+                if (!idsSorteadosPorBairro || Object.keys(idsSorteadosPorBairro).length === 0) continue;
+
+                const bairrosMapeados = CODIGOS_BAIRROS[cod];
+                if (!bairrosMapeados) continue;
+
+                // Filtra registros do JSON que pertencem aos bairros deste código
+                const bairrosNormalizados = bairrosMapeados.map(b => normalizarString(b.bairro));
+                const registrosDoCodigo = dadosEstatisticos.filter(item => 
+                    bairrosNormalizados.includes(normalizarString(item['BAIRRO']))
+                );
+
+                // Para cada bairro mapeado neste código
+                bairrosMapeados.forEach(itemBairro => {
+                    const nomeBairroOriginal = itemBairro.bairro;
+                    const nomeBairroNorm = normalizarString(nomeBairroOriginal);
+                    const idsInput = idsSorteadosPorBairro[nomeBairroNorm] || '';
+                    if (!idsInput) return;
+
+                    // Parse dos IDs sorteados
+                    const idsSorteados = new Set();
+                    const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
+                    idsArray.forEach(idStr => {
+                        const idNum = parseInt(idStr);
+                        if (!isNaN(idNum) && idNum > 0) idsSorteados.add(idNum);
+                    });
+                    if (idsSorteados.size === 0) return;
+
+                    // Filtra quadras do bairro no intervalo (usando início/fim padrão do mapeamento)
+                    const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
+                        const nomeItemNorm = normalizarString(registro['BAIRRO']);
+                        const quadra = registro[CHAVE_QUADRA];
+                        return nomeItemNorm === nomeBairroNorm &&
+                               compararQuadras(quadra, itemBairro.inicio, itemBairro.fim);
+                    });
+
+                    const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+                    const quadrasSorteadas = quadrasComIds.filter(q => 
+                        q.ID_SEQUENCIAL > 0 && idsSorteados.has(q.ID_SEQUENCIAL)
+                    );
+
+                    let totalImoveisInspecionar = 0;
+                    quadrasSorteadas.forEach(registro => {
+                        const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                        const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                        const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                        const imoveisLiquidos = totalReg - apReg - peReg;
+                        const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
+                        totalImoveisInspecionar += amostra20Pct;
+                    });
+
+                    if (!totaisPorBairro[nomeBairroOriginal]) {
+                        totaisPorBairro[nomeBairroOriginal] = {
+                            quadrasSorteadas: 0,
+                            imoveisInspecionar: 0
+                        };
+                    }
+                    totaisPorBairro[nomeBairroOriginal].quadrasSorteadas += quadrasSorteadas.length;
+                    totaisPorBairro[nomeBairroOriginal].imoveisInspecionar += totalImoveisInspecionar;
+                });
+            }
+
+            // --- RENDERIZAÇÃO ---
+            const container = document.getElementById('totaisPorBairroContainer');
+            if (Object.keys(totaisPorBairro).length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            let html = '<h3>Totais por Bairro (Independente do Código)</h3><div class="grid-estatisticas">';
+            for (const [bairro, dados] of Object.entries(totaisPorBairro)) {
+                html += `
+                    <div>
+                        <p><strong>${bairro}</strong></p>
+                        <p>Quadras Sorteadas: <strong style="color: var(--sucess-color);">${formatarValor(dados.quadrasSorteadas)}</strong></p>
+                        <p>Imóveis à Inspecionar: <strong style="color: #ff9800;">${formatarValor(dados.imoveisInspecionar)}</strong></p>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            container.innerHTML = html;
+            container.style.display = 'block';
+        }
+
+        // --- Atualizar chamadas para incluir a nova função ---
+        // Substituir a chamada antiga de calcularTotaisConsolidados por uma que também chame a nova função
+        const calcularTotaisConsolidadosOriginal = calcularTotaisConsolidados;
+        calcularTotaisConsolidados = function(...args) {
+            calcularTotaisConsolidadosOriginal(...args);
+            calcularTotaisPorBairro();
+        };
     </script>
 </body>
 </html>
+
 
 
 
