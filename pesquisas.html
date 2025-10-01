@@ -357,7 +357,18 @@
 
         <!-- RESULTADO CONTAGEM - TOTAIS LÍQUIDOS PARA O CÓDIGO SELECIONADO (DISPLAY HABILITADO POR JS) -->
         <div id="resultadoContagem" class="box" style="display: none;"></div>
-        
+        <div id="resultsContent">
+                        <p class="empty-selection-message">Selecione um código acima para visualizar os resultados.</p>
+                    </div>
+
+                    <!-- NOVO BLOCO: Detalhes por Bairro -->
+                    <div id="resultsBairros" style="display: none;">
+                        <div class="section-divider"></div>
+                        <p class="subtitle">Detalhe de Imóveis Líquidos por Bairro:</p>
+                        <div id="bairrosList" class="bairros-list">
+                            <!-- Conteúdo dinâmico da soma por bairro será inserido aqui -->
+                        </div>
+                    </div>
         <!-- DETALHAMENTO DE AMOSTRA (DISPLAY HABILITADO POR JS) -->
         <div id="detalhamentoQuadras" class="box" style="display: none;">
             <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
@@ -390,7 +401,11 @@
         const quarteiroesEstrato = document.getElementById('quarteiroesEstrato');
         const imoveisInspecionar = document.getElementById('imoveisInspecionar');
         const quarteiroesSorteados = document.getElementById('quarteiroesSorteados');
-        
+        // NOVOS ELEMENTOS para Detalhamento por Bairro
+        const resultsBairrosDiv = document.getElementById('resultsBairros');
+        const bairrosListDiv = document.getElementById('bairrosList');
+
+        const modalSenha = document.getElementById('modalSenha');
         const modalSenha = document.getElementById('modalSenha');
         const inputSenha = document.getElementById('inputSenha');
         const erroSenha = document.getElementById('erroSenha');
@@ -1038,42 +1053,133 @@
         }
         
         // Função principal de exibição (Atualizada)
+      /**
+         * Exibe os resultados detalhados para o código de bairro selecionado.
+         * Inclui o cálculo e a exibição da soma de Imóveis Líquidos por Bairro.
+         * @param {string} codigo O código de bairro selecionado.
+         */
         function exibirResultsPorCodigo(codigoSelecionado) {
             
+            // --- PARTE 1: Inicialização e Limpeza ---
             codigoAtual = codigoSelecionado; // Salva o código selecionado globalmente
 
-            bairrosAtuais = []; 
+            // Limpa e esconde os elementos de detalhamento do CÓDIGO/BAIRRO (Novo e Existente)
+            // Note que resultsContent não está mais aqui, mas precisa ser limpo se existir
+            if(document.getElementById('resultsContent')) {
+                document.getElementById('resultsContent').innerHTML = ''; // Limpeza do display de totais
+            }
+            if(typeof resultsBairrosDiv !== 'undefined') {
+                resultsBairrosDiv.style.display = 'none'; // Novo
+                bairrosListDiv.innerHTML = ''; // Novo
+            }
+            
+            bairrosAtuais = [];
             bairroDisplay.textContent = 'Selecione um código para filtrar por bairro.';
             quadrasContainer.innerHTML = '';
-            quadrasContainer.style.display = 'none'; // Novo
+            quadrasContainer.style.display = 'none';
             resultadoContagem.style.display = 'none';
             detalhamentoQuadras.style.display = 'none';
-            btnDesbloquear.style.display = 'none'; // Esconde se nada estiver selecionado
+            btnDesbloquear.style.display = 'none';
 
             if (!codigoSelecionado) {
                 resultadoContagem.innerHTML = '';
                 detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>';
-                
-                // NOVO: Garantir que o seletor esteja resetado no valor correto
-                selecaoCodigo.value = ''; 
+                selecaoCodigo.value = '';
                 return;
             }
 
+            // --- PARTE 2: Busca e Validação de Bairros (Sua Lógica Original) ---
+            
+            // AQUI ESTÁ SEU PROBLEMA DE DADOS: 
+            // Você usa CODIGOS_BAIRROS[codigoSelecionado] que é um Array de objetos {bairro: string, intervalo: string}
+            // O novo código usa DADOS_GERAIS (lista completa de itens) para calcular os totais
+            
             const bairrosComIntervalo = CODIGOS_BAIRROS[codigoSelecionado];
-            const nomesBairrosMapeados = bairrosComIntervalo ? bairrosComIntervalo.map(item => item.bairro) : [];
-            const nomeDisplayBairros = nomesBairrosMapeados ? nomesBairrosMapeados.join(', ') : '';
-            bairrosAtuais = bairrosComIntervalo; 
-
+            
             if (!bairrosComIntervalo || bairrosComIntervalo.length === 0) {
-                bairroDisplay.textContent = `Código ${codigoSelecionado} não mapeado para nenhum bairro ou intervalo.`;
-                return;
+                 bairroDisplay.textContent = `Código ${codigoSelecionado} não mapeado para nenhum bairro ou intervalo.`;
+                 return;
             }
+            
+            const nomesBairrosMapeados = bairrosComIntervalo.map(item => item.bairro);
+            const nomeDisplayBairros = nomesBairrosMapeados.join(', ');
+            bairrosAtuais = bairrosComIntervalo;
             
             bairroDisplay.innerHTML = `**Bairro(s) Selecionado(s) para Cód. ${codigoSelecionado}:** ${nomeDisplayBairros}`;
-            
-            // NOVO: Selecionar o código correto se veio de um carregamento persistido (embora o listener já faça isso)
             selecaoCodigo.value = codigoSelecionado;
 
+            // --- PARTE 3: CÁLCULOS NOVOS: Agrupamento e Totais por Código e Bairro ---
+            
+            // 1. Filtrar os dados pelo código selecionado (usa DADOS_GERAIS, não CODIGOS_BAIRROS)
+            const dadosFiltrados = DADOS_GERAIS.filter(item => 
+                item.codigoBairro === codigoSelecionado
+            );
+
+            // 2. Calcular Totais Gerais para o Código Selecionado
+            const totalILCodigo = dadosFiltrados.reduce((acc, item) => acc + (item.imoveisLiquidos || 0), 0);
+            const quadrasUnicasCodigo = new Set(dadosFiltrados.map(item => item.quadraUtil));
+            const totalQTCodigo = quadrasUnicasCodigo.size;
+            const percentualIL = calcularPorcentagem(totalILCodigo, totalImoveisLiquidosGeral);
+            const percentualQT = calcularPorcentagem(totalQTCodigo, totalQuadrasUteisGeral);
+
+            // 3. Exibir Totais Gerais do Código (Assume que você tem um elemento DOM 'resultsContent')
+            document.getElementById('resultsContent').innerHTML = `
+                <p>Total de Imóveis Líquidos (IL) no Código: 
+                    <strong class="result-value" style="color: var(--primary-color);">${formatarValor(totalILCodigo)}</strong> 
+                    <span style="font-size: 0.9em; color: var(--secondary-color);">(${percentualIL} do Geral)</span>
+                </p>
+                <p>Total de Quadras Úteis (QT) Únicas no Código: 
+                    <strong class="result-value" style="color: var(--primary-color);">${formatarValor(totalQTCodigo)}</strong>
+                    <span style="font-size: 0.9em; color: var(--secondary-color);">(${percentualQT} do Geral)</span>
+                </p>
+            `;
+
+            // 4. Agrupamento e Cálculo por Bairro
+            const totaisPorBairro = {};
+            dadosFiltrados.forEach(item => {
+                const bairro = item.nomeBairro;
+                
+                if (!totaisPorBairro[bairro]) {
+                    totaisPorBairro[bairro] = {
+                        imoveisLiquidos: 0,
+                        estratos: new Set(),
+                        minQuadra: Infinity,
+                        maxQuadra: -Infinity,
+                    };
+                }
+                
+                // Soma os imóveis líquidos (resolvendo o problema 27 + 1)
+                totaisPorBairro[bairro].imoveisLiquidos += (item.imoveisLiquidos || 0); 
+                
+                if (item.quadraUtil < totaisPorBairro[bairro].minQuadra) {
+                    totaisPorBairro[bairro].minQuadra = item.quadraUtil;
+                }
+                if (item.quadraUtil > totaisPorBairro[bairro].maxQuadra) {
+                    totaisPorBairro[bairro].maxQuadra = item.quadraUtil;
+                }
+                if (item.estratos) { // 'estratos' é opcional, se não estiver no JSON use o min/max quadra
+                    totaisPorBairro[bairro].estratos.add(item.estratos);
+                }
+            });
+
+            // 5. Exibir Detalhes por Bairro
+            if(typeof resultsBairrosDiv !== 'undefined') {
+                resultsBairrosDiv.style.display = 'block';
+                Object.keys(totaisPorBairro).forEach(bairro => {
+                    const data = totaisPorBairro[bairro];
+                    const estratoInfo = data.estratos.size > 0 
+                                        ? Array.from(data.estratos).join(', ') 
+                                        : (data.minQuadra !== Infinity ? `QT ${data.minQuadra} a ${data.maxQuadra}` : '');
+                    
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'bairro-item';
+                    itemDiv.innerHTML = `
+                        <span class="bairro-item-name">${bairro} (${estratoInfo}):</span>
+                        <span class="bairro-item-value">${formatarValor(data.imoveisLiquidos)} Imóveis</span>
+                    `;
+                    bairrosListDiv.appendChild(itemDiv);
+                });
+            }
             // Gera os campos e anexa listeners (vai acionar calcularResultadosDoCodigoAtual)
             gerarSelecaoQuadras(bairrosComIntervalo);
         }
@@ -1160,6 +1266,7 @@
     </script>
 </body>
 </html>
+
 
 
 
