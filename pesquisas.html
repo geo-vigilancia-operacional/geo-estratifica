@@ -1160,108 +1160,11 @@
                 }
             });
         });
-           // --- NOVA FUNÇÃO: Calcular e exibir totais por bairro individual ---
-        function calcularTotaisPorBairro() {
-            if (dadosEstatisticos.length === 0) return;
-
-            const totaisPorBairro = {};
-
-            // Percorre todos os códigos com dados salvos
-            for (const cod of Object.keys(quadrasSorteioGlobal)) {
-                const idsSorteadosPorBairro = quadrasSorteioGlobal[cod];
-                if (!idsSorteadosPorBairro || Object.keys(idsSorteadosPorBairro).length === 0) continue;
-
-                const bairrosMapeados = CODIGOS_BAIRROS[cod];
-                if (!bairrosMapeados) continue;
-
-                // Filtra registros do JSON que pertencem aos bairros deste código
-                const bairrosNormalizados = bairrosMapeados.map(b => normalizarString(b.bairro));
-                const registrosDoCodigo = dadosEstatisticos.filter(item => 
-                    bairrosNormalizados.includes(normalizarString(item['BAIRRO']))
-                );
-
-                // Para cada bairro mapeado neste código
-                bairrosMapeados.forEach(itemBairro => {
-                    const nomeBairroOriginal = itemBairro.bairro;
-                    const nomeBairroNorm = normalizarString(nomeBairroOriginal);
-                    const idsInput = idsSorteadosPorBairro[nomeBairroNorm] || '';
-                    if (!idsInput) return;
-
-                    // Parse dos IDs sorteados
-                    const idsSorteados = new Set();
-                    const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
-                    idsArray.forEach(idStr => {
-                        const idNum = parseInt(idStr);
-                        if (!isNaN(idNum) && idNum > 0) idsSorteados.add(idNum);
-                    });
-                    if (idsSorteados.size === 0) return;
-
-                    // Filtra quadras do bairro no intervalo (usando início/fim padrão do mapeamento)
-                    const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
-                        const nomeItemNorm = normalizarString(registro['BAIRRO']);
-                        const quadra = registro[CHAVE_QUADRA];
-                        return nomeItemNorm === nomeBairroNorm &&
-                               compararQuadras(quadra, itemBairro.inicio, itemBairro.fim);
-                    });
-
-                    const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
-                    const quadrasSorteadas = quadrasComIds.filter(q => 
-                        q.ID_SEQUENCIAL > 0 && idsSorteados.has(q.ID_SEQUENCIAL)
-                    );
-
-                    let totalImoveisInspecionar = 0;
-                    quadrasSorteadas.forEach(registro => {
-                        const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
-                        const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
-                        const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
-                        const imoveisLiquidos = totalReg - apReg - peReg;
-                        const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
-                        totalImoveisInspecionar += amostra20Pct;
-                    });
-
-                    if (!totaisPorBairro[nomeBairroOriginal]) {
-                        totaisPorBairro[nomeBairroOriginal] = {
-                            quadrasSorteadas: 0,
-                            imoveisInspecionar: 0
-                        };
-                    }
-                    totaisPorBairro[nomeBairroOriginal].quadrasSorteadas += quadrasSorteadas.length;
-                    totaisPorBairro[nomeBairroOriginal].imoveisInspecionar += totalImoveisInspecionar;
-                });
-            }
-
-            // --- RENDERIZAÇÃO ---
-            const container = document.getElementById('totaisPorBairroContainer');
-            if (Object.keys(totaisPorBairro).length === 0) {
-                container.style.display = 'none';
-                return;
-            }
-
-            let html = '<h3>Totais por Bairro (Independente do Código)</h3><div class="grid-estatisticas">';
-            for (const [bairro, dados] of Object.entries(totaisPorBairro)) {
-                html += `
-                    <div>
-                        <p><strong>${bairro}</strong></p>
-                        <p>Quadras Sorteadas: <strong style="color: var(--sucess-color);">${formatarValor(dados.quadrasSorteadas)}</strong></p>
-                        <p>Imóveis à Inspecionar: <strong style="color: #ff9800;">${formatarValor(dados.imoveisInspecionar)}</strong></p>
-                    </div>
-                `;
-            }
-            html += '</div>';
-            container.innerHTML = html;
-            container.style.display = 'block';
-        }
-
-        // --- Atualizar chamadas para incluir a nova função ---
-        // Substituir a chamada antiga de calcularTotaisConsolidados por uma que também chame a nova função
-        const calcularTotaisConsolidadosOriginal = calcularTotaisConsolidados;
-        calcularTotaisConsolidados = function(...args) {
-            calcularTotaisConsolidadosOriginal(...args);
-            calcularTotaisPorBairro();
-        };
+  
     </script>
 </body>
 </html>
+
 
 
 
