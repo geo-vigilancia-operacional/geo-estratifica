@@ -307,7 +307,54 @@
             font-weight: 700;
             height: 20px; /* Evitar CLS */
         }
-        
+               /* ESTILOS PARA O MAPA DE QUADRAS COMPLETO */
+        #mapaQuadrasCompleto .mapa-bairro {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        #mapaQuadrasCompleto .mapa-bairro:last-of-type {
+            border-bottom: none;
+        }
+        #mapaQuadrasCompleto .mapa-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+        #mapaQuadrasCompleto .mapa-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            font-weight: 700;
+            color: var(--secondary-color);
+            background-color: var(--highlight-bg);
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+        #mapaQuadrasCompleto .quadra-item-mapa {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            padding: 8px;
+            background-color: #313158;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+        #mapaQuadrasCompleto .quadra-id {
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        #mapaQuadrasCompleto .quadra-numero {
+            font-weight: 700;
+        }
+        #mapaQuadrasCompleto .quadra-total {
+            text-align: right;
+        }
+        #mapaQuadrasCompleto .quadra-status {
+            font-weight: 700;
+            text-align: center;
+        } 
     </style>
 </head>
 <body>
@@ -320,7 +367,6 @@
             <!-- RESULTADOS GERAIS E CONSOLIDADOS (SEMPRE VISÍVEIS) -->
             <div id="resultadosEstatisticos" class="grid-estatisticas">
                 <div>
-            <div id="totaisPorBairroContainer" class="box" style="display: none; margin-top: 20px;"></div>
                     <p><strong>Total de Imóveis Líquidos / Estrato:</strong></p>
                     <p id="imoveisEstrato">--</p>
                 </div>
@@ -361,6 +407,11 @@
         
         <!-- DETALHAMENTO DE AMOSTRA (DISPLAY HABILITADO POR JS) -->
         <div id="detalhamentoQuadras" class="box" style="display: none;">
+                    <!-- MAPA DE QUADRAS POR BAIRRO (INTERVALO COMPLETO) -->
+        <div id="mapaQuadrasCompleto" class="box" style="display: none;">
+            <h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
+            <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
+        </div>
             <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
         </div>
     </div>
@@ -870,6 +921,8 @@
                             </div>`;
                     detalhamentoQuadras.innerHTML += detalhamentoHtml;
                     detalhamentoQuadras.style.display = 'block';
+                    // Chama a nova função para atualizar o mapa completo
+                   gerarMapaQuadrasCompleto();
                 } else {
                     detalhamentoQuadras.style.display = 'none';
                 }
@@ -1160,10 +1213,107 @@
                 }
             });
         });
-  
+          /**
+         * FUNÇÃO NOVA: Gera o mapa completo de quadras por bairro, incluindo extintas
+         */
+        function gerarMapaQuadrasCompleto() {
+            const container = document.getElementById('mapaQuadrasCompleto');
+            if (!codigoAtual || bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            let html = '';
+            const todosRegistrosDoCodigo = dadosEstatisticos.filter(item => {
+                const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
+                const bairrosParaFiltrarNormalizados = bairrosAtuais.map(item => normalizarString(item.bairro));
+                return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
+            });
+
+            bairrosAtuais.forEach((itemBairro) => {
+                const nomeBairroClean = itemBairro.bairro;
+                const nomeBairroNormalizado = normalizarString(nomeBairroClean);
+                const inicio = itemBairro.inicio;
+                const fim = itemBairro.fim;
+
+                // Filtra quadras dentro do intervalo
+                const quadrasNoIntervalo = todosRegistrosDoCodigo.filter(registro => {
+                    const nomeItemNormalizado = normalizarString(registro['BAIRRO']);
+                    const quadra = registro[CHAVE_QUADRA];
+                    return nomeItemNormalizado === nomeBairroNormalizado &&
+                           compararQuadras(quadra, inicio, fim);
+                });
+
+                // Ordena por número de quadra
+                const quadrasOrdenadas = quadrasNoIntervalo.sort((a, b) => {
+                    const parseQuadraSort = (q_str) => {
+                        const parts = String(q_str).split('/');
+                        let num = parseFloat(parts[0]);
+                        if (parts.length > 1) {
+                            const decimal = parseFloat(parts[1]) / 1000;
+                            num += decimal;
+                        }
+                        return num;
+                    };
+                    return parseQuadraSort(a[CHAVE_QUADRA]) - parseQuadraSort(b[CHAVE_QUADRA]);
+                });
+
+                // Gera IDs sequenciais apenas para quadras úteis
+                let idCounter = 1;
+                quadrasOrdenadas.forEach(registro => {
+                    const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                    const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                    const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                    const imoveisLiquidos = totalReg - apReg - peReg;
+                    if (imoveisLiquidos > 0) {
+                        registro.ID_SEQUENCIAL = idCounter++;
+                    } else {
+                        registro.ID_SEQUENCIAL = 0; // Extinta
+                    }
+                });
+
+                // Monta o HTML
+                let quadrasHtml = '<div class="quadra-item-lista">';
+                quadrasOrdenadas.forEach(registro => {
+                    const idDisplay = registro.ID_SEQUENCIAL > 0 ? registro.ID_SEQUENCIAL : '—';
+                    const status = registro.ID_SEQUENCIAL > 0 ? 'Útil' : 'Extinta';
+                    const corStatus = registro.ID_SEQUENCIAL > 0 ? 'color: var(--sucess-color);' : 'color: var(--danger-color);';
+                    quadrasHtml += `
+                        <div class="quadra-item-mapa">
+                            <span class="quadra-id">${idDisplay}</span>
+                            <span class="quadra-numero">${registro[CHAVE_QUADRA]}</span>
+                            <span class="quadra-total">${parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0}</span>
+                            <span class="quadra-status" style="${corStatus}">${status}</span>
+                        </div>
+                    `;
+                });
+                quadrasHtml += '</div>';
+
+                html += `
+                    <div class="mapa-bairro">
+                        <h5>${nomeBairroClean} (QT ${inicio} a ${fim}):</h5>
+                        <div class="mapa-grid">
+                            <div class="mapa-header">
+                                <span>ID</span>
+                                <span>Quadra</span>
+                                <span>Total</span>
+                                <span>Status</span>
+                            </div>
+                            ${quadrasHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `<h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
+                                  <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
+                                  ${html}`;
+            container.style.display = 'block';
+        }
     </script>
 </body>
 </html>
+
 
 
 
