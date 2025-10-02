@@ -678,52 +678,54 @@
         /**
          * Gera a seção de detalhamento por quadra segmentada para o CÓDIGO ATUAL. (Mantida)
          */
-        function gerarDetalhamentoPorQuadraSegmentado(detalhe) {
-            const { nomeBairro, inicio, fim, quadrasUteisBairro, idsSorteados } = detalhe;
-            let totalAmostraBairro = 0;
-            let detalheHtml = '';
-            
-            if (quadrasUteisBairro.length === 0 || idsSorteados.size === 0) {
-                 return { html: '', totalAmostra: 0 };
-            }
+      function gerarDetalhamentoPorQuadraSegmentado(detalhe) {
+    const { nomeBairro, inicio, fim, quadrasUteisBairro, idsSorteados } = detalhe;
+    let totalAmostraBairro = 0;
+    let detalheHtml = '';
+    
+    if (quadrasUteisBairro.length === 0 || idsSorteados.size === 0) {
+        return { html: '', totalAmostra: 0 };
+    }
 
-            const quadrasFiltradas = quadrasUteisBairro.filter(registro => 
-                registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
-            );
-            
-            if (quadrasFiltradas.length === 0) return { html: '', totalAmostra: 0 }; 
+    const quadrasFiltradas = quadrasUteisBairro.filter(registro => 
+        registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
+    );
+    
+    if (quadrasFiltradas.length === 0) return { html: '', totalAmostra: 0 }; 
 
-            let gridItensHtml = '';
-            
-            quadrasFiltradas.forEach(registro => {
-                const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
-                const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
-                const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
-                
-                const imoveisLiquidos = totalReg - apReg - peReg;
-                
-                const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
-                totalAmostraBairro += amostra20Pct;
-                
-                gridItensHtml += `
-                    <div class="quadra-item">
-                        <span class="quadra-identificacao">ID ${registro.ID_SEQUENCIAL} (QT ${registro[CHAVE_QUADRA]})</span>
-                        <span class="quadra-quantidade">${amostra20Pct.toLocaleString('pt-BR')}</span>
-                    </div>
-                `;
-            });
-            
-            detalheHtml = `
-                <div class="detalhe-bairro">
-                    <strong>${nomeBairro} (QT ${inicio} a ${fim}):</strong>
-                    <div class="detalhe-grid">
-                        ${gridItensHtml}
-                    </div>
-                </div>
-            `;
-            
-            return { html: detalheHtml, totalAmostra: totalAmostraBairro };
-        }
+    let gridItensHtml = '';
+    
+    quadrasFiltradas.forEach(registro => {
+        const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+        const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+        const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+        
+        const imoveisLiquidos = totalReg - apReg - peReg;
+        const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
+        totalAmostraBairro += amostra20Pct;
+        
+        gridItensHtml += `
+            <div class="quadra-item">
+                <span class="quadra-identificacao">ID ${registro.ID_SEQUENCIAL} (QT ${registro[CHAVE_QUADRA]})</span>
+                <span class="quadra-quantidade">${amostra20Pct.toLocaleString('pt-BR')}</span>
+            </div>
+        `;
+    });
+    
+    detalheHtml = `
+        <div class="detalhe-bairro">
+            <strong>${nomeBairro} (QT ${inicio} a ${fim}):</strong>
+            <p style="color: var(--sucess-color); font-weight: 700; margin-top: 5px;">
+                Total de Imóveis à Inspecionar: ${totalAmostraBairro.toLocaleString('pt-BR')}
+            </p>
+            <div class="detalhe-grid">
+                ${gridItensHtml}
+            </div>
+        </div>
+    `;
+    
+    return { html: detalheHtml, totalAmostra: totalAmostraBairro };
+}
 
 
         /**
@@ -1260,6 +1262,7 @@
     </script>
 </body>
 </html>
+
 
 
 
