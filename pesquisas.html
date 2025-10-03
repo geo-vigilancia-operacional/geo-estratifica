@@ -586,18 +586,21 @@
                     return qA - qB;
                 });
 
-            registrosOrdenados.forEach(registro => {
-                const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
-                const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
-                const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
-                const imoveisLiquidos = totalReg - apReg - peReg;
-                
-                if (imoveisLiquidos > 0) {
-                    registro.ID_SEQUENCIAL = idCounter++;
-                } else {
-                    registro.ID_SEQUENCIAL = 0; 
-                }
-            });
+          registrosOrdenados.forEach(registro => {
+    const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+    const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+    const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+    const imoveisLiquidos = totalReg - apReg - peReg;
+
+    // EXCEÇÃO: Se TOTAL for exatamente 1, considera como útil, independentemente do valor líquido
+    if (totalReg === 1) {
+        registro.ID_SEQUENCIAL = idCounter++;
+    } else if (imoveisLiquidos > 0) {
+        registro.ID_SEQUENCIAL = idCounter++;
+    } else {
+        registro.ID_SEQUENCIAL = 0; 
+    }
+});
 
             return registrosOrdenados;
         }
@@ -1313,6 +1316,7 @@
     </script>
 </body>
 </html>
+
 
 
 
