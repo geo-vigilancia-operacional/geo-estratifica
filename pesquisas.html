@@ -664,7 +664,7 @@ function calcularResultadosDoCodigoAtual() {
     detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>';
     if (!codigoAtual || bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) {
         // Atualiza o campo "Total de Quadras Úteis / Estrato" com "--" se não houver código
-        quarteiroesEstrato.textContent = '--';
+      
         return;
     }
     let resultadosHtml = '';
@@ -1095,6 +1095,7 @@ quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
     </script>
 </body>
 </html>
+
 
 
 
