@@ -873,27 +873,60 @@ function calcularResultadosDoCodigoAtual() {
             calcularResultadosDoCodigoAtual();
         }
 
-        async function carregarDados() {
-            try {
-                const resEstatisticas = await fetch(urlEstatisticas);
-                if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas (${urlEstatisticas}): ${resEstatisticas.statusText}`);
-                dadosEstatisticos = await resEstatisticas.json();
-                let imoveisBrutosTotal = 0;
-                let apAcimaTerreoTotal = 0;
-                let peTotal = 0;
-                dadosEstatisticos.forEach(item => {
-                    const totalReg = parseInt(item[CHAVE_IMOVEIS_QUADRA]) || 0;
-                    const apReg = parseInt(item[CHAVE_SUBTRACAO_AP]) || 0;
-                    const peReg = parseInt(item[CHAVE_SUBTRACAO_PE]) || 0;
-                    imoveisBrutosTotal += totalReg;
-                    apAcimaTerreoTotal += apReg;
-                    peTotal += peReg;
+      /**
+ * Carrega o JSON e calcula os totais GERAIS com base nos intervalos oficiais (85 a 113)
+ */
+async function carregarDados() {
+    try {
+        const resEstatisticas = await fetch(urlEstatisticas);
+        if (!resEstatisticas.ok) throw new Error(`Erro ao carregar Estatísticas (${urlEstatisticas}): ${resEstatisticas.statusText}`);
+        dadosEstatisticos = await resEstatisticas.json();
+
+        // --- Cálculo do total de imóveis líquidos do estrato (mantido) ---
+        let imoveisBrutosTotal = 0;
+        let apAcimaTerreoTotal = 0;
+        let peTotal = 0;
+        dadosEstatisticos.forEach(item => {
+            const totalReg = parseInt(item[CHAVE_IMOVEIS_QUADRA]) || 0;
+            const apReg = parseInt(item[CHAVE_SUBTRACAO_AP]) || 0;
+            const peReg = parseInt(item[CHAVE_SUBTRACAO_PE]) || 0;
+            imoveisBrutosTotal += totalReg;
+            apAcimaTerreoTotal += apReg;
+            peTotal += peReg;
+        });
+        totalImoveisLiquidosGeral = imoveisBrutosTotal - apAcimaTerreoTotal - peTotal;
+
+        // --- NOVO: Cálculo acumulado de quadras úteis nos intervalos oficiais ---
+        let totalQuadrasAcumulado = 0;
+        for (let i = 85; i <= 113; i++) {
+            const codigo = String(i);
+            const bairrosComIntervalo = CODIGOS_BAIRROS[codigo];
+            if (!bairrosComIntervalo) continue;
+
+            const bairrosNormalizados = bairrosComIntervalo.map(item => normalizarString(item.bairro));
+            const registrosDoCodigo = dadosEstatisticos.filter(item => 
+                bairrosNormalizados.includes(normalizarString(item['BAIRRO']))
+            );
+
+            bairrosComIntervalo.forEach(itemBairro => {
+                const nomeBairroNorm = normalizarString(itemBairro.bairro);
+                const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
+                    const nomeItemNorm = normalizarString(registro['BAIRRO']);
+                    const quadra = registro[CHAVE_QUADRA];
+                    return nomeItemNorm === nomeBairroNorm &&
+                           compararQuadras(quadra, itemBairro.inicio, itemBairro.fim);
                 });
-                totalImoveisLiquidosGeral = imoveisBrutosTotal - apAcimaTerreoTotal - peTotal;
-            } catch (error) {
-                console.error('Erro fatal ao buscar arquivo JSON:', error);
-            }
+                const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+                const quadrasUteis = quadrasComIds.filter(q => q.ID_SEQUENCIAL > 0);
+                totalQuadrasAcumulado += quadrasUteis.length;
+            });
         }
+        totalQuadrasUteisGeral = totalQuadrasAcumulado;
+
+    } catch (error) {
+        console.error('Erro fatal ao buscar arquivo JSON:', error);
+    }
+}
 
         function popularSeletor() {
             const defaultOption = document.createElement('option');
@@ -1084,6 +1117,7 @@ function calcularResultadosDoCodigoAtual() {
     </script>
 </body>
 </html>
+
 
 
 
