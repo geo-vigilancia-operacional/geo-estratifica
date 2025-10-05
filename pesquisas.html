@@ -595,38 +595,7 @@ function gerarIdsSequenciais(registros) {
             }
         }
 
-        /**
-         * Calcula o TOTAL GLOBAL DE QUADRAS ÚTEIS considerando todos os códigos e intervalos
-         */
-        function calcularTotalQuadrasUteisGlobal() {
-            if (dadosEstatisticos.length === 0) return 0;
-            let totalGlobal = 0;
-            for (const cod of Object.keys(CODIGOS_BAIRROS)) {
-                const bairrosMapeados = CODIGOS_BAIRROS[cod];
-                if (!bairrosMapeados) continue;
-                const bairrosNormalizados = bairrosMapeados.map(item => normalizarString(item.bairro));
-                const registrosDoCodigo = dadosEstatisticos.filter(item => 
-                    bairrosNormalizados.includes(normalizarString(item['BAIRRO']))
-                );
-                bairrosMapeados.forEach(itemBairro => {
-                    const nomeBairroNorm = normalizarString(itemBairro.bairro);
-                    const inicio = itemBairro.inicio;
-                    const fim = itemBairro.fim;
-                    const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
-                        const nomeItemNorm = normalizarString(registro['BAIRRO']);
-                        const quadra = registro[CHAVE_QUADRA];
-                        return nomeItemNorm === nomeBairroNorm &&
-                               compararQuadras(quadra, inicio, fim);
-                    });
-                    const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
-                    const quadrasUteis = quadrasComIds.filter(q => q.ID_SEQUENCIAL > 0);
-                    totalGlobal += quadrasUteis.length;
-                });
-            }
-            return totalGlobal;
-        }
-
-        function compararQuadras(quadraItem, inicio, fim) {
+            function compararQuadras(quadraItem, inicio, fim) {
             const parseQuadra = (q_str) => {
                 const parts = String(q_str).split('/');
                 let num = parseFloat(parts[0]);
@@ -1126,6 +1095,7 @@ quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
     </script>
 </body>
 </html>
+
 
 
 
