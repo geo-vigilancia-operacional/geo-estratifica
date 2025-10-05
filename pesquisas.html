@@ -1104,9 +1104,9 @@ async function carregarDados() {
             await carregarDados();
             popularSeletor();
             // ATUALIZAÇÃO: Usa o cálculo dinâmico para "Total de Quadras Úteis / Estrato"
-            const totalQuadrasUteisCalculado = calcularTotalQuadrasUteisGlobal();
-            imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
-            quarteiroesEstrato.textContent  = '--'; 
+           // ATUALIZAÇÃO: Usa o cálculo dinâmico para "Total de Quadras Úteis / Estrato"
+imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
+quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
             calcularTotaisConsolidados();
             const codigoSalvo = localStorage.getItem('codigoSelecionado');
             if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
@@ -1126,6 +1126,7 @@ async function carregarDados() {
     </script>
 </body>
 </html>
+
 
 
 
