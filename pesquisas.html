@@ -383,7 +383,11 @@
                     <p id="quarteiroesSorteados">--</p>
                 </div>
             </div>
-
+<div>
+    <p><strong>Total de Quadras Úteis (Intervalos Oficiais):</strong></p>
+    <p id="totalQuadrasIntervalosOficiais">--</p>
+</div>
+            
             <hr style="border-color: var(--border-color); margin-bottom: 20px;">
 
             <!-- SELETOR DE CÓDIGO E BOTÃO DE DESBLOQUEIO -->
@@ -1189,6 +1193,7 @@
             
             // 2. Carrega o arquivo JSON e calcula os totais gerais
             await carregarDados();
+           calcularTotalQuadrasIntervalosOficiais(); // ✅ Nova chamada
             popularSeletor();
             
             // 3. Preenche os TOTAIS GERAIS FIXOS
@@ -1216,7 +1221,54 @@
                 }
             });
         });
-          /**
+        /**
+ * Calcula o total de quadras úteis SOMENTE dentro dos intervalos oficiais (85 a 113)
+ * e exibe em #totalQuadrasIntervalosOficiais
+ */
+function calcularTotalQuadrasIntervalosOficiais() {
+    if (dadosEstatisticos.length === 0) {
+        document.getElementById('totalQuadrasIntervalosOficiais').textContent = '--';
+        return;
+    }
+
+    let totalGlobal = 0;
+
+    // Percorre todos os códigos de 85 a 113
+    for (let i = 85; i <= 113; i++) {
+        const codigo = String(i);
+        const bairrosComIntervalo = CODIGOS_BAIRROS[codigo];
+        if (!bairrosComIntervalo) continue;
+
+        // Filtra registros do JSON que pertencem aos bairros deste código
+        const bairrosNormalizados = bairrosComIntervalo.map(item => normalizarString(item.bairro));
+        const registrosDoCodigo = dadosEstatisticos.filter(item => 
+            bairrosNormalizados.includes(normalizarString(item['BAIRRO']))
+        );
+
+        // Para cada bairro do código
+        bairrosComIntervalo.forEach(itemBairro => {
+            const nomeBairroNorm = normalizarString(itemBairro.bairro);
+            const inicio = itemBairro.inicio;
+            const fim = itemBairro.fim;
+
+            // Filtra quadras dentro do intervalo
+            const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
+                const nomeItemNorm = normalizarString(registro['BAIRRO']);
+                const quadra = registro[CHAVE_QUADRA];
+                return nomeItemNorm === nomeBairroNorm &&
+                       compararQuadras(quadra, inicio, fim);
+            });
+
+            // Aplica a lógica de IDs (com regra de TOTAL=1 se implementada)
+            const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+            const quadrasUteis = quadrasComIds.filter(q => q.ID_SEQUENCIAL > 0);
+            totalGlobal += quadrasUteis.length;
+        });
+    }
+
+    document.getElementById('totalQuadrasIntervalosOficiais').textContent = formatarValor(totalGlobal);
+} 
+        /**
          * FUNÇÃO NOVA: Gera o mapa completo de quadras por bairro, incluindo extintas
          */
         function gerarMapaQuadrasCompleto() {
@@ -1316,6 +1368,7 @@
     </script>
 </body>
 </html>
+
 
 
 
