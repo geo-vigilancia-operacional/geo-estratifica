@@ -223,13 +223,25 @@
             font-size: 0.9em;
         }
         
-        .quadra-quantidade {
-            font-weight: 700;
-            color: var(--sucess-color); 
-            font-size: 1.1em;
-            padding-left: 8px; 
-        }
+       /* Estilo do valor da quantidade (ex: 27, 1, 18) */
+.quadra-quantidade {
+    font-weight: 700;
+    color: #ff4444; /* Vermelho */
+    font-size: 1.1em;
+    padding-left: 8px; 
+}
 
+/* Estilo do ID (ex: ID 1) */
+.quadra-identificacao span.id {
+    color: #00b4d8; /* Azul */
+    font-weight: 700;
+}
+
+/* Estilo da quadra (ex: QT 60) */
+.quadra-identificacao span.quadra {
+    color: #4CAF50; /* Verde */
+    font-weight: 700;
+}
         .grid-estatisticas {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -250,11 +262,16 @@
             font-size: 1.2em;
         }
         
-        #imoveisInspecionar, #quarteiroesSorteados {
-            color: var(--sucess-color); /* Verde para destaque */
-            font-weight: 700;
-            font-size: 1.2em;
-        }
+      #imoveisInspecionar {
+    color: #ff4444; /* Vermelho */
+    font-weight: 700;
+    font-size: 1.2em;
+}
+#quarteiroesSorteados {
+    color: var(--sucess-color); /* Verde para destaque */
+    font-weight: 700;
+    font-size: 1.2em;
+}
         
         /* MODAL DE SENHA */
         .modal-overlay {
@@ -761,12 +778,15 @@
         const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
         totalAmostraBairro += amostra20Pct;
         
-        gridItensHtml += `
-            <div class="quadra-item">
-                <span class="quadra-identificacao">ID ${registro.ID_SEQUENCIAL} (QT ${registro[CHAVE_QUADRA]})</span>
-                <span class="quadra-quantidade">${amostra20Pct.toLocaleString('pt-BR')}</span>
-            </div>
-        `;
+      gridItensHtml += `
+    <div class="quadra-item">
+        <span class="quadra-identificacao">
+            <span class="id">ID ${registro.ID_SEQUENCIAL}</span>
+            <span class="quadra">(QT ${registro[CHAVE_QUADRA]})</span>
+        </span>
+        <span class="quadra-quantidade">${amostra20Pct.toLocaleString('pt-BR')}</span>
+    </div>
+`;
     });
     
     detalheHtml = `
@@ -1367,6 +1387,7 @@ function calcularTotalQuadrasIntervalosOficiais() {
     </script>
 </body>
 </html>
+
 
 
 
