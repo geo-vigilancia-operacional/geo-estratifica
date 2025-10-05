@@ -262,8 +262,34 @@
             font-size: 1.2em;
         }
         
-      #imoveisInspecionar {
+    /* Estilo do valor da quantidade (ex: 27, 1, 18) */
+.quadra-quantidade {
+    font-weight: 700;
     color: #ff4444; /* Vermelho */
+    font-size: 1.1em;
+    padding-left: 8px; 
+}
+
+/* Estilo do ID (ex: ID 1) */
+.quadra-identificacao span.id {
+    color: #00b4d8; /* Azul */
+    font-weight: 700;
+}
+
+/* Estilo da quadra (ex: QT 60) */
+.quadra-identificacao span.quadra {
+    color: #4CAF50; /* Verde */
+    font-weight: 700;
+}
+
+/* Estilo do título "Total de Imóveis à Inspecionar" e o número */
+#imoveisInspecionar {
+    color: #ff4444; /* Vermelho */
+    font-weight: 700;
+    font-size: 1.2em;
+}
+#quarteiroesSorteados {
+    color: var(--sucess-color); /* Verde para destaque */
     font-weight: 700;
     font-size: 1.2em;
 }
@@ -778,7 +804,7 @@
         const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
         totalAmostraBairro += amostra20Pct;
         
-      gridItensHtml += `
+  gridItensHtml += `
     <div class="quadra-item">
         <span class="quadra-identificacao">
             <span class="id">ID ${registro.ID_SEQUENCIAL}</span>
@@ -941,10 +967,10 @@
                 resultadoContagem.style.display = 'block';
                 
                 if (detalhamentoHtml.length > 0) {
-                    detalhamentoHtml += `<div class="resultado-total" style="border-top: 1px solid var(--sucess-color);">
-                                <p><strong>IMÓVEIS À INSPECIONAR (20% Amostra p/ Cód. ${codigoAtual}):</strong> 
-                                <strong style="font-size: 1.5em; color: var(--sucess-color);">${totalAmostraGeralCodigo.toLocaleString('pt-BR')}</strong></p>
-                            </div>`;
+                 detalhamentoHtml += `<div class="resultado-total" style="border-top: 1px solid #ff4444;">
+                    <p><strong style="color: #ff4444; font-weight: 700;">IMÓVEIS À INSPECIONAR (20% Amostra p/ Cód. ${codigoAtual}):</strong> 
+                    <strong style="font-size: 1.5em; color: #ff4444; font-weight: 700;">${totalAmostraGeralCodigo.toLocaleString('pt-BR')}</strong></p>
+                </div>`;
                     detalhamentoQuadras.innerHTML += detalhamentoHtml;
                     detalhamentoQuadras.style.display = 'block';
                     // Chama a nova função para atualizar o mapa completo
@@ -1387,6 +1413,7 @@ function calcularTotalQuadrasIntervalosOficiais() {
     </script>
 </body>
 </html>
+
 
 
 
