@@ -482,44 +482,45 @@
             calcularTotaisConsolidados(true); 
         }
 
-        /**
-         * LÓGICA ATUALIZADA: Quadras com TOTAL = 1 SEMPRE recebem ID
-         */
-        function gerarIdsSequenciais(registros) {
-            let idCounter = 1;
-            const registrosOrdenados = registros
-                .map(item => ({ ...item })) 
-                .sort((a, b) => {
-                    const parseQuadraSort = (q_str) => {
-                        const parts = String(q_str).split('/');
-                        let num = parseFloat(parts[0]);
-                        if (parts.length > 1) {
-                            const decimal = parseFloat(parts[1]) / 1000;
-                            num += decimal;
-                        }
-                        return num;
-                    };
-                    const qA = parseQuadraSort(a[CHAVE_QUADRA]);
-                    const qB = parseQuadraSort(b[CHAVE_QUADRA]);
-                    return qA - qB;
-                });
-            registrosOrdenados.forEach(registro => {
-                const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
-                const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
-                const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
-                const imoveisLiquidos = totalReg - apReg - peReg;
-
-                // EXCEÇÃO: TOTAL = 1 SEMPRE é útil
-                if (totalReg === 1) {
-                    registro.ID_SEQUENCIAL = idCounter++;
-                } else if (imoveisLiquidos > 0) {
-                    registro.ID_SEQUENCIAL = idCounter++;
-                } else {
-                    registro.ID_SEQUENCIAL = 0; 
+    /**
+ * Gera a lista de registros com um ID sequencial para cada quadra útil
+ * REGRA: Quadras com TOTAL = 1 são SEMPRE consideradas úteis, mesmo que AP+PE = TOTAL.
+ */
+function gerarIdsSequenciais(registros) {
+    let idCounter = 1;
+    const registrosOrdenados = registros
+        .map(item => ({ ...item })) 
+        .sort((a, b) => {
+            const parseQuadraSort = (q_str) => {
+                const parts = String(q_str).split('/');
+                let num = parseFloat(parts[0]);
+                if (parts.length > 1) {
+                    const decimal = parseFloat(parts[1]) / 1000;
+                    num += decimal;
                 }
-            });
-            return registrosOrdenados;
+                return num;
+            };
+            const qA = parseQuadraSort(a[CHAVE_QUADRA]);
+            const qB = parseQuadraSort(b[CHAVE_QUADRA]);
+            return qA - qB;
+        });
+    registrosOrdenados.forEach(registro => {
+        const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+        const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+        const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+        const imoveisLiquidos = totalReg - apReg - peReg;
+
+        // 🔥 REGRA CRÍTICA: TOTAL = 1 SEMPRE é útil
+        if (totalReg === 1) {
+            registro.ID_SEQUENCIAL = idCounter++;
+        } else if (imoveisLiquidos > 0) {
+            registro.ID_SEQUENCIAL = idCounter++;
+        } else {
+            registro.ID_SEQUENCIAL = 0; 
         }
+    });
+    return registrosOrdenados;
+}
 
         function calcularTotaisDeSorteio(registros, idsSorteadosPorBairro, bairrosComIntervalo) {
             let totalImoveisInspecionar = 0;
@@ -873,9 +874,6 @@ function calcularResultadosDoCodigoAtual() {
             calcularResultadosDoCodigoAtual();
         }
 
-      /**
- * Carrega o JSON e calcula os totais GERAIS com base nos intervalos oficiais (85 a 113)
- */
 /**
  * Carrega o JSON e calcula os totais GERAIS com base nos intervalos oficiais (85 a 113)
  */
@@ -899,26 +897,34 @@ async function carregarDados() {
         });
         totalImoveisLiquidosGeral = imoveisBrutosTotal - apAcimaTerreoTotal - peTotal;
 
-        // --- NOVO: Cálculo acumulado de quadras úteis nos intervalos oficiais ---
+        // --- 🔥 CÁLCULO CORRETO: Total de quadras úteis nos intervalos oficiais ---
         let totalQuadrasAcumulado = 0;
         for (let i = 85; i <= 113; i++) {
             const codigo = String(i);
             const bairrosComIntervalo = CODIGOS_BAIRROS[codigo];
             if (!bairrosComIntervalo) continue;
 
+            // Filtra registros do JSON que pertencem aos bairros deste código
             const bairrosNormalizados = bairrosComIntervalo.map(item => normalizarString(item.bairro));
             const registrosDoCodigo = dadosEstatisticos.filter(item => 
                 bairrosNormalizados.includes(normalizarString(item['BAIRRO']))
             );
 
+            // Para cada bairro do código
             bairrosComIntervalo.forEach(itemBairro => {
                 const nomeBairroNorm = normalizarString(itemBairro.bairro);
+                const inicio = itemBairro.inicio;
+                const fim = itemBairro.fim;
+
+                // Filtra quadras dentro do intervalo
                 const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
                     const nomeItemNorm = normalizarString(registro['BAIRRO']);
                     const quadra = registro[CHAVE_QUADRA];
                     return nomeItemNorm === nomeBairroNorm &&
-                           compararQuadras(quadra, itemBairro.inicio, itemBairro.fim);
+                           compararQuadras(quadra, inicio, fim);
                 });
+
+                // Aplica a lógica de IDs (com regra de TOTAL=1)
                 const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
                 const quadrasUteis = quadrasComIds.filter(q => q.ID_SEQUENCIAL > 0);
                 totalQuadrasAcumulado += quadrasUteis.length;
@@ -1120,6 +1126,7 @@ async function carregarDados() {
     </script>
 </body>
 </html>
+
 
 
 
