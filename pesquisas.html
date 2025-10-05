@@ -811,17 +811,17 @@
 `;
     });
     
-    detalheHtml = `
-        <div class="detalhe-bairro">
-            <strong>${nomeBairro} (QT ${inicio} a ${fim}):</strong>
-            <p style="color: var(--sucess-color); font-weight: 700; margin-top: 5px;">
-                Total de Imóveis à Inspecionar: ${totalAmostraBairro.toLocaleString('pt-BR')}
-            </p>
-            <div class="detalhe-grid">
-                ${gridItensHtml}
-            </div>
+ detalheHtml = `
+    <div class="detalhe-bairro">
+        <strong>${nomeBairro} (QT ${inicio} a ${fim}):</strong>
+        <p style="color: #ff4444; font-weight: 700; margin-top: 5px;">
+            Total de Imóveis à Inspecionar: ${totalAmostraBairro.toLocaleString('pt-BR')}
+        </p>
+        <div class="detalhe-grid">
+            ${gridItensHtml}
         </div>
-    `;
+    </div>
+`;
     
     return { html: detalheHtml, totalAmostra: totalAmostraBairro };
 }
@@ -1409,6 +1409,7 @@ function calcularTotalQuadrasIntervalosOficiais() {
     </script>
 </body>
 </html>
+
 
 
 
