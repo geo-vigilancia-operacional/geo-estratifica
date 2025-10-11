@@ -233,11 +233,6 @@
             font-weight: 700;
             font-size: 1.2em;
         }
-        #imoveisInspecionar {
-            color: #ff4444; /* Vermelho */
-            font-weight: 700;
-            font-size: 1.2em;
-        }
         #quarteiroesSorteados {
             color: var(--sucess-color);
             font-weight: 700;
@@ -355,10 +350,6 @@
                     <p id="quarteiroesEstrato">--</p>
                 </div>
                 <div>
-                    <p><strong>Total de Imóveis à Inspecionar:</strong></p>
-                    <p id="imoveisInspecionar">--</p>
-                </div>
-                <div>
                     <p><strong>Total de Quarteirões Sorteados:</strong></p>
                     <p id="quarteiroesSorteados">--</p>
                 </div>
@@ -400,7 +391,6 @@
         const detalhamentoQuadras = document.getElementById('detalhamentoQuadras'); 
         const imoveisEstrato = document.getElementById('imoveisEstrato');
         const quarteiroesEstrato = document.getElementById('quarteiroesEstrato');
-        const imoveisInspecionar = document.getElementById('imoveisInspecionar');
         const quarteiroesSorteados = document.getElementById('quarteiroesSorteados');
         const modalSenha = document.getElementById('modalSenha');
         const inputSenha = document.getElementById('inputSenha');
@@ -488,7 +478,8 @@
             }
             quadrasSorteioGlobal[codigoAtual][bairroNormalizado] = ids;
             salvarDadosPersistidos(); 
-            
+            // Recalcula apenas o total de quarteirões sorteados
+            calcularTotaisConsolidados(true); 
         }
 
         /**
@@ -531,7 +522,6 @@
         }
 
         function calcularTotaisDeSorteio(registros, idsSorteadosPorBairro, bairrosComIntervalo) {
-            let totalImoveisInspecionar = 0;
             let totalQuarteiroesSorteados = 0;
             const bairrosParaProcessar = bairrosComIntervalo || Object.values(CODIGOS_BAIRROS).flat();
             bairrosParaProcessar.forEach(itemBairro => {
@@ -562,19 +552,34 @@
                     registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
                 );
                 totalQuarteiroesSorteados += quadrasSorteadas.length; 
-                quadrasSorteadas.forEach(registro => {
-                    const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
-                    const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
-                    const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
-                    const imoveisLiquidos = totalReg - apReg - peReg;
-                    const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
-                    totalImoveisInspecionar += amostra20Pct;
-                });
             });
-            return { totalImoveisInspecionar, totalQuarteiroesSorteados };
+            return { totalQuarteiroesSorteados };
         }
 
-      
+        function calcularTotaisConsolidados(recalcularTudo = false) {
+            if (dadosEstatisticos.length === 0) {
+                 quarteiroesSorteados.textContent = '--';
+                 return;
+            }
+            let totalQuarteiroesConsolidado = 0;
+            for (const cod of Object.keys(quadrasSorteioGlobal)) {
+                const idsSorteados = quadrasSorteioGlobal[cod];
+                if (!idsSorteados || Object.keys(idsSorteados).length === 0) continue;
+                const bairrosMapeados = CODIGOS_BAIRROS[cod];
+                if (!bairrosMapeados) continue;
+                const bairrosParaFiltrarNormalizados = bairrosMapeados.map(item => normalizarString(item.bairro));
+                const registrosDoCodigo = dadosEstatisticos.filter(item => {
+                    const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
+                    return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
+                });
+                const resultados = calcularTotaisDeSorteio(registrosDoCodigo, idsSorteados, bairrosMapeados);
+                totalQuarteiroesConsolidado += resultados.totalQuarteiroesSorteados;
+            }
+            quarteiroesSorteados.textContent = formatarValor(totalQuarteiroesConsolidado);
+            if (recalcularTudo && codigoAtual) {
+                calcularResultadosDoCodigoAtual();
+            }
+        }
 
         function compararQuadras(quadraItem, inicio, fim) {
             const parseQuadra = (q_str) => {
@@ -1065,6 +1070,7 @@
     </script>
 </body>
 </html>
+
 
 
 
