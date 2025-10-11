@@ -1028,7 +1028,7 @@
             // Preenche os TOTAIS GERAIS FIXOS com base nos intervalos oficiais
             imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
             quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
-            calcularTotaisConsolidados();
+           
             const codigoSalvo = localStorage.getItem('codigoSelecionado');
             if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
                  selecaoCodigo.value = codigoSalvo;
@@ -1047,6 +1047,7 @@
     </script>
 </body>
 </html>
+
 
 
 
