@@ -595,10 +595,37 @@
         /**
          * FUNÇÃO CRÍTICA: Calcula os totais de inspeção e sorteio para TODOS os códigos (Mantida)
          */
-        function calcularTotaisConsolidados(recalcularTudo = false) {
-            // NÃO FAZ NADA! Esta função é mantida apenas para compatibilidade.
-            // Os totais agora são calculados localmente, dentro de calcularResultadosDoCodigoAtual.
-        }
+       /**
+ * FUNÇÃO CRÍTICA: Calcula os totais de inspeção e sorteio para TODOS os códigos (Mantida)
+ */
+function calcularTotaisConsolidados(recalcularTudo = false) {
+    if (dadosEstatisticos.length === 0) {
+         imoveisInspecionar.textContent = '--';
+         quarteiroesSorteados.textContent = '--';
+         return;
+    }
+    let totalImoveisConsolidado = 0;
+    let totalQuarteiroesConsolidado = 0;
+    for (const cod of Object.keys(quadrasSorteioGlobal)) {
+        const idsSorteados = quadrasSorteioGlobal[cod];
+        if (!idsSorteados || Object.keys(idsSorteados).length === 0) continue;
+        const bairrosMapeados = CODIGOS_BAIRROS[cod];
+        if (!bairrosMapeados) continue;
+        const bairrosParaFiltrarNormalizados = bairrosMapeados.map(item => normalizarString(item.bairro));
+        const registrosDoCodigo = dadosEstatisticos.filter(item => {
+            const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
+            return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
+        });
+        const resultados = calcularTotaisDeSorteio(registrosDoCodigo, idsSorteados, bairrosMapeados);
+        totalImoveisConsolidado += resultados.totalImoveisInspecionar;
+        totalQuarteiroesConsolidado += resultados.totalQuarteiroesSorteados;
+    }
+    imoveisInspecionar.textContent = formatarValor(totalImoveisConsolidado);
+    quarteiroesSorteados.textContent = formatarValor(totalQuarteiroesConsolidado);
+    if (recalcularTudo && codigoAtual) {
+        calcularResultadosDoCodigoAtual();
+    }
+}
         /**
          * FUNÇÃO AUXILIAR: Compara quadras (Mantida)
          */
@@ -1078,9 +1105,9 @@
                                   ${html}`;
             container.style.display = 'block';
         }
-   /**
+ /**
  * Calcula e exibe um resumo dinâmico baseado APENAS nos valores atuais dos inputs.
- * Não usa dados do JSON ou do localStorage, apenas o que está visível na tela.
+ * Usa a lógica já existente do sistema para garantir precisão.
  */
 function calcularResumoDinamico() {
     const painel = document.getElementById('painelResumoDinamico');
@@ -1089,12 +1116,13 @@ function calcularResumoDinamico() {
     const resumoImoveisInspecionar = document.getElementById('resumoImoveisInspecionar');
     const resumoQuarteiroesSorteados = document.getElementById('resumoQuarteiroesSorteados');
 
-    // Se não houver código selecionado, esconde o painel
+    // Se não houver código selecionado ou dados carregados, esconde o painel
     if (!codigoAtual || bairrosAtuais.length === 0) {
         painel.style.display = 'none';
         return;
     }
 
+    // --- INICIA OS TOTAIS DO ZERO ---
     let totalQuadrasUteis = 0;
     let totalImoveisLiquidos = 0;
     let totalImoveisInspecionar = 0;
@@ -1105,7 +1133,7 @@ function calcularResumoDinamico() {
         const nomeBairroClean = itemBairro.bairro;
         const idPrefix = normalizarString(nomeBairroClean).replace(/\s/g, '_');
         
-        // Lê os valores atuais dos inputs de intervalo
+        // 1. LÊ OS VALORES DOS INPUTS DE INTERVALO
         const inputInicio = document.getElementById(`${idPrefix}_inicio`);
         const inputFim = document.getElementById(`${idPrefix}_fim`);
         const inicio = inputInicio ? inputInicio.value : itemBairro.inicio;
@@ -1113,37 +1141,73 @@ function calcularResumoDinamico() {
 
         if (!inicio || !fim) return;
 
-        // Simula o cálculo de quadras úteis no intervalo
-        // Como não temos acesso direto ao JSON aqui, usamos uma estimativa baseada na lógica existente.
-        // Na prática, este valor viria da função `calcularResultadosDoCodigoAtual`.
-        // Para simplificar, vamos reutilizar os valores já calculados por ela.
-        // (Este é um atalho para não reescrever toda a lógica de parsing do JSON)
+        // 2. LÊ OS IDs SORTEADOS
+        const nomeBairroNormalizado = normalizarString(nomeBairroClean);
+        const idsInput = quadrasSorteioGlobal[codigoAtual] ? quadrasSorteioGlobal[codigoAtual][nomeBairroNormalizado] || '' : '';
+        let idsSorteados = new Set();
+        if (idsInput) {
+            const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
+            idsArray.forEach(idStr => {
+                const idNum = parseInt(idStr);
+                if (!isNaN(idNum) && idNum > 0) {
+                    idsSorteados.add(idNum);
+                }
+            });
+        }
+
+        // 3. FILTRA OS DADOS DO JSON PARA O INTERVALO DO BAIRRO
+        const bairrosParaFiltrarNormalizados = [nomeBairroNormalizado];
+        const todosRegistrosDoCodigo = dadosEstatisticos.filter(item => {
+            const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
+            return bairrosParaFiltrarNormalizados.includes(nomeBairroItemNormalizado);
+        });
+
+        const quadrasNoIntervalo = todosRegistrosDoCodigo.filter(registro => {
+            const nomeItemNormalizado = normalizarString(registro['BAIRRO']);
+            const quadra = registro[CHAVE_QUADRA];
+            return nomeItemNormalizado === nomeBairroNormalizado &&
+                   compararQuadras(quadra, inicio, fim);
+        });
+
+        // 4. APLICA A LÓGICA DE ID SEQUENCIAL (com a regra de TOTAL=1)
+        const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+        const quadrasUteisBairro = quadrasComIds.filter(q => q.ID_SEQUENCIAL > 0);
+        const quadrasSorteadas = quadrasComIds.filter(registro => 
+            registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
+        );
+
+        // 5. ACUMULA OS TOTAIS
+        totalQuadrasUteis += quadrasUteisBairro.length;
+        totalQuarteiroesSorteados += quadrasSorteadas.length;
+
+        // Calcula imóveis líquidos e à inspecionar
+        let imoveisLiquidosBairro = 0;
+        let imoveisInspecionarBairro = 0;
+        quadrasUteisBairro.forEach(registro => {
+            const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+            const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+            const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+            const imoveisLiquidos = totalReg - apReg - peReg;
+            imoveisLiquidosBairro += imoveisLiquidos;
+        });
+        quadrasSorteadas.forEach(registro => {
+            const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+            const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+            const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+            const imoveisLiquidos = totalReg - apReg - peReg;
+            const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
+            imoveisInspecionarBairro += amostra20Pct;
+        });
+
+        totalImoveisLiquidos += imoveisLiquidosBairro;
+        totalImoveisInspecionar += imoveisInspecionarBairro;
     });
-
-    // A maneira mais simples e segura é extrair os valores diretamente da seção de resultado já existente.
-    const resultadoContagem = document.getElementById('resultadoContagem');
-    const totalQuadrasElement = resultadoContagem.querySelector('p strong[style*="font-size: 1.2em"]');
-    const totalImoveisLiquidosElement = resultadoContagem.querySelector('.resultado-liquido strong[style*="font-size: 1.5em"]');
-
-    if (totalQuadrasElement) {
-        const valorQuadras = totalQuadrasElement.textContent.replace(/\./g, '');
-        totalQuadrasUteis = parseInt(valorQuadras) || 0;
-    }
-
-    if (totalImoveisLiquidosElement) {
-        const valorImoveis = totalImoveisLiquidosElement.textContent.replace(/\./g, '');
-        totalImoveisLiquidos = parseInt(valorImoveis) || 0;
-    }
-
-    // Para os valores de "Imóveis à Inspecionar" e "Quarteirões Sorteados", usamos os globais,
-    // mas podemos calcular localmente se necessário.
-    // Por simplicidade, vamos manter a chamada para a função existente.
-    // Mas o foco é mostrar que o painel está funcionando.
 
     // Atualiza os campos do painel
     resumoQuadrasUteis.textContent = formatarValor(totalQuadrasUteis);
     resumoImoveisLiquidos.textContent = formatarValor(totalImoveisLiquidos);
-    // Os outros dois campos podem ser preenchidos com lógica similar ou deixados para uma iteração futura.
+    resumoImoveisInspecionar.textContent = formatarValor(totalImoveisInspecionar);
+    resumoQuarteiroesSorteados.textContent = formatarValor(totalQuarteiroesSorteados);
 
     // Mostra o painel
     painel.style.display = 'block';
@@ -1151,6 +1215,7 @@ function calcularResumoDinamico() {
         </script>
 </body>
 </html>
+
 
 
 
