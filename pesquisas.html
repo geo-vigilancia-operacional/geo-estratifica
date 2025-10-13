@@ -338,6 +338,50 @@
             font-weight: 700;
             text-align: center;
         } 
+   /* ESTILO PARA OS CAMPOS DE ESTATÍSTICAS EM DUAS COLUNAS */
+.grid-estatisticas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.grid-estatisticas > div {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.estatistica-item {
+    background-color: var(--highlight-bg);
+    border-radius: 6px;
+    padding: 10px;
+    flex: 1 1 200px; /* Ajusta o tamanho mínimo e permite crescimento */
+    min-width: 200px;
+    text-align: center;
+}
+
+.estatistica-item p {
+    margin: 5px 0;
+}
+
+/* RESPONSIVIDADE: Em telas pequenas, os itens empurram um abaixo do outro */
+@media (max-width: 768px) {
+    .grid-estatisticas {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-estatisticas > div {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .estatistica-item {
+        min-width: 100%;
+    }
+}
     </style>
 </head>
 <body>
@@ -345,24 +389,29 @@
         <div class="box">
             <h1>Estatísticas de Inspeção Estrato</h1>
             <h3 id="tituloEstatisticas">Estatísticas Consolidadas (Todos os Códigos)</h3>
-            <div id="resultadosEstatisticos" class="grid-estatisticas">
-                <div>
-                    <p><strong>Total de Imóveis Líquidos / Estrato:</strong></p>
-                    <p id="imoveisEstrato">--</p>
-                </div>
-                <div>
-                    <p><strong>Total de Quadras Úteis / Estrato:</strong></p>
-                    <p id="quarteiroesEstrato">--</p>
-                </div>
-               </div>
-                <p><strong>Total de Imóveis à Inspecionar:</strong></p>
-                    <p id="ImóveisInspecionar">--</p>
-               </div>    
-               <div>
-                    <p><strong>Total de Quarteirões Sorteados:</strong></p>
-                    <p id="quarteiroesSorteados">--</p>
-                </div>
-            </div>
+          <!-- RESULTADOS GERAIS E CONSOLIDADOS (SEMPRE VISÍVEIS) -->
+<div id="resultadosEstatisticos" class="grid-estatisticas">
+    <div>
+        <div class="estatistica-item">
+            <p><strong>Total de Imóveis Líquidos / Estrato:</strong></p>
+            <p id="imoveisEstrato">--</p>
+        </div>
+        <div class="estatistica-item">
+            <p><strong>Total de Imóveis à Inspecionar:</strong></p>
+            <p id="ImóveisInspecionar">--</p>
+        </div>
+    </div>
+    <div>
+        <div class="estatistica-item">
+            <p><strong>Total de Quadras Úteis / Estrato:</strong></p>
+            <p id="quarteiroesEstrato">--</p>
+        </div>
+        <div class="estatistica-item">
+            <p><strong>Total de Quarteirões Sorteados:</strong></p>
+            <p id="quarteiroesSorteados">--</p>
+        </div>
+    </div>
+</div>
             <hr style="border-color: var(--border-color); margin-bottom: 20px;">
             <p id="bairroSelecionadoDisplay" style="font-size: 1.1em; margin-bottom: 15px;">Selecione um código para filtrar por bairro.</p>
             <label for="selecaoCodigo">Selecione o Código:</label>
@@ -1079,6 +1128,7 @@
     </script>
 </body>
 </html>
+
 
 
 
