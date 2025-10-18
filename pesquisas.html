@@ -410,24 +410,33 @@
         </div>
     </div>
 </div>
-            <hr style="border-color: var(--border-color); margin-bottom: 20px;">
-            <p id="bairroSelecionadoDisplay" style="font-size: 1.1em; margin-bottom: 15px;">Selecione um código para filtrar por bairro.</p>
-            <label for="selecaoCodigo">Selecione o Código:</label>
-            <select id="selecaoCodigo" class="select-personalizado"></select>
-            <button id="btnDesbloquear" class="btn-desbloquear" style="display: none;" onclick="mostrarModalSenha()">
-                Clique para Desbloquear a Edição dos IDs
-            </button>
-        </div>
-        <div id="quadrasContainer" class="box" style="display: none;"></div>
-        <div id="resultadoContagem" class="box" style="display: none;"></div>
-        <div id="detalhamentoQuadras" class="box" style="display: none;">
-            <div id="mapaQuadrasCompleto" class="box" style="display: none;">
-                <h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
-                <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
-            </div>
-            <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
-        </div>
+       <hr style="border-color: var(--border-color); margin-bottom: 20px;">
+<p id="bairroSelecionadoDisplay" style="font-size: 1.1em; margin-bottom: 15px;">
+    Selecione um código para filtrar por bairro.
+</p>
+
+<label for="selecaoCodigo">Selecione o Código:</label>
+<select id="selecaoCodigo" class="select-personalizado"></select>
+
+<button id="btnDesbloquear" class="btn-desbloquear" style="display: none;" onclick="mostrarModalSenha()">
+    Clique para Desbloquear a Edição dos IDs
+</button>
+
+</div> <!-- Certifique-se de que essa div de fechamento corresponde à anterior -->
+
+<div id="quadrasContainer" class="box" style="display: none;"></div>
+<div id="resultadoContagem" class="box" style="display: none;"></div>
+
+<div id="detalhamentoQuadras" class="box" style="display: none;">
+    <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
+
+    <!-- ✅ Apenas um mapaQuadrasCompleto -->
+    <div id="mapaQuadrasCompleto" class="box" style="display: none;">
+        <h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
+        <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
     </div>
+</div>
+
     <div id="modalSenha" class="modal-overlay">
         <div class="modal-content">
             <h3>Desbloquear Edição de IDs</h3>
@@ -1262,6 +1271,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
 
 
 
