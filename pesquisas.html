@@ -1215,6 +1215,7 @@ function gerarMapaQuadrasCompleto() {
 // -----------------------------------------------------------------
 // 🚀 ÚNICO bloco de inicialização ao carregar a página
 // -----------------------------------------------------------------
+<script>
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // 1️⃣ Carrega dados persistidos e estatísticos
@@ -1239,16 +1240,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
             selecaoCodigo.value = codigoSalvo;
             exibirResultsPorCodigo(codigoSalvo);
+
+            // ✅ Gera o mapa somente se o elemento existe
+            const mapaContainer = document.getElementById('mapaQuadrasCompleto');
+            if (mapaContainer) {
+                gerarMapaQuadrasCompleto();
+            } else {
+                console.warn("Elemento 'mapaQuadrasCompleto' não encontrado. Mapa não gerado.");
+            }
         } else {
             exibirResultsPorCodigo('');
         }
 
-        // 5️⃣ Garante salvamento do código ao trocar seleção (evita duplicação de listener)
+        // 5️⃣ Garante salvamento do código ao trocar seleção
         selecaoCodigo.addEventListener('change', (event) => {
             const valor = event.target.value;
             if (valor) {
                 localStorage.setItem('codigoSelecionado', valor);
-                exibirResultsPorCodigo(valor); // Atualiza visual ao trocar
+                exibirResultsPorCodigo(valor);
+
+                // ✅ Gera o mapa novamente após troca
+                const mapaContainer = document.getElementById('mapaQuadrasCompleto');
+                if (mapaContainer) {
+                    gerarMapaQuadrasCompleto();
+                }
             } else {
                 localStorage.removeItem('codigoSelecionado');
                 exibirResultsPorCodigo('');
@@ -1258,19 +1273,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 6️⃣ Calcula o total global após gerar os parágrafos dos bairros
         calcularTotalImoveisSeparado();
 
-        // 7️⃣ Gera o mapa de quadras completo com dados reais
-        gerarMapaQuadrasCompleto();
-
         console.log("✅ Inicialização concluída sem erros.");
     } catch (e) {
         console.error("❌ Erro ao inicializar:", e);
         bairroDisplay.textContent = 'Erro ao carregar os dados. Tente novamente mais tarde.';
     }
 });
-
 </script>
 </body>
 </html>
+
+
 
 
 
