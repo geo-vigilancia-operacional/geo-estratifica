@@ -1140,11 +1140,11 @@ calcularTotalImoveisInspecionarGlobal();
                     </div>
                 `;
             });
-            container.innerHTML = `<h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
-                                  <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
-                                  ${html}`;
-            container.style.display = 'block';
-        }
+         container.innerHTML = `<h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
+                            <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
+                            ${html}`;
+    container.style.display = 'block';
+}
 
         selecaoCodigo.addEventListener('change', (event) => {
             exibirResultsPorCodigo(event.target.value);
@@ -1217,6 +1217,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
