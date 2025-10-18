@@ -1190,7 +1190,8 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Lê os valores diretamente do DOM e salva no localStorage.
  */
 function calcularTotalImoveisInspecionarGlobal() {
-    // 💥 CORREÇÃO: Usando o ID REAL do HTML ('ImóveisInspecionar')
+    // Usando o ID REAL do HTML ('totalImoveisInspecionarGlobal' ou 'ImóveisInspecionar', dependendo do seu HTML)
+    // Vamos manter 'ImóveisInspecionar' para consistência com nossas correções anteriores.
     const totalElement = document.getElementById('ImóveisInspecionar');
     let somaTotal = 0;
 
@@ -1211,14 +1212,14 @@ function calcularTotalImoveisInspecionarGlobal() {
     if (totalElement) { 
         totalElement.textContent = formatarValor(somaTotal);
 
-        // Salva no localStorage (a chave 'totalImoveisInspecionarGlobal' está correta)
+        // Salva no localStorage
         try {
             localStorage.setItem('totalImoveisInspecionarGlobal', somaTotal.toString());
         } catch (e) {
             console.error('Erro ao salvar o total global no localStorage:', e);
         }
     }
-}
+} // FIM CORRETO DA FUNÇÃO
 
     // Atualiza o elemento na tela
     totalElement.textContent = formatarValor(somaTotal);
@@ -1233,6 +1234,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
