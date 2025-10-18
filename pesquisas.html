@@ -855,7 +855,8 @@ calcularTotalImoveisInspecionarGlobal();
     } else {
         detalhamentoQuadras.style.display = 'none';
     }
-
+setTimeout(calcularTotalImoveisInspecionarGlobal, 0); 
+        }
     // 🔥 CORREÇÃO DE FLUXO: Usa setTimeout para garantir que o DOM seja atualizado 
     // com todos os valores de 'Total de Imóveis à Inspecionar' antes de somá-los.
     setTimeout(calcularTotalImoveisInspecionarGlobal, 0); 
@@ -1066,6 +1067,10 @@ calcularTotalImoveisInspecionarGlobal();
 
         function gerarMapaQuadrasCompleto() {
             const container = document.getElementById('mapaQuadrasCompleto');
+            if (!container) {
+        console.error("Elemento 'mapaQuadrasCompleto' não encontrado. Abortando mapa.");
+        return;
+    }
             if (!codigoAtual || bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) {
                 container.style.display = 'none';
                 return;
@@ -1234,6 +1239,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
