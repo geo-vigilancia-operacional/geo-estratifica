@@ -427,14 +427,17 @@
 <div id="quadrasContainer" class="box" style="display: none;"></div>
 <div id="resultadoContagem" class="box" style="display: none;"></div>
 
-<div id="detalhamentoQuadras" class="box" style="display: none;">
-    <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
+<!-- ✅ Mapa fora do detalhamento -->
+<div id="mapaQuadrasCompleto" class="box" style="display: none;">
+  <h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
+  <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
+</div>
 
-    <!-- ✅ Apenas um mapaQuadrasCompleto -->
-    <div id="mapaQuadrasCompleto" class="box" style="display: none;">
-        <h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
-        <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
-    </div>
+<!-- Bloco que é sobrescrito -->
+<div id="detalhamentoQuadras" class="box" style="display: none;">
+  <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
+</div>
+
 </div>
 
     <div id="modalSenha" class="modal-overlay">
@@ -1272,6 +1275,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
 
 
 
