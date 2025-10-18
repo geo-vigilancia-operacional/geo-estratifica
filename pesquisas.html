@@ -1195,16 +1195,15 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Lê os valores diretamente do DOM e salva no localStorage.
  */
 function calcularTotalImoveisInspecionarGlobal() {
-    // Usando o ID REAL do HTML ('totalImoveisInspecionarGlobal' ou 'ImóveisInspecionar', dependendo do seu HTML)
-    // Vamos manter 'ImóveisInspecionar' para consistência com nossas correções anteriores.
+    // Pega o elemento onde o total global será exibido
     const totalElement = document.getElementById('ImóveisInspecionar');
     let somaTotal = 0;
 
-    // Seleciona todos os elementos que contêm o texto "Total de Imóveis à Inspecionar:"
+    // Busca todos os parágrafos com o texto "Total de Imóveis à Inspecionar:"
     const elementosDetalhe = document.querySelectorAll('.detalhe-bairro p');
     elementosDetalhe.forEach(element => {
         if (element.textContent.includes('Total de Imóveis à Inspecionar:')) {
-            // Extrai o número do texto (já está OK)
+            // Extrai o número (remove tudo que não for dígito)
             const numeroTexto = element.textContent.replace(/[^0-9]/g, '');
             const numero = parseInt(numeroTexto);
             if (!isNaN(numero)) {
@@ -1213,32 +1212,22 @@ function calcularTotalImoveisInspecionarGlobal() {
         }
     });
 
-    // Atualiza o elemento na tela SOMENTE se ele for encontrado
-    if (totalElement) { 
+    // Atualiza o campo no HTML
+    if (totalElement) {
         totalElement.textContent = formatarValor(somaTotal);
-
-        // Salva no localStorage
+        // Salva o total no localStorage
         try {
             localStorage.setItem('totalImoveisInspecionarGlobal', somaTotal.toString());
         } catch (e) {
             console.error('Erro ao salvar o total global no localStorage:', e);
         }
     }
-} // FIM CORRETO DA FUNÇÃO
+} // FIM DA FUNÇÃO
 
-    // Atualiza o elemento na tela
-    totalElement.textContent = formatarValor(somaTotal);
-
-    // Salva no localStorage para persistência
-    try {
-        localStorage.setItem('totalImoveisInspecionarGlobal', somaTotal.toString());
-    } catch (e) {
-        console.error('Erro ao salvar o total global no localStorage:', e);
-    }
-
-    </script>
+</script>
 </body>
 </html>
+
 
 
 
