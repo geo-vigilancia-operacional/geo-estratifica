@@ -429,7 +429,9 @@
 
 <div id="detalhamentoQuadras" class="box" style="display: none;">
     <h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>
-
+if (document.getElementById("mapaQuadrasCompleto")) {
+    gerarMapaQuadrasCompleto();
+}
     <!-- ✅ Apenas um mapaQuadrasCompleto -->
     <div id="mapaQuadrasCompleto" class="box" style="display: none;">
         <h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
@@ -1197,18 +1199,12 @@ function calcularTotalImoveisSeparado() {
         console.error('Erro ao salvar o total global no localStorage:', e);
     }
 }
-
-// ----------------------------------------------------------
-// 🗺️ Função para gerar o mapa (com verificação de segurança)
-// ----------------------------------------------------------
-
-        function gerarMapaQuadrasCompleto() {
+function gerarMapaQuadrasCompleto() {
     const mapaContainer = document.getElementById("mapaQuadrasCompleto");
     if (!mapaContainer) {
         console.warn("Elemento 'mapaQuadrasCompleto' não encontrado. Abortando mapa.");
         return;
     }
-
     mapaContainer.style.display = "block";
     mapaContainer.innerHTML = "<p style='text-align:center;padding:20px;'>[ Mapa carregado com sucesso! ]</p>";
 }
@@ -1278,6 +1274,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
 
 
 
