@@ -1152,7 +1152,7 @@ calcularTotalImoveisInspecionarGlobal();
         selecaoCodigo.addEventListener('change', (event) => {
             exibirResultsPorCodigo(event.target.value);
         });
-
+document.addEventListener('DOMContentLoaded', async () => {
        carregarDadosPersistidos();
     await carregarDados();
     popularSeletor();
@@ -1233,6 +1233,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
