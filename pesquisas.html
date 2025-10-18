@@ -844,7 +844,7 @@ calcularTotalImoveisInspecionarGlobal();
             resultadoContagem.style.display = 'block';
           // ... (código anterior)
 
-    if (detalhamentoHtml.length > 0) {
+ if (detalhamentoHtml.length > 0) {
         detalhamentoHtml += `<div class="resultado-total" style="border-top: 1px solid #ff4444;">
                             <p><strong>IMÓVEIS À INSPECIONAR (20% Amostra p/ Cód. ${codigoAtual}):</strong> 
                             <strong style="font-size: 1.5em; color: #ff4444; font-weight: 700;">${totalAmostraGeralCodigo.toLocaleString('pt-BR')}</strong></p>
@@ -856,8 +856,8 @@ calcularTotalImoveisInspecionarGlobal();
         detalhamentoQuadras.style.display = 'none';
     }
 
-    // 🔥 CORREÇÃO PRINCIPAL DE FLUXO: Usa setTimeout para garantir que o DOM seja atualizado
-    // ANTES de tentar ler e somar os valores globais.
+    // 🔥 CORREÇÃO DE FLUXO: Usa setTimeout para garantir que o DOM seja atualizado 
+    // com todos os valores de 'Total de Imóveis à Inspecionar' antes de somá-los.
     setTimeout(calcularTotalImoveisInspecionarGlobal, 0); 
 }
         function gerarSelecaoQuadras(bairrosComIntervalo) {
@@ -1153,22 +1153,21 @@ calcularTotalImoveisInspecionarGlobal();
             exibirResultsPorCodigo(event.target.value);
         });
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            carregarDadosPersistidos();
-            await carregarDados();
-            popularSeletor();
-            // Preenche os TOTAIS GERAIS FIXOS com base nos intervalos oficiais
-            imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
-            quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
-            calcularTotaisConsolidados();
-            // --- CARREGA O VALOR SALVO NO LOCALSTORAGE ---
-const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
-if (totalSalvo) {
-    const totalElement = document.getElementById('ImóveisInspecionar');
-    if (totalElement) { 
-    totalElement.textContent = formatarValor(parseInt(totalSalvo));
-
-          
+       carregarDadosPersistidos();
+    await carregarDados();
+    popularSeletor();
+    // Preenche os TOTAIS GERAIS FIXOS com base nos intervalos oficiais
+    imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
+    quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
+    calcularTotaisConsolidados();
+    
+    // --- CARREGA O VALOR SALVO NO LOCALSTORAGE ---
+    const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
+    if (totalSalvo) {
+        // CORREÇÃO (Confirmada): Usa o ID 'ImóveisInspecionar'
+        const totalElement = document.getElementById('ImóveisInspecionar');
+        if (totalElement) {
+            totalElement.textContent = formatarValor(parseInt(totalSalvo));
         }
     }
             const codigoSalvo = localStorage.getItem('codigoSelecionado');
@@ -1191,6 +1190,7 @@ if (totalSalvo) {
  * Lê os valores diretamente do DOM e salva no localStorage.
  */
 function calcularTotalImoveisInspecionarGlobal() {
+    // 💥 CORREÇÃO: Usando o ID REAL do HTML ('ImóveisInspecionar')
     const totalElement = document.getElementById('ImóveisInspecionar');
     let somaTotal = 0;
 
@@ -1198,7 +1198,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     const elementosDetalhe = document.querySelectorAll('.detalhe-bairro p');
     elementosDetalhe.forEach(element => {
         if (element.textContent.includes('Total de Imóveis à Inspecionar:')) {
-            // Extrai o número do texto
+            // Extrai o número do texto (já está OK)
             const numeroTexto = element.textContent.replace(/[^0-9]/g, '');
             const numero = parseInt(numeroTexto);
             if (!isNaN(numero)) {
@@ -1206,6 +1206,19 @@ function calcularTotalImoveisInspecionarGlobal() {
             }
         }
     });
+
+    // Atualiza o elemento na tela SOMENTE se ele for encontrado
+    if (totalElement) { 
+        totalElement.textContent = formatarValor(somaTotal);
+
+        // Salva no localStorage (a chave 'totalImoveisInspecionarGlobal' está correta)
+        try {
+            localStorage.setItem('totalImoveisInspecionarGlobal', somaTotal.toString());
+        } catch (e) {
+            console.error('Erro ao salvar o total global no localStorage:', e);
+        }
+    }
+}
 
     // Atualiza o elemento na tela
     totalElement.textContent = formatarValor(somaTotal);
@@ -1220,6 +1233,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
