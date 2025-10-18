@@ -1170,7 +1170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
     if (totalSalvo) {
         // CORREÇÃO (Confirmada): Usa o ID 'ImóveisInspecionar'
-        const totalElement = document.getElementById('ImóveisInspecionar');
+       const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
         if (totalElement) {
             totalElement.textContent = formatarValor(parseInt(totalSalvo));
         }
@@ -1239,6 +1239,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
