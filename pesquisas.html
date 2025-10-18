@@ -398,7 +398,7 @@
         </div>
         <div class="estatistica-item">
             <p><strong>Total de Imóveis à Inspecionar:</strong></p>
-           <p id="totalImoveisInspecionarGlobal">--</p>
+            <p id="ImóveisInspecionar">--</p>
         </div>
     </div>
     <div>
@@ -613,49 +613,7 @@
             });
             return { totalQuarteiroesSorteados };
         }
-function calcularTotaisDeSorteio(registrosDoCodigo, idsSorteadosGlobal, bairrosMapeados) {
-    let totalQuarteiroesSorteados = 0;
 
-    bairrosMapeados.forEach(itemBairro => {
-        const nomeBairroNormalizado = normalizarString(itemBairro.bairro);
-        const inicio = itemBairro.inicio;
-        const fim = itemBairro.fim;
-
-        // 1. Filtrar registros pelo intervalo de quadra (usando a função 'compararQuadras')
-        const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
-            const nomeItemNormalizado = normalizarString(registro['BAIRRO']);
-            const quadra = registro[CHAVE_QUADRA];
-            return nomeItemNormalizado === nomeBairroNormalizado &&
-                   compararQuadras(quadra, inicio, fim);
-        });
-
-        // 2. Gerar IDs sequenciais para determinar quadras úteis
-        const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
-
-        // 3. Obter os IDs de sorteio persistidos para este bairro/intervalo
-        const idsInput = idsSorteadosGlobal[nomeBairroNormalizado] || '';
-        let idsSorteadosSet = new Set();
-        
-        if (idsInput) {
-            const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
-            idsArray.forEach(idStr => {
-                const idNum = parseInt(idStr);
-                // Adiciona ao set apenas IDs úteis (ID_SEQUENCIAL > 0) que foram sorteados
-                if (!isNaN(idNum) && idNum > 0) {
-                    // Verifica se o ID sequencial existe no intervalo de quadras úteis
-                    const isIdValido = quadrasComIds.some(q => q.ID_SEQUENCIAL === idNum && q.ID_SEQUENCIAL > 0);
-                    if (isIdValido) {
-                        idsSorteadosSet.add(idNum);
-                    }
-                }
-            });
-        }
-        // Acumula o total de quadras sorteadas encontradas (tamanho do Set)
-        totalQuarteiroesSorteados += idsSorteadosSet.size;
-    });
-
-    return { totalQuarteiroesSorteados: totalQuarteiroesSorteados };
-}
         function calcularTotaisConsolidados(recalcularTudo = false) {
             if (dadosEstatisticos.length === 0) {
                  quarteiroesSorteados.textContent = '--';
@@ -702,7 +660,7 @@ function calcularTotaisDeSorteio(registrosDoCodigo, idsSorteadosGlobal, bairrosM
             let totalAmostraBairro = 0;
             let detalheHtml = '';
             if (quadrasUteisBairro.length === 0 || idsSorteados.size === 0) {
-             return { html: detalheHtml, totalAmostra: totalAmostraBairro };
+                return { html: '', totalAmostra: 0 };
             }
             const quadrasFiltradas = quadrasUteisBairro.filter(registro => 
                 registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
@@ -842,24 +800,18 @@ calcularTotalImoveisInspecionarGlobal();
                                        <p><strong>TOTAL GERAL DE IMÓVEIS LÍQUIDOS (Cód. ${codigoAtual}):</strong> <strong style="font-size: 1.5em;">${totalImoveisLiquidosCodigo.toLocaleString('pt-BR')}</strong></p>
                                        </div>`;
             resultadoContagem.style.display = 'block';
-          // ... (código anterior)
-
- if (detalhamentoHtml.length > 0) {
-        detalhamentoHtml += `<div class="resultado-total" style="border-top: 1px solid #ff4444;">
+            if (detalhamentoHtml.length > 0) {
+                detalhamentoHtml += `<div class="resultado-total" style="border-top: 1px solid #ff4444;">
                             <p><strong>IMÓVEIS À INSPECIONAR (20% Amostra p/ Cód. ${codigoAtual}):</strong> 
                             <strong style="font-size: 1.5em; color: #ff4444; font-weight: 700;">${totalAmostraGeralCodigo.toLocaleString('pt-BR')}</strong></p>
                         </div>`;
-        detalhamentoQuadras.innerHTML += detalhamentoHtml;
-        detalhamentoQuadras.style.display = 'block';
-        gerarMapaQuadrasCompleto();
-    } else {
-        detalhamentoQuadras.style.display = 'none';
-    }
-setTimeout(calcularTotalImoveisInspecionarGlobal, 0); 
+                detalhamentoQuadras.innerHTML += detalhamentoHtml;
+                detalhamentoQuadras.style.display = 'block';
+                gerarMapaQuadrasCompleto();
+            } else {
+                detalhamentoQuadras.style.display = 'none';
+            }
         }
-    // 🔥 CORREÇÃO DE FLUXO: Usa setTimeout para garantir que o DOM seja atualizado 
-    // com todos os valores de 'Total de Imóveis à Inspecionar' antes de somá-los.
-    setTimeout(calcularTotalImoveisInspecionarGlobal, 0); 
 
         function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = ''; 
@@ -1067,10 +1019,6 @@ setTimeout(calcularTotalImoveisInspecionarGlobal, 0);
 
         function gerarMapaQuadrasCompleto() {
             const container = document.getElementById('mapaQuadrasCompleto');
-            if (!container) {
-        console.error("Elemento 'mapaQuadrasCompleto' não encontrado. Abortando mapa.");
-        return;
-    }
             if (!codigoAtual || bairrosAtuais.length === 0 || dadosEstatisticos.length === 0) {
                 container.style.display = 'none';
                 return;
@@ -1148,33 +1096,30 @@ setTimeout(calcularTotalImoveisInspecionarGlobal, 0);
                     </div>
                 `;
             });
-         container.innerHTML = `<h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
-                            <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
-                            ${html}`;
-    container.style.display = 'block';
-}
+            container.innerHTML = `<h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
+                                  <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
+                                  ${html}`;
+            container.style.display = 'block';
+        }
 
         selecaoCodigo.addEventListener('change', (event) => {
             exibirResultsPorCodigo(event.target.value);
         });
-document.addEventListener('DOMContentLoaded', async () => {
-       carregarDadosPersistidos();
-    await carregarDados();
-    popularSeletor();
-    // Preenche os TOTAIS GERAIS FIXOS com base nos intervalos oficiais
-    imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
-    quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
-    calcularTotaisConsolidados();
-    
-    // --- CARREGA O VALOR SALVO NO LOCALSTORAGE ---
-    const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
-    if (totalSalvo) {
-        // CORREÇÃO (Confirmada): Usa o ID 'ImóveisInspecionar'
-       const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
-        if (totalElement) {
-            totalElement.textContent = formatarValor(parseInt(totalSalvo));
-        }
-    }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            carregarDadosPersistidos();
+            await carregarDados();
+            popularSeletor();
+            // Preenche os TOTAIS GERAIS FIXOS com base nos intervalos oficiais
+            imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
+            quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
+            calcularTotaisConsolidados();
+            // --- CARREGA O VALOR SALVO NO LOCALSTORAGE ---
+const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
+if (totalSalvo) {
+    const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
+    totalElement.textContent = formatarValor(parseInt(totalSalvo));
+}
             const codigoSalvo = localStorage.getItem('codigoSelecionado');
             if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
                  selecaoCodigo.value = codigoSalvo;
@@ -1194,30 +1139,15 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Calcula e exibe o total global de imóveis à inspecionar, somando todos os valores dos bairros.
  * Lê os valores diretamente do DOM e salva no localStorage.
  */
-
-<!-- ✅ Contêiner do mapa (fora do script, obrigatório para evitar erro) -->
-<div id="mapaQuadrasCompleto" style="width:100%; height:400px; display:none;">
-    </div>
-
-
-// ------------------------------
-// 🧮 Função para formatar números
-// ------------------------------
-function formatarValor(valor) {
-    return valor.toLocaleString('pt-BR');
-}
-
-// -------------------------------------------
-// 🧩 Função para calcular o total global
-// -------------------------------------------
 function calcularTotalImoveisInspecionarGlobal() {
-    const totalElement = document.getElementById('ImóveisInspecionar');
+    const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
     let somaTotal = 0;
 
-    // Busca todos os parágrafos dentro de .detalhe-bairro que contenham o texto desejado
+    // Seleciona todos os elementos que contêm o texto "Total de Imóveis à Inspecionar:"
     const elementosDetalhe = document.querySelectorAll('.detalhe-bairro p');
     elementosDetalhe.forEach(element => {
         if (element.textContent.includes('Total de Imóveis à Inspecionar:')) {
+            // Extrai o número do texto
             const numeroTexto = element.textContent.replace(/[^0-9]/g, '');
             const numero = parseInt(numeroTexto);
             if (!isNaN(numero)) {
@@ -1226,86 +1156,20 @@ function calcularTotalImoveisInspecionarGlobal() {
         }
     });
 
-    // Atualiza o valor na tela e salva no localStorage
-    if (totalElement) {
-        totalElement.textContent = formatarValor(somaTotal);
-        try {
-            localStorage.setItem('totalImoveisInspecionarGlobal', somaTotal.toString());
-        } catch (e) {
-            console.error('Erro ao salvar o total global no localStorage:', e);
-        }
-    }
-}
+    // Atualiza o elemento na tela
+    totalElement.textContent = formatarValor(somaTotal);
 
-// ----------------------------------------------------------
-// 🗺️ Função para gerar o mapa (com verificação de segurança)
-// ----------------------------------------------------------
-function gerarMapaQuadrasCompleto() {
-    const mapaContainer = document.getElementById("mapaQuadrasCompleto");
-    if (!mapaContainer) {
-        console.warn("Elemento 'mapaQuadrasCompleto' não encontrado. Abortando mapa.");
-        return;
-    }
-
-    // Exemplo de inicialização simples — personalize depois se quiser exibir dados reais
-    mapaContainer.style.display = "block";
-    mapaContainer.innerHTML = "<p style='text-align:center;padding:20px;'>[ Mapa carregado com sucesso! ]</p>";
-}
-
-// -----------------------------------------------------------------
-// 🚀 Bloco único de inicialização quando a página termina de carregar
-// -----------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', async () => {
+    // Salva no localStorage para persistência
     try {
-        // 🧩 Etapa 1 – Carrega dados e popula seletores
-        carregarDadosPersistidos();
-        await carregarDados();
-        popularSeletor();
-
-        // 🧩 Etapa 2 – Atualiza totais fixos
-        imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
-        quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
-        calcularTotaisConsolidados();
-
-        // 🧩 Etapa 3 – Restaura o total salvo no localStorage
-        const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
-        if (totalSalvo) {
-            const totalElement = document.getElementById('ImóveisInspecionar');
-            if (totalElement) {
-                totalElement.textContent = formatarValor(parseInt(totalSalvo));
-            }
-        }
-
-        // 🧩 Etapa 4 – Aplica o código salvo (bairro)
-        const codigoSalvo = localStorage.getItem('codigoSelecionado');
-        if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
-            selecaoCodigo.value = codigoSalvo;
-            exibirResultsPorCodigo(codigoSalvo);
-        } else {
-            exibirResultsPorCodigo('');
-        }
-
-        // 🧩 Etapa 5 – Atualiza localStorage ao mudar o código
-        selecaoCodigo.addEventListener('change', (event) => {
-            if (event.target.value) {
-                localStorage.setItem('codigoSelecionado', event.target.value);
-            } else {
-                localStorage.removeItem('codigoSelecionado');
-            }
-        });
-
-        // 🧩 Etapa 6 – Calcula total e gera o mapa
-        calcularTotalImoveisInspecionarGlobal();
-        gerarMapaQuadrasCompleto();
-
-        console.log("✅ Inicialização concluída sem erros.");
+        localStorage.setItem('totalImoveisInspecionarGlobal', somaTotal.toString());
     } catch (e) {
-        console.error("Erro ao inicializar:", e);
+        console.error('Erro ao salvar o total global no localStorage:', e);
     }
-});
-</script>
+}
+    </script>
 </body>
 </html>
+
 
 
 
