@@ -399,10 +399,7 @@
       <div class="resumo-geral">
     <p>Total de Imóveis à Inspecionar: <span id="totalImoveisInspecionarGlobal">0</span></p>
 </div>
-<div>
-  Total de Imóveis à Inspecionar: <span id="totalImoveisInspecionarGlobal">0</span>
-</div>
-    <div>
+ <div>
         <div class="estatistica-item">
             <p><strong>Total de Quadras Úteis / Estrato:</strong></p>
             <p id="quarteiroesEstrato">--</p>
@@ -697,10 +694,7 @@
                 </div>
             `;
             return { html: detalheHtml, totalAmostra: totalAmostraBairro };
-        // ... código anterior ...
-return { html: detalheHtml, totalAmostra: totalAmostraBairro };
-// CHAMA A FUNÇÃO DE CÁLCULO GLOBAL APÓS GERAR O DETALHAMENTO
-calcularTotalImoveisInspecionarGlobal();
+       calcularTotalImoveisInspecionarGlobal();
         }
 
         function calcularResultadosDoCodigoAtual() {
@@ -945,79 +939,109 @@ calcularTotalImoveisSeparado();
             }
         }
 
-        function popularSeletor() {
-            const defaultOption = document.createElement('option');
-            defaultOption.textContent = 'Selecione um código';
-            defaultOption.value = '';
-            selecaoCodigo.appendChild(defaultOption);
-            for (let i = 85; i <= 113; i++) {
-                const codigo = String(i);
-                const nomesBairros = CODIGOS_BAIRROS[codigo] ? CODIGOS_BAIRROS[codigo].map(item => item.bairro) : [];
-                const nomeDisplay = nomesBairros.length > 0 ? nomesBairros.join(', ') : 'Bairro(s) Desconhecido(s)';
-                const option = document.createElement('option');
-                option.textContent = `${codigo} - ${nomeDisplay}`; 
-                option.value = codigo;
-                selecaoCodigo.appendChild(option);
-            }
-        }
+      function popularSeletor() {
+    // Limpa o seletor antes de popular
+    selecaoCodigo.innerHTML = '';
 
-        function exibirResultsPorCodigo(codigoSelecionado) {
-            codigoAtual = codigoSelecionado;
-            bairrosAtuais = []; 
-            bairroDisplay.textContent = 'Selecione um código para filtrar por bairro.';
-            quadrasContainer.innerHTML = '';
-            quadrasContainer.style.display = 'none';
-            resultadoContagem.style.display = 'none';
-            detalhamentoQuadras.style.display = 'none';
-            btnDesbloquear.style.display = 'none';
-            if (!codigoSelecionado) {
-                resultadoContagem.innerHTML = '';
-                detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>';
-                selecaoCodigo.value = ''; 
-                return;
-            }
-            const bairrosComIntervalo = CODIGOS_BAIRROS[codigoSelecionado];
-            const nomesBairrosMapeados = bairrosComIntervalo ? bairrosComIntervalo.map(item => item.bairro) : [];
-            const nomeDisplayBairros = nomesBairrosMapeados ? nomesBairrosMapeados.join(', ') : '';
-            bairrosAtuais = bairrosComIntervalo; 
-            if (!bairrosComIntervalo || bairrosComIntervalo.length === 0) {
-                bairroDisplay.textContent = `Código ${codigoSelecionado} não mapeado para nenhum bairro ou intervalo.`;
-                return;
-            }
-            bairroDisplay.innerHTML = `**Bairro(s) Selecionado(s) para Cód. ${codigoSelecionado}:** ${nomeDisplayBairros}`;
-            selecaoCodigo.value = codigoSelecionado;
-            gerarSelecaoQuadras(bairrosComIntervalo);
-        }
+    // Cria a opção padrão
+    const defaultOption = document.createElement('option');
+    defaultOption.textContent = 'Selecione um código';
+    defaultOption.value = '';
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    selecaoCodigo.appendChild(defaultOption);
 
-        function mostrarModalSenha() {
-            modalSenha.style.display = 'flex';
-            inputSenha.value = '';
+    // Ordena os códigos numericamente
+    const codigosOrdenados = Object.keys(CODIGOS_BAIRROS).sort((a, b) => parseInt(a) - parseInt(b));
+
+    codigosOrdenados.forEach(codigo => {
+        const bairros = CODIGOS_BAIRROS[codigo];
+        const nomesBairros = bairros.map(item => item.bairro);
+        const nomeDisplay = nomesBairros.length > 0 ? nomesBairros.join(', ') : 'Bairro(s) Desconhecido(s)';
+
+        const option = document.createElement('option');
+        option.textContent = `${codigo} - ${nomeDisplay}`;
+        option.value = codigo;
+        option.title = `Bairros: ${nomeDisplay}`; // Acessibilidade extra
+        selecaoCodigo.appendChild(option);
+    });
+}
+
+
+       function exibirResultsPorCodigo(codigoSelecionado) {
+    // Atualiza o código atual e limpa variáveis relacionadas
+    codigoAtual = codigoSelecionado;
+    bairrosAtuais = [];
+
+    // Reset visual da interface
+    bairroDisplay.textContent = 'Selecione um código para filtrar por bairro.';
+    quadrasContainer.innerHTML = '';
+    quadrasContainer.style.display = 'none';
+    resultadoContagem.style.display = 'none';
+    detalhamentoQuadras.style.display = 'none';
+    btnDesbloquear.style.display = 'none';
+
+    // Se nenhum código foi selecionado, limpa tudo e retorna
+    if (!codigoSelecionado) {
+        resultadoContagem.innerHTML = '';
+        detalhamentoQuadras.innerHTML = '<h4>Detalhamento de Imóveis à Inspecionar (20% da Amostra) para o Código Selecionado:</h4>';
+        selecaoCodigo.value = '';
+        return;
+    }
+
+    // Obtém os bairros mapeados para o código
+    const bairrosComIntervalo = CODIGOS_BAIRROS[codigoSelecionado];
+    if (!bairrosComIntervalo || bairrosComIntervalo.length === 0) {
+        bairroDisplay.textContent = `Código ${codigoSelecionado} não mapeado para nenhum bairro ou intervalo.`;
+        return;
+    }
+
+    // Atualiza variáveis e exibe os bairros
+    bairrosAtuais = bairrosComIntervalo;
+    const nomesBairrosMapeados = bairrosComIntervalo.map(item => item.bairro);
+    const nomeDisplayBairros = nomesBairrosMapeados.join(', ');
+    bairroDisplay.innerHTML = `<strong>Bairro(s) Selecionado(s) para Cód. ${codigoSelecionado}:</strong> ${nomeDisplayBairros}`;
+    selecaoCodigo.value = codigoSelecionado;
+
+    // Gera os inputs de quadras e IDs sorteados
+    gerarSelecaoQuadras(bairrosComIntervalo);
+}
+
+    function mostrarModalSenha() {
+    modalSenha.style.display = 'flex';
+    inputSenha.value = '';
+    erroSenha.textContent = '';
+    inputSenha.focus();
+}
+
+function esconderModalSenha() {
+    modalSenha.style.display = 'none';
+}
+
+function verificarEnter(event) {
+    if (event.key === "Enter") {
+        verificarSenha();
+    }
+}
+
+function verificarSenha() {
+    const senhaDigitada = inputSenha.value.trim();
+    if (senhaDigitada === SENHA_SECRETA) {
+        isInputUnlocked = true;
+        esconderModalSenha();
+        gerarSelecaoQuadras(bairrosAtuais);
+    } else {
+        erroSenha.textContent = 'Senha incorreta. Tente novamente.';
+        inputSenha.value = '';
+        inputSenha.focus();
+
+        // Limpa a mensagem após 3 segundos
+        setTimeout(() => {
             erroSenha.textContent = '';
-            inputSenha.focus();
-        }
-        function esconderModalSenha() {
-            modalSenha.style.display = 'none';
-        }
-        function verificarEnter(event) {
-            if (event.key === "Enter") {
-                verificarSenha();
-            }
-        }
-        function verificarSenha() {
-            const senhaDigitada = inputSenha.value;
-            if (senhaDigitada === SENHA_SECRETA) {
-                isInputUnlocked = true;
-                esconderModalSenha();
-                gerarSelecaoQuadras(bairrosAtuais); 
-            } else {
-                erroSenha.textContent = 'Senha incorreta. Tente novamente.';
-                inputSenha.value = '';
-                inputSenha.focus();
-                setTimeout(() => {
-                    erroSenha.textContent = '';
-                }, 3000);
-            }
-        }
+        }, 3000);
+    }
+}
+
 
         function gerarMapaQuadrasCompleto() {
             const container = document.getElementById('mapaQuadrasCompleto');
@@ -1139,16 +1163,6 @@ if (totalSalvo) {
             });
         });
 
-
-
-
-// ------------------------------
-// 🧮 Função para formatar números
-// ------------------------------
-function formatarValor(valor) {
-    return valor.toLocaleString('pt-BR');
-}
-
 // -------------------------------------------
 // 🧩 Função separada para calcular o total global
 // -------------------------------------------
@@ -1194,7 +1208,7 @@ function gerarMapaQuadrasCompleto() {
 // -----------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // 1️⃣ Carrega dados salvos e popula seletores
+        // 1️⃣ Carrega dados persistidos e estatísticos
         carregarDadosPersistidos();
         await carregarDados();
         popularSeletor();
@@ -1206,11 +1220,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 3️⃣ Restaura total salvo no localStorage
         const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
-        if (totalSalvo) {
-            const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
-            if (totalElement) {
-                totalElement.textContent = formatarValor(parseInt(totalSalvo, 10));
-            }
+        const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
+        if (totalSalvo && totalElement) {
+            totalElement.textContent = formatarValor(parseInt(totalSalvo, 10));
         }
 
         // 4️⃣ Aplica o código de bairro salvo
@@ -1222,29 +1234,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             exibirResultsPorCodigo('');
         }
 
-        // 5️⃣ Garante salvamento do código ao trocar seleção
+        // 5️⃣ Garante salvamento do código ao trocar seleção (evita duplicação de listener)
         selecaoCodigo.addEventListener('change', (event) => {
-            if (event.target.value) {
-                localStorage.setItem('codigoSelecionado', event.target.value);
+            const valor = event.target.value;
+            if (valor) {
+                localStorage.setItem('codigoSelecionado', valor);
+                exibirResultsPorCodigo(valor); // Atualiza visual ao trocar
             } else {
                 localStorage.removeItem('codigoSelecionado');
+                exibirResultsPorCodigo('');
             }
         });
 
-        // 6️⃣ Calcula o total global **após gerar os parágrafos dos bairros**
+        // 6️⃣ Calcula o total global após gerar os parágrafos dos bairros
         calcularTotalImoveisSeparado();
 
-        // 7️⃣ Gera o mapa de quadras completo
+        // 7️⃣ Gera o mapa de quadras completo com dados reais
         gerarMapaQuadrasCompleto();
 
         console.log("✅ Inicialização concluída sem erros.");
     } catch (e) {
-        console.error("Erro ao inicializar:", e);
+        console.error("❌ Erro ao inicializar:", e);
+        bairroDisplay.textContent = 'Erro ao carregar os dados. Tente novamente mais tarde.';
     }
 });
+
 </script>
 </body>
 </html>
+
 
 
 
