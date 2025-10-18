@@ -1115,6 +1115,7 @@ calcularTotalImoveisSeparado();
             imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
             quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
             calcularTotaisConsolidados();
+            calcularTotalImoveisSeparado();
             // --- CARREGA O VALOR SALVO NO LOCALSTORAGE ---
 const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
 if (totalSalvo) {
@@ -1169,6 +1170,7 @@ console.log("Total de Imóveis à Inspecionar:", totalAtual);
     </script>
 </body>
 </html>
+
 
 
 
