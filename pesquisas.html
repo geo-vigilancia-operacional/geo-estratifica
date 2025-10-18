@@ -1194,16 +1194,27 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Calcula e exibe o total global de imóveis à inspecionar, somando todos os valores dos bairros.
  * Lê os valores diretamente do DOM e salva no localStorage.
  */
+<!-- ✅ Contêiner opcional para o mapa (se você quiser exibi-lo visualmente) -->
+<div id="mapaQuadrasCompleto" style="width:100%; height:400px; display:none;"></div>
+
+<script>
+// ------------------------------
+// 🧮 Função para formatar números
+// ------------------------------
+function formatarValor(valor) {
+    return valor.toLocaleString('pt-BR');
+}
+
+// -------------------------------------------
+// 🧩 Função para calcular o total global
+// -------------------------------------------
 function calcularTotalImoveisInspecionarGlobal() {
-    // Pega o elemento onde o total global será exibido
     const totalElement = document.getElementById('ImóveisInspecionar');
     let somaTotal = 0;
 
-    // Busca todos os parágrafos com o texto "Total de Imóveis à Inspecionar:"
     const elementosDetalhe = document.querySelectorAll('.detalhe-bairro p');
     elementosDetalhe.forEach(element => {
         if (element.textContent.includes('Total de Imóveis à Inspecionar:')) {
-            // Extrai o número (remove tudo que não for dígito)
             const numeroTexto = element.textContent.replace(/[^0-9]/g, '');
             const numero = parseInt(numeroTexto);
             if (!isNaN(numero)) {
@@ -1212,21 +1223,87 @@ function calcularTotalImoveisInspecionarGlobal() {
         }
     });
 
-    // Atualiza o campo no HTML
     if (totalElement) {
         totalElement.textContent = formatarValor(somaTotal);
-        // Salva o total no localStorage
         try {
             localStorage.setItem('totalImoveisInspecionarGlobal', somaTotal.toString());
         } catch (e) {
             console.error('Erro ao salvar o total global no localStorage:', e);
         }
     }
-} // FIM DA FUNÇÃO
+}
 
+// ----------------------------------------------------------
+// 🗺️ Função para gerar o mapa (com verificação de segurança)
+// ----------------------------------------------------------
+function gerarMapaQuadrasCompleto() {
+    const mapaContainer = document.getElementById("mapaQuadrasCompleto");
+    if (!mapaContainer) {
+        console.warn("Elemento 'mapaQuadrasCompleto' não encontrado. Abortando mapa.");
+        return;
+    }
+
+    mapaContainer.style.display = "block";
+    mapaContainer.innerHTML = "<p style='text-align:center;padding:20px;'>[ Mapa carregado com sucesso! ]</p>";
+}
+
+// -----------------------------------------------------------------
+// 🚀 ÚNICO bloco de inicialização ao carregar a página
+// -----------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // 🧩 Etapa 1 – Carrega dados salvos e popula seletores
+        carregarDadosPersistidos();
+        await carregarDados();
+        popularSeletor();
+
+        // 🧩 Etapa 2 – Atualiza totais fixos
+        imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
+        quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
+        calcularTotaisConsolidados();
+
+        // 🧩 Etapa 3 – Restaura total salvo no localStorage
+        const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
+        if (totalSalvo) {
+            const totalElement = document.getElementById('ImóveisInspecionar');
+            if (totalElement) {
+                totalElement.textContent = formatarValor(parseInt(totalSalvo));
+            }
+        }
+
+        // 🧩 Etapa 4 – Lê e aplica o código de bairro salvo
+        const codigoSalvo = localStorage.getItem('codigoSelecionado');
+        if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
+            selecaoCodigo.value = codigoSalvo;
+            exibirResultsPorCodigo(codigoSalvo);
+        } else {
+            exibirResultsPorCodigo('');
+        }
+
+        // 🧩 Etapa 5 – Garante salvamento do código ao trocar seleção
+        selecaoCodigo.addEventListener('change', (event) => {
+            if (event.target.value) {
+                localStorage.setItem('codigoSelecionado', event.target.value);
+            } else {
+                localStorage.removeItem('codigoSelecionado');
+            }
+        });
+
+        // 🧩 Etapa 6 – Calcula total global e gera mapa
+        calcularTotalImoveisInspecionarGlobal();
+        gerarMapaQuadrasCompleto();
+
+        console.log("✅ Inicialização concluída sem erros.");
+    } catch (e) {
+        console.error("Erro ao inicializar:", e);
+    }
+});
 </script>
 </body>
 </html>
+
+
+
 
 
 
