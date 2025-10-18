@@ -842,21 +842,24 @@ calcularTotalImoveisInspecionarGlobal();
                                        <p><strong>TOTAL GERAL DE IMÓVEIS LÍQUIDOS (Cód. ${codigoAtual}):</strong> <strong style="font-size: 1.5em;">${totalImoveisLiquidosCodigo.toLocaleString('pt-BR')}</strong></p>
                                        </div>`;
             resultadoContagem.style.display = 'block';
-            if (detalhamentoHtml.length > 0) {
-                detalhamentoHtml += `<div class="resultado-total" style="border-top: 1px solid #ff4444;">
+          // ... (código anterior)
+
+    if (detalhamentoHtml.length > 0) {
+        detalhamentoHtml += `<div class="resultado-total" style="border-top: 1px solid #ff4444;">
                             <p><strong>IMÓVEIS À INSPECIONAR (20% Amostra p/ Cód. ${codigoAtual}):</strong> 
                             <strong style="font-size: 1.5em; color: #ff4444; font-weight: 700;">${totalAmostraGeralCodigo.toLocaleString('pt-BR')}</strong></p>
                         </div>`;
-                detalhamentoQuadras.innerHTML += detalhamentoHtml;
-                detalhamentoQuadras.style.display = 'block';
-                gerarMapaQuadrasCompleto();
-            } else {
-                detalhamentoQuadras.style.display = 'none';
-            }
-       
-       calcularTotalImoveisInspecionarGlobal();
-}
+        detalhamentoQuadras.innerHTML += detalhamentoHtml;
+        detalhamentoQuadras.style.display = 'block';
+        gerarMapaQuadrasCompleto();
+    } else {
+        detalhamentoQuadras.style.display = 'none';
+    }
 
+    // 🔥 CORREÇÃO PRINCIPAL DE FLUXO: Usa setTimeout para garantir que o DOM seja atualizado
+    // ANTES de tentar ler e somar os valores globais.
+    setTimeout(calcularTotalImoveisInspecionarGlobal, 0); 
+}
         function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = ''; 
             const oldInputs = quadrasContainer.querySelectorAll('.quadra-input-inicio, .quadra-input-fim, .input-ids-bairro');
@@ -1217,6 +1220,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
