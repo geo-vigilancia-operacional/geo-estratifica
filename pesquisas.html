@@ -1159,9 +1159,12 @@ calcularTotalImoveisInspecionarGlobal();
             // --- CARREGA O VALOR SALVO NO LOCALSTORAGE ---
 const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
 if (totalSalvo) {
-    const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
+    const totalElement = document.getElementById('ImoveisInspecionar');
     totalElement.textContent = formatarValor(parseInt(totalSalvo));
-}
+if (totalElement) { 
+            totalElement.textContent = formatarValor(parseInt(totalSalvo));
+        }
+    }
             const codigoSalvo = localStorage.getItem('codigoSelecionado');
             if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
                  selecaoCodigo.value = codigoSalvo;
@@ -1182,7 +1185,7 @@ if (totalSalvo) {
  * Lê os valores diretamente do DOM e salva no localStorage.
  */
 function calcularTotalImoveisInspecionarGlobal() {
-    const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
+    const totalElement = document.getElementById('ImóveisInspecionar');
     let somaTotal = 0;
 
     // Seleciona todos os elementos que contêm o texto "Total de Imóveis à Inspecionar:"
@@ -1211,6 +1214,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
