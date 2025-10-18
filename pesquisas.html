@@ -1166,9 +1166,43 @@ function calcularTotalImoveisInspecionarGlobal() {
         console.error('Erro ao salvar o total global no localStorage:', e);
     }
 }
+   /**
+ * Calcula o Total de Imóveis à Inspecionar sem afetar outras funções
+ * Retorna o valor como número e também atualiza o elemento na tela.
+ */
+function calcularTotalImoveisSeparado() {
+    const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
+    if (!totalElement) {
+        console.warn("Elemento 'totalImoveisInspecionarGlobal' não encontrado.");
+        return 0;
+    }
+
+    let somaTotal = 0;
+    const elementosDetalhe = document.querySelectorAll('.detalhe-bairro p');
+    
+    elementosDetalhe.forEach(element => {
+        if (element.textContent.includes('Total de Imóveis à Inspecionar:')) {
+            const numeroTexto = element.textContent.replace(/[^0-9]/g, '');
+            const numero = parseInt(numeroTexto);
+            if (!isNaN(numero)) somaTotal += numero;
+        }
+    });
+
+    // Atualiza apenas este total, sem mexer em outras funções
+    totalElement.textContent = somaTotal.toLocaleString('pt-BR');
+
+    // Retorna o valor para quem precisar usar
+    return somaTotal;
+}
+
+// Exemplo de uso sem interferir no restante
+const totalAtual = calcularTotalImoveisSeparado();
+console.log("Total de Imóveis à Inspecionar:", totalAtual);
+
     </script>
 </body>
 </html>
+
 
 
 
