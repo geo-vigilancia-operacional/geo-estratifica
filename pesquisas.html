@@ -1195,6 +1195,9 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Lê os valores diretamente do DOM e salva no localStorage.
  */
 
+<!-- ✅ Contêiner opcional para o mapa (fora do script) -->
+<div id="mapaQuadrasCompleto" style="width:100%; height:400px; display:none;"></div>
+
 <script>
 // ------------------------------
 // 🧮 Função para formatar números
@@ -1250,17 +1253,14 @@ function gerarMapaQuadrasCompleto() {
 // -----------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // 🧩 Etapa 1 – Carrega dados salvos e popula seletores
         carregarDadosPersistidos();
         await carregarDados();
         popularSeletor();
 
-        // 🧩 Etapa 2 – Atualiza totais fixos
         imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
         quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
         calcularTotaisConsolidados();
 
-        // 🧩 Etapa 3 – Restaura total salvo no localStorage
         const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
         if (totalSalvo) {
             const totalElement = document.getElementById('ImóveisInspecionar');
@@ -1269,7 +1269,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 🧩 Etapa 4 – Lê e aplica o código de bairro salvo
         const codigoSalvo = localStorage.getItem('codigoSelecionado');
         if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
             selecaoCodigo.value = codigoSalvo;
@@ -1278,7 +1277,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             exibirResultsPorCodigo('');
         }
 
-        // 🧩 Etapa 5 – Garante salvamento do código ao trocar seleção
         selecaoCodigo.addEventListener('change', (event) => {
             if (event.target.value) {
                 localStorage.setItem('codigoSelecionado', event.target.value);
@@ -1287,7 +1285,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 🧩 Etapa 6 – Calcula total global e gera mapa
         calcularTotalImoveisInspecionarGlobal();
         gerarMapaQuadrasCompleto();
 
@@ -1299,6 +1296,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
+
 
 
 
