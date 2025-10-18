@@ -819,7 +819,8 @@
                 detalhamentoQuadras.style.display = 'none';
             }
         }
-calcularTotalImoveisSeparado();
+calcularTotalImoveisInspecionarGlobalReal();
+
 
         function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = ''; 
@@ -1200,7 +1201,67 @@ function calcularTotalImoveisSeparado() {
         console.error('Erro ao salvar o total global no localStorage:', e);
     }
 }
-function gerarMapaQuadrasCompleto() {
+function calcularTotalImoveisInspecionarGlobalReal() {
+    let totalGlobal = 0;
+
+    for (const cod of Object.keys(quadrasSorteioGlobal)) {
+        const idsSorteados = quadrasSorteioGlobal[cod];
+        const bairrosMapeados = CODIGOS_BAIRROS[cod];
+        if (!bairrosMapeados || !idsSorteados) continue;
+
+        const bairrosNormalizados = bairrosMapeados.map(item => normalizarString(item.bairro));
+        const registrosDoCodigo = dadosEstatisticos.filter(item => {
+            const nomeBairroItemNormalizado = normalizarString(item['BAIRRO']);
+            return bairrosNormalizados.includes(nomeBairroItemNormalizado);
+        });
+
+        bairrosMapeados.forEach(itemBairro => {
+            const nomeBairroNorm = normalizarString(itemBairro.bairro);
+            const inicio = itemBairro.inicio;
+            const fim = itemBairro.fim;
+            const idsInput = idsSorteados[nomeBairroNorm] || '';
+            if (!idsInput) return;
+
+            const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
+            const idsSet = new Set();
+            idsArray.forEach(idStr => {
+                const idNum = parseInt(idStr);
+                if (!isNaN(idNum) && idNum > 0) idsSet.add(idNum);
+            });
+
+            const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
+                const nomeItemNorm = normalizarString(registro['BAIRRO']);
+                const quadra = registro[CHAVE_QUADRA];
+                return nomeItemNorm === nomeBairroNorm && compararQuadras(quadra, inicio, fim);
+            });
+
+            const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+            const quadrasSorteadas = quadrasComIds.filter(registro => idsSet.has(registro.ID_SEQUENCIAL));
+
+            quadrasSorteadas.forEach(registro => {
+                const totalReg = parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0;
+                const apReg = parseInt(registro[CHAVE_SUBTRACAO_AP]) || 0;
+                const peReg = parseInt(registro[CHAVE_SUBTRACAO_PE]) || 0;
+                const imoveisLiquidos = totalReg - apReg - peReg;
+                const amostra20Pct = Math.ceil(imoveisLiquidos * 0.20);
+                totalGlobal += amostra20Pct;
+            });
+        });
+    }
+
+    const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
+    if (totalElement) {
+        totalElement.textContent = formatarValor(totalGlobal);
+    }
+
+    try {
+        localStorage.setItem('totalImoveisInspecionarGlobal', totalGlobal.toString());
+    } catch (e) {
+        console.error('Erro ao salvar o total global no localStorage:', e);
+    }
+}
+
+        function gerarMapaQuadrasCompleto() {
     const mapaContainer = document.getElementById("mapaQuadrasCompleto");
     if (!mapaContainer) {
         console.warn("Elemento 'mapaQuadrasCompleto' não encontrado. Abortando mapa.");
@@ -1275,6 +1336,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
 
 
 
