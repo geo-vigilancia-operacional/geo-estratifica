@@ -398,7 +398,7 @@
         </div>
         <div class="estatistica-item">
             <p><strong>Total de Imóveis à Inspecionar:</strong></p>
-            <p id="ImóveisInspecionar">--</p>
+            <p id="ImoveisInspecionar">--</p>
         </div>
     </div>
     <div>
@@ -1146,7 +1146,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     // Seleciona todos os elementos que contêm o texto "Total de Imóveis à Inspecionar:"
     const elementosDetalhe = document.querySelectorAll('.detalhe-bairro p');
     elementosDetalhe.forEach(element => {
-        if (element.textContent.includes('Total de Imóveis à Inspecionar:')) {
+        if (element.textContent.includes('Total de Imoveis à Inspecionar:')) {
             // Extrai o número do texto
             const numeroTexto = element.textContent.replace(/[^0-9]/g, '');
             const numero = parseInt(numeroTexto);
@@ -1169,6 +1169,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
