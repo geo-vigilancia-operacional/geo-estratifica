@@ -1135,41 +1135,7 @@ if (totalSalvo) {
                 }
             });
         });
-   /**
- * Calcula e exibe o total global de imóveis à inspecionar, somando todos os valores dos bairros.
- * Lê os valores diretamente do DOM e salva no localStorage.
- */
-function calcularTotalImoveisInspecionarGlobal() {
-    const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
-    let somaTotal = 0;
 
-    // Seleciona todos os elementos que contêm o texto "Total de Imóveis à Inspecionar:"
-    const elementosDetalhe = document.querySelectorAll('.detalhe-bairro p');
-    elementosDetalhe.forEach(element => {
-        if (element.textContent.includes('Total de Imoveis à Inspecionar:')) {
-            // Extrai o número do texto
-            const numeroTexto = element.textContent.replace(/[^0-9]/g, '');
-            const numero = parseInt(numeroTexto);
-            if (!isNaN(numero)) {
-                somaTotal += numero;
-            }
-        }
-    });
-
-    // Atualiza o elemento na tela
-    totalElement.textContent = formatarValor(somaTotal);
-
-    // Salva no localStorage para persistência
-    try {
-        localStorage.setItem('totalImoveisInspecionarGlobal', somaTotal.toString());
-    } catch (e) {
-        console.error('Erro ao salvar o total global no localStorage:', e);
-    }
-}
-   /**
- * Calcula o Total de Imóveis à Inspecionar sem afetar outras funções
- * Retorna o valor como número e também atualiza o elemento na tela.
- */
 function calcularTotalImoveisSeparado() {
     const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
     if (!totalElement) {
@@ -1202,6 +1168,7 @@ console.log("Total de Imóveis à Inspecionar:", totalAtual);
     </script>
 </body>
 </html>
+
 
 
 
