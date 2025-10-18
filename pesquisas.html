@@ -613,7 +613,49 @@
             });
             return { totalQuarteiroesSorteados };
         }
+function calcularTotaisDeSorteio(registrosDoCodigo, idsSorteadosGlobal, bairrosMapeados) {
+    let totalQuarteiroesSorteados = 0;
 
+    bairrosMapeados.forEach(itemBairro => {
+        const nomeBairroNormalizado = normalizarString(itemBairro.bairro);
+        const inicio = itemBairro.inicio;
+        const fim = itemBairro.fim;
+
+        // 1. Filtrar registros pelo intervalo de quadra (usando a função 'compararQuadras')
+        const quadrasNoIntervalo = registrosDoCodigo.filter(registro => {
+            const nomeItemNormalizado = normalizarString(registro['BAIRRO']);
+            const quadra = registro[CHAVE_QUADRA];
+            return nomeItemNormalizado === nomeBairroNormalizado &&
+                   compararQuadras(quadra, inicio, fim);
+        });
+
+        // 2. Gerar IDs sequenciais para determinar quadras úteis
+        const quadrasComIds = gerarIdsSequenciais(quadrasNoIntervalo);
+
+        // 3. Obter os IDs de sorteio persistidos para este bairro/intervalo
+        const idsInput = idsSorteadosGlobal[nomeBairroNormalizado] || '';
+        let idsSorteadosSet = new Set();
+        
+        if (idsInput) {
+            const idsArray = idsInput.replace(/\s/g, '').replace(/-/g, ',').split(',');
+            idsArray.forEach(idStr => {
+                const idNum = parseInt(idStr);
+                // Adiciona ao set apenas IDs úteis (ID_SEQUENCIAL > 0) que foram sorteados
+                if (!isNaN(idNum) && idNum > 0) {
+                    // Verifica se o ID sequencial existe no intervalo de quadras úteis
+                    const isIdValido = quadrasComIds.some(q => q.ID_SEQUENCIAL === idNum && q.ID_SEQUENCIAL > 0);
+                    if (isIdValido) {
+                        idsSorteadosSet.add(idNum);
+                    }
+                }
+            });
+        }
+        // Acumula o total de quadras sorteadas encontradas (tamanho do Set)
+        totalQuarteiroesSorteados += idsSorteadosSet.size;
+    });
+
+    return { totalQuarteiroesSorteados: totalQuarteiroesSorteados };
+}
         function calcularTotaisConsolidados(recalcularTudo = false) {
             if (dadosEstatisticos.length === 0) {
                  quarteiroesSorteados.textContent = '--';
@@ -1169,6 +1211,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
