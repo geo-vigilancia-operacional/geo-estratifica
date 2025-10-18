@@ -702,7 +702,7 @@ function calcularTotaisDeSorteio(registrosDoCodigo, idsSorteadosGlobal, bairrosM
             let totalAmostraBairro = 0;
             let detalheHtml = '';
             if (quadrasUteisBairro.length === 0 || idsSorteados.size === 0) {
-                return { html: '', totalAmostra: 0 };
+             return { html: detalheHtml, totalAmostra: totalAmostraBairro };
             }
             const quadrasFiltradas = quadrasUteisBairro.filter(registro => 
                 registro.ID_SEQUENCIAL > 0 && idsSorteados.has(registro.ID_SEQUENCIAL)
@@ -853,7 +853,9 @@ calcularTotalImoveisInspecionarGlobal();
             } else {
                 detalhamentoQuadras.style.display = 'none';
             }
-        }
+       
+       calcularTotalImoveisInspecionarGlobal();
+}
 
         function gerarSelecaoQuadras(bairrosComIntervalo) {
             quadrasContainer.innerHTML = ''; 
@@ -1159,10 +1161,11 @@ calcularTotalImoveisInspecionarGlobal();
             // --- CARREGA O VALOR SALVO NO LOCALSTORAGE ---
 const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
 if (totalSalvo) {
-    const totalElement = document.getElementById('ImoveisInspecionar');
+    const totalElement = document.getElementById('ImóveisInspecionar');
+    if (totalElement) { 
     totalElement.textContent = formatarValor(parseInt(totalSalvo));
-if (totalElement) { 
-            totalElement.textContent = formatarValor(parseInt(totalSalvo));
+
+          
         }
     }
             const codigoSalvo = localStorage.getItem('codigoSelecionado');
@@ -1214,6 +1217,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     </script>
 </body>
 </html>
+
 
 
 
