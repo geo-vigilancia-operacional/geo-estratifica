@@ -1195,7 +1195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Lê os valores diretamente do DOM e salva no localStorage.
  */
 
-<!-- ✅ Contêiner opcional para o mapa (fora do script) -->
+<!-- ✅ Contêiner do mapa (fora do script, obrigatório para evitar erro) -->
 <div id="mapaQuadrasCompleto" style="width:100%; height:400px; display:none;"></div>
 
 <script>
@@ -1213,6 +1213,7 @@ function calcularTotalImoveisInspecionarGlobal() {
     const totalElement = document.getElementById('ImóveisInspecionar');
     let somaTotal = 0;
 
+    // Busca todos os parágrafos dentro de .detalhe-bairro que contenham o texto desejado
     const elementosDetalhe = document.querySelectorAll('.detalhe-bairro p');
     elementosDetalhe.forEach(element => {
         if (element.textContent.includes('Total de Imóveis à Inspecionar:')) {
@@ -1224,6 +1225,7 @@ function calcularTotalImoveisInspecionarGlobal() {
         }
     });
 
+    // Atualiza o valor na tela e salva no localStorage
     if (totalElement) {
         totalElement.textContent = formatarValor(somaTotal);
         try {
@@ -1244,23 +1246,27 @@ function gerarMapaQuadrasCompleto() {
         return;
     }
 
+    // Exemplo de inicialização simples — personalize depois se quiser exibir dados reais
     mapaContainer.style.display = "block";
     mapaContainer.innerHTML = "<p style='text-align:center;padding:20px;'>[ Mapa carregado com sucesso! ]</p>";
 }
 
 // -----------------------------------------------------------------
-// 🚀 ÚNICO bloco de inicialização ao carregar a página
+// 🚀 Bloco único de inicialização quando a página termina de carregar
 // -----------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        // 🧩 Etapa 1 – Carrega dados e popula seletores
         carregarDadosPersistidos();
         await carregarDados();
         popularSeletor();
 
+        // 🧩 Etapa 2 – Atualiza totais fixos
         imoveisEstrato.textContent = formatarValor(totalImoveisLiquidosGeral);
         quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
         calcularTotaisConsolidados();
 
+        // 🧩 Etapa 3 – Restaura o total salvo no localStorage
         const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
         if (totalSalvo) {
             const totalElement = document.getElementById('ImóveisInspecionar');
@@ -1269,6 +1275,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // 🧩 Etapa 4 – Aplica o código salvo (bairro)
         const codigoSalvo = localStorage.getItem('codigoSelecionado');
         if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
             selecaoCodigo.value = codigoSalvo;
@@ -1277,6 +1284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             exibirResultsPorCodigo('');
         }
 
+        // 🧩 Etapa 5 – Atualiza localStorage ao mudar o código
         selecaoCodigo.addEventListener('change', (event) => {
             if (event.target.value) {
                 localStorage.setItem('codigoSelecionado', event.target.value);
@@ -1285,6 +1293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
+        // 🧩 Etapa 6 – Calcula total e gera o mapa
         calcularTotalImoveisInspecionarGlobal();
         gerarMapaQuadrasCompleto();
 
@@ -1296,6 +1305,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
+
 
 
 
