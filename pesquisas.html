@@ -338,8 +338,9 @@
             font-weight: 700;
             text-align: center;
         } 
-   /* ESTILO PARA OS CAMPOS DE ESTATÍSTICAS EM DUAS COLUNAS */
+/* ESTILO PARA OS CAMPOS DE ESTATÍSTICAS EM DUAS COLUNAS */
 .grid-estatisticas {
+    /* Define o layout principal como um grid de 2 colunas */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
@@ -348,38 +349,50 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.grid-estatisticas > div {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
 .estatistica-item {
+    /* Estilo da caixa individual */
     background-color: var(--highlight-bg);
-    border-radius: 6px;
-    padding: 10px;
-    flex: 1 1 200px; /* Ajusta o tamanho mínimo e permite crescimento */
-    min-width: 200px;
+    border-radius: 8px; /* Aumentei um pouco para melhor visual */
+    padding: 15px; /* Aumentei o padding */
     text-align: center;
+    /* Garante que o conteúdo fique centrado e bem distribuído */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 90px;
 }
 
 .estatistica-item p {
     margin: 5px 0;
+    font-size: 0.9em;
 }
 
-/* RESPONSIVIDADE: Em telas pequenas, os itens empurram um abaixo do outro */
+.estatistica-item p:last-child {
+    /* Estilo para o valor numérico */
+    font-size: 1.5em; /* Valor mais destacado */
+    font-weight: 700;
+}
+
+/* Garante que o campo de inspeção use a cor verde de sucesso */
+#totalImoveisInspecionarGlobal {
+    color: var(--sucess-color);
+}
+#imoveisEstrato {
+    color: #ff9800; /* Laranja/Amarelo */
+}
+#quarteiroesEstrato {
+    color: var(--primary-color); /* Azul Claro */
+}
+#quarteiroesSorteados {
+    color: var(--secondary-color); /* Azul Mais Suave */
+}
+
+
+/* RESPONSIVIDADE: Em telas pequenas, volta para 1 coluna */
 @media (max-width: 768px) {
     .grid-estatisticas {
         grid-template-columns: 1fr;
-    }
-
-    .grid-estatisticas > div {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .estatistica-item {
-        min-width: 100%;
     }
 }
     </style>
@@ -391,24 +404,29 @@
             <h3 id="tituloEstatisticas">Estatísticas Consolidadas (Todos os Códigos)</h3>
           <!-- RESULTADOS GERAIS E CONSOLIDADOS (SEMPRE VISÍVEIS) -->
 <div id="resultadosEstatisticos" class="grid-estatisticas">
-    <div>
-        <div class="estatistica-item">
-            <p><strong>Total de Imóveis Líquidos / Estrato:</strong></p>
-            <p id="imoveisEstrato">--</p>
-        </div>
-      <div class="resumo-geral">
-    <p>Total de Imóveis à Inspecionar: <span id="totalImoveisInspecionarGlobal">0</span></p>
-</div>
- <div>
-        <div class="estatistica-item">
-            <p><strong>Total de Quadras Úteis / Estrato:</strong></p>
-            <p id="quarteiroesEstrato">--</p>
-        </div>
-        <div class="estatistica-item">
-            <p><strong>Total de Quarteirões Sorteados:</strong></p>
-            <p id="quarteiroesSorteados">--</p>
-        </div>
+  <div id="resultadosEstatisticos" class="grid-estatisticas">
+
+    <div class="estatistica-item">
+        <p><strong>Total de Imóveis Líquidos / Estrato:</strong></p>
+        <p id="imoveisEstrato">--</p>
     </div>
+
+    <div class="estatistica-item">
+        <p><strong>Total de Quadras Úteis / Estrato:</strong></p>
+        <p id="quarteiroesEstrato">--</p>
+    </div>
+
+    <div class="estatistica-item" style="border: 2px solid var(--sucess-color);">
+        <p><strong>Total de Imóveis à Inspecionar (20%):</strong></p>
+        <p id="totalImoveisInspecionarGlobal">0</p>
+    </div>
+
+    <div class="estatistica-item">
+        <p><strong>Total de Quarteirões Sorteados:</strong></p>
+        <p id="quarteiroesSorteados">--</p>
+    </div>
+
+</div>
 </div>
        <hr style="border-color: var(--border-color); margin-bottom: 20px;">
 <p id="bairroSelecionadoDisplay" style="font-size: 1.1em; margin-bottom: 15px;">
@@ -1345,6 +1363,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
 
 
 
