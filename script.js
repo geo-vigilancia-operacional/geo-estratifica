@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
     // ... O resto do seu código principal continua e fecha aqui ...
 });
-// Função para abrir o Google Maps
+// Função corrigida para abrir o Google Maps
 function abrirMapsComEndereco() {
     // 1. Pega o valor do campo de endereço usando o ID
     const endereco = document.getElementById('inputEndereco').value;
@@ -632,25 +632,19 @@ function abrirMapsComEndereco() {
     // 2. Validação básica: verifica se o campo está vazio
     if (endereco.trim() === "") {
         alert("Por favor, digite um endereço antes de buscar no mapa.");
-        return; // Sai da função
+        return; 
     }
 
-    // 3. Formata o endereço (substitui espaços, caracteres especiais, etc.)
+    // 3. Formata o endereço (encodeURIComponent)
     const enderecoFormatado = encodeURIComponent(endereco);
 
-    // 4. Constrói o URL do Google Maps para pesquisa
-    // A estrutura é: https://www.google.com/maps/search/?api=1&query=
-    const urlMaps = `https://developers.google.com/maps/documentation/javascript/add-google-map-wc-tut?hl=pt-br7{enderecoFormatado}`;
+    // 4. CORREÇÃO CRÍTICA: Constrói o URL usando o formato de busca /search/
+    // Este formato é o mais simples e direto para pesquisar um endereço.
+    const urlMaps = `https://www.google.com/maps/search/${enderecoFormatado}`;
 
     // 5. Abre a URL em uma nova aba
     window.open(urlMaps, '_blank');
 }
-
-// **OBSERVAÇÃO IMPORTANTE:** // Você provavelmente já tem uma função para mostrar/ocultar o 'mutiraoContainer'. 
-// Certifique-se de que o campo 'inputEndereco' só é lido pelo JavaScript quando 
-// ele estiver visível e pronto para uso (ou seja, quando o select for 'mutiraoRegional' 
-// ou 'mutiraoMunicipal'). A função acima só é chamada pelo botão, então não há problema.
-// NOVO: Função de limpeza completa
 function limparTudo() {
     estado.bairroSelecionado = null;
     estado.quadrasSelecionadas.clear();
@@ -951,6 +945,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
