@@ -374,18 +374,26 @@
     font-weight: 700;
 }
 
-/* Garante que o campo de inspeção use a cor verde de sucesso */
-#totalImoveisInspecionarGlobal {
-    color: var(--sucess-color);
-}
+/* 1. Imóveis Líquidos / Estrato (Laranja/Amarelo - Alerta de base) */
 #imoveisEstrato {
-    color: #ff9800; /* Laranja/Amarelo */
+    color: #ff9800; /* Laranja */
 }
+
+/* 2. Quadras Úteis / Estrato (Azul Primário - Informação principal) */
 #quarteiroesEstrato {
-    color: var(--primary-color); /* Azul Claro */
+    color: var(--primary-color); /* Azul mais claro (#00b4d8) */
 }
+
+/* 3. Imóveis à Inspecionar (VERMELHO, conforme sua solicitação - DANGER) */
+#totalImoveisInspecionarGlobal {
+    color: var(--danger-color); /* Vermelho (#ef4444) */
+    /* Se você manteve o style="border: 2px solid var(--sucess-color);" no HTML, 
+       a borda fica verde e o número vermelho, ótimo contraste. */
+}
+
+/* 4. Quarteirões Sorteados (Verde - SUCESSO/Concluído) */
 #quarteiroesSorteados {
-    color: var(--secondary-color); /* Azul Mais Suave */
+    color: var(--sucess-color); /* Verde (#4CAF50) */
 }
 
 
@@ -1361,6 +1369,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
+
 
 
 
