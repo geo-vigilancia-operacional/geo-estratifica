@@ -742,14 +742,8 @@ header h1 {
         <label>Quadra:
             <input type="text" id="inputQuadra" name="quadra" placeholder="Quadra">
         </label>
-      <label>UAPS:
-            <select id="selectUAPS" name="uapsDeReferencia">
-                <option value="" selected disabled>Selecione a UAPS</option>
-                <option value="UAPS A">UAPS A - Bairro Novo</option>
-                <option value="UAPS B">UAPS B - Centro Antigo</option>
-                <option value="UAPS C">UAPS C - Zona Sul</option>
-                <option value="Outra UAPS">Outra (Especifique)</option>
-                </select>
+    <label>UAPS:
+            <input type="text" id="inputUAPS" name="uaps" placeholder="UAPS de Ref.">
         </label>
     </div>
     <span id="avisoMutirao" class="aviso-obrigatorio oculto">Obrigatório: Preencha Endereço, Quadra e UAPS.</span>
@@ -954,6 +948,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
