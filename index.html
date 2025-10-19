@@ -78,7 +78,8 @@ header h1 {
     margin-bottom: 20px;
     border: 1px solid var(--border-color);
     position: relative;
-    overflow: hidden;
+    /* 🔴 CORREÇÃO 1: Removendo overflow: hidden se ele estivesse aqui */
+    overflow: hidden; 
 }
 
 .box::before {
@@ -114,10 +115,11 @@ header h1 {
     color: var(--text-color);
 }
 
+/* 🟢 CORREÇÃO CRÍTICA 2: Ajuste no seletor universal de inputs/selects */
 .box input[type="text"],
 .box input[type="number"],
 .box input[type="date"],
-.box select,
+.box select, /* <--- Incluído o SELECT aqui */
 .box textarea,
 #dadosDetalhes {
     width: 100%;
@@ -128,6 +130,10 @@ header h1 {
     background-color: var(--input-bg);
     color: var(--text-color);
     transition: all 0.3s ease;
+    
+    /* 🔑 Chave para o SELECT: Não forçar altura e garantir que o dropdown apareça */
+    height: auto; 
+    overflow: visible;
 }
 
 .box input[type="text"]:focus,
@@ -221,7 +227,7 @@ header h1 {
 #compartilharWhatsapp {
     background: linear-gradient(45deg, var(--whatsapp-color), #20a354);
     color: white;
-    text-shadow: none; /* Remove text-shadow para melhorar a legibilidade */
+    text-shadow: none;
 }
 
 #compartilharWhatsapp:hover {
@@ -311,16 +317,16 @@ header h1 {
     border-radius: 6px;
     padding: 12px 20px;
     cursor: pointer;
-    font-size: 14px; /* Ajuste para garantir um tamanho consistente */
+    font-size: 14px;
     font-weight: 700;
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    display: inline-block; /* Garante que os botões se comportem de forma consistente */
-    width: 48%; /* Define uma largura relativa para que se ajustem em linha */
-    box-sizing: border-box; /* Inclui o padding na largura */
-    margin: 5px 1%; /* Adiciona um pequeno espaçamento entre eles */
+    display: inline-block;
+    width: 48%;
+    box-sizing: border-box;
+    margin: 5px 1%;
 }
 #salvarProcessoBtn:hover,
 #carregarProcessoBtn:hover {
@@ -345,35 +351,39 @@ input[readonly] {
 /* 1. Estilo para colocar os campos Endereço, Quadra e UAPS em linha (Flexbox) */
 .mutirao-campos-flex {
     display: flex;
-    flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo se não houver espaço */
-    gap: 10px; /* Espaço entre os campos */
-    margin-top: 5px; /* Adiciona margem superior para espaçamento */
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
 }
 
 .mutirao-campos-flex label {
-    /* Por padrão, em telas pequenas (celular), ocupa a largura total */
     flex: 1 1 100%;
 }
 
 /* 2. Media Query para telas maiores que um celular (Tablet/Desktop) */
 @media (min-width: 600px) {
-    /* Em telas maiores, Endereço ocupa 100%, e Quadra/UAPS ficam em 2 colunas */
-    .mutirao-campos-flex label:nth-child(1) { /* Endereço */
-        flex: 1 1 100%; 
+    
+    /* 🟢 CORREÇÃO 3: Invertendo Largura do Endereço (Maior) e Quadra (Menor) */
+    .endereco-maps-group { /* Endereço: Queremos maior */
+        flex: 3 1 calc(50% - 5px); /* Dá 3 partes de espaço livre, largura mínima de 50% */
     }
     
-    .mutirao-campos-flex label:nth-child(2), /* Quadra */
-    .mutirao-campos-flex label:nth-child(3) { /* UAPS */
-        /* Calcula a largura para caber em 2 colunas com o gap */
-        flex: 1 1 calc(50% - 5px); 
-        min-width: 150px; 
+    .mutirao-campos-flex label:nth-child(2) { /* Quadra: Queremos menor */
+        flex: 1 1 calc(25% - 5px); /* Dá 1 parte de espaço livre, largura mínima de 25% */
+        min-width: 100px;
+    }
+    
+    .mutirao-campos-flex label:nth-child(3) { /* UAPS: Queremos média (select) */
+        flex: 2 1 calc(25% - 5px); /* Dá 2 partes de espaço livre, largura mínima de 25% */
+        min-width: 150px;
     }
 }
 
-/* 3. Garante que os inputs dentro dos labels em flex ocupem o espaço total do label */
-.mutirao-campos-flex input[type="text"] {
+/* 3. Garante que os inputs E SELECTS ocupem o espaço total do label */
+.mutirao-campos-flex input[type="text"],
+.mutirao-campos-flex select { /* 🟢 CORREÇÃO: Incluindo o SELECT */
     width: 100%;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 
@@ -394,22 +404,27 @@ input[readonly] {
     margin-bottom: 4px; 
 }
 
-/* Estilos gerais para inputs/selects do novo bloco */
+/* Estilos gerais para inputs/selects do novo bloco (ajustando a padding e border do bloco mutirão) */
 #tipoSelect,
 #inputOutros,
-#mutiraoContainer input[type="text"] {
+#mutiraoContainer input[type="text"],
+#mutiraoContainer select { /* 🟢 CORREÇÃO: Incluindo o SELECT no estilo do mutirão */
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     color: var(--text-color);
     background-color: var(--input-bg);
     border: 1px solid var(--primary-color);
     border-radius: 8px;
-    padding: 10px;
+    padding: 10px; /* Um pouco menos de padding que o .box default */
     width: 100%;
     max-width: 100%; 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     transition: all 0.3s ease;
+    
+    /* 🔴 CORREÇÃO FINAL: Garantir que não haja altura fixa no select */
+    height: auto; 
+    overflow: visible;
 }
 
 /* Estilo para os labels dentro do container do Mutirão */
@@ -420,7 +435,7 @@ input[readonly] {
 /* O aviso fica abaixo do container flex, ocupando a largura total */
 #avisoMutirao {
     text-align: left; 
-    margin-top: 10px; /* Adiciona um espaço do bloco de inputs */
+    margin-top: 10px;
 }
 
 /* --- FIM DOS AJUSTES DE ESTILOS --- */
@@ -433,7 +448,6 @@ input[readonly] {
     margin-top: 5px;
     font-weight: normal;
 }
-/* ... (Resto do CSS Original) ... */
 
 header {
     text-align: center;
@@ -479,9 +493,9 @@ header h1 {
 /* Estilo para os botões "Salvar como TXT" e "Abrir Mapa" */
 #salvarTxt,
 #abrirMapa {
-    width: auto; /* Permite que o botão se ajuste ao conteúdo */
+    width: auto;
     padding: 12px 20px;
-    margin: 10px 5px; /* Adiciona espaçamento entre os botões */
+    margin: 10px 5px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -493,7 +507,7 @@ header h1 {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 #percImoveisTrabalhados, #percFechados {
-    color: #ff9800;    /* laranja */
+    color: #ff9800;
     font-weight: bold;
     margin-top: 4px;
 }
@@ -509,7 +523,7 @@ header h1 {
 }
 
 #abrirMapa {
-    background: linear-gradient(45deg, #00b65f, #00994d); /* Novo gradiente verde */
+    background: linear-gradient(45deg, #00b65f, #00994d);
     color: white;
 }
 
@@ -580,7 +594,7 @@ header h1 {
     .main-grid {
         display: flex;
         gap: 20px;
-        align-items: stretch; /* 🔑 faz as boxes ficarem da mesma altura */
+        align-items: stretch;
     }
 
     .main-grid .box {
@@ -591,13 +605,13 @@ header h1 {
 #avisoTratamentos {
     margin-top: 6px;
     font-weight: bold;
-    color: orange;  /* aviso em laranja */
+    color: orange;
 }
 
     #listaQuadras {
-        flex: 1;            /* ocupa todo espaço vertical da box */
-        min-height: 400px; /* garante altura mínima */
-        overflow-y: auto;  /* scroll se passar */
+        flex: 1;
+        min-height: 400px;
+        overflow-y: auto;
     }
 }
 
@@ -609,7 +623,7 @@ header h1 {
     }
 
     #listaQuadras {
-        max-height: 250px; /* altura menor no celular */
+        max-height: 250px;
     }
 }
 /* Força links do menu sempre em laranja (todos os estados) */
@@ -620,42 +634,43 @@ header h1 {
 .menu a:active,
 .menu a:focus {
     color: orange !important;
-    -webkit-text-fill-color: orange !important; /* compatibilidade iOS/Safari */
-    background: transparent !important;          /* evita fundos indesejados */
+    -webkit-text-fill-color: orange !important;
+    background: transparent !important;
     text-decoration: none;
     outline: none;
-    -webkit-tap-highlight-color: transparent;    /* remove o destaque azul no touch */
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* opcional: pequeno feedback visual no hover (desktop) */
 .menu a:hover {
     text-decoration: underline;
 }
-/* Para organizar o input e o botão lado a lado */
+
+/* Estilos para o Endereço/Maps */
 .endereco-maps-group {
-    display: flex; /* ou inline-flex, dependendo do seu layout */
-    flex-direction: column; /* Organiza label, input e button em coluna por padrão */
-    /* Adicione um pouco de margem se necessário */
-    margin-right: 15px; 
-    flex-basis: 45%;
-    flex-grow: 3;
+    display: flex;
+    flex-direction: column;
+    margin-right: 15px;
+    /* As larguras foram movidas para a media query de 600px para responsividade */
 }
 
 /* Opcional: ajustar a largura do input e do botão se estiverem em linha */
 .endereco-maps-group input {
-    margin-bottom: 5px; /* Espaço entre o input e o botão */
+    margin-bottom: 5px;
 }
 
 /* Estilização básica para o botão (ajuste as cores e tamanhos) */
 #btnMaps {
     padding: 5px 10px;
-    background-color: #4285F4; /* Cor azul do Google */
+    background-color: #4285F4;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 4px;
-    font-size: 0.8em; /* Deixe menor para caber melhor */
-    align-self: flex-start; /* Alinha o botão à esquerda se o flex-direction for row */
+    font-size: 0.8em;
+    align-self: flex-start;
+    width: 100%; /* O botão ocupa a largura total do grupo */
+    box-sizing: border-box;
 }
 
 #btnMaps:hover {
@@ -742,9 +757,14 @@ header h1 {
         <label>Quadra:
             <input type="text" id="inputQuadra" name="quadra" placeholder="Quadra">
         </label>
-    <label>UAPS:
-            <input type="text" id="inputUAPS" name="uaps" placeholder="UAPS de Ref.">
-        </label>
+   <label>UAPS:
+    <select id="selectUAPS" name="uapsDeReferencia">
+        <option value="" selected disabled>Selecione a UAPS</option>
+        <option value="UAPS A">UAPS A - Bairro Novo</option>
+        <option value="UAPS B">UAPS B - Centro Antigo</option>
+        <option value="UAPS C">UAPS C - Zona Sul</option>
+        </select>
+</label>
     </div>
     <span id="avisoMutirao" class="aviso-obrigatorio oculto">Obrigatório: Preencha Endereço, Quadra e UAPS.</span>
 </div>
@@ -948,6 +968,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
