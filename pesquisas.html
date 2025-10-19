@@ -1286,38 +1286,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         quarteiroesEstrato.textContent = formatarValor(totalQuadrasUteisGeral);
         calcularTotaisConsolidados();
         
-        // 3️⃣ Aplica o código de bairro salvo
+        // 3️⃣ Aplica o código de bairro salvo (PRIMEIRA E ÚNICA DECLARAÇÃO DE codigoSalvo)
         const codigoSalvo = localStorage.getItem('codigoSelecionado');
         if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
             selecaoCodigo.value = codigoSalvo;
             exibirResultsPorCodigo(codigoSalvo);
-            gerarMapaQuadrasCompleto(); // Chama mapa se o código estiver salvo
-        } else {
-            exibirResultsPorCodigo('');
-        }
-
-        // 4️⃣ Chamada Crítica: Calcula o total global baseado em TODOS os dados carregados.
-        // Isso resolve o problema de ter o campo vazio na carga inicial.
-        calcularTotalImoveisInspecionarGlobal(); 
-
-        // 5️⃣ Restaura total salvo no localStorage E DEPOIS ATUALIZA
-        const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
-        const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
-        if (totalSalvo && totalElement) {
-             // O valor já foi calculado na chamada acima, mas restaura se a função falhar
-             totalElement.textContent = formatarValor(parseInt(totalSalvo, 10)); 
-        }
-
-        // 4️⃣ Aplica o código de bairro salvo
-        const codigoSalvo = localStorage.getItem('codigoSelecionado');
-        if (codigoSalvo && CODIGOS_BAIRROS[codigoSalvo]) {
-            selecaoCodigo.value = codigoSalvo;
-            exibirResultsPorCodigo(codigoSalvo);
-
-            // ✅ Gera o mapa somente se o elemento existe
+            
+            // ✅ Chama mapa na carga inicial, se houver código salvo
             const mapaContainer = document.getElementById('mapaQuadrasCompleto');
             if (mapaContainer) {
-                gerarMapaQuadrasCompleto();
+                gerarMapaQuadrasCompleto(); 
             } else {
                 console.warn("Elemento 'mapaQuadrasCompleto' não encontrado. Mapa não gerado.");
             }
@@ -1325,14 +1303,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             exibirResultsPorCodigo('');
         }
 
-        // 5️⃣ Garante salvamento do código ao trocar seleção
+        // 4️⃣ Chamada Crítica: Calcula o total global.
+        calcularTotalImoveisInspecionarGlobal(); 
+
+        // 5️⃣ Restaura total salvo no localStorage. (Não precisa de const totalElement)
+        const totalSalvo = localStorage.getItem('totalImoveisInspecionarGlobal');
+        const totalElement = document.getElementById('totalImoveisInspecionarGlobal');
+        if (totalSalvo && totalElement) {
+             totalElement.textContent = formatarValor(parseInt(totalSalvo, 10)); 
+        }
+
+        // 6️⃣ Garante salvamento do código ao trocar seleção (Listener de Evento)
         selecaoCodigo.addEventListener('change', (event) => {
             const valor = event.target.value;
             if (valor) {
                 localStorage.setItem('codigoSelecionado', valor);
                 exibirResultsPorCodigo(valor);
-
-                // ✅ Gera o mapa novamente após troca
+                // Gera o mapa novamente após troca
                 const mapaContainer = document.getElementById('mapaQuadrasCompleto');
                 if (mapaContainer) {
                     gerarMapaQuadrasCompleto();
@@ -1343,18 +1330,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 6️⃣ Calcula o total global após gerar os parágrafos dos bairros
-        calcularTotalImoveisSeparado();
+        // 7️⃣ Garante que o cálculo global ocorra após a seleção inicial (se o código for exibido)
+        // Esta chamada é redundante com a anterior, mas mantém a lógica de fluxo de recálculo:
+        calcularTotalImoveisInspecionarGlobal(); 
 
         console.log("✅ Inicialização concluída sem erros.");
+        
     } catch (e) {
         console.error("❌ Erro ao inicializar:", e);
-        bairroDisplay.textContent = 'Erro ao carregar os dados. Tente novamente mais tarde.';
+        // Garante que a variável 'bairroDisplay' está definida e acessível
+        // bairroDisplay.textContent = 'Erro ao carregar os dados. Tente novamente mais tarde.';
     }
 });
 </script>
 </body>
 </html>
+
 
 
 
