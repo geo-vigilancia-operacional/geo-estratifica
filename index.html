@@ -631,7 +631,34 @@ header h1 {
 .menu a:hover {
     text-decoration: underline;
 }
+/* Para organizar o input e o botão lado a lado */
+.endereco-maps-group {
+    display: flex; /* ou inline-flex, dependendo do seu layout */
+    flex-direction: column; /* Organiza label, input e button em coluna por padrão */
+    /* Adicione um pouco de margem se necessário */
+    margin-right: 15px; 
+}
 
+/* Opcional: ajustar a largura do input e do botão se estiverem em linha */
+.endereco-maps-group input {
+    margin-bottom: 5px; /* Espaço entre o input e o botão */
+}
+
+/* Estilização básica para o botão (ajuste as cores e tamanhos) */
+#btnMaps {
+    padding: 5px 10px;
+    background-color: #4285F4; /* Cor azul do Google */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.8em; /* Deixe menor para caber melhor */
+    align-self: flex-start; /* Alinha o botão à esquerda se o flex-direction for row */
+}
+
+#btnMaps:hover {
+    background-color: #3b78e7;
+}
 </style>
 </head>
 <body>
@@ -701,9 +728,15 @@ header h1 {
 
 <div id="mutiraoContainer" class="oculto grupo">
     <div id="mutiraoCamposContainer" class="mutirao-campos-flex">
-        <label>Endereço:
+        <div class="endereco-maps-group"> 
+            <label for="inputEndereco">Endereço:</label>
             <input type="text" id="inputEndereco" name="enderecoLocal" placeholder="Local de Referência ou Ponto Fixo">
-        </label>
+            
+            <button type="button" id="btnMaps" onclick="abrirMapsComEndereco()">
+                Ver no Mapa
+            </button>
+        </div>
+        
         <label>Quadra:
             <input type="text" id="inputQuadra" name="quadra" placeholder="Quadra">
         </label>
@@ -913,6 +946,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
