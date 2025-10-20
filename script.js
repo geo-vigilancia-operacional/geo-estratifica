@@ -942,7 +942,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
          }
     });
 });
+document.addEventListener("DOMContentLoaded", function() {
+    // ... [Seus outros listeners, como selectBairro, aplicarTextoBtn, etc.] ...
 
+    const btnCompartilhar = document.getElementById("compartilharWhatsapp");
+    if (btnCompartilhar) {
+        btnCompartilhar.addEventListener("click", compartilharWhatsApp);
+    }
+    
+    // ... [O resto do seu código DOMContentLoaded] ...
+});
+
+// A função 'compartilharWhatsApp' deve ser definida fora ou dentro deste bloco, 
+// garantindo que esteja no escopo global ou acessível.
+// Se você a definiu no escopo global, o código acima é suficiente.
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
 
@@ -990,6 +1003,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
