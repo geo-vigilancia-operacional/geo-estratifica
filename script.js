@@ -784,9 +784,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Executa logo ao carregar
     verificarTratamentos();
 });
-// --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (VERSÃO COMPLETA) ---
+// --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (VERSÃO MÁXIMA) ---
 function compartilharWhatsApp() {
-    console.log("Iniciando compartilhamento via WhatsApp...");
+    console.log("Iniciando compartilhamento via WhatsApp (Versão Máxima)...");
 
     if (!estado.bairroSelecionado) {
         alert("Selecione um bairro e defina a estratificação primeiro!");
@@ -795,102 +795,144 @@ function compartilharWhatsApp() {
 
     try {
         const bairro = estado.bairroSelecionado;
+        const formatarData = (data) => data ? new Date(data + "T00:00:00").toLocaleDateString('pt-BR') : 'N/A';
         
-        // --- 1. Dados de Estratificação (Motivo) ---
+        // --- FUNÇÕES AUXILIARES DE BUSCA ---
+        // Função que tenta obter o valor de um campo de entrada
+        const getValue = (id) => document.getElementById(id)?.value || 'N/A';
+        // Função que tenta obter o texto de um elemento
+        const getText = (id) => document.getElementById(id)?.textContent.trim() || 'N/A';
+        
+        // --- 1. SEÇÃO GERAL E MOTIVAÇÃO ---
+        
+        // Dados estáticos do resumo do Bairro (IDs simulados, ajuste se necessário)
+        const totalQuadras = getText("totalQuadrasAtivas"); // Exemplo de ID
+        const totalImoveis = getText("totalImoveisBairro"); // Exemplo de ID
+        const totalHabitantes = getText("totalHabitantes"); // Exemplo de ID
+        const imoveisProgramados = getText("imoveisProgramadosValue"); 
+        
+        const cães = getText("cãesValue");
+        const gatos = getText("gatosValue");
+        const depositosAgua = getText("depositosAguaValue");
+        const ovitrampas = getText("ovitrampasValue");
+        
+        // Motivação/Tipo de Estratificação
         const selectEstratificacao = document.getElementById('tipoEstratificacao');
         let motivo = "Não definido";
         let outrosTipo = "";
-        
         if (selectEstratificacao) {
-            motivo = selectEstratificacao.options[selectEstratificacao.selectedIndex].textContent;
-            outrosTipo = document.getElementById('outrosTipoEstratificacao')?.value;
+            motivo = selectEstratificacao.options[selectEstratificacao.selectedIndex].textContent.trim();
+            outrosTipo = getValue('outrosTipoEstratificacao');
         }
-        
-        if (motivo.toLowerCase().includes("outros") && outrosTipo) {
+        if (motivo.toLowerCase().includes("outros") && outrosTipo !== "N/A") {
             motivo += ` (${outrosTipo})`;
         }
-
-        // --- 2. Dados de Programação (Meta) ---
-        const quadrasSelecionadas = document.getElementById("quadrasEstratificadas")?.value || "N/A";
-        const quadrasPositivas = document.getElementById("quadrasPositivas")?.value || "Nenhuma";
-        const imoveisProgramados = document.getElementById("imoveisProgramadosValue")?.textContent || "N/A";
-        const imoveisTrabalhar = document.getElementById("imoveisATrabalhar")?.value || "N/A";
-
-        // --- 3. Dados de Esforço ---
-        const media = document.getElementById("media")?.value || "N/A";
-        const servidores = document.getElementById("servidores")?.value || "N/A";
-        const dias = document.getElementById("dias")?.value || "N/A";
-        const dataInicio = document.getElementById("dataInicio")?.value;
-        const dataTermino = document.getElementById("dataTermino")?.value;
-        const formatarData = (data) => data ? new Date(data + "T00:00:00").toLocaleDateString('pt-BR') : 'N/A';
-
-        // --- 4. Dados de Execução/Resultado ---
-        // Pegando campos do painel de Resultados (você pode precisar ajustar os IDs)
-        const quadrasTrabalhadas = document.getElementById("quadrasTrabalhadasInput")?.value || 0;
-        const imoveisTrabalhados = document.getElementById("imoveisTrabalhadosInput")?.value || 0;
-        const fechados = document.getElementById("fechadosInput")?.value || 0;
-        const improdutivos = document.getElementById("improdutivosInput")?.value || 0; // Se você tiver este campo
-        const imoveisTratados = document.getElementById("imoveisTratadosInput")?.value || 0; // Se você tiver este campo
-        const imoveisBti = document.getElementById("imoveisBtiInput")?.value || 0;
         
-        // Pega o percentual dos imóveis trabalhados para inclusão
-        const percTrabalhadosElem = document.getElementById("percImoveisTrabalhados");
-        const percTrabalhados = percTrabalhadosElem ? percTrabalhadosElem.textContent.match(/\((.*?)\)/)?.[1] || '' : '';
+        // --- 2. PROGRAMAÇÃO E ESFORÇO ---
+        const quadrasSelecionadas = getValue("quadrasEstratificadas");
+        const quadrasPositivas = getValue("quadrasPositivas") || "Nenhuma";
+        
+        const percentualFechados = getValue("percentualFechados");
+        const imoveisTrabalhar = getValue("imoveisATrabalhar");
+        const media = getValue("media");
+        const servidores = getValue("servidores");
+        const dias = getValue("dias");
+        const dataInicioProg = getValue("dataInicio");
+        const dataTerminoProg = getValue("dataTermino");
+        const uaps = getValue("uaps"); // Novo Campo
+        const endereço = getValue("endereço"); // Novo Campo
 
+        // --- 3. RESULTADOS/EXECUÇÃO ---
+        const quadrasTrabalhadas = getValue("quadrasTrabalhadasInput");
+        const semanaInicial = getValue("semanaInicial");
+        const semanaFinal = getValue("semanaFinal");
+        const ciclo = getValue("ciclo");
+        const dataInicioReal = getValue("dataInicioReal"); // Novo Campo
+        const dataTerminoReal = getValue("dataTerminoReal"); // Novo Campo
+        const obs = getValue("observações"); // Novo Campo
 
+        // Imóveis e Focos
+        const imoveisTrabalhados = getValue("imoveisTrabalhadosInput");
+        const fechados = getValue("fechadosInput");
+        const focosPorImovel = getValue("focosPorImovel"); // QTD De Focos Por Imóvel
+        const btiTratados = getValue("imoveisBtiInput");
+        const espTratados = getValue("imoveisEspInput"); // Assumindo ID para ESP
+
+        // Depósitos Positivos (IDs simulados)
+        const d_A1 = getValue("depositosA1");
+        const d_A2 = getValue("depositosA2");
+        const d_B = getValue("depositosB");
+        const d_C = getValue("depositosC");
+        const d_D1 = getValue("depositosD1");
+        const d_D2 = getValue("depositosD2");
+        const d_E = getValue("depositosE");
+        
+        // Total de Depósitos Positivos (deve ser calculado no HTML, aqui apenas buscamos)
+        const totalDepositosPositivos = getText("totalDepositosPositivosValue"); 
+
+        // Larvicidas e Eliminação
+        const depositosBti = getValue("depositosBtiTratados");
+        const depositosEsp = getValue("depositosEspTratados");
+        const larvicidaBti = getValue("larvicidaBtiGasto");
+        const larvicidaEsp = getValue("larvicidaEspGasto");
+        const depositosEliminados = getValue("depositosEliminados");
+        
+        const responsavel = getValue("responsavelInformacao"); // Novo Campo
+        
         // --- MONTAGEM DA MENSAGEM ---
-        let mensagem = `*🦟 PLANO DE TRABALHO DTE - ${bairro.toUpperCase()} 🗓️*\n\n`;
-        
-        // Seção I: Motivação
-        mensagem += `*MOTIVO:* ${motivo}\n\n`;
+        let mensagem = `*🦟 PLANO DE TRABALHO DTE - ${bairro.toUpperCase()} 🗓️*\n`;
+        mensagem += `*Responsável:* ${responsavel}\n\n`;
 
-        // Seção II: Programação (Meta)
-        if (quadrasSelecionadas.length > 0) {
-            mensagem += `*--- PROGRAMAÇÃO ---\n`;
-            mensagem += `*🗺 Quadras Programadas (Meta):* ${quadrasSelecionadas}\n`;
-            if (quadrasPositivas !== "Nenhuma") {
-                mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
-            }
-            mensagem += `\n`;
+        // 1. DADOS ESTRATÉGICOS DO BAIRRO
+        mensagem += `*--- DADOS GERAIS DO BAIRRO ---\n`;
+        mensagem += `*Total Imóveis:* ${totalImoveis}\n`;
+        mensagem += `*Total Habitantes:* ${totalHabitantes}\n`;
+        mensagem += `*Cães/Gatos:* ${cães}/${gatos}\n`;
+        mensagem += `*Depósitos de Água:* ${depositosAgua}\n`;
+        mensagem += `*Ovitrampas:* ${ovitrampas}\n\n`;
+        
+        // 2. PROGRAMAÇÃO E ESFORÇO
+        mensagem += `*--- PROGRAMAÇÃO E ESFORÇO ---\n`;
+        mensagem += `*Tipo:* ${motivo}\n`;
+        if (endereço !== "N/A" && endereço.length > 0) mensagem += `*Endereço:* ${endereço}\n`;
+        if (uaps !== "N/A" && uaps.length > 0) mensagem += `*UAPS:* ${uaps}\n`;
+        
+        mensagem += `*Quadras (Meta/Foco):* ${quadrasSelecionadas} / ${quadrasPositivas}\n`;
+        mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar} (${percentualFechados}% Fech.)\n`;
+        
+        mensagem += `*Início Prog/Término Prog:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
+        mensagem += `*Servidores/Média/Dias:* ${servidores} / ${media} / ${dias}\n\n`;
+        
+        // 3. RESULTADOS (EXECUÇÃO)
+        mensagem += `*--- RESULTADOS DO TRABALHO ---\n`;
+        mensagem += `*Período:* ${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})\n`;
+        mensagem += `*Início/Término Real:* ${formatarData(dataInicioReal)} - ${formatarData(dataTerminoReal)}\n`;
+        mensagem += `*Quadras Trabalhadas:* ${quadrasTrabalhadas}\n`;
+        
+        // Imóveis e Focos
+        mensagem += `*Imóveis Trab/Fech:* ${imoveisTrabalhados} / ${fechados}\n`;
+        mensagem += `*QTD Focos/Imóvel:* ${focosPorImovel}\n`;
+        
+        // Tratamentos
+        mensagem += `*Imóveis Tratados BTI/ESP:* ${btiTratados} / ${espTratados}\n`;
+        
+        // Depósitos Positivos
+        mensagem += `*--- DEPÓSITOS POSITIVOS ---\n`;
+        mensagem += `*A1/A2/B/C/D1/D2/E:* ${d_A1}/${d_A2}/${d_B}/${d_C}/${d_D1}/${d_D2}/${d_E}\n`;
+        mensagem += `*Total Dep. Positivos:* ${totalDepositosPositivos}\n`;
+        
+        // Larvicidas e Eliminação
+        mensagem += `*Dep. Tratados BTI/ESP:* ${depositosBti} / ${depositosEsp}\n`;
+        mensagem += `*Larvicida Gasto BTI/ESP:* ${larvicidaBti} / ${larvicidaEsp}\n`;
+        mensagem += `*Depósitos Eliminados:* ${depositosEliminados}\n\n`;
+
+        // Observações Finais
+        if (obs !== "N/A" && obs.length > 0) {
+             mensagem += `*--- OBSERVAÇÕES ---\n`;
+             mensagem += `${obs}\n\n`;
         }
-        mensagem += `*🏠 Imóveis Programados:* ${imoveisProgramados}\n`;
-        mensagem += `*🎯 Imóveis a Trabalhar (estimado):* ${imoveisTrabalhar}\n`;
-        mensagem += `\n`;
 
-        // Seção III: Esforço
-        mensagem += `*--- ESFORÇO E PRAZO ---\n`;
-        mensagem += `*INÍCIO:* ${formatarData(dataInicio)}\n`;
-        mensagem += `*TÉRMINO (Previsto):* ${formatarData(dataTermino)}\n`;
-        mensagem += `*Dias Úteis:* ${dias}\n`;
-        mensagem += `*Servidores:* ${servidores}\n`;
-        mensagem += `*Média/Servidor/Dia:* ${media}\n`;
-        
-        
-        // Seção IV: Resultados/Execução (Só inclui se houver dados preenchidos)
-        if (Number(quadrasTrabalhadas) > 0 || Number(imoveisTrabalhados) > 0) {
-            mensagem += `\n*--- RESULTADOS/EXECUÇÃO ---\n`;
-            
-            // Quadras
-            mensagem += `*🗺 Quadras Trabalhadas:* ${quadrasTrabalhadas}\n`;
-            
-            // Imóveis
-            mensagem += `*🏠 Imóveis Trabalhados:* ${imoveisTrabalhados} ${percTrabalhados}\n`;
-            mensagem += `*🔒 Fechados:* ${fechados}\n`;
-            if (Number(improdutivos) > 0) {
-                mensagem += `*❌ Improdutivos:* ${improdutivos}\n`;
-            }
-
-            // Tratamentos (se houver)
-            if (Number(imoveisTratados) > 0) {
-                mensagem += `*🧪 Tratados (Imóveis):* ${imoveisTratados}\n`;
-            }
-            if (Number(imoveisBti) > 0) {
-                mensagem += `*🦠 BTI (Imóveis):* ${imoveisBti}\n`;
-            }
-            
-            mensagem += `\n`;
-            mensagem += `_Dados coletados em ${new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza' })}_`;
-        }
+        mensagem += `_Dados exportados em ${new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza' })}_`;
 
 
         // --- Finalização ---
@@ -900,7 +942,7 @@ function compartilharWhatsApp() {
         window.open(urlWhatsApp, '_blank');
 
     } catch (error) {
-        console.error("Erro fatal ao montar a mensagem do WhatsApp:", error);
+        console.error("Erro fatal ao montar a mensagem do WhatsApp (Versão Máxima):", error);
         alert("Erro ao tentar compartilhar. Verifique o console para detalhes.");
     }
 }
@@ -1113,6 +1155,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
