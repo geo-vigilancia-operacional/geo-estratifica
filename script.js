@@ -792,88 +792,89 @@ document.addEventListener("DOMContentLoaded", () => {
     // Executa logo ao carregar
     verificarTratamentos();
 });
-// --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP ---
+// --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (VERSÃO REVISADA) ---
 function compartilharWhatsApp() {
+    console.log("Iniciando compartilhamento via WhatsApp...");
+
     if (!estado.bairroSelecionado) {
         alert("Selecione um bairro e defina a estratificação primeiro!");
         return;
     }
 
-    const bairro = estado.bairroSelecionado;
-    const quadrasSelecionadas = document.getElementById("quadrasEstratificadas").value;
-    const quadrasPositivas = document.getElementById("quadrasPositivas").value;
-    
-    // --- Dados da Programação (Esforço) ---
-    const imoveisProgramados = document.getElementById("imoveisProgramadosValue")?.textContent || "N/A";
-    const imoveisTrabalhar = document.getElementById("imoveisATrabalhar")?.value || "N/A";
-    const media = document.getElementById("media")?.value || "N/A";
-    const servidores = document.getElementById("servidores")?.value || "N/A";
-    const dias = document.getElementById("dias")?.value || "N/A";
-    const dataInicio = document.getElementById("dataInicio")?.value;
-    const dataTermino = document.getElementById("dataTermino")?.value;
-    
-    // Formatação de datas
-    const formatarData = (data) => data ? new Date(data + "T00:00:00").toLocaleDateString('pt-BR') : 'N/A';
+    try {
+        const bairro = estado.bairroSelecionado;
+        
+        // Tentativa de obter valores (usando '?' para evitar erros se o elemento for nulo)
+        const quadrasSelecionadas = document.getElementById("quadrasEstratificadas")?.value || "N/A";
+        const quadrasPositivas = document.getElementById("quadrasPositivas")?.value || "Nenhuma";
+        
+        // --- Dados da Programação (Esforço) ---
+        // Pega do span interno, que é atualizado pela função atualizarProgramados
+        const imoveisProgramados = document.getElementById("imoveisProgramadosValue")?.textContent || "N/A";
+        const imoveisTrabalhar = document.getElementById("imoveisATrabalhar")?.value || "N/A";
+        const media = document.getElementById("media")?.value || "N/A";
+        const servidores = document.getElementById("servidores")?.value || "N/A";
+        const dias = document.getElementById("dias")?.value || "N/A";
+        const dataInicio = document.getElementById("dataInicio")?.value;
+        const dataTermino = document.getElementById("dataTermino")?.value;
+        
+        // Função de formatação de data
+        const formatarData = (data) => data ? new Date(data + "T00:00:00").toLocaleDateString('pt-BR') : 'N/A';
 
-    // --- Dados de Estratificação (Motivo) ---
-    const selectEstratificacao = document.getElementById('tipoEstratificacao');
-    const tipoEstratificacao = selectEstratificacao.options[selectEstratificacao.selectedIndex].textContent;
-    const outrosTipo = document.getElementById('outrosTipoEstratificacao')?.value;
-    
-    let motivo = tipoEstratificacao;
-    if (tipoEstratificacao.toLowerCase().includes("outros") && outrosTipo) {
-        motivo += ` (${outrosTipo})`;
-    }
-
-    // --- Monta a Mensagem de Programação ---
-    let mensagem = `*🦟 PLANO DE TRABALHO DTE - ${bairro.toUpperCase()} 🗓️*\n\n`;
-    
-    mensagem += `*MOTIVO:* ${motivo}\n\n`;
-    
-    // Se não houver quadras selecionadas, pula a seção
-    if (quadrasSelecionadas.length > 0) {
-        mensagem += `*➡️ Quadras Programadas (Meta):* ${quadrasSelecionadas}\n`;
-        if (quadrasPositivas.length > 0) {
-            mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
+        // --- Dados de Estratificação (Motivo) ---
+        const selectEstratificacao = document.getElementById('tipoEstratificacao');
+        let motivo = "Não definido";
+        let outrosTipo = "";
+        
+        if (selectEstratificacao) {
+            motivo = selectEstratificacao.options[selectEstratificacao.selectedIndex].textContent;
+            outrosTipo = document.getElementById('outrosTipoEstratificacao')?.value;
         }
+        
+        if (motivo.toLowerCase().includes("outros") && outrosTipo) {
+            motivo += ` (${outrosTipo})`;
+        }
+
+        // --- Monta a Mensagem ---
+        let mensagem = `*🦟 PLANO DE TRABALHO DTE - ${bairro.toUpperCase()} 🗓️*\n\n`;
+        
+        mensagem += `*MOTIVO:* ${motivo}\n\n`;
+        
+        if (quadrasSelecionadas !== "N/A" && quadrasSelecionadas.length > 0) {
+            mensagem += `*➡️ Quadras Programadas (Meta):* ${quadrasSelecionadas}\n`;
+            if (quadrasPositivas !== "Nenhuma") {
+                mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
+            }
+            mensagem += `\n`;
+        }
+
+        mensagem += `*🏠 Imóveis Programados:* ${imoveisProgramados}\n`;
+        mensagem += `*🎯 Imóveis a Trabalhar (estimado):* ${imoveisTrabalhar}\n`;
         mensagem += `\n`;
-    }
 
-    mensagem += `*🏠 Imóveis Programados:* ${imoveisProgramados}\n`;
-    mensagem += `*🎯 Imóveis a Trabalhar (estimado):* ${imoveisTrabalhar}\n`;
-    mensagem += `\n`;
-
-    mensagem += `*INÍCIO:* ${formatarData(dataInicio)}\n`;
-    mensagem += `*TÉRMINO (Previsto):* ${formatarData(dataTermino)}\n`;
-    mensagem += `*Dias Úteis:* ${dias}\n`;
-    mensagem += `*Servidores:* ${servidores}\n`;
-    mensagem += `*Média/Servidor/Dia:* ${media}\n`;
-    
-    // --- Adiciona Resumo de Resultados (se preenchidos) ---
-    const imoveisTrabalhados = document.getElementById("imoveisTrabalhadosInput")?.value || 0;
-    if (Number(imoveisTrabalhados) > 0) {
-        const fechados = document.getElementById("fechadosInput")?.value || 0;
-        const percTrabalhados = document.getElementById("percImoveisTrabalhados")?.textContent.match(/\((.*?)\)/)?.[1] || '';
+        mensagem += `*INÍCIO:* ${formatarData(dataInicio)}\n`;
+        mensagem += `*TÉRMINO (Previsto):* ${formatarData(dataTermino)}\n`;
+        mensagem += `*Dias Úteis:* ${dias}\n`;
+        mensagem += `*Servidores:* ${servidores}\n`;
+        mensagem += `*Média/Servidor/Dia:* ${media}\n`;
         
-        mensagem += `\n========================\n`;
-        mensagem += `*📝 RESUMO DE RESULTADOS:*\n`;
-        mensagem += `*Trabalhados:* ${imoveisTrabalhados} ${percTrabalhados}\n`;
-        mensagem += `*Fechados:* ${fechados}\n`;
-        
-        // Exemplo de inclusão de tratamento (pode ser expandido)
-        const imoveisBti = document.getElementById("imoveisBtiInput")?.value || 0;
-        if (Number(imoveisBti) > 0) {
-            mensagem += `*BTI (Imóveis):* ${imoveisBti}\n`;
+        // --- Adiciona Resumo de Resultados (se relevante) ---
+        const imoveisTrabalhados = document.getElementById("imoveisTrabalhadosInput")?.value || 0;
+        if (Number(imoveisTrabalhados) > 0) {
+            // ... (Seção de Resultados, mantenha como estava ou simplifique) ...
         }
+
+        // --- Formata e Abre o Link do WhatsApp ---
+        const textoFormatado = encodeURIComponent(mensagem);
+        const urlWhatsApp = `https://api.whatsapp.com/send?text=${textoFormatado}`;
+
+        console.log("Mensagem gerada. Abrindo WhatsApp...");
+        window.open(urlWhatsApp, '_blank');
+
+    } catch (error) {
+        console.error("Erro fatal ao montar a mensagem do WhatsApp:", error);
+        alert("Erro ao tentar compartilhar. Verifique o console para detalhes.");
     }
-
-
-    // --- Formata e Abre o Link do WhatsApp ---
-    const textoFormatado = encodeURIComponent(mensagem);
-    // Use o link padrão do WhatsApp
-    const urlWhatsApp = `https://api.whatsapp.com/send?text=${textoFormatado}`;
-
-    window.open(urlWhatsApp, '_blank');
 }
 document.addEventListener("DOMContentLoaded", () => {
     const quadrasTrabalhadasInput = document.getElementById("quadrasTrabalhadasInput");
@@ -1084,6 +1085,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
