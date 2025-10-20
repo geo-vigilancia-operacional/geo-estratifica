@@ -942,36 +942,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
          }
     });
 });
-document.addEventListener("DOMContentLoaded", function() {
-    // ... [Seus outros listeners, como selectBairro, aplicarTextoBtn, etc.] ...
 
-    const btnCompartilhar = document.getElementById("compartilharWhatsapp");
-    if (btnCompartilhar) {
-        btnCompartilhar.addEventListener("click", compartilharWhatsApp);
-    }
-    
-    // ... [O resto do seu código DOMContentLoaded] ...
-});
-
-// A função 'compartilharWhatsApp' deve ser definida fora ou dentro deste bloco, 
-// garantindo que esteja no escopo global ou acessível.
-// Se você a definiu no escopo global, o código acima é suficiente.
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
 
+    // 1. Inicia o carregamento dos dados principais
     carregarDados();
 
+    // 2. Event Listener para seleção do Bairro
     if (selectBairro) {
         selectBairro.addEventListener("change", function() {
             estado.bairroSelecionado = this.value;
-            estado.quadrasSelecionadas.clear();
+            estado.quadrasSelecionadas.clear(); // Limpa as quadras selecionadas ao mudar o bairro
+            estado.quadrasPositivas.clear();     // Limpa as quadras positivas
+            
             montarResumoGeral();
             montarListaQuadras();
             atualizarProgramados();
             atualizarQuadrasSelecionadas();
+            atualizarQuadrasPositivas(); // Garante que o campo de positivas seja limpo
         });
     }
 
+    // 3. Event Listener para aplicar o texto da entrada de quadras (1-10, 25, 4/1)
     if (aplicarTextoBtn && entradaQuadras) {
         aplicarTextoBtn.addEventListener("click", function() {
             if (!estado.bairroSelecionado) {
@@ -981,26 +974,114 @@ document.addEventListener("DOMContentLoaded", function() {
             const texto = entradaQuadras.value;
             const quadrasSelecionadas = interpretarEntrada(texto);
             estado.quadrasSelecionadas = quadrasSelecionadas;
+            
+            // Re-renderiza a lista para atualizar os checkboxes
             montarListaQuadras();
+            
+            // Atualiza os painéis de resumo e texto
             atualizarProgramados();
             atualizarQuadrasSelecionadas();
+            atualizarQuadrasPositivas(); 
         });
     }
-    // Adiciona ouvintes de eventos para os campos de cálculo
+
+    // 4. Event Listeners para o CÁLCULO DE PROGRAMAÇÃO (Esforço)
     const inputPercentual = document.getElementById("percentualFechados");
     const inputMedia = document.getElementById("media");
     const inputServidores = document.getElementById("servidores");
     const inputDataInicio = document.getElementById("dataInicio");
     
+    // O percentual afeta Imóveis a Trabalhar, que chama calcularDiasETermino
     if (inputPercentual) inputPercentual.addEventListener("input", calcularImoveisATrabalhar);
+    
+    // Mídia, Servidores e Data Início afetam diretamente calcularDiasETermino
     if (inputMedia) inputMedia.addEventListener("input", calcularDiasETermino);
     if (inputServidores) inputServidores.addEventListener("input", calcularDiasETermino);
     if (inputDataInicio) inputDataInicio.addEventListener("input", calcularDiasETermino);
 
+    // 5. Event Listener para o botão LIMPAR TUDO
     if (limparTudoBtn) {
         limparTudoBtn.addEventListener("click", limparTudo);
     }
     
+    // 6. Event Listener para o botão COMPARTILHAR WHATSAPP
+    const btnCompartilhar = document.getElementById("compartilharWhatsapp");
+    if (btnCompartilhar) {
+        // Assume que a função 'compartilharWhatsApp' foi definida no escopo
+        btnCompartilhar.addEventListener("click", compartilharWhatsApp);
+    }
+
+    // 7. Lógica de validação do campo "Quadras Trabalhadas" (MutationObserver)
+    const quadrasTrabalhadasInput = document.getElementById("quadrasTrabalhadasInput");
+    const obsQuadrasTrabalhadas = document.getElementById("obsQuadrasTrabalhadas");
+    
+    if (quadrasTrabalhadasInput && obsQuadrasTrabalhadas) {
+        // Função para atualizar a validação das quadras trabalhadas
+        function atualizarQuadrasTrabalhadas() {
+            // ... (implementação da função) ...
+            // [A função 'atualizarQuadrasTrabalhadas' completa deve estar definida no seu script]
+            
+            // Pega o total de quadras selecionadas (a meta)
+            let totalSelecionadas = 0;
+            document.querySelectorAll("#resumoProgramados span").forEach(span => {
+                if (span.textContent.includes("Quadras Selecionadas:")) {
+                    totalSelecionadas = Number(span.textContent.replace(/\D/g, "")) || 0;
+                }
+            });
+
+            // Se for a primeira vez, preenche automaticamente
+            if (totalSelecionadas > 0 && !quadrasTrabalhadasInput.dataset.editado) {
+                quadrasTrabalhadasInput.value = totalSelecionadas;
+            }
+
+            // Comparar valores e exibir observação
+            const trabalhadas = Number(quadrasTrabalhadasInput.value) || 0;
+            if (trabalhadas === totalSelecionadas && totalSelecionadas > 0) {
+                obsQuadrasTrabalhadas.innerHTML = "✔ Todas as quadras foram trabalhadas.";
+                obsQuadrasTrabalhadas.style.color = "green"; // Ajuste para verde ou cor de sucesso
+            } else if (trabalhadas < totalSelecionadas) {
+                const diferenca = totalSelecionadas - trabalhadas;
+                obsQuadrasTrabalhadas.innerHTML = `⚠ ${diferenca} quadra(s) não foram trabalhadas.`;
+                obsQuadrasTrabalhadas.style.color = "orange";
+            } else {
+                obsQuadrasTrabalhadas.innerHTML = "";
+                obsQuadrasTrabalhadas.style.color = "";
+            }
+        }
+        
+        // Marca que o campo foi editado manualmente
+        quadrasTrabalhadasInput.addEventListener("input", () => {
+            quadrasTrabalhadasInput.dataset.editado = true;
+            atualizarQuadrasTrabalhadas();
+        });
+
+        // Observa mudanças no resumo de programados para atualizar a meta
+        const observer = new MutationObserver(atualizarQuadrasTrabalhadas);
+        observer.observe(document.getElementById("resumoProgramados"), { childList: true, subtree: true });
+
+        atualizarQuadrasTrabalhadas(); // Roda na inicialização
+    }
+
+    // 8. Lógica de controle do campo "Outros" na Estratificação
+    const selectEstratificacao = document.getElementById('tipoEstratificacao');
+    const outrosCampoContainer = document.getElementById('outrosCampoContainer');
+    const outrosCampoInput = document.getElementById('outrosTipoEstratificacao');
+    const avisoOutros = document.getElementById('avisoOutros');
+
+    if (selectEstratificacao && outrosCampoContainer && outrosCampoInput && avisoOutros) {
+        selectEstratificacao.addEventListener('change', (event) => {
+            if (event.target.value === 'outros') {
+                outrosCampoContainer.classList.remove('oculto');
+                avisoOutros.classList.remove('oculto');
+                outrosCampoInput.setAttribute('required', 'required');
+            } else {
+                outrosCampoContainer.classList.add('oculto');
+                avisoOutros.classList.add('oculto');
+                outrosCampoInput.removeAttribute('required');
+            }
+        });
+    }
+
     console.log("Sistema inicializado com sucesso!");
 });
 
