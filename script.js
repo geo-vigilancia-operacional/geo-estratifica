@@ -581,14 +581,6 @@ function calcularImoveisATrabalhar() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
-    // ... Seu código de Estratificação/Mutirão continua aqui ...
-    
-    // Chama a nova função de inicialização
-    inicializarHDT();
-    
-    // ... O resto do seu código principal continua e fecha aqui ...
-});
 // Função corrigida para abrir o Google Maps
 function abrirMapsComEndereco() {
     // 1. Pega o valor do campo de endereço usando o ID
@@ -1085,6 +1077,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
