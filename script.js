@@ -786,10 +786,10 @@ document.addEventListener("DOMContentLoaded", () => {
     verificarTratamentos();
 });
 // --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (VERSÃO FINAL COM IDs REAIS) ---
+// --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (Ajustada para DOM e Datas) ---
 function compartilharWhatsApp() {
-    console.log("Iniciando compartilhamento via WhatsApp (Versão Final)...");
+    console.log("Iniciando compartilhamento via WhatsApp (Ajuste para DOM)...");
 
-    // O objeto 'estado' deve conter 'bairroSelecionado' e os dados do bairro.
     if (!estado || !estado.bairroSelecionado) {
         alert("Selecione um bairro e defina a estratificação primeiro!");
         return;
@@ -797,29 +797,34 @@ function compartilharWhatsApp() {
 
     try {
         const bairro = estado.bairroSelecionado;
-        const formatarData = (data) => data ? new Date(data + "T00:00:00").toLocaleDateString('pt-BR') : 'N/A';
         
-        // --- FUNÇÕES AUXILIARES DE BUSCA ---
-       const getValue = (id) => document.getElementById(id)?.value.trim() || 'N/A';
-       const getText = (id) => document.getElementById(id)?.textContent.trim() || 'N/A'; // Adicionando getText para segurança
-        // Para dados que estão em containers (como o resumoProgramados), é mais complexo, 
-        // usaremos a lógica da 'estado' e 'resumoProgramados' para extrair esses dados.
+        // --- FUNÇÕES AUXILIARES DE BUSCA ROBUSTA ---
+        const getValue = (id) => document.getElementById(id)?.value.trim() || 'N/A';
+        const getText = (id) => document.getElementById(id)?.textContent.trim() || 'N/A';
         
-        // --- 1. DADOS GERAIS DO BAIRRO (Busca de dados do estado ou resumoProgramados) ---
-        // Estes dados geralmente vêm de uma função que atualiza o #resumoGeral ou #resumoProgramados.
-        // Vamos usar o objeto 'estado' para esses dados estáticos, assumindo que eles são carregados
-        // quando o bairro é selecionado. 
-        // Se a variável global 'estado' contiver todos os dados do bairro (como no objeto JSON original):
-        const dadosBairro = estado.dadosBairros[bairro] || {}; 
-        
-        const totalImoveis = dadosBairro.totalImoveis || 'N/A';
-        const totalHabitantes = dadosBairro.totalHabitantes || 'N/A';
-        const imoveisProgramados = dadosBairro.imoveisProgramados || 'N/A'; // Este é o valor que vai para '6099'
-        const cães = dadosBairro.cães || 'N/A';
-        const gatos = dadosBairro.gatos || 'N/A';
-        const depositosAgua = dadosBairro.depositosAgua || 'N/A';
-        const ovitrampas = dadosBairro.ovitrampas || 'N/A';
+        // Função de Formatação de Data
+        const formatarData = (data) => {
+            if (!data || data === 'N/A') return 'N/A';
+            const dataObj = new Date(data + "T00:00:00"); 
+            if (isNaN(dataObj)) return 'N/A'; 
+            return dataObj.toLocaleDateString('pt-BR');
+        };
 
+        // --- 1. DADOS GERAIS DO BAIRRO (Tentativa de extrair do DOM) ---
+        // Se a busca direta no 'estado.dadosBairros' falhou, tentamos o DOM
+        const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
+        
+        // Exemplo de como extrair dados do texto renderizado no resumoGeral (Se for texto plano)
+        const totalImoveis = resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1] || 'N/A';
+        const totalHabitantes = resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A';
+        const cães = resumoGeral.match(/Cães:\s*(\d+)/)?.[1] || 'N/A';
+        const gatos = resumoGeral.match(/Gatos:\s*(\d+)/)?.[1] || 'N/A';
+        const depositosAgua = resumoGeral.match(/Depósitos de Água:\s*(\d+)/)?.[1] || 'N/A';
+        const ovitrampas = resumoGeral.match(/Ovitrampas \(palhetas\):\s*(\d+)/)?.[1] || 'N/A';
+        
+        // Valores que vêm do Programados
+        const imoveisProgramados = document.getElementById("imoveisProgramadosValue")?.textContent.trim() || 'N/A';
+        
         // --- 2. MOTIVAÇÃO E CAMPOS DE ESTRATIFICAÇÃO ---
         const selectTipo = document.getElementById('tipoSelect');
         let motivo = "Não definido";
@@ -857,19 +862,21 @@ function compartilharWhatsApp() {
         const ciclo = getValue("ciclo");
         const dataInicioReal = getValue("dataInicioReal");
         const dataTerminoReal = getValue("dataTerminoReal");
+        const responsavel = getValue("responsavel");
+        const obs = getValue("observacoes");
 
         // Imóveis e Focos
         const imoveisTrabalhados = getValue("imoveisTrabalhadosInput");
         const fechados = getValue("fechadosInput");
-        // O percentual está em um div, precisa ser extraído como na função anterior
-        const percTrabalhadosElem = document.getElementById("percImoveisTrabalhados");
-        const percTrabalhados = percTrabalhadosElem ? percTrabalhadosElem.textContent.match(/\((.*?)\)/)?.[1] || '' : '';
+        // Extrai o percentual do texto do DIV (o que estava dando "0% de 0 programados" antes)
+        const percTrabalhadosText = getText("percImoveisTrabalhados");
+        const percTrabalhados = percTrabalhadosText.match(/\((.*?)\)/)?.[1] || '';
         
         const focosPorImovel = getValue("focosPorImovelInput");
         const btiTratados = getValue("imoveisBtiInput");
         const espTratados = getValue("imoveisEspInput");
 
-        // Depósitos Positivos (IDs ajustados para: a1, a2, b, c, d1, d2, e)
+        // Depósitos Positivos (IDs: a1, a2, b, c, d1, d2, e)
         const d_A1 = getValue("a1");
         const d_A2 = getValue("a2");
         const d_B = getValue("b");
@@ -886,8 +893,6 @@ function compartilharWhatsApp() {
         const larvicidaEsp = getValue("larvicidaEspInput");
         const depositosEliminados = getValue("depositosEliminadosInput");
         
-        const obs = getValue("observacoes"); 
-        const responsavel = getValue("responsavel");
         
         // --- MONTAGEM DA MENSAGEM ---
         let mensagem = `*🦟 PLANO DE TRABALHO DTE - ${bairro.toUpperCase()} 🗓️*\n`;
@@ -903,9 +908,13 @@ function compartilharWhatsApp() {
         // 2. PROGRAMAÇÃO E ESFORÇO
         mensagem += `*--- PROGRAMAÇÃO E ESFORÇO ---\n`;
         mensagem += `*Tipo:* ${motivo}\n`;
-        if (endereço !== 'N/A' && endereço.length > 0) mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao}) - UAPS: ${uaps}\n`;
         
-        mensagem += `*Quadras (Meta/Foco):* ${quadrasSelecionadas} / ${quadrasPositivas}\n`;
+        // Se for mutirão, inclui o endereço e UAPS
+        if (selectTipo?.value.includes("mutirao")) { 
+            mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao}) - UAPS: ${uaps}\n`;
+        }
+        
+        mensagem += `*Quadras (Meta/Foco):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'} / ${quadrasPositivas}\n`;
         mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`;
         mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
         
@@ -957,7 +966,7 @@ function compartilharWhatsApp() {
         window.open(urlWhatsApp, '_blank');
 
     } catch (error) {
-        console.error("Erro fatal ao montar a mensagem do WhatsApp (Versão Final):", error);
+        console.error("Erro fatal ao montar a mensagem do WhatsApp:", error);
         alert("Erro ao tentar compartilhar. Verifique o console para detalhes.");
     }
 }
@@ -1170,6 +1179,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
