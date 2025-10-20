@@ -784,7 +784,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Executa logo ao carregar
     verificarTratamentos();
 });
-// --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (VERSÃO REVISADA) ---
+// --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (VERSÃO COMPLETA) ---
 function compartilharWhatsApp() {
     console.log("Iniciando compartilhamento via WhatsApp...");
 
@@ -796,24 +796,7 @@ function compartilharWhatsApp() {
     try {
         const bairro = estado.bairroSelecionado;
         
-        // Tentativa de obter valores (usando '?' para evitar erros se o elemento for nulo)
-        const quadrasSelecionadas = document.getElementById("quadrasEstratificadas")?.value || "N/A";
-        const quadrasPositivas = document.getElementById("quadrasPositivas")?.value || "Nenhuma";
-        
-        // --- Dados da Programação (Esforço) ---
-        // Pega do span interno, que é atualizado pela função atualizarProgramados
-        const imoveisProgramados = document.getElementById("imoveisProgramadosValue")?.textContent || "N/A";
-        const imoveisTrabalhar = document.getElementById("imoveisATrabalhar")?.value || "N/A";
-        const media = document.getElementById("media")?.value || "N/A";
-        const servidores = document.getElementById("servidores")?.value || "N/A";
-        const dias = document.getElementById("dias")?.value || "N/A";
-        const dataInicio = document.getElementById("dataInicio")?.value;
-        const dataTermino = document.getElementById("dataTermino")?.value;
-        
-        // Função de formatação de data
-        const formatarData = (data) => data ? new Date(data + "T00:00:00").toLocaleDateString('pt-BR') : 'N/A';
-
-        // --- Dados de Estratificação (Motivo) ---
+        // --- 1. Dados de Estratificação (Motivo) ---
         const selectEstratificacao = document.getElementById('tipoEstratificacao');
         let motivo = "Não definido";
         let outrosTipo = "";
@@ -827,40 +810,93 @@ function compartilharWhatsApp() {
             motivo += ` (${outrosTipo})`;
         }
 
-        // --- Monta a Mensagem ---
+        // --- 2. Dados de Programação (Meta) ---
+        const quadrasSelecionadas = document.getElementById("quadrasEstratificadas")?.value || "N/A";
+        const quadrasPositivas = document.getElementById("quadrasPositivas")?.value || "Nenhuma";
+        const imoveisProgramados = document.getElementById("imoveisProgramadosValue")?.textContent || "N/A";
+        const imoveisTrabalhar = document.getElementById("imoveisATrabalhar")?.value || "N/A";
+
+        // --- 3. Dados de Esforço ---
+        const media = document.getElementById("media")?.value || "N/A";
+        const servidores = document.getElementById("servidores")?.value || "N/A";
+        const dias = document.getElementById("dias")?.value || "N/A";
+        const dataInicio = document.getElementById("dataInicio")?.value;
+        const dataTermino = document.getElementById("dataTermino")?.value;
+        const formatarData = (data) => data ? new Date(data + "T00:00:00").toLocaleDateString('pt-BR') : 'N/A';
+
+        // --- 4. Dados de Execução/Resultado ---
+        // Pegando campos do painel de Resultados (você pode precisar ajustar os IDs)
+        const quadrasTrabalhadas = document.getElementById("quadrasTrabalhadasInput")?.value || 0;
+        const imoveisTrabalhados = document.getElementById("imoveisTrabalhadosInput")?.value || 0;
+        const fechados = document.getElementById("fechadosInput")?.value || 0;
+        const improdutivos = document.getElementById("improdutivosInput")?.value || 0; // Se você tiver este campo
+        const imoveisTratados = document.getElementById("imoveisTratadosInput")?.value || 0; // Se você tiver este campo
+        const imoveisBti = document.getElementById("imoveisBtiInput")?.value || 0;
+        
+        // Pega o percentual dos imóveis trabalhados para inclusão
+        const percTrabalhadosElem = document.getElementById("percImoveisTrabalhados");
+        const percTrabalhados = percTrabalhadosElem ? percTrabalhadosElem.textContent.match(/\((.*?)\)/)?.[1] || '' : '';
+
+
+        // --- MONTAGEM DA MENSAGEM ---
         let mensagem = `*🦟 PLANO DE TRABALHO DTE - ${bairro.toUpperCase()} 🗓️*\n\n`;
         
+        // Seção I: Motivação
         mensagem += `*MOTIVO:* ${motivo}\n\n`;
-        
-        if (quadrasSelecionadas !== "N/A" && quadrasSelecionadas.length > 0) {
-            mensagem += `*➡️ Quadras Programadas (Meta):* ${quadrasSelecionadas}\n`;
+
+        // Seção II: Programação (Meta)
+        if (quadrasSelecionadas.length > 0) {
+            mensagem += `*--- PROGRAMAÇÃO ---\n`;
+            mensagem += `*🗺 Quadras Programadas (Meta):* ${quadrasSelecionadas}\n`;
             if (quadrasPositivas !== "Nenhuma") {
                 mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
             }
             mensagem += `\n`;
         }
-
         mensagem += `*🏠 Imóveis Programados:* ${imoveisProgramados}\n`;
         mensagem += `*🎯 Imóveis a Trabalhar (estimado):* ${imoveisTrabalhar}\n`;
         mensagem += `\n`;
 
+        // Seção III: Esforço
+        mensagem += `*--- ESFORÇO E PRAZO ---\n`;
         mensagem += `*INÍCIO:* ${formatarData(dataInicio)}\n`;
         mensagem += `*TÉRMINO (Previsto):* ${formatarData(dataTermino)}\n`;
         mensagem += `*Dias Úteis:* ${dias}\n`;
         mensagem += `*Servidores:* ${servidores}\n`;
         mensagem += `*Média/Servidor/Dia:* ${media}\n`;
         
-        // --- Adiciona Resumo de Resultados (se relevante) ---
-        const imoveisTrabalhados = document.getElementById("imoveisTrabalhadosInput")?.value || 0;
-        if (Number(imoveisTrabalhados) > 0) {
-            // ... (Seção de Resultados, mantenha como estava ou simplifique) ...
+        
+        // Seção IV: Resultados/Execução (Só inclui se houver dados preenchidos)
+        if (Number(quadrasTrabalhadas) > 0 || Number(imoveisTrabalhados) > 0) {
+            mensagem += `\n*--- RESULTADOS/EXECUÇÃO ---\n`;
+            
+            // Quadras
+            mensagem += `*🗺 Quadras Trabalhadas:* ${quadrasTrabalhadas}\n`;
+            
+            // Imóveis
+            mensagem += `*🏠 Imóveis Trabalhados:* ${imoveisTrabalhados} ${percTrabalhados}\n`;
+            mensagem += `*🔒 Fechados:* ${fechados}\n`;
+            if (Number(improdutivos) > 0) {
+                mensagem += `*❌ Improdutivos:* ${improdutivos}\n`;
+            }
+
+            // Tratamentos (se houver)
+            if (Number(imoveisTratados) > 0) {
+                mensagem += `*🧪 Tratados (Imóveis):* ${imoveisTratados}\n`;
+            }
+            if (Number(imoveisBti) > 0) {
+                mensagem += `*🦠 BTI (Imóveis):* ${imoveisBti}\n`;
+            }
+            
+            mensagem += `\n`;
+            mensagem += `_Dados coletados em ${new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza' })}_`;
         }
 
-        // --- Formata e Abre o Link do WhatsApp ---
+
+        // --- Finalização ---
         const textoFormatado = encodeURIComponent(mensagem);
         const urlWhatsApp = `https://api.whatsapp.com/send?text=${textoFormatado}`;
 
-        console.log("Mensagem gerada. Abrindo WhatsApp...");
         window.open(urlWhatsApp, '_blank');
 
     } catch (error) {
@@ -1077,6 +1113,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
