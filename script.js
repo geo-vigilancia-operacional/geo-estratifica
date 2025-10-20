@@ -5,6 +5,7 @@ let estado = {
     quadrasDisponiveis: [],
     quadrasSelecionadas: new Set(),
     quadrasPositivas: new Set(), // ✅ novo
+    dadosBairros: {}
 };
 // --- ELEMENTOS DO DOM ---
 const selectBairro = document.getElementById("bairro");
@@ -799,7 +800,8 @@ function compartilharWhatsApp() {
         const formatarData = (data) => data ? new Date(data + "T00:00:00").toLocaleDateString('pt-BR') : 'N/A';
         
         // --- FUNÇÕES AUXILIARES DE BUSCA ---
-        const getValue = (id) => document.getElementById(id)?.value.trim() || 'N/A';
+       const getValue = (id) => document.getElementById(id)?.value.trim() || 'N/A';
+       const getText = (id) => document.getElementById(id)?.textContent.trim() || 'N/A'; // Adicionando getText para segurança
         // Para dados que estão em containers (como o resumoProgramados), é mais complexo, 
         // usaremos a lógica da 'estado' e 'resumoProgramados' para extrair esses dados.
         
@@ -1168,6 +1170,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
