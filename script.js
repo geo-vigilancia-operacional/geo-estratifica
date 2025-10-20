@@ -1,8 +1,3 @@
-// =============================================
-// SISTEMA DE ESTRATIFICAÇÃO - VERSÃO COMPLETA
-// =============================================
-
-// --- VARIÁVEIS GLOBAIS ---
 let bairros = [];
 let dadosOvitrampas = []; // ✅ novo
 let estado = {
@@ -11,7 +6,6 @@ let estado = {
     quadrasSelecionadas: new Set(),
     quadrasPositivas: new Set(), // ✅ novo
 };
-
 // --- ELEMENTOS DO DOM ---
 const selectBairro = document.getElementById("bairro");
 const resumoGeralDiv = document.getElementById("resumoGeral");
@@ -23,7 +17,6 @@ const limparTudoBtn = document.getElementById("limparTudo");
 const dadosDetalhesDiv = document.getElementById("dadosDetalhes");
 
 // --- FUNÇÕES PRINCIPAIS ---
-
 // 1. CARREGAR DADOS (bairros + ovitrampas)
 function carregarDados() {
     Promise.all([
@@ -44,9 +37,6 @@ function carregarDados() {
         alert('Erro ao carregar dados. Verifique o console para detalhes.');
     });
 }
-
-
-
 // 2. PREENCHER LISTA DE BAIRROS
 function preencherListaBairros() {
     if (!selectBairro) return;
@@ -62,7 +52,6 @@ function preencherListaBairros() {
         selectBairro.appendChild(option);
     });
 }
-
 // 3. MONTAR RESUMO GERAL DO BAIRRO (COM TODOS OS DADOS)
 function montarResumoGeral() {
     if (!resumoGeralDiv) return;
@@ -116,8 +105,6 @@ function montarResumoGeral() {
         <span>🧪 <strong>Ovitrampas (palhetas):</strong> ${totalOvitrampasBairro}</span>
     `;
 }
-
-
 // 4. CALCULAR TOTAIS COMPLETOS DO BAIRRO
 function calcularTotaisBairro(dadosBairro) {
     const campos = [
@@ -218,8 +205,7 @@ function montarListaQuadras() {
                 atualizarQuadrasPositivas();
             });
         }
-
-        // === Checkbox positiva ===
+ // === Checkbox positiva ===
         const checkboxPositivo = document.createElement("input");
         checkboxPositivo.type = "checkbox";
         checkboxPositivo.value = quadra;
@@ -233,11 +219,6 @@ function montarListaQuadras() {
         labelPositivo.style.fontSize = "0.85em";
         labelPositivo.style.color = "#ccc";
 
-        // -------------------------------------------------------------
-        // NOVO: Adicionar a verificação 'isExtinta' aqui
-        // O checkbox Positiva só é habilitado se NÃO for extinta
-        // E se o checkbox principal estiver selecionado
-        // -------------------------------------------------------------
         if (isExtinta) {
             checkboxPositivo.disabled = true;
         } else {
@@ -255,10 +236,6 @@ function montarListaQuadras() {
             atualizarQuadrasPositivas();
         });
 
-        // -------------------------------------------------------------
-        // NOVO: Adicionar a verificação 'isExtinta' ao listener
-        // Para evitar que o checkbox seja habilitado em quadras extintas
-        // -------------------------------------------------------------
         checkbox.addEventListener("change", () => {
             if (isExtinta) {
                 checkboxPositivo.disabled = true;
@@ -292,9 +269,6 @@ function montarListaQuadras() {
     });
 }
 
-
-// === FUNÇÃO: MOSTRAR APENAS QUADRAS SELECIONADAS ===
-// === FUNÇÃO: MOSTRAR APENAS QUADRAS SELECIONADAS ===
 function atualizarQuadrasSelecionadas() {
     const textarea = document.getElementById("quadrasEstratificadas");
     const detalhesDiv = document.getElementById("dadosDetalhes");
@@ -425,8 +399,6 @@ function mostrarDetalhesQuadras() {
     dadosDetalhesDiv.innerHTML = detalhes;
 }
 
-// 9. INTERPRETAR ENTRADA DE TEXTO PARA QUADRAS
-// === FUNÇÃO: INTERPRETAR ENTRADA DE TEXTO PARA QUADRAS ===
 function interpretarEntrada(texto) {
     const partes = texto.split(/[\s,;]+/).filter(Boolean);
     const selecionadas = new Set();
@@ -513,9 +485,6 @@ function calcularDiasETermino() {
     dataTerminoInput.value = `${ano}-${mes}-${dia}`;
 }
 
-
-// Sua função atualizarProgramados (aqui com a chamada para o novo cálculo)
-// 6. ATUALIZAR RESUMO DE PROGRAMADOS COMPLETO
 function atualizarProgramados() {
     const resumoProgramados = document.getElementById("resumoProgramados");
 
@@ -612,10 +581,6 @@ function calcularImoveisATrabalhar() {
     }
 }
 
-
-// =========================================================
-// 3. Chamada no DOMContentLoaded PRINCIPAL
-// =========================================================
 document.addEventListener('DOMContentLoaded', (event) => {
     // ... Seu código de Estratificação/Mutirão continua aqui ...
     
@@ -895,8 +860,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 
-
-// --- INICIALIZAÇÃO ÚNICA ---
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
 
@@ -927,7 +890,6 @@ document.addEventListener("DOMContentLoaded", function() {
             atualizarQuadrasSelecionadas();
         });
     }
-    
     // Adiciona ouvintes de eventos para os campos de cálculo
     const inputPercentual = document.getElementById("percentualFechados");
     const inputMedia = document.getElementById("media");
@@ -945,6 +907,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
