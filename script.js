@@ -786,7 +786,7 @@ document.addEventListener("DOMContentLoaded", () => {
     verificarTratamentos();
 });
 function compartilharWhatsApp() {
-    console.log("Iniciando compartilhamento via WhatsApp (Revisão Final de Fontes)...");
+    console.log("Iniciando compartilhamento via WhatsApp (Versão Final)...");
 
     if (!estado || !estado.bairroSelecionado) {
         alert("Selecione um bairro e defina a estratificação primeiro!");
@@ -808,33 +808,32 @@ function compartilharWhatsApp() {
             return dataObj.toLocaleDateString('pt-BR');
         };
 
-        // --- 1. EXTRAÇÃO DE DADOS ESTÁTICOS DO BAIRRO (Fonte: Lado Esquerdo - resumoGeral) ---
-        // Assume-se que o bloco estático tem o ID 'resumoGeral' (Contém Cães: 620, Total Habitantes: 6549, etc.)
+        // --- FONTES DE DADOS ---
+        // Lado Esquerdo - Estático
         const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
-        
-        // DADOS GERAIS DO BAIRRO (ESTÁTICOS - JSON)
+        // Lado Direito - Dinâmico
+        const resumoProgramadosText = document.getElementById('resumoProgramados')?.textContent || '';
+        // Bloco de Estratificação (Para PE)
+        const dadosDetalhes = document.getElementById('dadosDetalhes')?.textContent || '';
+
+
+        // --- 1. EXTRAÇÃO DE DADOS ESTÁTICOS DO BAIRRO (resumoGeral) ---
+        // Mantive o GERAL para diferenciar na mensagem.
         const totalQuadrasAtivas = resumoGeral.match(/Total de Quadras \(ativas\):\s*(\d+)/)?.[1] || 'N/A';
-        const totalImoveisGeral = resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1] || 'N/A'; // 4146
-        const totalHabitantesGeral = resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A'; // 6549
-        const cãesGeral = resumoGeral.match(/Cães:\s*(\d+)/)?.[1] || 'N/A'; // 620
-        const gatosGeral = resumoGeral.match(/Gatos:\s*(\d+)/)?.[1] || 'N/A'; // 309
+        const totalImoveisGeral = resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1] || 'N/A'; 
+        const totalHabitantesGeral = resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A'; 
+        const cãesGeral = resumoGeral.match(/Cães:\s*(\d+)/)?.[1] || 'N/A'; 
+        const gatosGeral = resumoGeral.match(/Gatos:\s*(\d+)/)?.[1] || 'N/A'; 
         const depositosAguaGeral = resumoGeral.match(/Depósitos de Água:\s*(\d+)/)?.[1] || 'N/A';
-        const ovitrampasGeral = resumoGeral.match(/Ovitrampas \(palhetas\):\s*(\d+)/)?.[1] || 'N/A'; // 3
-        const pontosEstrategicosGeral = resumoGeral.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || 'N/A'; // 1
+        const ovitrampasGeral = resumoGeral.match(/Ovitrampas \(palhetas\):\s*(\d+)/)?.[1] || 'N/A'; 
+        const pontosEstrategicosGeral = resumoGeral.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || 'N/A'; 
         
-        // --- 2. EXTRAÇÃO DE DADOS DINÂMICOS (Fonte: Lado Direito - Bloco Programados) ---
-        // ASSUMIR ID para o bloco Programados: 'dadosProgramados'
-        const resumoProgramadosText = document.getElementById('dadosProgramados')?.textContent || '';
-        
-        // DADOS DINÂMICOS (BASEADO NAS QUADRAS SELECIONADAS)
-        const quadrasSelecionadasProg = resumoProgramadosText.match(/Quadras Selecionadas:\s*(\d+)/)?.[1] || 'N/A'; // 54
-        const totalImoveisProg = resumoProgramadosText.match(/Total de Imóveis:\s*(\d+)/)?.[1] || 'N/A'; // 3430
-        const cãesProg = resumoProgramadosText.match(/Cães:\s*(\d+)/)?.[1] || 'N/A'; // 543
-        const gatosProg = resumoProgramadosText.match(/Gatos:\s*(\d+)/)?.[1] || 'N/A'; // 275
-        const ovitrampasProg = resumoProgramadosText.match(/Ovitrampas \(palhetas\):\s*(\d+)/)?.[1] || 'N/A'; // 2
+        // --- 2. EXTRAÇÃO DE DADOS DINÂMICOS (resumoProgramadosText) ---
+        // Estes dados podem ser diferentes (Cães, Habitantes, Imóveis Programados)
         const totalHabitantesProg = resumoProgramadosText.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A'; // 5381
         const imoveisProgramados = resumoProgramadosText.match(/Imóveis Programados:\s*(\d+)/)?.[1] || 'N/A'; // 2900
-
+        const pontosEstrategicosProg = resumoProgramadosText.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || pontosEstrategicosGeral; // 0 ou 1
+        
         // --- 3. MOTIVAÇÃO E CAMPOS DE ESTRATIFICAÇÃO (Inputs) ---
         const selectTipo = document.getElementById('tipoSelect');
         let motivo = "Não definido";
@@ -855,7 +854,7 @@ function compartilharWhatsApp() {
         // --- 4. PROGRAMAÇÃO E ESFORÇO (CAMPOS INPUT) ---
         const quadrasSelecionadas = getValue("quadrasEstratificadas"); // Lista de quadras (Ex: "1, 2, 3")
         const percentualFechados = getValue("percentualFechados");
-        const imoveisTrabalhar = getValue("imoveisATrabalhar"); // Valor do input (no exemplo: 2900)
+        const imoveisTrabalhar = getValue("imoveisATrabalhar"); // Valor do input (no exemplo: 2900 ou 2952)
         const media = getValue("media");
         const servidores = getValue("servidores");
         const dias = getValue("dias");
@@ -864,7 +863,6 @@ function compartilharWhatsApp() {
         
         // --- 5. RESULTADOS/EXECUÇÃO ---
         const quadrasPositivas = getValue("quadrasPositivas") || "Nenhuma";
-        // ... (restante das variáveis de resultados/execução inalteradas) ...
         const quadrasTrabalhadas = getValue("quadrasTrabalhadasInput");
         const hdp = getValue("hdpInput");
         const hdt = getValue("hdtInput");
@@ -876,7 +874,7 @@ function compartilharWhatsApp() {
         const responsavel = getValue("responsavel");
         const obs = getValue("observacoes");
 
-        // Imóveis e Focos
+        // Imóveis e Focos (Continuação)
         const imoveisTrabalhados = getValue("imoveisTrabalhadosInput");
         const fechados = getValue("fechadosInput");
         const percTrabalhadosText = getText("percImoveisTrabalhados");
@@ -912,7 +910,7 @@ function compartilharWhatsApp() {
         mensagem += `*--- DADOS GERAIS DO BAIRRO ---\n`;
         mensagem += `*Quadras (Ativas):* ${totalQuadrasAtivas}\n`;
         mensagem += `*Total Imóveis (Ativos):* ${totalImoveisGeral}\n`;
-        mensagem += `*Total Habitantes:* ${totalHabitantesGeral}\n`; // VALOR ESTÁTICO DO JSON (6549)
+        mensagem += `*Total Habitantes:* ${totalHabitantesGeral}\n`; 
         mensagem += `*Cães/Gatos:* ${cãesGeral}/${gatosGeral}\n`;
         mensagem += `*Depósitos de Água:* ${depositosAguaGeral}\n`;
         mensagem += `*Ovitrampas (PE):* ${ovitrampasGeral} / ${pontosEstrategicosGeral}\n\n`;
@@ -932,10 +930,10 @@ function compartilharWhatsApp() {
         } 
         
         // Dados de esforço DINÂMICOS
-        mensagem += `*Total Habitantes:* ${totalHabitantesProg}\n`; // VALOR DINÂMICO DAS QUADRAS (5381)
-        mensagem += `*Pontos Estratégicos (PE):* ${pontosEstrategicosGeral}\n`; // Mantendo o geral por falta de PE dinâmico
-        mensagem += `*Imóveis Programados:* ${imoveisProgramados}\n`; // Valor extraído do bloco Programados (2900)
-        mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`; // (2900 / 2900)
+        mensagem += `*Total Habitantes:* ${totalHabitantesProg}\n`; // Agora busca no resumoProgramadosText (5381)
+        mensagem += `*Pontos Estratégicos (PE):* ${pontosEstrategicosProg}\n`; // Agora busca no resumoProgramadosText (0)
+        mensagem += `*Imóveis Programados:* ${imoveisProgramados}\n`; // Agora busca no resumoProgramadosText (2900)
+        mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`; // (2900 / 2952)
         mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
 
         mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
@@ -1211,6 +1209,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
