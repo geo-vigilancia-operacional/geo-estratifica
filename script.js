@@ -1047,25 +1047,26 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarQuadrasTrabalhadas(); // rodar na inicialização
 });
 document.addEventListener('DOMContentLoaded', (event) => {
-        const selectEstratificacao = document.getElementById('tipoEstratificacao');
-        const outrosCampoContainer = document.getElementById('outrosCampoContainer');
-        const outrosCampoInput = document.getElementById('outrosTipoEstratificacao');
-        const avisoOutros = document.getElementById('avisoOutros');
+    const selectEstratificacao = document.getElementById('tipoEstratificacao');
+    const outrosCampoContainer = document.getElementById('outrosCampoContainer');
+    const outrosCampoInput = document.getElementById('outrosTipoEstratificacao');
+    const avisoOutros = document.getElementById('avisoOutros');
 
+    if (selectEstratificacao) {
         selectEstratificacao.addEventListener('change', (event) => {
             if (event.target.value === 'outros') {
-                // Mostra o container do campo e o aviso
-                outrosCampoContainer.classList.remove('oculto');
-                avisoOutros.classList.remove('oculto');
-                outrosCampoInput.setAttribute('required', 'required');
+                outrosCampoContainer?.classList.remove('oculto');
+                avisoOutros?.classList.remove('oculto');
+                outrosCampoInput?.setAttribute('required', 'required');
             } else {
-                // Esconde o container do campo e o aviso
-                outrosCampoContainer.classList.add('oculto');
-                avisoOutros.classList.add('oculto');
-                outrosCampoInput.removeAttribute('required');
-         }
-    });
+                outrosCampoContainer?.classList.add('oculto');
+                avisoOutros?.classList.add('oculto');
+                outrosCampoInput?.removeAttribute('required');
+            }
+        });
+    }
 });
+
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sistema de estratificação inicializando...");
@@ -1208,6 +1209,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
