@@ -786,7 +786,7 @@ document.addEventListener("DOMContentLoaded", () => {
     verificarTratamentos();
 });
 function compartilharWhatsApp() {
-    console.log("Iniciando compartilhamento via WhatsApp (Versão Final)...");
+    console.log("Iniciando compartilhamento via WhatsApp (Versão Final Otimizada)...");
 
     if (!estado || !estado.bairroSelecionado) {
         alert("Selecione um bairro e defina a estratificação primeiro!");
@@ -809,16 +809,12 @@ function compartilharWhatsApp() {
         };
 
         // --- FONTES DE DADOS ---
-        // Lado Esquerdo - Estático
         const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
-        // Lado Direito - Dinâmico
         const resumoProgramadosText = document.getElementById('resumoProgramados')?.textContent || '';
-        // Bloco de Estratificação (Para PE)
         const dadosDetalhes = document.getElementById('dadosDetalhes')?.textContent || '';
 
 
         // --- 1. EXTRAÇÃO DE DADOS ESTÁTICOS DO BAIRRO (resumoGeral) ---
-        // Mantive o GERAL para diferenciar na mensagem.
         const totalQuadrasAtivas = resumoGeral.match(/Total de Quadras \(ativas\):\s*(\d+)/)?.[1] || 'N/A';
         const totalImoveisGeral = resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1] || 'N/A'; 
         const totalHabitantesGeral = resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A'; 
@@ -829,10 +825,9 @@ function compartilharWhatsApp() {
         const pontosEstrategicosGeral = resumoGeral.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || 'N/A'; 
         
         // --- 2. EXTRAÇÃO DE DADOS DINÂMICOS (resumoProgramadosText) ---
-        // Estes dados podem ser diferentes (Cães, Habitantes, Imóveis Programados)
-        const totalHabitantesProg = resumoProgramadosText.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A'; // 5381
-        const imoveisProgramados = resumoProgramadosText.match(/Imóveis Programados:\s*(\d+)/)?.[1] || 'N/A'; // 2900
-        const pontosEstrategicosProg = resumoProgramadosText.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || pontosEstrategicosGeral; // 0 ou 1
+        const totalHabitantesProg = resumoProgramadosText.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A'; 
+        const imoveisProgramados = resumoProgramadosText.match(/Imóveis Programados:\s*(\d+)/)?.[1] || 'N/A'; 
+        const pontosEstrategicosProg = resumoProgramadosText.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || pontosEstrategicosGeral; 
         
         // --- 3. MOTIVAÇÃO E CAMPOS DE ESTRATIFICAÇÃO (Inputs) ---
         const selectTipo = document.getElementById('tipoSelect');
@@ -852,9 +847,9 @@ function compartilharWhatsApp() {
         const uaps = getValue("inputUAPS");
 
         // --- 4. PROGRAMAÇÃO E ESFORÇO (CAMPOS INPUT) ---
-        const quadrasSelecionadas = getValue("quadrasEstratificadas"); // Lista de quadras (Ex: "1, 2, 3")
+        const quadrasSelecionadas = getValue("quadrasEstratificadas"); 
         const percentualFechados = getValue("percentualFechados");
-        const imoveisTrabalhar = getValue("imoveisATrabalhar"); // Valor do input (no exemplo: 2900 ou 2952)
+        const imoveisTrabalhar = getValue("imoveisATrabalhar"); 
         const media = getValue("media");
         const servidores = getValue("servidores");
         const dias = getValue("dias");
@@ -878,8 +873,13 @@ function compartilharWhatsApp() {
         const imoveisTrabalhados = getValue("imoveisTrabalhadosInput");
         const fechados = getValue("fechadosInput");
         const percTrabalhadosText = getText("percImoveisTrabalhados");
-        const percTrabalhados = percTrabalhadosText.match(/\((.*?)\)/)?.[1] || '';
+        // Extrai o texto da porcentagem (ex: "(0% de 0 programados)")
+        let percTrabalhados = percTrabalhadosText.match(/\((.*?)\)/)?.[1] || ''; 
         
+        // CORREÇÃO: Limpa a string da porcentagem se for o texto indesejado.
+        const percLimpo = percTrabalhados.includes('0% de 0') ? '' : ` (${percTrabalhados})`;
+
+
         const focosPorImovel = getValue("focosPorImovelInput");
         const btiTratados = getValue("imoveisBtiInput");
         const espTratados = getValue("imoveisEspInput");
@@ -923,17 +923,17 @@ function compartilharWhatsApp() {
             mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao}) - UAPS: ${uaps}\n`;
         }
         
-        // Bloco de Quadras Programadas/Foco (SEM ALTERAÇÃO)
+        // Bloco de Quadras Programadas/Foco
         mensagem += `*🗺 Quadras Programadas (Meta):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'}\n`;
         if (quadrasPositivas !== 'Nenhuma' && quadrasPositivas !== 'N/A') {
             mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
         } 
         
         // Dados de esforço DINÂMICOS
-        mensagem += `*Total Habitantes:* ${totalHabitantesProg}\n`; // Agora busca no resumoProgramadosText (5381)
-        mensagem += `*Pontos Estratégicos (PE):* ${pontosEstrategicosProg}\n`; // Agora busca no resumoProgramadosText (0)
-        mensagem += `*Imóveis Programados:* ${imoveisProgramados}\n`; // Agora busca no resumoProgramadosText (2900)
-        mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`; // (2900 / 2952)
+        mensagem += `*Total Habitantes:* ${totalHabitantesProg}\n`; 
+        mensagem += `*Pontos Estratégicos (PE):* ${pontosEstrategicosProg}\n`; 
+        // REMOVIDA A LINHA DE REPETIÇÃO: *Imóveis Programados: ${imoveisProgramados}\n
+        mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`;
         mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
 
         mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
@@ -951,8 +951,8 @@ function compartilharWhatsApp() {
             mensagem += `*HDP/HDT:* ${hdp} / ${hdt}\n`;
             mensagem += `*Quadras Trabalhadas:* ${quadrasTrabalhadas}\n`;
             
-            // Imóveis e Focos
-            mensagem += `*Imóveis Trabalhados:* ${imoveisTrabalhados} ${percTrabalhados}\n`;
+            // Imóveis e Focos (AGORA USANDO O percLimpo)
+            mensagem += `*Imóveis Trabalhados:* ${imoveisTrabalhados}${percLimpo}\n`; 
             mensagem += `*Fechados:* ${fechados}\n`;
             mensagem += `*QTD Focos/Imóvel:* ${focosPorImovel}\n`;
             
@@ -970,7 +970,7 @@ function compartilharWhatsApp() {
             ].join(' | ');
             mensagem += `*Detalhes:* ${depositosDetalhados}\n`;
             
-            // Larvicidas e Eliminação (FORMATO ESPECÍFICO SOLICITADO)
+            // Larvicidas e Eliminação
             mensagem += `*Depósitos Tratados BTI:* ${depositosBti}\n`;
             mensagem += `*Depósitos Tratados ESP:* ${depositosEsp}\n`;
             
@@ -1209,6 +1209,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
