@@ -914,12 +914,21 @@ function compartilharWhatsApp() {
             mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao}) - UAPS: ${uaps}\n`;
         }
         
-        mensagem += `*Quadras (Meta/Foco):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'} / ${quadrasPositivas}\n`;
-        mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`;
-        mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
-        
-        mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
-        mensagem += `*Servidores/Média/Dias:* ${servidores} / ${media} / ${dias}\n\n`;
+    // O campo 'Quadras Programadas (Meta)' sempre aparece.
+mensagem += `*🗺 Quadras Programadas (Meta):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'}\n`;
+
+// A seção 'Quadras Foco (Positivas)' aparece SOMENTE se houver dados.
+if (quadrasPositivas !== 'Nenhuma' && quadrasPositivas !== 'N/A') {
+    mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
+} 
+// O } (chave de fechamento) DO IF FICA AQUI.
+// Tudo abaixo é essencial e deve aparecer sempre.
+
+mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`;
+mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
+
+mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
+mensagem += `*Servidores/Média/Dias:* ${servidores} / ${media} / ${dias}\n\n`;
         
         // 3. RESULTADOS (EXECUÇÃO)
         
@@ -1179,6 +1188,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
