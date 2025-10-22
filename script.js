@@ -1356,7 +1356,7 @@ document.addEventListener("DOMContentLoaded", function() {
         atualizarQuadrasTrabalhadas(); // Roda na inicialização
     }
 
-    // 8. Lógica de controle do campo "Outros" na Estratificação
+  // 8. Lógica de controle do campo "Outros" na Estratificação
     const selectEstratificacao = document.getElementById('tipoEstratificacao');
     const outrosCampoContainer = document.getElementById('outrosCampoContainer');
     const outrosCampoInput = document.getElementById('outrosTipoEstratificacao');
@@ -1376,8 +1376,20 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // ==========================================================
+    // !!! NOVO CÓDIGO DO RELATÓRIO INSERIDO AQUI !!! (Ponto 9)
+    // ==========================================================
+    // 9. Event Listener para o botão GERAR RELATÓRIO WORD
+    const gerarRelatorioBtn = document.getElementById('gerarRelatorioBtn');
+    if (gerarRelatorioBtn) {
+        // Assume que a função 'gerarRelatorioWord' foi definida no escopo (no topo do script)
+        gerarRelatorioBtn.addEventListener('click', gerarRelatorioWord);
+    }
+    // ==========================================================
+
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
