@@ -787,7 +787,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 // --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (VERSÃO FINAL COM IDs REAIS) ---
 function compartilharWhatsApp() {
-    console.log("Iniciando compartilhamento via WhatsApp (Ajuste para DOM)...");
+    console.log("Iniciando compartilhamento via WhatsApp (Versão Refinada)...");
 
     if (!estado || !estado.bairroSelecionado) {
         alert("Selecione um bairro e defina a estratificação primeiro!");
@@ -809,22 +809,23 @@ function compartilharWhatsApp() {
             return dataObj.toLocaleDateString('pt-BR');
         };
 
-        // --- 1. DADOS GERAIS DO BAIRRO (Tentativa de extrair do DOM) ---
-        // Se a busca direta no 'estado.dadosBairros' falhou, tentamos o DOM
+        // --- 1. EXTRAÇÃO DE DADOS DO DOM (Resumo Geral) ---
         const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
         
-        // REFINANDO AS EXPRESSÕES REGULARES para buscar os dados de resumo:
-        // Se o seu resumoGeral tiver os rótulos de texto:
+        // DADOS GERAIS DO BAIRRO (Mapeando os rótulos do seu formulário)
+        const totalQuadrasAtivas = resumoGeral.match(/Total de Quadras \(ativas\):\s*(\d+)/)?.[1] || 'N/A';
         const totalImoveis = resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1] || 'N/A';
         const totalHabitantes = resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A';
         const cães = resumoGeral.match(/Cães:\s*(\d+)/)?.[1] || 'N/A';
         const gatos = resumoGeral.match(/Gatos:\s*(\d+)/)?.[1] || 'N/A';
         const depositosAgua = resumoGeral.match(/Depósitos de Água:\s*(\d+)/)?.[1] || 'N/A';
         const ovitrampas = resumoGeral.match(/Ovitrampas \(palhetas\):\s*(\d+)/)?.[1] || 'N/A';
+        const pontosEstrategicos = resumoGeral.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || 'N/A';
         
         // Valores que vêm do Programados
         const imoveisProgramados = document.getElementById("imoveisProgramadosValue")?.textContent.trim() || 'N/A';
-        
+        const quadrasSelecionadasProg = resumoGeral.match(/Quadras Selecionadas:\s*(\d+)/)?.[1] || 'N/A';
+
         // --- 2. MOTIVAÇÃO E CAMPOS DE ESTRATIFICAÇÃO ---
         const selectTipo = document.getElementById('tipoSelect');
         let motivo = "Não definido";
@@ -843,7 +844,7 @@ function compartilharWhatsApp() {
         const uaps = getValue("inputUAPS");
 
         // --- 3. PROGRAMAÇÃO E ESFORÇO ---
-        const quadrasSelecionadas = getValue("quadrasEstratificadas");
+        const quadrasSelecionadas = getValue("quadrasEstratificadas"); // Lista de quadras (Ex: "1, 2, 3")
         const percentualFechados = getValue("percentualFechados");
         const imoveisTrabalhar = getValue("imoveisATrabalhar");
         const media = getValue("media");
@@ -897,14 +898,16 @@ function compartilharWhatsApp() {
         let mensagem = `*🦟 PLANO DE TRABALHO DTE - ${bairro.toUpperCase()} 🗓️*\n`;
         mensagem += `*Responsável:* ${responsavel !== 'N/A' ? responsavel : 'Não Informado'}\n\n`;
 
-        // 1. DADOS ESTRATÉGICOS DO BAIRRO
+        // 1. DADOS ESTRATÉGICOS DO BAIRRO (Versão Detalhada)
         mensagem += `*--- DADOS GERAIS DO BAIRRO ---\n`;
+        mensagem += `*Quadras (Ativas):* ${totalQuadrasAtivas}\n`;
         mensagem += `*Total Imóveis (Ativos):* ${totalImoveis}\n`;
         mensagem += `*Total Habitantes:* ${totalHabitantes}\n`;
         mensagem += `*Cães/Gatos:* ${cães}/${gatos}\n`;
-        mensagem += `*Depósitos/Ovitrampas:* ${depositosAgua}/${ovitrampas}\n\n`;
+        mensagem += `*Depósitos de Água:* ${depositosAgua}\n`;
+        mensagem += `*Ovitrampas (PE):* ${ovitrampas} / ${pontosEstrategicos}\n\n`;
         
-        // 2. PROGRAMAÇÃO E ESFORÇO
+        // 2. PROGRAMAÇÃO E ESFORÇO (Versão Detalhada)
         mensagem += `*--- PROGRAMAÇÃO E ESFORÇO ---\n`;
         mensagem += `*Tipo:* ${motivo}\n`;
         
@@ -913,22 +916,26 @@ function compartilharWhatsApp() {
             mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao}) - UAPS: ${uaps}\n`;
         }
         
-        // Bloco de Quadras Programadas/Foco (CORRIGIDO)
+        // Bloco de Quadras Programadas/Foco (Sem Alteração conforme solicitado)
         mensagem += `*🗺 Quadras Programadas (Meta):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'}\n`;
         if (quadrasPositivas !== 'Nenhuma' && quadrasPositivas !== 'N/A') {
             mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
         } 
         
-        // Dados de esforço que aparecem SEMPRE
+        // Dados de esforço REFINADOS
+        mensagem += `*Total Habitantes:* ${totalHabitantes}\n`; // Adicionado novamente (solicitado no Programados)
+        mensagem += `*Pontos Estratégicos (PE):* ${pontosEstrategicos}\n`; // Adicionado (solicitado no Programados)
         mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`;
         mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
 
         mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
-        mensagem += `*Servidores/Média/Dias:* ${servidores} / ${media} / ${dias}\n\n`;
+        // Separação solicitada:
+        mensagem += `*Servidores:* ${servidores}\n`;
+        mensagem += `*Média por Servidor:* ${media}\n`;
+        mensagem += `*Dias Programados:* ${dias}\n\n`;
         
         // 3. RESULTADOS (EXECUÇÃO)
         
-        // Só inclui a seção de resultados se houver pelo menos um dado de execução
         if (quadrasTrabalhadas !== '0' && quadrasTrabalhadas !== 'N/A') {
             mensagem += `*--- RESULTADOS DA EXECUÇÃO ---\n`;
             mensagem += `*Período Real:* ${formatarData(dataInicioReal)} - ${formatarData(dataTerminoReal)}\n`;
@@ -941,17 +948,27 @@ function compartilharWhatsApp() {
             mensagem += `*Fechados:* ${fechados}\n`;
             mensagem += `*QTD Focos/Imóvel:* ${focosPorImovel}\n`;
             
-            // Tratamentos
+            // Tratamentos (Imóveis)
             mensagem += `*Imóveis Tratados BTI/ESP:* ${btiTratados} / ${espTratados}\n`;
             
-            // Depósitos Positivos
+            // Depósitos Positivos (FORMATO ESPECÍFICO SOLICITADO)
             mensagem += `*--- DEPÓSITOS POSITIVOS ---\n`;
-            mensagem += `*A1/A2/B/C/D1/D2/E:* ${d_A1}/${d_A2}/${d_B}/${d_C}/${d_D1}/${d_D2}/${d_E}\n`;
             mensagem += `*Total Dep. Positivos:* ${totalDepositosPositivos}\n`;
             
-            // Larvicidas e Eliminação
-            mensagem += `*Dep. Tratados BTI/ESP:* ${depositosBti} / ${depositosEsp}\n`;
-            mensagem += `*Larvicida Gasto BTI/ESP:* ${larvicidaBti} / ${larvicidaEsp}\n`;
+            // Formatação detalhada A1: 269 | A2: 270 | ...
+            const depositosDetalhados = [
+                `A1: ${d_A1}`, `A2: ${d_A2}`, `B: ${d_B}`, `C: ${d_C}`,
+                `D1: ${d_D1}`, `D2: ${d_D2}`, `E: ${d_E}`
+            ].join(' | ');
+            mensagem += `*Detalhes:* ${depositosDetalhados}\n`;
+            
+            // Larvicidas e Eliminação (FORMATO ESPECÍFICO SOLICITADO)
+            mensagem += `*Depósitos Tratados BTI:* ${depositosBti}\n`;
+            mensagem += `*Depósitos Tratados ESP:* ${depositosEsp}\n`;
+            
+            mensagem += `*Larvicida Gasto BTI:* ${larvicidaBti}\n`;
+            mensagem += `*Larvicida Gasto ESP:* ${larvicidaEsp}\n`;
+            
             mensagem += `*Depósitos Eliminados:* ${depositosEliminados}\n\n`;
 
             // Observações Finais
@@ -1184,6 +1201,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
