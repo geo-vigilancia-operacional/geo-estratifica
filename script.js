@@ -786,7 +786,6 @@ document.addEventListener("DOMContentLoaded", () => {
     verificarTratamentos();
 });
 // --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (VERSÃO FINAL COM IDs REAIS) ---
-// --- FUNÇÃO PARA COMPARTILHAR DADOS VIA WHATSAPP (Ajustada para DOM e Datas) ---
 function compartilharWhatsApp() {
     console.log("Iniciando compartilhamento via WhatsApp (Ajuste para DOM)...");
 
@@ -814,7 +813,8 @@ function compartilharWhatsApp() {
         // Se a busca direta no 'estado.dadosBairros' falhou, tentamos o DOM
         const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
         
-        // Exemplo de como extrair dados do texto renderizado no resumoGeral (Se for texto plano)
+        // REFINANDO AS EXPRESSÕES REGULARES para buscar os dados de resumo:
+        // Se o seu resumoGeral tiver os rótulos de texto:
         const totalImoveis = resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1] || 'N/A';
         const totalHabitantes = resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A';
         const cães = resumoGeral.match(/Cães:\s*(\d+)/)?.[1] || 'N/A';
@@ -868,7 +868,6 @@ function compartilharWhatsApp() {
         // Imóveis e Focos
         const imoveisTrabalhados = getValue("imoveisTrabalhadosInput");
         const fechados = getValue("fechadosInput");
-        // Extrai o percentual do texto do DIV (o que estava dando "0% de 0 programados" antes)
         const percTrabalhadosText = getText("percImoveisTrabalhados");
         const percTrabalhados = percTrabalhadosText.match(/\((.*?)\)/)?.[1] || '';
         
@@ -914,21 +913,18 @@ function compartilharWhatsApp() {
             mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao}) - UAPS: ${uaps}\n`;
         }
         
-    // O campo 'Quadras Programadas (Meta)' sempre aparece.
-mensagem += `*🗺 Quadras Programadas (Meta):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'}\n`;
+        // Bloco de Quadras Programadas/Foco (CORRIGIDO)
+        mensagem += `*🗺 Quadras Programadas (Meta):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'}\n`;
+        if (quadrasPositivas !== 'Nenhuma' && quadrasPositivas !== 'N/A') {
+            mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
+        } 
+        
+        // Dados de esforço que aparecem SEMPRE
+        mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`;
+        mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
 
-// A seção 'Quadras Foco (Positivas)' aparece SOMENTE se houver dados.
-if (quadrasPositivas !== 'Nenhuma' && quadrasPositivas !== 'N/A') {
-    mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
-} 
-// O } (chave de fechamento) DO IF FICA AQUI.
-// Tudo abaixo é essencial e deve aparecer sempre.
-
-mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`;
-mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
-
-mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
-mensagem += `*Servidores/Média/Dias:* ${servidores} / ${media} / ${dias}\n\n`;
+        mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
+        mensagem += `*Servidores/Média/Dias:* ${servidores} / ${media} / ${dias}\n\n`;
         
         // 3. RESULTADOS (EXECUÇÃO)
         
@@ -1188,6 +1184,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
