@@ -820,7 +820,6 @@ function compartilharWhatsApp() {
         const totalHabitantesGeral = resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A'; 
         const cãesGeral = resumoGeral.match(/Cães:\s*(\d+)/)?.[1] || 'N/A'; 
         const gatosGeral = resumoGeral.match(/Gatos:\s*(\d+)/)?.[1] || 'N/A'; 
-        const depositosAguaGeral = resumoGeral.match(/Depósitos de Água:\s*(\d+)/)?.[1] || 'N/A';
         const ovitrampasGeral = resumoGeral.match(/Ovitrampas \(palhetas\):\s*(\d+)/)?.[1] || 'N/A'; 
         const pontosEstrategicosGeral = resumoGeral.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || 'N/A'; 
         
@@ -1209,6 +1208,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
