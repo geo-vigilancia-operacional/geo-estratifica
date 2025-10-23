@@ -39,10 +39,10 @@ function salvarConteudoComoDoc(html, filename) {
 }
 
 // =================================================================
-// FUNÇÃO PRINCIPAL PARA GERAR O RELATÓRIO ESTILO WORD (COM QUADRAS POSITIVAS)
+// FUNÇÃO PRINCIPAL PARA GERAR O RELATÓRIO ESTILO WORD (COM TRATAMENTOS DETALHADOS)
 // =================================================================
 function gerarRelatorioWord() {
-    console.log("Iniciando a geração do Relatório Word (com quadras positivas)...");
+    console.log("Iniciando a geração do Relatório Word (com tratamentos detalhados)...");
 
     if (!estado || !estado.bairroSelecionado) {
         alert("Selecione um bairro e defina a estratificação primeiro!");
@@ -70,26 +70,25 @@ function gerarRelatorioWord() {
             return String(valor).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         };
 
-
-        // --- FONTES DE DADOS (Reutilização da extração anterior) ---
+        // --- FONTES DE DADOS (Extrações do DOM) ---
         const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
         const resumoProgramadosText = document.getElementById('resumoProgramados')?.textContent || '';
         
-        // Extração de Variáveis (Versões Geral/Estática)
+        // Extração de Variáveis (Geral/Estática)
         const totalImoveisGeral = formatarNumero(resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1]); 
         const totalHabitantesGeral = formatarNumero(resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1]); 
         const totalQuadrasAtivas = resumoGeral.match(/Total de Quadras \(ativas\):\s*(\d+)/)?.[1] || 'N/A';
         // ... (outras extrações gerais) ...
         
-        // Extração de Variáveis (Versões Programadas/Dinâmica)
+        // Extração de Variáveis (Programadas/Dinâmica)
         const totalHabitantesProg = formatarNumero(resumoProgramadosText.match(/Total de Habitantes:\s*(\d+)/)?.[1]); 
         const imoveisProgramados = formatarNumero(resumoProgramadosText.match(/Imóveis Programados:\s*(\d+)/)?.[1]); 
         // ... (outras extrações programadas) ...
 
-        // Extração de Inputs
+        // Extração de Inputs (Programação)
         const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
         const quadrasSelecionadasLista = getValue("quadrasEstratificadas");
-        const quadrasPositivas = getValue("quadrasPositivas") || "Nenhuma"; // <<-- Capturando Quadras Positivas
+        const quadrasPositivas = getValue("quadrasPositivas") || "Nenhuma";
         const percentualFechadosPrevisto = getValue("percentualFechados");
         const imoveisTrabalhar = formatarNumero(getValue("imoveisATrabalhar")); 
         const media = getValue("media");
@@ -98,7 +97,7 @@ function gerarRelatorioWord() {
         const dataInicioProg = formatarData(getValue("dataInicio"));
         const dataTerminoProg = formatarData(getValue("dataTermino"));
 
-        // Resultados/Execução
+        // Extração de Inputs (Resultados/Execução)
         const quadrasTrabalhadas = getValue("quadrasTrabalhadasInput");
         const hdp = getValue("hdpInput");
         const hdt = getValue("hdtInput");
@@ -115,14 +114,21 @@ function gerarRelatorioWord() {
         const responsavel = getValue("responsavel");
         const obs = getValue("observacoes");
         
-        // Detalhes dos Depósitos
+        // ==========================================================
+        // !!! NOVAS VARIÁVEIS DE TRATAMENTO !!!
+        // ==========================================================
+        const btiTratados = formatarNumero(getValue("imoveisBtiInput"));        // QTD Imóveis Tratados Com BTI
+        const espTratados = formatarNumero(getValue("imoveisEspInput"));        // QTD Imóveis Tratados Com ESP
+        const depositosBti = formatarNumero(getValue("depositosBtiInput"));     // Depósitos Tratados Com BTI
+        const depositosEsp = formatarNumero(getValue("depositosEspInput"));     // Depósitos Tratados Com ESP
+        const larvicidaBti = getValue("larvicidaBtiInput");                     // Larvicida Total Gasto Com BTI
+        const larvicidaEsp = getValue("larvicidaEspInput");                     // Larvicida Total Gasto Com ESP
+        
+        // Detalhes dos Depósitos Positivos
         const depositosDetalhes = {
-            'A1': formatarNumero(getValue("a1")),
-            'A2': formatarNumero(getValue("a2")),
-            'B': formatarNumero(getValue("b")),
-            'C': formatarNumero(getValue("c")),
-            'D1': formatarNumero(getValue("d1")),
-            'D2': formatarNumero(getValue("d2")),
+            'A1': formatarNumero(getValue("a1")), 'A2': formatarNumero(getValue("a2")),
+            'B': formatarNumero(getValue("b")), 'C': formatarNumero(getValue("c")),
+            'D1': formatarNumero(getValue("d1")), 'D2': formatarNumero(getValue("d2")),
             'E': formatarNumero(getValue("e"))
         };
 
@@ -144,6 +150,7 @@ function gerarRelatorioWord() {
         
         let intro = `Este relatório detalha a ação de combate ao Aedes Aegypti realizada no bairro <strong>${bairro}</strong> (com ${totalQuadrasAtivas} quadras ativas), classificada como <strong>${tipoAcao}</strong>.`;
         
+        // ... (Período de execução/programação) ...
         if (dataInicioReal !== 'N/A' && dataTerminoReal !== 'N/A') {
              intro += ` A execução ocorreu no período de <strong>${dataInicioReal}</strong> a <strong>${dataTerminoReal}</strong>.`;
         } else if (dataInicioProg !== 'N/A' && dataTerminoProg !== 'N/A') {
@@ -152,13 +159,12 @@ function gerarRelatorioWord() {
         
         htmlContent += `<p>${intro}</p>`;
         
-        // 2. DETALHES GERAIS E METAS
+        // 2. ESFORÇO E METAS PROGRAMADAS
         htmlContent += `<h3 style="color: #00796b;">2. ESFORÇO E METAS PROGRAMADAS</h3>`;
         htmlContent += `<p>O bairro ${bairro} possui um total de <strong>${totalHabitantesGeral}</strong> habitantes e <strong>${totalImoveisGeral}</strong> imóveis ativos.</p>`;
         
         htmlContent += `<p>O foco desta ação foram as quadras programadas: <strong>${quadrasSelecionadasLista}</strong>.`;
         
-        // Adicionando a informação das Quadras Positivas
         if (quadrasPositivas !== 'Nenhuma' && quadrasPositivas !== 'N/A') {
              htmlContent += ` As quadras identificadas com positividade de larvas (Foco) foram: <strong>${quadrasPositivas}</strong>.`;
         }
@@ -178,7 +184,7 @@ function gerarRelatorioWord() {
             htmlContent += `<p><strong>Visão Geral:</strong> O trabalho cobriu <strong>${quadrasTrabalhadas}</strong> quadras, pertencentes às Semanas/Ciclo <strong>${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})</strong>. O desempenho foi de <strong>HDP/HDT: ${hdp} / ${hdt}</strong>.</p>`;
 
             // Desempenho Imóveis
-            htmlContent += `<h4>Desempenho da Cobertura</h4>`;
+            htmlContent += `<h4>Desempenho da Cobertura e Achados</h4>`;
             htmlContent += `<ul>`;
             htmlContent += `<li><strong>Total de Imóveis Visitados:</strong> ${imoveisTrabalhados}</li>`;
             htmlContent += `<li><strong>Imóveis Fechados Encontrados:</strong> ${fechados}</li>`;
@@ -186,18 +192,25 @@ function gerarRelatorioWord() {
             htmlContent += `<li><strong>Depósitos Eliminados:</strong> ${depositosEliminados}</li>`;
             htmlContent += `</ul>`;
             
-            // Achados e Tratamentos (COM A NOVA FRASE)
+            // Achados Detalhados
             if (totalDepositosPositivos !== '0') {
-                 htmlContent += `<h4>Achados e Tratamento Larvicida</h4>`;
-                 
                  let achadosFrase = `Foram encontrados <strong>${totalDepositosPositivos}</strong> depósitos positivos.`;
-                 
                  if (depositosDetalhadosFrase.length > 0) {
                       achadosFrase += ` Estes depósitos estavam distribuídos nos seguintes tipos: <strong>${depositosDetalhadosFrase}</strong>.`;
                  }
-                 
                  htmlContent += `<p>${achadosFrase}</p>`;
             }
+
+            // ==========================================================
+            // !!! NOVO BLOCO: TRATAMENTOS E LARVICIDAS !!!
+            // ==========================================================
+            htmlContent += `<h4>Tratamentos Realizados e Recursos</h4>`;
+            htmlContent += `<ul>`;
+            htmlContent += `<li><strong>Imóveis Tratados (BTI/ESP):</strong> ${btiTratados} / ${espTratados}</li>`;
+            htmlContent += `<li><strong>Depósitos Tratados (BTI/ESP):</strong> ${depositosBti} / ${depositosEsp}</li>`;
+            htmlContent += `<li><strong>Larvicida Gasto (BTI/ESP):</strong> ${larvicidaBti} / ${larvicidaEsp}</li>`;
+            htmlContent += `</ul>`;
+            // ==========================================================
         }
         
         // 4. OBSERVAÇÕES
@@ -1419,6 +1432,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
