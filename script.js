@@ -386,7 +386,7 @@ function exportarTabelaTXT() {
         // 4. ACHADOS E TRATAMENTO
         tabelaContent += `--- ACHADOS E TRATAMENTO ---\n`;
         tabelaContent += `Total Depósitos Positivos${SEPARADOR}${totalDepositosPositivos}\n`;
-        tabelaContent += `Detalhe Depósitos Positivos (Tipo:Qtd | Tipo:Qtd)${SEPARADOR}${depositosDetalhadosFrase}\n`;
+        tabelaContent += `Detalhe Depósitos Positivos${SEPARADOR}${depositosDetalhadosFrase}\n`;
         tabelaContent += `Depósitos Eliminados${SEPARADOR}${depositosEliminados}\n`;
         tabelaContent += `Imóveis Tratados (BTI)${SEPARADOR}${btiTratados}\n`;
         tabelaContent += `Imóveis Tratados (ESP)${SEPARADOR}${espTratados}\n`;
@@ -1619,6 +1619,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
