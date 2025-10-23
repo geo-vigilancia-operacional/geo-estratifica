@@ -230,11 +230,14 @@ function gerarRelatorioWord() {
     }
 }
 // =================================================================
-// FUNÇÃO AUXILIAR PARA SALVAR O ARQUIVO NO FORMATO TXT
+// FUNÇÃO AUXILIAR PARA SALVAR O ARQUIVO NO FORMATO TXT (AGORA COM UTF-8 BOM)
 // =================================================================
 function salvarConteudoComoTxt(conteudo, filename) {
-    const blob = new Blob([conteudo], {
-        type: 'text/plain;charset=utf-8'
+    // Adiciona o BOM (Byte Order Mark) para forçar o Excel a usar UTF-8
+    const conteudoComBOM = "\uFEFF" + conteudo;
+    
+    const blob = new Blob([conteudoComBOM], {
+        type: 'text/plain;charset=utf-8' // Mantenha o UTF-8 no Blob
     });
     
     // Cria um link de download e o aciona
@@ -1619,6 +1622,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
