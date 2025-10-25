@@ -1307,7 +1307,7 @@ function compartilharWhatsApp() {
         mensagem += `*Total Imóveis (Ativos):* ${totalImoveisGeral}\n`;
         mensagem += `*Total Habitantes:* ${totalHabitantesGeral}\n`; 
         mensagem += `*Cães/Gatos:* ${cãesGeral}/${gatosGeral}\n`;
-        mensagem += `*Ovitrampas / (PE):* ${ovitrampasGeral} / ${pontosEstrategicosGeral}\n\n`;
+        mensagem += `*Ovitrampas:* ${ovitrampasGeral} /(PE) ${pontosEstrategicosGeral}\n\n`;
         
         // 2. PROGRAMAÇÃO E ESFORÇO (DINÂMICOS)
         mensagem += `*--- PROGRAMAÇÃO ---\n`;
@@ -1620,6 +1620,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
