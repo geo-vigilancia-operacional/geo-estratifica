@@ -1307,7 +1307,7 @@ function compartilharWhatsApp() {
         mensagem += `*Total Imóveis (Ativos):* ${totalImoveisGeral}\n`;
         mensagem += `*Total Habitantes:* ${totalHabitantesGeral}\n`; 
         mensagem += `*Cães/Gatos:* ${cãesGeral}/${gatosGeral}\n`;
-        mensagem += `*Ovitrampas (PE):* ${ovitrampasGeral} / ${pontosEstrategicosGeral}\n\n`;
+        mensagem += `*Ovitrampas / (PE):* ${ovitrampasGeral} / ${pontosEstrategicosGeral}\n\n`;
         
         // 2. PROGRAMAÇÃO E ESFORÇO (DINÂMICOS)
         mensagem += `*--- PROGRAMAÇÃO ---\n`;
@@ -1341,7 +1341,7 @@ function compartilharWhatsApp() {
         if (quadrasTrabalhadas !== '0' && quadrasTrabalhadas !== 'N/A') {
             mensagem += `*--- RESULTADOS ---\n`;
             mensagem += `*Período Real:* ${formatarData(dataInicioReal)} - ${formatarData(dataTerminoReal)}\n`;
-            mensagem += `*Semana/Ciclo:* ${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})\n`;
+            mensagem += `*Semana e Ciclo:* ${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})\n`;
             mensagem += `*HDP/HDT:* ${hdp} / ${hdt}\n`;
             mensagem += `*Quadras Trabalhadas:* ${quadrasTrabalhadas}\n`;
             
@@ -1354,8 +1354,7 @@ function compartilharWhatsApp() {
             mensagem += `*Imóveis Tratados BTI/ESP:* ${btiTratados} / ${espTratados}\n`;
             
             // Depósitos Positivos (FORMATO ESPECÍFICO SOLICITADO)
-            mensagem += `*--- DEPÓSITOS POSITIVOS ---\n`;
-            mensagem += `*Total Dep. Positivos:* ${totalDepositosPositivos}\n`;
+           mensagem += `*Total Dep. Positivos:* ${totalDepositosPositivos}\n`;
             
             // Formatação detalhada A1: 269 | A2: 270 | ...
             const depositosDetalhados = [
@@ -1621,6 +1620,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
