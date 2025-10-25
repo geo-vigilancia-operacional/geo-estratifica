@@ -141,7 +141,7 @@ function gerarRelatorioWord() {
         let htmlContent = '';
         
         // 1. TÍTULO E CONTEXTO
-        htmlContent += `<h1 style="text-align: center; color: #1e88e5;">RELATÓRIO DE AÇÃO DTE</h1>`;
+        htmlContent += `<h1 style="text-align: center; color: #1e88e5;">RELATÓRIO DE AÇÃO </h1>`;
         htmlContent += `<h2 style="text-align: center; color: #555;">Bairro: ${bairro.toUpperCase()}</h2>`;
         htmlContent += `<p><strong>Data de Geração:</strong> ${new Date().toLocaleDateString('pt-BR')} - <strong>Responsável:</strong> ${responsavel}</p>`;
         htmlContent += `<hr style="border: 1px solid #ddd;">`;
@@ -184,7 +184,7 @@ function gerarRelatorioWord() {
             htmlContent += `<p><strong>Visão Geral:</strong> O trabalho cobriu <strong>${quadrasTrabalhadas}</strong> quadras, pertencentes às Semanas/Ciclo <strong>${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})</strong>. O desempenho foi de <strong>HDP/HDT: ${hdp} / ${hdt}</strong>.</p>`;
 
             // Desempenho Imóveis
-            htmlContent += `<h4>Desempenho da Cobertura e Achados</h4>`;
+            htmlContent += `<h4>Desempenho da Cobertura</h4>`;
             htmlContent += `<ul>`;
             htmlContent += `<li><strong>Total de Imóveis Visitados:</strong> ${imoveisTrabalhados}</li>`;
             htmlContent += `<li><strong>Imóveis Fechados Encontrados:</strong> ${fechados}</li>`;
@@ -387,7 +387,7 @@ function exportarTabelaTXT() {
         tabelaContent += '\n';
         
         // 4. ACHADOS E TRATAMENTO
-        tabelaContent += `--- ACHADOS E TRATAMENTO ---\n`;
+        tabelaContent += `--- AÇÕES E TRATAMENTO ---\n`;
         tabelaContent += `Total Depósitos Positivos${SEPARADOR}${totalDepositosPositivos}\n`;
         tabelaContent += `Detalhe Depósitos Positivos${SEPARADOR}${depositosDetalhadosFrase}\n`;
         tabelaContent += `Depósitos Eliminados${SEPARADOR}${depositosEliminados}\n`;
@@ -1298,7 +1298,7 @@ function compartilharWhatsApp() {
         
         
         // --- MONTAGEM DA MENSAGEM ---
-        let mensagem = `*🦟 PLANO DE TRABALHO DTE - ${bairro.toUpperCase()} 🗓️*\n`;
+        let mensagem = `*🦟 RESUMO DA ESTRATIFICAÇÃO - ${bairro.toUpperCase()} 🗓️*\n`;
         mensagem += `*Responsável:* ${responsavel !== 'N/A' ? responsavel : 'Não Informado'}\n\n`;
 
         // 1. DADOS GERAIS DO BAIRRO (ESTÁTICOS)
@@ -1307,11 +1307,10 @@ function compartilharWhatsApp() {
         mensagem += `*Total Imóveis (Ativos):* ${totalImoveisGeral}\n`;
         mensagem += `*Total Habitantes:* ${totalHabitantesGeral}\n`; 
         mensagem += `*Cães/Gatos:* ${cãesGeral}/${gatosGeral}\n`;
-        mensagem += `*Depósitos de Água:* ${depositosAguaGeral}\n`;
         mensagem += `*Ovitrampas (PE):* ${ovitrampasGeral} / ${pontosEstrategicosGeral}\n\n`;
         
         // 2. PROGRAMAÇÃO E ESFORÇO (DINÂMICOS)
-        mensagem += `*--- PROGRAMAÇÃO E ESFORÇO ---\n`;
+        mensagem += `*--- PROGRAMAÇÃO ---\n`;
         mensagem += `*Tipo:* ${motivo}\n`;
         
         if (selectTipo?.value.includes("mutirao")) { 
@@ -1340,7 +1339,7 @@ function compartilharWhatsApp() {
         // 3. RESULTADOS (EXECUÇÃO)
         
         if (quadrasTrabalhadas !== '0' && quadrasTrabalhadas !== 'N/A') {
-            mensagem += `*--- RESULTADOS DA EXECUÇÃO ---\n`;
+            mensagem += `*--- RESULTADOS ---\n`;
             mensagem += `*Período Real:* ${formatarData(dataInicioReal)} - ${formatarData(dataTerminoReal)}\n`;
             mensagem += `*Semana/Ciclo:* ${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})\n`;
             mensagem += `*HDP/HDT:* ${hdp} / ${hdt}\n`;
@@ -1622,6 +1621,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
