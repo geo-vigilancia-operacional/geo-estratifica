@@ -1327,10 +1327,10 @@ function compartilharWhatsApp() {
         mensagem += `*Total Habitantes:* ${totalHabitantesProg}\n`; 
         mensagem += `*Pontos Estratégicos (PE):* ${pontosEstrategicosProg}\n`; 
         // REMOVIDA A LINHA DE REPETIÇÃO: *Imóveis Programados: ${imoveisProgramados}\n
-        mensagem += `*Imóveis Prog/Trabalhar:* ${imoveisProgramados} / ${imoveisTrabalhar}\n`;
+        mensagem += `*Imóveis Programados /á Trabalhar:* ${imoveisProgramados} /Trabalhar ${imoveisTrabalhar}\n`;
         mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
 
-        mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} - ${formatarData(dataTerminoProg)}\n`;
+        mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} á ${formatarData(dataTerminoProg)}\n`;
         // Separação solicitada:
         mensagem += `*Servidores:* ${servidores}\n`;
         mensagem += `*Média por Servidor:* ${media}\n`;
@@ -1341,8 +1341,8 @@ function compartilharWhatsApp() {
         if (quadrasTrabalhadas !== '0' && quadrasTrabalhadas !== 'N/A') {
             mensagem += `*--- RESULTADOS ---\n`;
             mensagem += `*Período Real:* ${formatarData(dataInicioReal)} - ${formatarData(dataTerminoReal)}\n`;
-            mensagem += `*Semana e Ciclo:* ${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})\n`;
-            mensagem += `*HDP/HDT:* ${hdp} / ${hdt}\n`;
+            mensagem += `*Semana:* ${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})\n`;
+            mensagem += `*HDP/HDT:* ${hdp} /HDT ${hdt}\n`;
             mensagem += `*Quadras Trabalhadas:* ${quadrasTrabalhadas}\n`;
             
             // Imóveis e Focos (AGORA USANDO O percLimpo)
@@ -1620,6 +1620,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
