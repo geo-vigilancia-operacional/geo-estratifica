@@ -2,7 +2,7 @@
 // Quando 'true', o sistema será bloqueado na inicialização.
 // Quando 'false', o sistema funcionará normalmente.
 // ==========================================================
-const MODO_MANUTENCAO_ATIVO = true; // <-- Adicione esta linha!
+const MODO_MANUTENCAO_ATIVO = false; // <-- Adicione esta linha!
 // ==========================================================
 let bairros = [];
 let dadosOvitrampas = []; // ✅ novo
@@ -1720,6 +1720,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
