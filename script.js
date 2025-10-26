@@ -1537,6 +1537,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //29.
 document.addEventListener("DOMContentLoaded", function() {
+   // 🛑 BLOCO DE VERIFICAÇÃO DE MANUTENÇÃO 🛑
+    const maintenanceOverlay = document.getElementById('maintenanceOverlay');
+
+    if (MODO_MANUTENCAO_ATIVO) {
+        if (maintenanceOverlay) {
+            // Remove a classe 'hidden' para mostrar a mensagem
+            maintenanceOverlay.classList.remove('maintenance-hidden');
+            
+            // Opcional: Se houver um container principal, você pode esconder ele também
+            // document.querySelector('.main-grid').style.display = 'none';
+
+            console.log("Sistema bloqueado: MODO MANUTENÇÃO ATIVO.");
+            return; // 🛑 MUITO IMPORTANTE: Sai da função e impede o resto do código de rodar!
+        }
+    } else {
+        // Garante que o overlay esteja escondido se a chave for false
+        if (maintenanceOverlay) {
+            maintenanceOverlay.classList.add('maintenance-hidden');
+        }
+    }
     console.log("Sistema de estratificação inicializando...");
 
     // 1. Inicia o carregamento dos dados principais
@@ -1694,6 +1714,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
