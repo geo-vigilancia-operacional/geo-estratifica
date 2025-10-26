@@ -999,6 +999,7 @@ function abrirMapsComEndereco() {
     // 5. Abre a URL em uma nova aba
     window.open(urlMaps, '_blank');
 }
+//LIMPAR TUDO
 function limparTudo() {
     estado.bairroSelecionado = null;
     estado.quadrasSelecionadas.clear();
@@ -1620,6 +1621,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
