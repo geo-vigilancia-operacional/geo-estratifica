@@ -1,4 +1,3 @@
-/ ==========================================================
 // 🛑 CHAVE DE CONTROLE DO MODO MANUTENÇÃO 🛑
 // Quando 'true', o sistema será bloqueado na inicialização.
 // Quando 'false', o sistema funcionará normalmente.
@@ -1721,6 +1720,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
