@@ -109,7 +109,10 @@
                 grid-template-columns: 1fr 1fr; 
             }
         }
-        
+      .oculto {
+    /* Garante que nada sobrescreva o 'display: none' */
+    display: none !important; 
+}  
     </style>
 </head>
 <body>
@@ -128,20 +131,26 @@
                 <option value="LIRA 4">LIRA 4</option>
             </select>
             
-                        <div id="resultadosContainer" class="oculto box">
-                <h3>Resumo de Resultados LIRAa</h3>
-                <div id="resultadosLiraa" class="resultados-liraa"></div>
-            </div>
-            
-            <div id="mapaContainer" class="oculto box">
-                <h3>Mapa LIRAa Selecionado</h3>
-                <img id="mapa-dinamico" 
-                     src="" 
-                     alt="Mapa da situação LIRAa" 
-                     style="max-width: 100%; height: auto;">
-            </div>
-            
-        </div> <div id="estatisticasContainer" class="oculto box">
+                       <div class="container">
+    <div class="box">
+        <div id="resultadosContainer" class="oculto box"> 
+            <h3>Resumo de Resultados LIRAa</h3>
+            <div id="resultadosLiraa" class="resultados-liraa"></div>
+        </div>
+        
+        <div id="mapaContainer" class="oculto box">
+            <h3>Mapa LIRAa Selecionado</h3>
+            <img id="mapa-dinamico" 
+                 src="" 
+                 alt="Mapa da situação LIRAa" 
+                 style="max-width: 100%; height: auto;">
+        </div>
+        
+    </div> <div id="estatisticasContainer" class="oculto box">
+        <h3>Estatísticas do Ciclo</h3>
+        <div id="resultadosEstatisticos" class="grid-estatisticas resultados-estatisticos"></div>
+    </div>
+</div>
             <h3>Estatísticas do Ciclo</h3>
             <div id="resultadosEstatisticos" class="grid-estatisticas resultados-estatisticos">
                 </div>
@@ -382,6 +391,7 @@
     </script>
 </body>
 </html>
+
 
 
 
