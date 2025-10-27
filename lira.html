@@ -102,49 +102,41 @@ grid-template-columns: 1fr 1fr;
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="box">
-            <h1>Dados LIRAa</h1>
-            
-            <label for="selecaoBairro">Selecione o Bairro:</label>
-            <select id="selecaoBairro" class="select-bairro"></select>
-            <label for="selecaoFiltro" id="labelFiltro" class="oculto">Selecione o Tipo de LIRAa:</label>
-            <select id="selecaoFiltro" class="select-filtro oculto">
-                <option value="">Selecione um filtro</option>
-                <option value="LIRA 1">LIRA 1</option>
-                <option value="LIRA 2">LIRA 2</option>
-                <option value="LIRA 3">LIRA 3</option>
-                <option value="LIRA 4">LIRA 4</option>
-            </select>
-            
-                       <div class="container">
-    <div class="box">
-        <div id="resultadosContainer" class="oculto box"> 
+    <div class="container">
+        <div class="box">
+            <h1>Dados LIRAa</h1>
+            
+            <label for="selecaoBairro">Selecione o Bairro:</label>
+            <select id="selecaoBairro" class="select-bairro"></select>
+            
+            <label for="selecaoFiltro" id="labelFiltro" class="oculto">Selecione o Tipo de LIRAa:</label>
+            <select id="selecaoFiltro" class="select-filtro oculto">
+                <option value="">Selecione um filtro</option>
+                <option value="LIRA 1">LIRA 1</option>
+                <option value="LIRA 2">LIRA 2</option>
+                <option value="LIRA 3">LIRA 3</option>
+                <option value="LIRA 4">LIRA 4</option>
+            </select>
+        </div> <div id="resultadosContainer" class="oculto box"> 
             <h3>Resumo de Resultados LIRAa</h3>
             <div id="resultadosLiraa" class="resultados-liraa"></div>
         </div>
         
         <div id="mapaContainer" class="oculto box">
             <h3>Mapa LIRAa Selecionado</h3>
-            <img id="mapa-dinamico" 
-                 src="" 
-                 alt="Mapa da situação LIRAa" 
+            <img id="mapa-dinamico" 
+                 src="" 
+                 alt="Mapa da situação LIRAa" 
                  style="max-width: 100%; height: auto;">
         </div>
         
-    </div> <div id="estatisticasContainer" class="oculto box">
-        <h3>Estatísticas do Ciclo</h3>
-        <div id="resultadosEstatisticos" class="grid-estatisticas resultados-estatisticos"></div>
-    </div>
-</div>
+        <div id="estatisticasContainer" class="oculto box">
             <h3>Estatísticas do Ciclo</h3>
-            <div id="resultadosEstatisticos" class="grid-estatisticas resultados-estatisticos">
-                </div>
+            <div id="resultadosEstatisticos" class="grid-estatisticas resultados-estatisticos"></div>
         </div>
-
-    </div>
-
-    <script>
+        
+    </div> 
+    <script>
         // URLs dos arquivos
         const urlLIRAa = 'LIRAa 2025.json';
         const urlEstatisticas = 'bairros_4ciclo_2025.json';
@@ -377,6 +369,7 @@ grid-template-columns: 1fr 1fr;
     </script>
 </body>
 </html>
+
 
 
 
