@@ -12,110 +12,93 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
     </head>
-    <style>
-        /* Estilos CSS originais */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <style>
 
-        :root {
-            --bg-color: #1a1a2e;
-            --primary-color: #00b4d8;
-            --secondary-color: #89b4f0;
-            --text-color: #e0e0e0;
-            --card-bg: #21213e;
-            --border-color: #3e4a61;
-            --input-bg: #111122;
-        }
+        /* Estilos CSS do seu projeto (Mantidos) */
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 10px;
-        }
+        * {
+            margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+:root {
+ --bg-color: #1a1a2e;
+ --primary-color: #00b4d8;
+ --secondary-color: #89b4f0;
+ --text-color: #e0e0e0;
+ --card-bg: #21213e;
+--border-color: #3e4a61;
+ --input-bg: #111122;
+ }
+ body {
+font-family: 'Roboto', sans-serif;
+background-color: var(--bg-color);
+color: var(--text-color);
+line-height: 1.6;
+padding: 10px;
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 15px;
+}
+ .box {
+background: var(--card-bg);
+border-radius: 12px;
+ box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+padding: 25px;
+margin-bottom: 20px;
+border: 1px solid var(--border-color);
+}
+.box h1, .box h3 {
+margin-top: 0;
+margin-bottom: 20px;
+font-size: 1.3em;
+font-weight: 700;
+color: var(--secondary-color);
+text-shadow: 0 0 3px var(--secondary-color);
+padding-bottom: 10px;
+border-bottom: 1px solid var(--border-color);
+ }
+ .select-bairro, .select-filtro {
+ width: 100%;
+ padding: 10px;
+margin-bottom: 15px;
+background-color: var(--input-bg);
+color: var(--text-color);
+ border: 1px solid var(--border-color);
+border-radius: 8px;
+}
+.oculto {
+ display: none;
+}
+.resultados-liraa p, .resultados-estatisticos p {
+margin-bottom: 10px;
+}
+.resultados-liraa strong, .resultados-estatisticos strong {
+color: var(--primary-color);
+}
+/* Estilo para as estatísticas - layout em 2 colunas */
+.grid-estatisticas {
+display: grid;
+grid-template-columns: 1fr;
+ gap: 15px;
+}
+.grid-estatisticas > div {
+background-color: var(--input-bg);
+padding: 15px;
+border-radius: 8px;
+border: 1px solid var(--border-color);
+}
+@media (min-width: 600px) {
+.grid-estatisticas {
+grid-template-columns: 1fr 1fr; 
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
+            }
 
-        .box {
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .box h1, .box h3 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 1.3em;
-            font-weight: 700;
-            color: var(--secondary-color);
-            text-shadow: 0 0 3px var(--secondary-color);
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .select-bairro, .select-filtro {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-        }
-
-        .oculto {
-            display: none !important; /* Importante para garantir o ocultamento */
-        }
-        
-        /* Estilo para a imagem do mapa */
-        #mapa-dinamico {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            border-radius: 8px;
         }
 
-        .resultados-liraa p, .resultados-estatisticos p {
-            margin-bottom: 10px;
-        }
-        
-        .resultados-liraa strong, .resultados-estatisticos strong {
-            color: var(--primary-color);
-        }
 
-        /* Estilo para as estatísticas - layout em 2 colunas */
-        .grid-estatisticas {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-        .grid-estatisticas > div {
-            background-color: var(--input-bg);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        @media (min-width: 600px) {
-            .grid-estatisticas {
-                grid-template-columns: 1fr 1fr; 
-            }
-        }
-      .oculto {
-    /* Garante que nada sobrescreva o 'display: none' */
-    display: none !important; 
-}  
     </style>
 </head>
 <body>
@@ -394,6 +377,7 @@
     </script>
 </body>
 </html>
+
 
 
 
