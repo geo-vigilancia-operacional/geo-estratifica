@@ -133,13 +133,7 @@ label {
                  alt="Mapa da situação LIRAa" 
                  style="max-width: 100%; height: auto;">
         </div>
-        
-        <div id="estatisticasContainer" class="oculto box">
-            <h3>Estatísticas do Ciclo</h3>
-            <div id="resultadosEstatisticos" class="grid-estatisticas resultados-estatisticos"></div>
-        </div>
-        
-    </div> 
+         </div> 
     <script>
         // URLs dos arquivos
         const urlLIRAa = 'LIRAa 2025.json';
@@ -228,50 +222,7 @@ label {
                 mapaContainer.classList.add('oculto');
             }
         }
-
-        // Função para exibir as estatísticas (Mantida e Correta)
-        function exibirEstatisticas(bairroSelecionado) {
-            // ... (Sua função original de exibirEstatisticas) ...
-            resultadosEstatisticos.innerHTML = '';
-            estatisticasContainer.classList.add('oculto');
-            
-            if (!bairroSelecionado) return;
-
-            const dadosDoBairro = dadosEstatisticos.find(item => 
-                item['BAIRRO'].trim() === bairroSelecionado
-            );
-
-            if (!dadosDoBairro) {
-                resultadosEstatisticos.innerHTML = '<p>Nenhuma estatística encontrada para este bairro.</p>';
-                estatisticasContainer.classList.remove('oculto');
-                return;
-            }
-
-            // Mapeamento das chaves do JSON para os rótulos solicitados
-            const chavesMapeadas = [
-                { rotulo: "Total de Imóveis / Estrato", chave: "total_imoveis_por_estrato" },
-                { rotulo: "Total de Quarteirões / Estrato", chave: "total_quarteiroes_por_estrato" },
-                { rotulo: "Total de Imóveis à Inspecionar", chave: "total_imoveis_a_inspecionar" },
-                { rotulo: "Total de Quarteirões Sorteados", chave: "total_quarteiroes_sorteados" }
-            ];
-
-            let htmlEstatisticas = '';
-            chavesMapeadas.forEach(item => {
-                const valor = dadosDoBairro[item.chave] || 'N/A';
-                htmlEstatisticas += `
-                    <div>
-                        <p><strong>${item.rotulo}:</strong></p>
-                        <p>${valor}</p>
-                    </div>
-                `;
-            });
-
-            resultadosEstatisticos.innerHTML = htmlEstatisticas;
-            estatisticasContainer.classList.remove('oculto');
-        }
-
-
-        // Função para filtro LIRAa (Mantida e Correta)
+        // Função para filtro LIRAa (Mantida e Correta)
         function exibirResultadosLIRAa(bairroSelecionado, filtroSelecionado) {
             // ... (Sua função original de exibirResultadosLIRAa) ...
             resultadosLiraa.innerHTML = '';
@@ -373,6 +324,7 @@ label {
     </script>
 </body>
 </html>
+
 
 
 
