@@ -1677,6 +1677,40 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+// =========================================================
+// ARQUIVO: script.js
+// =========================================================
+
+// Esta função é chamada automaticamente após login bem-sucedido
+function inicializarAplicacao() {
+    console.log("✅ Aplicação inicializada após login!");
+    
+    // Exemplo: inicializar os elementos principais da sua aplicação
+    const painel = document.getElementById('painelPrincipal');
+    if (painel) {
+        painel.innerHTML = `
+            <h2>Painel de Controle</h2>
+            <p>Sua sessão foi iniciada com sucesso!</p>
+        `;
+    }
+
+    // Exemplo: carregar dados, configurar eventos, etc.
+    carregarDadosIniciais();
+    configurarBotoes();
+}
+
+// Exemplo de outras funções que podem ser usadas no sistema
+function carregarDadosIniciais() {
+    console.log("🔄 Carregando dados iniciais...");
+    // Aqui você pode carregar JSON, listas, quadras, bairros, etc.
+}
+
+function configurarBotoes() {
+    console.log("⚙️ Configurando botões...");
+    // Exemplo:
+    const btn = document.getElementById('btnExemplo');
+    if (btn) btn.addEventListener('click', () => alert("Botão clicado!"));
+}
 
     // ==========================================================
     // !!! NOVO CÓDIGO DO RELATÓRIO INSERIDO AQUI !!! (Ponto 9)
@@ -1697,6 +1731,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
