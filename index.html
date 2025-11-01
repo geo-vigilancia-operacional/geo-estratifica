@@ -676,6 +676,136 @@ header h1 {
 #btnMaps:hover {
     background-color: #3b78e7;
 }
+/* ======== LOGIN ======== */
+.login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(135deg, #004d7a, #008793, #00bf72, #a8eb12);
+    background-size: 400% 400%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: gradientMove 10s ease infinite;
+    transition: opacity 0.6s ease;
+    z-index: 9999;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.login-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px 50px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 380px;
+    max-width: 90%;
+    animation: fadeIn 0.6s ease;
+}
+
+.login-box h2 {
+    margin-bottom: 10px;
+    color: #004d7a;
+    font-size: 28px;
+}
+
+.login-box .descricao {
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 12px 14px;
+    margin: 8px 0;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.login-box input:focus {
+    border-color: #00bf72;
+    outline: none;
+}
+
+.senha-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#toggleBtn {
+    padding: 10px 14px;
+    background-color: #eee;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#toggleBtn:hover {
+    background-color: #ddd;
+}
+
+#btnEntrar {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    background-color: #00bf72;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#btnEntrar:hover {
+    background-color: #009d5f;
+}
+
+#mensagemErro {
+    color: red;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* Transição suave ao exibir conteúdo principal */
+#conteudoPrincipal {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+#conteudoPrincipal.mostrar {
+    opacity: 1;
+}
+
+/* ======== BOAS-VINDAS ======== */
+.boas-vindas {
+    background-color: #004d7a;
+    color: white;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* ======== ANIMAÇÕES ======== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 </style>
 </head>
 <body>
@@ -985,6 +1115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
