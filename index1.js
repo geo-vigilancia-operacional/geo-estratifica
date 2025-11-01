@@ -1,0 +1,74 @@
+// ==========================================================
+// ⚠️ CREDENCIAIS E LÓGICA DE LOGIN (Antigo login.js) ⚠️
+// ==========================================================
+
+const TENTATIVAS_MAXIMAS = 1;
+let tentativasAtuais = 0;
+let bloqueado = false;
+
+// Credenciais e nomes de exibição
+const CREDENCIAIS_OFUSCADAS = {
+    'ADMINISTRADOR': { name: 'Senhor Administrador', pass: '1212121513' },
+    'MARCIO':        { name: 'Márcio', pass: '124149' },
+    'MARCOS':        { name: 'Marcos', pass: '127153' },
+    'PAULO':         { name: 'Paulo', pass: '128139' },
+    'EDSON':         { name: 'Edson', pass: '155145' },
+    'NILO':          { name: 'Nilo', pass: '130151' },
+};
+
+
+function buscarCredenciais(usuario, senha) {
+    const userKey = usuario.toUpperCase();
+    const credencial = CREDENCIAIS_OFUSCADAS[userKey];
+    
+    if (credencial && senha === credencial.pass) {
+        return credencial.name; 
+    }
+    return null; 
+}
+
+
+// Função principal que será chamada pelo botão no HTML
+function tentarLogin() {
+    const inputUsuario = document.getElementById('inputUsuario');
+    const inputSenha = document.getElementById('inputSenha');
+    const mensagemErro = document.getElementById('mensagemErro');
+    const telaLogin = document.getElementById('telaLogin');
+    const conteudoPrincipal = document.getElementById('conteudoPrincipal');
+    const mensagemBoasVindas = document.getElementById('mensagemBoasVindas');
+    
+    // CHECAGEM DE BLOQUEIO
+    if (bloqueado) {
+        mensagemErro.textContent = 'Acesso bloqueado. Recarregue a página para tentar novamente.';
+        return; 
+    }
+    
+    const usuario = inputUsuario.value.trim();
+    const senha = inputSenha.value.trim();
+
+    const nomePersonalizado = buscarCredenciais(usuario, senha);
+
+    if (nomePersonalizado) {
+        // LOGIN BEM-SUCEDIDO
+        mensagemBoasVindas.textContent = `BEM-VINDO, ${nomePersonalizado.toUpperCase()}!`;
+        telaLogin.style.display = 'none';
+        conteudoPrincipal.style.display = 'block';
+        tentativasAtuais = 0;
+        
+        // 🚨 CHAME A FUNÇÃO DE INICIALIZAÇÃO DO SEU SCRIPT PRINCIPAL AQUI!
+        // Se a sua lógica principal estiver em uma função chamada, por exemplo, 'iniciarAplicacao()', chame-a aqui.
+        
+    } else {
+        // LOGIN FALHOU
+        tentativasAtuais++;
+        inputSenha.value = '';
+        
+        if (tentativasAtuais >= TENTATIVAS_MAXIMAS) {
+            bloqueado = true;
+            mensagemErro.textContent = 'Acesso bloqueado por tentativa incorreta. Recarregue a página.';
+            document.querySelector('#telaLogin button').disabled = true;
+        } else {
+            mensagemErro.textContent = 'Usuário ou Senha incorretos.'; 
+        }
+    }
+}
