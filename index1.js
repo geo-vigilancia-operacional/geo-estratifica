@@ -8,7 +8,7 @@ let bloqueado = false;
 
 // Credenciais e nomes de exibição
 const CREDENCIAIS_OFUSCADAS = {
-    'ADMINISTRADOR': { name: 'Senhor Administrador', pass: '1212121513' },
+    'ADMINISTRADOR': { name: 'Administrador', pass: '1212121513' },
     'MARCIO':        { name: 'Márcio', pass: '124149' },
     'MARCOS':        { name: 'Marcos', pass: '127153' },
     'PAULO':         { name: 'Paulo', pass: '128139' },
@@ -75,4 +75,5 @@ function tentarLogin() {
     }
 
 }
+
 
