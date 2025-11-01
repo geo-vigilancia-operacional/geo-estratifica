@@ -1,9 +1,3 @@
-// 🛑 CHAVE DE CONTROLE DO MODO MANUTENÇÃO 🛑
-// Quando 'true', o sistema será bloqueado na inicialização.
-// Quando 'false', o sistema funcionará normalmente.
-// ==========================================================
-const MODO_MANUTENCAO_ATIVO = false; // <-- Adicione esta linha!
-// ==========================================================
 let bairros = [];
 let dadosOvitrampas = []; // ✅ novo
 let estado = {
@@ -22,8 +16,9 @@ const entradaQuadras = document.getElementById("entradaQuadras");
 const aplicarTextoBtn = document.getElementById("aplicarTexto");
 const limparTudoBtn = document.getElementById("limparTudo");
 const dadosDetalhesDiv = document.getElementById("dadosDetalhes");
-
-// 1.FUNÇÃO AUXILIAR PARA SALVAR O ARQUIVO NO FORMATO .doc
+// =================================================================
+// FUNÇÃO AUXILIAR PARA SALVAR O ARQUIVO NO FORMATO .doc
+// =================================================================
 function salvarConteudoComoDoc(html, filename) {
     // Esta função prepara o HTML para ser reconhecido como um documento Word
     const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Relatório</title></head><body>";
@@ -43,8 +38,9 @@ function salvarConteudoComoDoc(html, filename) {
     document.body.removeChild(a);
 }
 
-
-// 2.FUNÇÃO PRINCIPAL PARA GERAR O RELATÓRIO ESTILO WORD (COM TRATAMENTOS DETALHADOS)
+// =================================================================
+// FUNÇÃO PRINCIPAL PARA GERAR O RELATÓRIO ESTILO WORD (COM TRATAMENTOS DETALHADOS)
+// =================================================================
 function gerarRelatorioWord() {
     console.log("Iniciando a geração do Relatório Word (com tratamentos detalhados)...");
 
@@ -233,8 +229,9 @@ function gerarRelatorioWord() {
         alert("Erro ao tentar gerar o relatório. Verifique o console para detalhes.");
     }
 }
-
-// 3.FUNÇÃO AUXILIAR PARA SALVAR O ARQUIVO NO FORMATO TXT (AGORA COM UTF-8 BOM)
+// =================================================================
+// FUNÇÃO AUXILIAR PARA SALVAR O ARQUIVO NO FORMATO TXT (AGORA COM UTF-8 BOM)
+// =================================================================
 function salvarConteudoComoTxt(conteudo, filename) {
     // Adiciona o BOM (Byte Order Mark) para forçar o Excel a usar UTF-8
     const conteudoComBOM = "\uFEFF" + conteudo;
@@ -251,7 +248,11 @@ function salvarConteudoComoTxt(conteudo, filename) {
     a.click();
     document.body.removeChild(a);
 }
-// 4.FUNÇÃO PRINCIPAL PARA EXPORTAR OS DADOS COMO TABELA TXT/CSV
+
+
+// =================================================================
+// FUNÇÃO PRINCIPAL PARA EXPORTAR OS DADOS COMO TABELA TXT/CSV
+// =================================================================
 function exportarTabelaTXT() {
     console.log("Iniciando a exportação da Tabela TXT...");
 
@@ -412,7 +413,8 @@ function exportarTabelaTXT() {
         alert("Erro ao tentar exportar a tabela. Verifique o console para detalhes.");
     }
 }
-// 5.--- FUNÇÕES PRINCIPAIS ---
+// --- FUNÇÕES PRINCIPAIS ---
+// 1. CARREGAR DADOS (bairros + ovitrampas)
 function carregarDados() {
     Promise.all([
         fetch('bairros_4ciclo_2025.json').then(r => r.json()),
@@ -432,7 +434,7 @@ function carregarDados() {
         alert('Erro ao carregar dados. Verifique o console para detalhes.');
     });
 }
-// 6. PREENCHER LISTA DE BAIRROS
+// 2. PREENCHER LISTA DE BAIRROS
 function preencherListaBairros() {
     if (!selectBairro) return;
     
@@ -447,7 +449,7 @@ function preencherListaBairros() {
         selectBairro.appendChild(option);
     });
 }
-// 7. MONTAR RESUMO GERAL DO BAIRRO (COM TODOS OS DADOS)
+// 3. MONTAR RESUMO GERAL DO BAIRRO (COM TODOS OS DADOS)
 function montarResumoGeral() {
     if (!resumoGeralDiv) return;
 
@@ -500,7 +502,7 @@ function montarResumoGeral() {
         <span>🧪 <strong>Ovitrampas (palhetas):</strong> ${totalOvitrampasBairro}</span>
     `;
 }
-// 8. CALCULAR TOTAIS COMPLETOS DO BAIRRO
+// 4. CALCULAR TOTAIS COMPLETOS DO BAIRRO
 function calcularTotaisBairro(dadosBairro) {
     const campos = [
         'R', 'C', 'TB', 'OU', 'PE', 'TOTAL', 'APARTAMENTO EXISTENTE',
@@ -534,7 +536,8 @@ function calcularTotaisBairro(dadosBairro) {
     
     return totais;
 }
-// 9. MONTAR LISTA DE QUADRAS COM DETALHES
+// 5. MONTAR LISTA DE QUADRAS COM DETALHES
+// === FUNÇÃO: MONTAR LISTA DE QUADRAS ===
 function montarListaQuadras() {
     if (!listaQuadrasDiv) return;
 
@@ -662,7 +665,7 @@ function montarListaQuadras() {
         listaQuadrasDiv.appendChild(wrapper);
     });
 }
-//10.
+
 function atualizarQuadrasSelecionadas() {
     const textarea = document.getElementById("quadrasEstratificadas");
     const detalhesDiv = document.getElementById("dadosDetalhes");
@@ -688,7 +691,7 @@ function atualizarQuadrasSelecionadas() {
     detalhesDiv.innerHTML = ""; // pode ser expandido para mostrar dados detalhados
 }
 
-// 11.Função para calcular e atualizar o campo 'Imóveis a Trabalhar'
+// Função para calcular e atualizar o campo 'Imóveis a Trabalhar'
 function calcularImoveisATrabalhar() {
     // 1. Obter o valor de 'Imóveis Programados'
     // Acessa o valor pelo ID, agora que ele foi adicionado no HTML gerado
@@ -714,7 +717,7 @@ function calcularImoveisATrabalhar() {
     }
 }
 
-// 12. CALCULAR TOTAIS DAS QUADRAS SELECIONADAS
+// 7. CALCULAR TOTAIS DAS QUADRAS SELECIONADAS
 function calcularTotaisQuadrasSelecionadas(dadosBairro) {
     const campos = [
         'R', 'C', 'TB', 'OU', 'PE', 'TOTAL', 'AP. ACIMA DO TÉRREO', 'HABITANTES',
@@ -745,12 +748,11 @@ function calcularTotaisQuadrasSelecionadas(dadosBairro) {
     
     return totais;
 }
-//13.
 function atualizarQuadrasPositivas() {
     const textarea = document.getElementById("quadrasPositivas");
     textarea.value = Array.from(estado.quadrasPositivas).join(", ");
 }
-//14.
+
 function limparTudo() {
     estado.bairroSelecionado = null;
     estado.quadrasSelecionadas.clear();
@@ -767,7 +769,7 @@ function limparTudo() {
     atualizarProgramados();
 }
 
-// 15. MOSTRAR DETALHES DAS QUADRAS SELECIONADAS
+// 8. MOSTRAR DETALHES DAS QUADRAS SELECIONADAS
 function mostrarDetalhesQuadras() {
     if (!dadosDetalhesDiv) return;
     
@@ -793,7 +795,7 @@ function mostrarDetalhesQuadras() {
     
     dadosDetalhesDiv.innerHTML = detalhes;
 }
-//16.
+
 function interpretarEntrada(texto) {
     const partes = texto.split(/[\s,;]+/).filter(Boolean);
     const selecionadas = new Set();
@@ -827,7 +829,7 @@ function interpretarEntrada(texto) {
 
     return selecionadas;
 }
-// 17. CALCULAR DIAS E DATA DE TÉRMINO PROGRAMADO
+// 1. CALCULAR DIAS E DATA DE TÉRMINO PROGRAMADO
 function calcularDiasETermino() {
     // 1. Obter os valores dos campos de entrada
     const imoveisATrabalhar = Number(document.getElementById("imoveisATrabalhar").value) || 0;
@@ -879,7 +881,7 @@ function calcularDiasETermino() {
     const ano = dataAtual.getFullYear();
     dataTerminoInput.value = `${ano}-${mes}-${dia}`;
 }
-//18.
+
 function atualizarProgramados() {
     const resumoProgramados = document.getElementById("resumoProgramados");
 
@@ -957,7 +959,7 @@ function atualizarProgramados() {
     calcularImoveisATrabalhar();
 }
 
-// 19.Sua função de cálculo de Imóveis a Trabalhar
+// Sua função de cálculo de Imóveis a Trabalhar
 function calcularImoveisATrabalhar() {
     const imoveisProgramados = Number(document.getElementById("imoveisProgramadosValue").textContent);
     const inputFechados = document.getElementById("percentualFechados");
@@ -976,7 +978,7 @@ function calcularImoveisATrabalhar() {
     }
 }
 
-//20. Função corrigida para abrir o Google Maps
+// Função corrigida para abrir o Google Maps
 function abrirMapsComEndereco() {
     // 1. Pega o valor do campo de endereço usando o ID
     const endereco = document.getElementById('inputEndereco').value;
@@ -997,113 +999,36 @@ function abrirMapsComEndereco() {
     // 5. Abre a URL em uma nova aba
     window.open(urlMaps, '_blank');
 }
-//21.LIMPAR TUDO
-// LIMPAR TUDO (APRIMORADA)
+//LIMPAR TUDO
 function limparTudo() {
-    // Limpeza de Variáveis de Estado (Essencial)
     estado.bairroSelecionado = null;
     estado.quadrasSelecionadas.clear();
     estado.quadrasPositivas.clear();
     
-    // --- 1. Limpa o bloco SELECIONE O BAIRRO / QUADRAS ---
+    // Limpa campos da tela
     if (selectBairro) selectBairro.value = "";
     if (entradaQuadras) entradaQuadras.value = "";
-    if (resumoGeralDiv) resumoGeralDiv.innerHTML = ""; // Assumindo ID 'resumoGeral'
-    if (listaQuadrasDiv) listaQuadrasDiv.innerHTML = ""; // Assumindo ID 'listaQuadras'
-    if (resumoProgramadosDiv) resumoProgramadosDiv.innerHTML = "<em>Selecione quadras para ver os programados.</em>"; // Assumindo ID 'resumoProgramados'
+    if (resumoGeralDiv) resumoGeralDiv.innerHTML = "";
+    if (listaQuadrasDiv) listaQuadrasDiv.innerHTML = "";
+    if (resumoProgramadosDiv) resumoProgramadosDiv.innerHTML = "<em>Selecione quadras para ver os programados.</em>";
+    if (dadosDetalhesDiv) dadosDetalhesDiv.innerHTML = "";
     
-    // --- 2. Limpa o bloco ESTRATIFICAR (Programação) ---
-    // Limpeza de inputs e textareas simples
+    // ✅ NOVO: Limpeza dos campos de cálculo
     document.getElementById("dataInicio").value = "";
-    document.getElementById("percentualFechados").value = "";
     document.getElementById("media").value = "";
     document.getElementById("servidores").value = "";
-    document.getElementById("dias").value = "";
-    
-    // Inputs readonly (limpar valor, mas o JS os recalcula)
     document.getElementById("imoveisATrabalhar").value = "";
+    document.getElementById("percentualFechados").value = "";
+    document.getElementById("dias").value = "";
     document.getElementById("dataTermino").value = "";
-    document.getElementById("quadrasEstratificadas").value = "";
     
-    // Limpa divs de informação
-    document.getElementById("contagemQuadrasEstratificadas").innerHTML = "";
-    document.getElementById("dadosDetalhes").innerHTML = "";
-    document.getElementById("obsDias").innerHTML = "";
-    document.getElementById("obsTermino").innerHTML = "Adicione a data de início programado";
-
-    // --- 3. Limpa o bloco RESULTADO (Execução) ---
-    document.getElementById("quadrasPositivas").value = "";
-    document.getElementById("contagemQuadrasPositivas").innerHTML = "";
-    document.getElementById("quadrasTrabalhadasInput").value = "0"; // Volta para o valor inicial
-    document.getElementById("obsQuadrasTrabalhadas").innerHTML = "";
-    
-    // Limpeza de campos de Resultado
-    document.getElementById("hdpInput").value = "";
-    document.getElementById("hdtInput").value = "";
-    document.getElementById("imoveisTrabalhadosInput").value = "";
-    document.getElementById("fechadosInput").value = "";
-    document.getElementById("focosPorImovelInput").value = "";
-    document.getElementById("depositosEliminadosInput").value = "";
-    document.getElementById("dataInicioReal").value = "";
-    document.getElementById("dataTerminoReal").value = "";
-    
-    // Limpeza de select fields
-    document.getElementById("semanaInicial").value = "";
-    document.getElementById("semanaFinal").value = "";
-    document.getElementById("ciclo").value = "";
-    
-    // Limpa as divs de porcentagem
-    document.getElementById("percImoveisTrabalhados").innerHTML = "";
-    document.getElementById("percFechados").innerHTML = "";
-
-
-    // --- 4. Limpeza dos Detalhes de Depósito, Tratamento e Observações ---
-    
-    // Limpeza de Depósitos Positivos (A1, A2, B, C, D1, D2, E)
-    ['a1', 'a2', 'b', 'c', 'd1', 'd2', 'e'].forEach(id => {
-        const input = document.getElementById(id);
-        if (input) input.value = "";
-    });
-    document.getElementById("totalDepositos").value = ""; // Readonly, mas bom limpar
-    
-    // Limpeza de Tratamentos
-    document.getElementById("imoveisBtiInput").value = "";
-    document.getElementById("imoveisEspInput").value = "";
-    document.getElementById("depositosBtiInput").value = "";
-    document.getElementById("depositosEspInput").value = "";
-    document.getElementById("larvicidaBtiInput").value = "";
-    document.getElementById("larvicidaEspInput").value = "";
-
-    // Limpeza de Informações Adicionais
-    document.getElementById("observacoes").value = "";
-    document.getElementById("responsavel").value = "";
-
-
-    // --- 5. Limpa a Lógica de Estratificação/Mutirão (select tipo) ---
-    
-    // Define o select principal para o valor padrão ('estratificacaoDeArea')
-    const selectTipo = document.getElementById("tipoSelect");
-    if (selectTipo) {
-        selectTipo.value = "estratificacaoDeArea";
-        
-        // Chamada à função que esconde/mostra os campos (Do código que você forneceu)
-        // Isso garante que 'outrosContainer' e 'mutiraoContainer' fiquem ocultos
-        // e limpa os campos inputOutros, inputEndereco, inputQuadra, inputUAPS (dentro de toggleFields)
-        if (typeof toggleFields === 'function') {
-            toggleFields(selectTipo.value);
-        }
-    }
-
-    // Chama as funções de atualização para garantir que tudo seja resetado na tela
-    // (Presumindo que estas funções estão definidas no seu escopo global/superior)
+    // Chama as funções de atualização para garantir que tudo seja resetado
     montarListaQuadras();
     montarResumoGeral();
     atualizarProgramados();
-    
-    console.log("Sistema completamente limpo.");
 }
 document.addEventListener("DOMContentLoaded", () => {
-    // ---21. Função para preencher semanas ---
+    // --- Função para preencher semanas ---
     function preencherSemanas(selectId) {
         const select = document.getElementById(selectId);
         if (select) {
@@ -1117,7 +1042,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 22.--- Função para preencher ciclos ---
+    // --- Função para preencher ciclos ---
     function preencherCiclos() {
         const select = document.getElementById("ciclo");
         if (select) {
@@ -1151,7 +1076,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 23.Função que calcula a soma dos depósitos
+    // Função que calcula a soma dos depósitos
     function atualizarTotalDepositos() {
         const ids = ["a1", "a2", "b", "c", "d1", "d2", "e"];
         let total = 0;
@@ -1175,7 +1100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarTotalDepositos();
 });
 document.addEventListener("DOMContentLoaded", () => {
-//24.
+
     function atualizarPercentuais() {
         // Pega valor de imóveis programados no painel
         const resumo = document.querySelector("#resumoProgramados");
@@ -1205,7 +1130,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Atualiza ao carregar
     atualizarPercentuais();
 });
-//25.
 document.addEventListener("DOMContentLoaded", () => {
     function verificarTratamentos() {
         const imoveisBti = Number(document.getElementById("imoveisBtiInput").value) || 0;
@@ -1258,7 +1182,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Executa logo ao carregar
     verificarTratamentos();
 });
-//26
 function compartilharWhatsApp() {
     console.log("Iniciando compartilhamento via WhatsApp (Versão Final Otimizada)...");
 
@@ -1351,77 +1274,7 @@ function compartilharWhatsApp() {
         
         // CORREÇÃO: Limpa a string da porcentagem se for o texto indesejado.
         const percLimpo = percTrabalhados.includes('0% de 0') ? '' : ` (${percTrabalhados})`;
-// =========================================================================
-// NOVO CÓDIGO NO SEU ARQUIVO 'script.js'
-// =========================================================================
 
-// Esta função vai conter TODO o seu código de lógica da aplicação
-// (cálculos, listeners de input, carregamento de bairros, etc.).
-function inicializarAplicacao() {
-    console.log("Sistema de estratificação inicializando..."); // Linha 1566
-
-    // *****************************************************************
-    // Mova TODO O CÓDIGO QUE ESTÁ DANDO ERRO (linhas 1142, 1161, 1202, 1255, 1511)
-    // PARA DENTRO DESTA FUNÇÃO.
-    // *****************************************************************
-
-    // EXEMPLO (Substitua este bloco com o seu código completo entre as linhas 1142-1550):
-    document.addEventListener('DOMContentLoaded', () => {
-        // 1. Lógica para cálculo de depósitos (anteriormente linha 1142)
-        const depositos = ['a1', 'a2', 'b', 'c', 'd1', 'd2', 'e'];
-        const totalDepositos = document.getElementById('totalDepositos');
-        
-        function atualizarTotalDepositos() {
-            let total = 0;
-            depositos.forEach(id => {
-                const input = document.getElementById(id);
-                // A VERIFICAÇÃO DE NULL AQUI É CRÍTICA!
-                if (input && input.value) { 
-                    total += parseInt(input.value) || 0; // Evita erro na linha 1161
-                }
-            });
-            if (totalDepositos) {
-                totalDepositos.value = total;
-            }
-        }
-        
-        depositos.forEach(id => {
-            const input = document.getElementById(id);
-            if (input) { // Verifica se o elemento existe (para evitar erro 1142)
-                input.addEventListener('input', atualizarTotalDepositos);
-            }
-        });
-        
-        // 2. Lógica de botões (anteriormente linha 1202)
-        const salvarBtn = document.getElementById('salvarProcessoBtn');
-        if (salvarBtn) {
-            salvarBtn.addEventListener('click', salvarProcesso); // Evita erro 1202
-        }
-
-        // 3. O resto do seu código da aplicação principal...
-    });
-    
-    // ... Coloque aqui o restante do código que estava nas linhas 1142-1565 ...
-
-    console.log("Sistema inicializado com sucesso!"); // Linha 1721
-}
-
-
-
-// =========================================================================
-// NOVO CÓDIGO NO SEU ARQUIVO 'script.js' (GLOBAL)
-// =========================================================================
-
-// IMPORTANTE: Adicione um listener de DOMContentLoaded para carregar os Bairros/Ovitrampas
-// (Se esse carregamento não depende do login)
-document.addEventListener('DOMContentLoaded', () => {
-    // Coloque aqui apenas o código que roda mesmo sem o login
-    // como carregamento de dados estáticos que não dependem do DOM da aplicação.
-
-    // Ex: Carregamento de Bairros e Ovitrampas (Linhas 427-428)
-    carregarBairros(); 
-    carregarOvitrampas(); 
-});
 
         const focosPorImovel = getValue("focosPorImovelInput");
         const btiTratados = getValue("imoveisBtiInput");
@@ -1541,7 +1394,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("Erro ao tentar compartilhar. Verifique o console para detalhes.");
     }
 }
-//27.
 document.addEventListener("DOMContentLoaded", () => {
     const quadrasTrabalhadasInput = document.getElementById("quadrasTrabalhadasInput");
     const obsQuadrasTrabalhadas = document.getElementById("obsQuadrasTrabalhadas");
@@ -1589,8 +1441,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     atualizarQuadrasTrabalhadas(); // rodar na inicialização
 });
-//28.
-    document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
     const selectEstratificacao = document.getElementById('tipoEstratificacao');
     const outrosCampoContainer = document.getElementById('outrosCampoContainer');
     const outrosCampoInput = document.getElementById('outrosTipoEstratificacao');
@@ -1611,28 +1462,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-//29.
+
 document.addEventListener("DOMContentLoaded", function() {
-   // 🛑 BLOCO DE VERIFICAÇÃO DE MANUTENÇÃO 🛑
-    const maintenanceOverlay = document.getElementById('maintenanceOverlay');
-
-    if (MODO_MANUTENCAO_ATIVO) {
-        if (maintenanceOverlay) {
-            // Remove a classe 'hidden' para mostrar a mensagem
-            maintenanceOverlay.classList.remove('maintenance-hidden');
-            
-            // Opcional: Se houver um container principal, você pode esconder ele também
-            // document.querySelector('.main-grid').style.display = 'none';
-
-            console.log("Sistema bloqueado: MODO MANUTENÇÃO ATIVO.");
-            return; // 🛑 MUITO IMPORTANTE: Sai da função e impede o resto do código de rodar!
-        }
-    } else {
-        // Garante que o overlay esteja escondido se a chave for false
-        if (maintenanceOverlay) {
-            maintenanceOverlay.classList.add('maintenance-hidden');
-        }
-    }
     console.log("Sistema de estratificação inicializando...");
 
     // 1. Inicia o carregamento dos dados principais
@@ -1774,7 +1605,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // ==========================================================
     // !!! NOVO CÓDIGO DO RELATÓRIO INSERIDO AQUI !!! (Ponto 9)
     // ==========================================================
-    // 30. Event Listener para o botão GERAR RELATÓRIO WORD
+    // 9. Event Listener para o botão GERAR RELATÓRIO WORD
     const gerarRelatorioBtn = document.getElementById('gerarRelatorioBtn');
     if (gerarRelatorioBtn) {
         // Assume que a função 'gerarRelatorioWord' foi definida no escopo (no topo do script)
@@ -1782,7 +1613,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
    // ... Código do ponto 9 (Gerar Relatório Word) ...
 
-    // 31. Event Listener para o botão EXPORTAR TABELA TXT
+    // 10. Event Listener para o botão EXPORTAR TABELA TXT
     const exportarTabelaTxtBtn = document.getElementById('exportarTabelaTxtBtn');
     if (exportarTabelaTxtBtn) {
         exportarTabelaTxtBtn.addEventListener('click', exportarTabelaTXT);
@@ -1790,6 +1621,8 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
+
 
 
 
