@@ -141,7 +141,7 @@ function gerarRelatorioWord() {
         let htmlContent = '';
         
         // 1. TÍTULO E CONTEXTO
-        htmlContent += `<h1 style="text-align: center; color: #1e88e5;">RELATÓRIO DE AÇÃO </h1>`;
+        htmlContent += `<h1 style="text-align: center; color: #1e88e5;">RELATÓRIO DE AÇÃO DTE</h1>`;
         htmlContent += `<h2 style="text-align: center; color: #555;">Bairro: ${bairro.toUpperCase()}</h2>`;
         htmlContent += `<p><strong>Data de Geração:</strong> ${new Date().toLocaleDateString('pt-BR')} - <strong>Responsável:</strong> ${responsavel}</p>`;
         htmlContent += `<hr style="border: 1px solid #ddd;">`;
@@ -184,7 +184,7 @@ function gerarRelatorioWord() {
             htmlContent += `<p><strong>Visão Geral:</strong> O trabalho cobriu <strong>${quadrasTrabalhadas}</strong> quadras, pertencentes às Semanas/Ciclo <strong>${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})</strong>. O desempenho foi de <strong>HDP/HDT: ${hdp} / ${hdt}</strong>.</p>`;
 
             // Desempenho Imóveis
-            htmlContent += `<h4>Desempenho da Cobertura</h4>`;
+            htmlContent += `<h4>Desempenho da Cobertura e Achados</h4>`;
             htmlContent += `<ul>`;
             htmlContent += `<li><strong>Total de Imóveis Visitados:</strong> ${imoveisTrabalhados}</li>`;
             htmlContent += `<li><strong>Imóveis Fechados Encontrados:</strong> ${fechados}</li>`;
@@ -1697,6 +1697,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
