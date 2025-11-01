@@ -787,16 +787,6 @@ header h1 {
     box-shadow: 0 0 0 2px #4a90e2; /* Borda azul ao focar */
 }
 
-/* Contêiner da Senha para o Olhinho */
-.password-wrapper {
-    position: relative;
-    width: 100%;
-    margin-bottom: 25px;
-}
-.password-wrapper input {
-    margin: 0;
-    padding-right: 50px; /* Espaço para o botão do olhinho */
-}
 .toggle-password {
     position: absolute;
     right: 5px;
@@ -859,10 +849,8 @@ header h1 {
         <div class="password-wrapper">
             <input type="password" id="inputSenha" placeholder="Senha" 
                    required onkeypress="if (event.key === 'Enter') tentarLogin();">
-            <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
-                <span id="toggleIcon">👁️</span>
-            </button>
-        </div>
+          <input type="password" id="inputSenha" placeholder="Senha" 
+       required onkeypress="if (event.key === 'Enter') tentarLogin();">
         
         <p class="msg-status" id="mensagemErro"></p>
 
@@ -1171,6 +1159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
