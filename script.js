@@ -1407,23 +1407,6 @@ function inicializarAplicacao() {
 }
 
 
-// =========================================================================
-// NOVO CÓDIGO NO SEU ARQUIVO 'index1.js' (FUNÇÃO tentarLogin)
-// =========================================================================
-function tentarLogin() {
-    // ... Seu código de login ...
-
-    if (nomePersonalizado) {
-        // ... Mostra a tela principal ...
-        
-        // CHAMA A FUNÇÃO DE INICIALIZAÇÃO AQUI, APÓS O LOGIN BEM-SUCEDIDO
-        // E APÓS A TELA PRINCIPAL SER EXIBIDA.
-        inicializarAplicacao(); // <---- ADICIONE ISTO!
-    
-    } else {
-        // ... Falha no login ...
-    }
-}
 
 // =========================================================================
 // NOVO CÓDIGO NO SEU ARQUIVO 'script.js' (GLOBAL)
@@ -1807,6 +1790,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
