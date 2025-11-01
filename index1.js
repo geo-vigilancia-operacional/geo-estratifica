@@ -26,7 +26,32 @@ function buscarCredenciais(usuario, senha) {
     }
     return null; 
 }
+// index1.js (Adicione esta nova função)
 
+function verificarLoginPersistente() {
+    // Verifica se a chave 'acesso_liberado' existe no armazenamento local
+    if (localStorage.getItem('acesso_liberado') === 'true') {
+        
+        // Se a chave existir, esconde o login e mostra o conteúdo
+        const telaLogin = document.getElementById('telaLogin');
+        const conteudoPrincipal = document.getElementById('conteudoPrincipal');
+        
+        if (telaLogin && conteudoPrincipal) {
+            telaLogin.style.display = 'none';
+            conteudoPrincipal.style.display = 'block';
+
+            // Opcional: Você pode tentar recuperar a mensagem de boas-vindas se quiser
+            // document.getElementById('mensagemBoasVindas').textContent = "BEM-VINDO DE VOLTA!"; 
+
+            console.log("Acesso persistente restaurado.");
+            return true;
+        }
+    }
+    return false;
+}
+
+// 🚨 ADIÇÃO 2: Executa a checagem imediatamente ao carregar o script
+verificarLoginPersistente();
 
 // O restante do seu código index1.js (tentarLogin, credenciais, etc.) permanece o mesmo.
 
@@ -52,6 +77,8 @@ function tentarLogin() {
 
     if (nomePersonalizado) {
         // LOGIN BEM-SUCEDIDO
+       // 🚨 ADIÇÃO 1: Salva uma chave no armazenamento local
+        localStorage.setItem('acesso_liberado', 'true');
         mensagemBoasVindas.textContent = `BEM-VINDO, ${nomePersonalizado.toUpperCase()}!`;
         telaLogin.style.display = 'none';
         conteudoPrincipal.style.display = 'block';
@@ -75,5 +102,6 @@ function tentarLogin() {
     }
 
 }
+
 
 
