@@ -1351,7 +1351,94 @@ function compartilharWhatsApp() {
         
         // CORREÇÃO: Limpa a string da porcentagem se for o texto indesejado.
         const percLimpo = percTrabalhados.includes('0% de 0') ? '' : ` (${percTrabalhados})`;
+// =========================================================================
+// NOVO CÓDIGO NO SEU ARQUIVO 'script.js'
+// =========================================================================
 
+// Esta função vai conter TODO o seu código de lógica da aplicação
+// (cálculos, listeners de input, carregamento de bairros, etc.).
+function inicializarAplicacao() {
+    console.log("Sistema de estratificação inicializando..."); // Linha 1566
+
+    // *****************************************************************
+    // Mova TODO O CÓDIGO QUE ESTÁ DANDO ERRO (linhas 1142, 1161, 1202, 1255, 1511)
+    // PARA DENTRO DESTA FUNÇÃO.
+    // *****************************************************************
+
+    // EXEMPLO (Substitua este bloco com o seu código completo entre as linhas 1142-1550):
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Lógica para cálculo de depósitos (anteriormente linha 1142)
+        const depositos = ['a1', 'a2', 'b', 'c', 'd1', 'd2', 'e'];
+        const totalDepositos = document.getElementById('totalDepositos');
+        
+        function atualizarTotalDepositos() {
+            let total = 0;
+            depositos.forEach(id => {
+                const input = document.getElementById(id);
+                // A VERIFICAÇÃO DE NULL AQUI É CRÍTICA!
+                if (input && input.value) { 
+                    total += parseInt(input.value) || 0; // Evita erro na linha 1161
+                }
+            });
+            if (totalDepositos) {
+                totalDepositos.value = total;
+            }
+        }
+        
+        depositos.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) { // Verifica se o elemento existe (para evitar erro 1142)
+                input.addEventListener('input', atualizarTotalDepositos);
+            }
+        });
+        
+        // 2. Lógica de botões (anteriormente linha 1202)
+        const salvarBtn = document.getElementById('salvarProcessoBtn');
+        if (salvarBtn) {
+            salvarBtn.addEventListener('click', salvarProcesso); // Evita erro 1202
+        }
+
+        // 3. O resto do seu código da aplicação principal...
+    });
+    
+    // ... Coloque aqui o restante do código que estava nas linhas 1142-1565 ...
+
+    console.log("Sistema inicializado com sucesso!"); // Linha 1721
+}
+
+
+// =========================================================================
+// NOVO CÓDIGO NO SEU ARQUIVO 'index1.js' (FUNÇÃO tentarLogin)
+// =========================================================================
+function tentarLogin() {
+    // ... Seu código de login ...
+
+    if (nomePersonalizado) {
+        // ... Mostra a tela principal ...
+        
+        // CHAMA A FUNÇÃO DE INICIALIZAÇÃO AQUI, APÓS O LOGIN BEM-SUCEDIDO
+        // E APÓS A TELA PRINCIPAL SER EXIBIDA.
+        inicializarAplicacao(); // <---- ADICIONE ISTO!
+    
+    } else {
+        // ... Falha no login ...
+    }
+}
+
+// =========================================================================
+// NOVO CÓDIGO NO SEU ARQUIVO 'script.js' (GLOBAL)
+// =========================================================================
+
+// IMPORTANTE: Adicione um listener de DOMContentLoaded para carregar os Bairros/Ovitrampas
+// (Se esse carregamento não depende do login)
+document.addEventListener('DOMContentLoaded', () => {
+    // Coloque aqui apenas o código que roda mesmo sem o login
+    // como carregamento de dados estáticos que não dependem do DOM da aplicação.
+
+    // Ex: Carregamento de Bairros e Ovitrampas (Linhas 427-428)
+    carregarBairros(); 
+    carregarOvitrampas(); 
+});
 
         const focosPorImovel = getValue("focosPorImovelInput");
         const btiTratados = getValue("imoveisBtiInput");
@@ -1720,6 +1807,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
