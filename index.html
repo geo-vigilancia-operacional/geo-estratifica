@@ -683,28 +683,21 @@ header h1 {
     <!-- =========================================================
          TELA DE LOGIN
     ========================================================== -->
-    <div id="telaLogin">
-        <h2>Acesso Restrito</h2>
-
-        <div>
-            <label for="inputUsuario">Usuário:</label><br>
-            <input type="text" id="inputUsuario" placeholder="Digite seu usuário">
-        </div>
-
-        <div style="margin-top:10px;">
-            <label for="inputSenha">Senha:</label><br>
-            <input type="password" id="inputSenha" placeholder="Digite sua senha"><br>
-            <button id="toggleBtn" type="button" onclick="togglePasswordVisibility()">Mostrar senha</button>
-        </div>
-
-        <button style="margin-top:10px;" onclick="tentarLogin()">Entrar</button>
-        <p id="mensagemErro"></p>
+  <div id="telaLogin" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+    <h2>Acesso Restrito</h2>
+    <input type="text" id="inputUsuario" placeholder="Usuário">
+    <div style="display: flex; gap: 8px;">
+        <input type="password" id="inputSenha" placeholder="Senha">
+        <button id="toggleBtn" type="button" onclick="togglePasswordVisibility()">Mostrar senha</button>
     </div>
+    <button type="button" onclick="tentarLogin()">Entrar</button>
+    <p id="mensagemErro" style="color: red;"></p>
+</div>
 
-    <!-- =========================================================
-         CONTEÚDO PRINCIPAL (oculto até login)
-    ========================================================== -->
-    <div id="conteudoPrincipal" style="display:none;">
+<!-- Conteúdo principal escondido até o login -->
+<div id="conteudoPrincipal" style="display: none;">
+    <div id="mensagemBoasVindas" style="font-weight: bold; text-align: center; margin: 10px 0;"></div>
+
 
         <header>
 
@@ -992,6 +985,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
