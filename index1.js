@@ -26,19 +26,7 @@ function buscarCredenciais(usuario, senha) {
     }
     return null; 
 }
-// index1.js (Adicione esta função)
-function togglePasswordVisibility() {
-    const inputSenha = document.getElementById('inputSenha');
-    const toggleIcon = document.getElementById('toggleIcon');
-    
-    if (inputSenha.type === 'password') {
-        inputSenha.type = 'text';
-        toggleIcon.textContent = '🙈'; // Olho fechado
-    } else {
-        inputSenha.type = 'password';
-        toggleIcon.textContent = '👁️'; // Olho aberto
-    }
-}
+
 
 // O restante do seu código index1.js (tentarLogin, credenciais, etc.) permanece o mesmo.
 
@@ -87,3 +75,4 @@ function tentarLogin() {
     }
 
 }
+
