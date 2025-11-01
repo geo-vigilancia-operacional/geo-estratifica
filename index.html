@@ -721,7 +721,30 @@ header h1 {
 </style>
 </head>
 <body>
-<div id="maintenanceOverlay" class="maintenance-hidden">
+<div id="telaLogin" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f0f0; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif;">
+        
+        <h2>Acesso DTE VI</h2>
+        <p>Insira suas credenciais:</p>
+        
+        <input type="text" id="inputUsuario" placeholder="Usuário (Ex: MARCIO)" style="margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; text-transform: uppercase;">
+        
+                <input type="password" id="inputSenha" placeholder="Senha" 
+               style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;"
+               onkeypress="if (event.key === 'Enter') tentarLogin();">
+        
+        <button onclick="tentarLogin()" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; cursor: pointer;">Entrar</button>
+        
+        <p id="mensagemErro" style="color: red; margin-top: 10px;"></p>
+        <p style="margin-top: 20px; font-size: 0.8em; color: #666;">Apenas 1 tentativa permitida.</p>
+</div>
+
+    <div id="conteudoPrincipal" style="display: none; padding: 20px; font-family: sans-serif;">
+        
+        <h1 id="mensagemBoasVindas" style="color: #007bff;"></h1> 
+
+        <hr>
+        <h2>Início da Aplicação de Estratificação</h2>
+    <div id="maintenanceOverlay" class="maintenance-hidden">
         <div class="maintenance-message">
             <h1>🛠️ SISTEMA EM MANUTENÇÃO OU ATUALIZAÇÃO 🛠️</h1>
             <p>A aplicação está temporariamente indisponível para melhorias.</p>
@@ -1012,6 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
