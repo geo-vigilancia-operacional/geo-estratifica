@@ -48,13 +48,17 @@ function tentarLogin() {
     const nomePersonalizado = buscarCredenciais(usuario, senha);
 
     if (nomePersonalizado) {
-       mensagemBoasVindas.textContent = `BEM-VINDO, ${nomePersonalizado.toUpperCase()}!`;
+        // LOGIN BEM-SUCEDIDO
+        mensagemBoasVindas.textContent = `BEM-VINDO, ${nomePersonalizado.toUpperCase()}!`;
         telaLogin.style.display = 'none';
         conteudoPrincipal.style.display = 'block';
         tentativasAtuais = 0;
         
-        // 🚨 CHAME A FUNÇÃO DE INICIALIZAÇÃO DO SEU SCRIPT PRINCIPAL AQUI!
-        // Se a sua lógica principal estiver em uma função chamada, por exemplo, 'iniciarAplicacao()', chame-a aqui.
+        // 🚨 CORREÇÃO PRINCIPAL: CHAMA A FUNÇÃO DE INICIALIZAÇÃO AQUI!
+        // Esta função deve ser aquela que você criou no 'script.js' (Passo 1 da última resposta)
+        if (typeof inicializarAplicacao === 'function') {
+            inicializarAplicacao(); 
+        }
         
     } else {
         // LOGIN FALHOU
@@ -69,8 +73,8 @@ function tentarLogin() {
             mensagemErro.textContent = 'Usuário ou Senha incorretos.'; 
         }
     }
-
 }
+
 
 
 
