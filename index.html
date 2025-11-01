@@ -664,7 +664,37 @@ header h1 {
 </style>
 </head>
 <body>
-<header>
+    <div id="telaLogin">
+        <div class="login-container">
+            <h2>Acesso DTE VI</h2>
+            <p>Insira suas credenciais:</p>
+            
+            <input type="text" id="inputUsuario" placeholder="USUÁRIO" required>
+            
+            <input type="password" id="inputSenha" placeholder="Senha" 
+                   required onkeypress="if (event.key === 'Enter') tentarLogin();">
+            
+            <p class="msg-status" id="mensagemErro"></p>
+
+            <button class="btn-login" onclick="tentarLogin()">
+                Entrar
+            </button>
+
+            <p class="limite-tentativas">Apenas 1 tentativa permitida.</p>
+        </div>
+    </div>
+
+    <div id="conteudoPrincipal" style="display: none; padding: 20px; font-family: sans-serif;">
+        
+        <h1 id="mensagemBoasVindas" style="color: #007bff;"></h1> 
+        <hr>
+        
+        </div>
+
+    <script src="index1.js"></script>
+    <script src="script.js?v=1.2"></script>
+</body>
+    <header>
 
 
             <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
@@ -948,6 +978,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
