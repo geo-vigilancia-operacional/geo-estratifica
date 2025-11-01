@@ -661,29 +661,161 @@ header h1 {
 #btnMaps:hover {
     background-color: #3b78e7;
 }
+/* ========================================================== */
+/* ESTILOS MODERNOS (GLASSMORPHISM) PARA TELA DE LOGIN */
+/* ========================================================== */
+
+/* Fundo da Tela */
+#telaLogin {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white; /* Texto em branco sobre o fundo escuro */
+    
+    /* Fundo Escuro com Brilhos */
+    background: linear-gradient(135deg, #1f013d 0%, #0c001a 100%);
+    /* Adicionar um padrão simples de estrelas/pontos para o fundo */
+    background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 1px, transparent 1.5px), 
+                      radial-gradient(circle at top left, rgba(255, 255, 255, 0.05) 1px, transparent 2px);
+    background-size: 50px 50px, 100px 100px;
+}
+
+/* Contêiner de Vidro (Glassmorphism) */
+.login-container {
+    background: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Sombra acentuada */
+    backdrop-filter: blur(15px); /* Efeito de vidro fosco! */
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.titulo-login {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.subtitulo-login {
+    font-size: 1em;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+/* Estilo dos Inputs */
+#inputUsuario, #inputSenha {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9); /* Quase branco para contraste */
+    color: #333;
+    font-size: 1em;
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+#inputUsuario:focus, #inputSenha:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #4a90e2; /* Borda azul ao focar */
+}
+
+/* Contêiner da Senha para o Olhinho */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 25px;
+}
+.password-wrapper input {
+    margin: 0;
+    padding-right: 50px; /* Espaço para o botão do olhinho */
+}
+.toggle-password {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #555;
+    font-size: 1.2em;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.toggle-password:hover {
+    opacity: 1;
+}
+
+/* Botão de Login */
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    
+    /* Efeito degrade no botão */
+    background: linear-gradient(90deg, #4a90e2 0%, #00bcd4 100%);
+    color: white;
+}
+.btn-login:hover {
+    box-shadow: 0 0 15px rgba(74, 144, 226, 0.7);
+}
+
+/* Mensagens de Status/Erro */
+.msg-status {
+    color: #ffdd57; /* Amarelo claro para erro */
+    margin-top: 10px;
+    font-weight: 600;
+}
+.limite-tentativas {
+    font-size: 0.85em;
+    opacity: 0.6;
+    margin-top: 20px;
+}
 </style>
 </head>
 <body>
-    <div id="telaLogin">
-        <div class="login-container">
-            <h2>Acesso DTE VI</h2>
-            <p>Insira suas credenciais:</p>
-            
-            <input type="text" id="inputUsuario" placeholder="USUÁRIO" required>
-            
+<div id="telaLogin">
+    <div class="login-container">
+        <h2 class="titulo-login">Acesso DTE VI</h2>
+        <p class="subtitulo-login">Insira suas credenciais:</p>
+        
+        <input type="text" id="inputUsuario" placeholder="USUÁRIO" required>
+        
+        <div class="password-wrapper">
             <input type="password" id="inputSenha" placeholder="Senha" 
                    required onkeypress="if (event.key === 'Enter') tentarLogin();">
-            
-            <p class="msg-status" id="mensagemErro"></p>
-
-            <button class="btn-login" onclick="tentarLogin()">
-                Entrar
+            <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                <span id="toggleIcon">👁️</span>
             </button>
-
-            <p class="limite-tentativas">Apenas 1 tentativa permitida.</p>
         </div>
-    </div>
+        
+        <p class="msg-status" id="mensagemErro"></p>
 
+        <button class="btn-login" onclick="tentarLogin()">
+            Entrar
+        </button>
+
+        <p class="limite-tentativas">Apenas 1 tentativa permitida.</p>
+    </div>
+</div>
     <div id="conteudoPrincipal" style="display: none; padding: 20px; font-family: sans-serif;">
         
         <h1 id="mensagemBoasVindas" style="color: #007bff;"></h1> 
@@ -691,9 +823,7 @@ header h1 {
         
         </div>
 
-    <script src="index1.js"></script>
-    <script src="script.js?v=1.2"></script>
-</body>
+    
     <header>
 
 
@@ -974,10 +1104,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <button id="salvarTxt" class="botao">Salvar como TXT</button>
 
      <!-- Script deve vir DEPOIS do HTML, não dentro dele -->
-<script src="script.js"></script>
+  <script src="index1.js"></script>
+    <script src="script.js?v=1.2"></script>
 
 </body>
 </html>
+
 
 
 
