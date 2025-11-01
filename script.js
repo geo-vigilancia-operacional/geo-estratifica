@@ -999,33 +999,109 @@ function abrirMapsComEndereco() {
     // 5. Abre a URL em uma nova aba
     window.open(urlMaps, '_blank');
 }
-//LIMPAR TUDO
+// LIMPAR TUDO (APRIMORADA)
 function limparTudo() {
+    // Limpeza de Variáveis de Estado (Essencial)
     estado.bairroSelecionado = null;
     estado.quadrasSelecionadas.clear();
     estado.quadrasPositivas.clear();
     
-    // Limpa campos da tela
+    // --- 1. Limpa o bloco SELECIONE O BAIRRO / QUADRAS ---
     if (selectBairro) selectBairro.value = "";
     if (entradaQuadras) entradaQuadras.value = "";
-    if (resumoGeralDiv) resumoGeralDiv.innerHTML = "";
-    if (listaQuadrasDiv) listaQuadrasDiv.innerHTML = "";
-    if (resumoProgramadosDiv) resumoProgramadosDiv.innerHTML = "<em>Selecione quadras para ver os programados.</em>";
-    if (dadosDetalhesDiv) dadosDetalhesDiv.innerHTML = "";
+    if (resumoGeralDiv) resumoGeralDiv.innerHTML = ""; // Assumindo ID 'resumoGeral'
+    if (listaQuadrasDiv) listaQuadrasDiv.innerHTML = ""; // Assumindo ID 'listaQuadras'
+    if (resumoProgramadosDiv) resumoProgramadosDiv.innerHTML = "<em>Selecione quadras para ver os programados.</em>"; // Assumindo ID 'resumoProgramados'
     
-    // ✅ NOVO: Limpeza dos campos de cálculo
+    // --- 2. Limpa o bloco ESTRATIFICAR (Programação) ---
+    // Limpeza de inputs e textareas simples
     document.getElementById("dataInicio").value = "";
+    document.getElementById("percentualFechados").value = "";
     document.getElementById("media").value = "";
     document.getElementById("servidores").value = "";
-    document.getElementById("imoveisATrabalhar").value = "";
-    document.getElementById("percentualFechados").value = "";
     document.getElementById("dias").value = "";
-    document.getElementById("dataTermino").value = "";
     
-    // Chama as funções de atualização para garantir que tudo seja resetado
+    // Inputs readonly (limpar valor, mas o JS os recalcula)
+    document.getElementById("imoveisATrabalhar").value = "";
+    document.getElementById("dataTermino").value = "";
+    document.getElementById("quadrasEstratificadas").value = "";
+    
+    // Limpa divs de informação
+    document.getElementById("contagemQuadrasEstratificadas").innerHTML = "";
+    document.getElementById("dadosDetalhes").innerHTML = "";
+    document.getElementById("obsDias").innerHTML = "";
+    document.getElementById("obsTermino").innerHTML = "Adicione a data de início programado";
+
+    // --- 3. Limpa o bloco RESULTADO (Execução) ---
+    document.getElementById("quadrasPositivas").value = "";
+    document.getElementById("contagemQuadrasPositivas").innerHTML = "";
+    document.getElementById("quadrasTrabalhadasInput").value = "0"; // Volta para o valor inicial
+    document.getElementById("obsQuadrasTrabalhadas").innerHTML = "";
+    
+    // Limpeza de campos de Resultado
+    document.getElementById("hdpInput").value = "";
+    document.getElementById("hdtInput").value = "";
+    document.getElementById("imoveisTrabalhadosInput").value = "";
+    document.getElementById("fechadosInput").value = "";
+    document.getElementById("focosPorImovelInput").value = "";
+    document.getElementById("depositosEliminadosInput").value = "";
+    document.getElementById("dataInicioReal").value = "";
+    document.getElementById("dataTerminoReal").value = "";
+    
+    // Limpeza de select fields
+    document.getElementById("semanaInicial").value = "";
+    document.getElementById("semanaFinal").value = "";
+    document.getElementById("ciclo").value = "";
+    
+    // Limpa as divs de porcentagem
+    document.getElementById("percImoveisTrabalhados").innerHTML = "";
+    document.getElementById("percFechados").innerHTML = "";
+
+
+    // --- 4. Limpeza dos Detalhes de Depósito, Tratamento e Observações ---
+    
+    // Limpeza de Depósitos Positivos (A1, A2, B, C, D1, D2, E)
+    ['a1', 'a2', 'b', 'c', 'd1', 'd2', 'e'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) input.value = "";
+    });
+    document.getElementById("totalDepositos").value = ""; // Readonly, mas bom limpar
+    
+    // Limpeza de Tratamentos
+    document.getElementById("imoveisBtiInput").value = "";
+    document.getElementById("imoveisEspInput").value = "";
+    document.getElementById("depositosBtiInput").value = "";
+    document.getElementById("depositosEspInput").value = "";
+    document.getElementById("larvicidaBtiInput").value = "";
+    document.getElementById("larvicidaEspInput").value = "";
+
+    // Limpeza de Informações Adicionais
+    document.getElementById("observacoes").value = "";
+    document.getElementById("responsavel").value = "";
+
+
+    // --- 5. Limpa a Lógica de Estratificação/Mutirão (select tipo) ---
+    
+    // Define o select principal para o valor padrão ('estratificacaoDeArea')
+    const selectTipo = document.getElementById("tipoSelect");
+    if (selectTipo) {
+        selectTipo.value = "estratificacaoDeArea";
+        
+        // Chamada à função que esconde/mostra os campos (Do código que você forneceu)
+        // Isso garante que 'outrosContainer' e 'mutiraoContainer' fiquem ocultos
+        // e limpa os campos inputOutros, inputEndereco, inputQuadra, inputUAPS (dentro de toggleFields)
+        if (typeof toggleFields === 'function') {
+            toggleFields(selectTipo.value);
+        }
+    }
+
+    // Chama as funções de atualização para garantir que tudo seja resetado na tela
+    // (Presumindo que estas funções estão definidas no seu escopo global/superior)
     montarListaQuadras();
     montarResumoGeral();
     atualizarProgramados();
+    
+    console.log("Sistema completamente limpo.");
 }
 document.addEventListener("DOMContentLoaded", () => {
     // --- Função para preencher semanas ---
@@ -1621,6 +1697,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
