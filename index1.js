@@ -1,33 +1,40 @@
-// ==========================================================
-// ⚠️ CREDENCIAIS E LÓGICA DE LOGIN (Antigo login.js) ⚠️
-// ==========================================================
+// =========================================================
+// CONTEÚDO NO ARQUIVO 'index1.js'
+// =========================================================
 
-const TENTATIVAS_MAXIMAS = 1;
-let tentativasAtuais = 0;
-let bloqueado = false;
-
-// Credenciais e nomes de exibição
+// 1. Dicionário de Credenciais
 const CREDENCIAIS_OFUSCADAS = {
-    'ADMINISTRADOR': { name: 'Administrador', pass: '1212121513' },
+    // Chave: Usuário (em MAIÚSCULAS)  |  Valor: { name: Nome para Boas-Vindas, pass: Senha Real }
+    'ADMINISTRADOR': { name: 'Senhor Administrador', pass: '1212121513' },
     'MARCIO':        { name: 'Márcio', pass: '124149' },
-    'MARCOS':        { name: 'Marcos', pass: '127153' },
-    'PAULO':         { name: 'Paulo', pass: '128139' },
-    'EDSON':         { name: 'Edson', pass: '155145' },
-    'NILO':          { name: 'Nilo', pass: '130151' },
+    // Adicione ou altere suas credenciais aqui.
 };
 
+// 2. Variáveis de Controle
+let tentativasAtuais = 0;
+const TENTATIVAS_MAXIMAS = 1; 
+let bloqueado = false; // Usado para bloquear após o limite
 
+// 3. Função Auxiliar para Busca de Credenciais
 function buscarCredenciais(usuario, senha) {
-    const userKey = usuario.toUpperCase();
-    const credencial = CREDENCIAIS_OFUSCADAS[userKey];
-    
-    if (credencial && senha === credencial.pass) {
-        return credencial.name; 
-    }
-    return null; 
+    const credencial = CREDENCIAIS_OFUSCADAS[usuario.toUpperCase()];
+    return (credencial && credencial.pass === senha) ? credencial.name : null;
 }
 
-// Função principal que será chamada pelo botão no HTML
+// 4. Função de Alternar Senha (Chamada pelo HTML)
+function togglePasswordVisibility() {
+    const senhaInput = document.getElementById('inputSenha');
+    const icon = document.getElementById('toggleIcon');
+    if (senhaInput.type === 'password') {
+        senhaInput.type = 'text';
+        icon.textContent = '🔒'; 
+    } else {
+        senhaInput.type = 'password';
+        icon.textContent = '👁️'; 
+    }
+}
+
+// 5. Função Principal de Login (Chamada pelo HTML)
 function tentarLogin() {
     const inputUsuario = document.getElementById('inputUsuario');
     const inputSenha = document.getElementById('inputSenha');
@@ -36,7 +43,6 @@ function tentarLogin() {
     const conteudoPrincipal = document.getElementById('conteudoPrincipal');
     const mensagemBoasVindas = document.getElementById('mensagemBoasVindas');
     
-    // CHECAGEM DE BLOQUEIO
     if (bloqueado) {
         mensagemErro.textContent = 'Acesso bloqueado. Recarregue a página para tentar novamente.';
         return; 
@@ -54,12 +60,13 @@ function tentarLogin() {
         conteudoPrincipal.style.display = 'block';
         tentativasAtuais = 0;
         
-        // 🚨 CORREÇÃO PRINCIPAL: CHAMA A FUNÇÃO DE INICIALIZAÇÃO AQUI!
-        // Esta função deve ser aquela que você criou no 'script.js' (Passo 1 da última resposta)
+        // 🛑 ESTE É O PONTO CRÍTICO QUE RESOLVEMOS NA ÚLTIMA TENTATIVA!
+        // ASSUMINDO QUE SEU script.js JÁ TEM A FUNÇÃO inicializarAplicacao()
+        // (A função que contém todo o código da sua aplicação).
         if (typeof inicializarAplicacao === 'function') {
             inicializarAplicacao(); 
         }
-        
+
     } else {
         // LOGIN FALHOU
         tentativasAtuais++;
