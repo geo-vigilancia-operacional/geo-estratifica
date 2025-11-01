@@ -115,9 +115,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const inputSenha = document.getElementById('inputSenha');
     const mensagemErro = document.getElementById('mensagemErro');
 
-    inputUsuario.addEventListener('input', () => mensagemErro.textContent = '');
-    inputSenha.addEventListener('input', () => mensagemErro.textContent = '');
+    if (inputUsuario && inputSenha && mensagemErro) {
+        inputUsuario.addEventListener('input', () => mensagemErro.textContent = '');
+        inputSenha.addEventListener('input', () => mensagemErro.textContent = '');
+    }
 });
+
 
 
 
