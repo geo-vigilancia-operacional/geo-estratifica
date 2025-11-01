@@ -28,6 +28,15 @@ function buscarCredenciais(usuario, senha) {
 }
 // index1.js (Adicione esta nova função)
 
+function fazerLogout() {
+    // 1. Remove a chave do armazenamento local
+    localStorage.removeItem('acesso_liberado');
+    
+    // 2. Recarrega a página para aplicar o efeito (voltar à tela de login)
+    window.location.reload(); 
+}
+// index1.js (Adicione esta nova função)
+
 function verificarLoginPersistente() {
     // Verifica se a chave 'acesso_liberado' existe no armazenamento local
     if (localStorage.getItem('acesso_liberado') === 'true') {
@@ -102,6 +111,7 @@ function tentarLogin() {
     }
 
 }
+
 
 
 
