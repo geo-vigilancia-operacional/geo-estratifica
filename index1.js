@@ -79,22 +79,24 @@ function tentarLogin() {
     const senha = inputSenha.value.trim();
     const nomePersonalizado = buscarCredenciais(usuario, senha);
 
-    if (nomePersonalizado) {
-        // LOGIN OK
-        mensagemBoasVindas.textContent = `BEM-VINDO, ${nomePersonalizado.toUpperCase()}!`;
+  if (nomePersonalizado) {
+    // Armazena no localStorage
+    localStorage.setItem('usuarioLogado', nomePersonalizado);
 
-        // Transição suave
-        telaLogin.style.opacity = '0';
-        setTimeout(() => {
-            telaLogin.style.display = 'none';
-            conteudoPrincipal.style.display = 'block';
-            conteudoPrincipal.style.opacity = '0';
-            setTimeout(() => conteudoPrincipal.style.opacity = '1', 100);
+    mensagemBoasVindas.textContent = `BEM-VINDO, ${nomePersonalizado.toUpperCase()}!`;
+    telaLogin.style.opacity = '0';
+    setTimeout(() => {
+        telaLogin.style.display = 'none';
+        conteudoPrincipal.style.display = 'block';
+        conteudoPrincipal.style.opacity = '0';
+        setTimeout(() => conteudoPrincipal.style.opacity = '1', 100);
 
-            if (typeof inicializarAplicacao === 'function') {
-                inicializarAplicacao();
-            }
-        }, 400);
+        if (typeof inicializarAplicacao === 'function') {
+            inicializarAplicacao();
+        }
+    }, 400);
+}
+
 
     } else {
         // LOGIN FALHOU
@@ -120,6 +122,24 @@ window.addEventListener('DOMContentLoaded', () => {
         inputSenha.addEventListener('input', () => mensagemErro.textContent = '');
     }
 });
+// Verifica se o usuário já está logado
+window.addEventListener('DOMContentLoaded', () => {
+    const telaLogin = document.getElementById('telaLogin');
+    const conteudoPrincipal = document.getElementById('conteudoPrincipal');
+    const mensagemBoasVindas = document.getElementById('mensagemBoasVindas');
+
+    const usuarioLogado = localStorage.getItem('usuarioLogado');
+    if (usuarioLogado) {
+        telaLogin.style.display = 'none';
+        conteudoPrincipal.style.display = 'block';
+        mensagemBoasVindas.textContent = `BEM-VINDO, ${usuarioLogado.toUpperCase()}!`;
+
+        if (typeof inicializarAplicacao === 'function') {
+            inicializarAplicacao();
+        }
+    }
+});
+
 
 
 
