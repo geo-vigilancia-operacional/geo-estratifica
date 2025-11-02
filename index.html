@@ -676,7 +676,7 @@ header h1 {
 #btnMaps:hover {
     background-color: #3b78e7;
 }
-/* ======== ESTILO DA TELA DE LOGIN ======== */
+/* ======== TELA DE LOGIN ======== */
 #telaLogin {
     position: fixed;
     top: 0;
@@ -700,6 +700,7 @@ header h1 {
     100% { background-position: 0% 50%; }
 }
 
+/* Caixa de login */
 #telaLogin h2 {
     color: #f1f1f1;
     font-size: 34px;
@@ -756,6 +757,7 @@ header h1 {
     color: #000;
 }
 
+/* Mensagem de erro */
 #telaLogin #mensagemErro {
     color: #ffbaba;
     background: rgba(100, 0, 0, 0.4);
@@ -772,15 +774,7 @@ header h1 {
     transition: opacity 0.8s ease;
 }
 
-#conteudoPrincipal p,
-#conteudoPrincipal label,
-#conteudoPrincipal input,
-#conteudoPrincipal select,
-#conteudoPrincipal button {
-    font-size: 16px; /* mantém tamanho legível para textos, inputs e botões */
-}
-
-
+/* Aparecer conteúdo após login */
 #conteudoPrincipal.mostrar {
     opacity: 1;
 }
@@ -790,6 +784,7 @@ header h1 {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
 
 
 </style>
@@ -1101,6 +1096,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
