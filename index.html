@@ -759,14 +759,17 @@ header h1 {
 
 /* Mensagem de erro */
 #telaLogin #mensagemErro {
-    color: #ffbaba;
-    background: rgba(100, 0, 0, 0.4);
+    color: #ffe5e5; /* vermelho clarinho */
+    background: rgba(255, 200, 200, 0.2); /* fundo suave */
     padding: 6px 12px;
     border-radius: 8px;
-    font-weight: bold;
+    font-weight: 500; /* menos “bold” */
     margin-top: 15px;
     font-size: 16px;
+    text-align: center;
+    transition: all 0.3s ease; /* suaviza aparecimento/desaparecimento */
 }
+
 
 /* ======== CONTEÚDO PRINCIPAL ======== */
 #conteudoPrincipal {
@@ -1096,6 +1099,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
