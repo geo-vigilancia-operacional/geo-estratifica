@@ -4,8 +4,12 @@
 
 // --- 1. Credenciais simuladas ---
 const CREDENCIAIS_OFUSCADAS = {
-    'ADMINISTRADOR': { name: 'Senhor Administrador', pass: '1212121513' },
-    'MARCIO': { name: 'Márcio', pass: '124149' },
+    'ADMINISTRADOR': { name: 'Administrador', pass: '1212121513' },
+    'MARCIO': { name: 'Sup. Técnico Márcio', pass: '124149' },
+    'MARCOS': { name: 'Sup. Técnico Marco Marcílio', pass: '127153' },
+    'PAULO': { name: 'Sup. Técnico Paulo', pass: '128139' },
+    'EDSON': { name: 'Sup. Técnico Edson', pass: '155145' },
+    'NILO': { name: 'Sup. Técnico Nilo', pass: '130151' },
 };
 
 // --- 2. Variáveis de controle ---
@@ -161,6 +165,7 @@ function resetTimerInatividade() {
 
 // Inicializa o timer ao carregar a página
 resetTimerInatividade();
+
 
 
 
