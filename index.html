@@ -770,8 +770,16 @@ header h1 {
 #conteudoPrincipal {
     opacity: 0;
     transition: opacity 0.8s ease;
-    font-size: 16px; /* restaura o tamanho original do conteúdo */
 }
+
+#conteudoPrincipal p,
+#conteudoPrincipal label,
+#conteudoPrincipal input,
+#conteudoPrincipal select,
+#conteudoPrincipal button {
+    font-size: 16px; /* mantém tamanho legível para textos, inputs e botões */
+}
+
 
 #conteudoPrincipal.mostrar {
     opacity: 1;
@@ -1093,6 +1101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
