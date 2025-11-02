@@ -692,6 +692,8 @@ header h1 {
     animation: gradientMove 12s ease infinite;
     transition: opacity 0.8s ease;
     z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 @keyframes gradientMove {
@@ -700,16 +702,19 @@ header h1 {
     100% { background-position: 0% 50%; }
 }
 
-/* Caixa de login */
+/* Cabeçalho */
 #telaLogin h2 {
     color: #f1f1f1;
-    font-size: 34px;
+    font-size: 32px;
     margin-bottom: 25px;
     text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    text-align: center;
 }
 
+/* Inputs Usuário e Senha */
 #telaLogin input {
-    width: 320px;
+    width: 100%;
+    max-width: 320px;
     padding: 14px 16px;
     margin: 8px 0;
     border-radius: 10px;
@@ -725,7 +730,10 @@ header h1 {
     transform: scale(1.03);
 }
 
-#telaLogin button {
+/* Botão Entrar */
+#telaLogin > button {
+    width: 100%;
+    max-width: 320px;
     margin-top: 12px;
     padding: 13px 24px;
     border: none;
@@ -739,55 +747,72 @@ header h1 {
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
-#telaLogin button:hover {
+#telaLogin > button:hover {
     background-color: #0c5d54;
     transform: scale(1.05);
 }
 
-#telaLogin #toggleBtn {
-    background-color: #ddd;
-    color: #222;
-    font-size: 14px;
-    border: 1px solid #aaa;
-    box-shadow: none;
+/* Container senha */
+.senha-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    margin: 8px 0;
 }
 
-#telaLogin #toggleBtn:hover {
+.senha-container input {
+    width: 100%;
+}
+
+.senha-container #toggleBtn {
+    margin-top: 6px;
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background-color: #ddd;
+    color: #222;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.senha-container #toggleBtn:hover {
     background-color: #ccc;
     color: #000;
 }
 
-/* Mensagem de erro */
+/* Mensagem de erro suavizada */
 #telaLogin #mensagemErro {
-    color: #FF5555; /* vermelho clarinho */
-    background: rgba(255, 255, 255, 0.2); /* fundo suave */
+    color: #ffe5e5;
+    background: rgba(255, 200, 200, 0.2);
     padding: 6px 12px;
     border-radius: 8px;
-    font-weight: 500; /* menos “bold” */
+    font-weight: 500;
     margin-top: 15px;
     font-size: 16px;
     text-align: center;
-    transition: all 0.3s ease; /* suaviza aparecimento/desaparecimento */
+    transition: all 0.3s ease;
 }
 
-
-/* ======== CONTEÚDO PRINCIPAL ======== */
+/* Conteúdo principal */
 #conteudoPrincipal {
     opacity: 0;
     transition: opacity 0.8s ease;
 }
 
-/* Aparecer conteúdo após login */
 #conteudoPrincipal.mostrar {
     opacity: 1;
 }
 
-/* ======== ANIMAÇÃO DE ENTRADA ======== */
+/* Fade in */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-/* ======== RESPONSIVO PARA CELULARES ======== */
+
+/* ======== RESPONSIVO CELULARES ======== */
 @media (max-width: 480px) {
     #telaLogin h2 {
         font-size: 26px;
@@ -795,20 +820,13 @@ header h1 {
     }
 
     #telaLogin input,
-    #telaLogin button {
+    #telaLogin > button,
+    .senha-container #toggleBtn {
         font-size: 16px;
         padding: 12px;
     }
-
-    #telaLogin #toggleBtn {
-        font-size: 12px;
-        padding: 8px;
-    }
-
-    #telaLogin {
-        padding: 15px;
-    }
 }
+
 
 
 </style>
@@ -818,20 +836,20 @@ header h1 {
     <!-- =========================================================
          TELA DE LOGIN
     ========================================================== -->
-  <div id="telaLogin" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+ <div id="telaLogin">
     <h2>Acesso Restrito</h2>
     <input type="text" id="inputUsuario" placeholder="Usuário">
-    <div style="display: flex; gap: 8px;">
+       <div class="senha-container">
         <input type="password" id="inputSenha" placeholder="Senha">
         <button id="toggleBtn" type="button" onclick="togglePasswordVisibility()">Mostrar senha</button>
     </div>
     <button type="button" onclick="tentarLogin()">Entrar</button>
-    <p id="mensagemErro" style="color: red;"></p>
+   <p id="mensagemErro"></p>
 </div>
 
 <!-- Conteúdo principal escondido até o login -->
-<div id="conteudoPrincipal" style="display: none;">
-    <div id="mensagemBoasVindas" style="font-weight: bold; text-align: center; margin: 10px 0;"></div>
+<div id="conteudoPrincipal">
+    <div id="mensagemBoasVindas"></div>
 
 
         <header>
@@ -1120,6 +1138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
