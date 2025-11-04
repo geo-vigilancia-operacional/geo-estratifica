@@ -256,51 +256,48 @@ function salvarConteudoComoTxt(conteudo, filename) {
 function exportarTabelaTXT() {
     console.log("Iniciando a exportação da Tabela TXT...");
 
-    if (!estado || !estado.bairroSelecionado) {
-        alert("Selecione um bairro e defina a estratificação primeiro!");
-        return;
-    }
+  if (!estado || !estado.bairroSelecionado) {
+    alert("Selecione um bairro e defina a estratificação primeiro!");
+    return;
+}
 
-    try {
-        const bairro = estado.bairroSelecionado;
-        const SEPARADOR = ';'; // Define o separador CSV como ponto e vírgula
-        
-        // --- FUNÇÕES AUXILIARES DE BUSCA ROBUSTA ---
-        const getValue = (id) => document.getElementById(id)?.value.trim() || 'N/A';
-        const getText = (id) => document.getElementById(id)?.textContent.trim() || 'N/A';
-        
-        // Função de Formatação de Data
-        const formatarData = (data) => {
-            if (!data || data === 'N/A') return 'N/A';
-            const dataObj = new Date(data + "T00:00:00"); 
-            if (isNaN(dataObj)) return 'N/A'; 
-            return dataObj.toLocaleDateString('pt-BR');
-        };
-        
-        // Função para formatar números (remove pontos de milhar para manter o formato puro em planilhas)
-        const formatarNumeroPuro = (valor) => {
-            if (valor === 'N/A' || valor === null || valor === undefined) return '0';
-            return String(valor).replace(/\D/g, ''); // Remove tudo que não for dígito
-        };
+try {
+    const bairro = estado.bairroSelecionado;
+    const SEPARADOR = ';'; // Define o separador CSV como ponto e vírgula
+
+    // --- FUNÇÕES AUXILIARES DE BUSCA ROBUSTA ---
+    const getValue = (id) => document.getElementById(id)?.value.trim() || 'N/A';
+    const getText = (id) => document.getElementById(id)?.textContent.trim() || 'N/A';
+
+    // Função de Formatação de Data
+    const formatarData = (data) => {
+        if (!data || data === 'N/A') return 'N/A';
+        const dataObj = new Date(data + "T00:00:00"); 
+        if (isNaN(dataObj)) return 'N/A'; 
+        return dataObj.toLocaleDateString('pt-BR');
+    };
+
+    // Função para formatar números (remove pontos de milhar para manter o formato puro em planilhas)
+    const formatarNumeroPuro = (valor) => {
+        if (valor === 'N/A' || valor === null || valor === undefined) return '0';
+        return String(valor).replace(/\D/g, ''); // Remove tudo que não for dígito
+    };
 
 
-        // --- FONTES DE DADOS (Extrações do DOM) ---
-        const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
-        const resumoProgramadosText = document.getElementById('resumoProgramados')?.textContent || '';
-        
-        // Extração de Variáveis (Geral/Estática)
-        const totalImoveisGeral = formatarNumeroPuro(resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1]); 
-        const totalHabitantesGeral = formatarNumeroPuro(resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1]); 
-        const totalQuadrasAtivas = resumoGeral.match(/Total de Quadras \(ativas\):\s*(\d+)/)?.[1] || 'N/A';
-         // Extração de Variáveis (Programadas/Dinâmica)
-        const imoveisProgramados = formatarNumeroPuro(resumoProgramadosText.match(/Imóveis Programados:\s*(\d+)/)?.[1]); 
-        
-        // Extração de Inputs (Programação)
-        const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
-  
-   // Extração de Inputs (Programação)
-   const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
+    // --- FONTES DE DADOS (Extrações do DOM) ---
+    const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
+    const resumoProgramadosText = document.getElementById('resumoProgramados')?.textContent || '';
 
+    // Extração de Variáveis (Geral/Estática)
+    const totalImoveisGeral = formatarNumeroPuro(resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1]); 
+    const totalHabitantesGeral = formatarNumeroPuro(resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1]); 
+    const totalQuadrasAtivas = resumoGeral.match(/Total de Quadras \(ativas\):\s*(\d+)/)?.[1] || 'N/A';
+
+    // Extração de Variáveis (Programadas/Dinâmica)
+    const imoveisProgramados = formatarNumeroPuro(resumoProgramadosText.match(/Imóveis Programados:\s*(\d+)/)?.[1]); 
+
+    // Extração de Inputs (Programação)
+    const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
     const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '|'); // Substitui vírgulas por barras para não quebrar o CSV
     const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '|'); 
     const percentualFechadosPrevisto = getValue("percentualFechados");
@@ -309,111 +306,113 @@ function exportarTabelaTXT() {
     const diasProgramados = getValue("dias");
     const dataInicioProg = formatarData(getValue("dataInicio"));
     const dataTerminoProg = formatarData(getValue("dataTermino"));
-        // Extração de Inputs (Resultados/Execução)
-        const quadrasTrabalhadas = formatarNumeroPuro(getValue("quadrasTrabalhadasInput"));
-        const hdp = getValue("hdpInput");
-        const hdt = getValue("hdtInput");
-        const semanaInicial = getValue("semanaInicial");
-        const semanaFinal = getValue("semanaFinal");
-        const ciclo = getValue("ciclo");
-        const dataInicioReal = formatarData(getValue("dataInicioReal"));
-        const dataTerminoReal = formatarData(getValue("dataTerminoReal"));
-        const imoveisTrabalhados = formatarNumeroPuro(getValue("imoveisTrabalhadosInput"));
-        const fechados = formatarNumeroPuro(getValue("fechadosInput"));
-        const focosPorImovel = getValue("focosPorImovelInput");
-        const totalDepositosPositivos = formatarNumeroPuro(getValue("totalDepositos")); 
-        const depositosEliminados = formatarNumeroPuro(getValue("depositosEliminadosInput"));
-        const responsavel = getValue("responsavel");
-        const obs = getValue("observacoes").replace(/(\r\n|\n|\r)/gm, ' | ').replace(/;/g, ','); // Limpa quebras de linha e ponto-e-vírgula
 
-        // Variáveis de Tratamento
-        const btiTratados = formatarNumeroPuro(getValue("imoveisBtiInput"));
-        const espTratados = formatarNumeroPuro(getValue("imoveisEspInput"));
-        const depositosBti = formatarNumeroPuro(getValue("depositosBtiInput"));
-        const depositosEsp = formatarNumeroPuro(getValue("depositosEspInput"));
-        const larvicidaBti = getValue("larvicidaBtiInput");
-        const larvicidaEsp = getValue("larvicidaEspInput");
-        
-        // Detalhes dos Depósitos Positivos (Mantendo o formato limpo)
-        const depositosDetalhes = {
-            'A1': formatarNumeroPuro(getValue("a1")), 'A2': formatarNumeroPuro(getValue("a2")),
-            'B': formatarNumeroPuro(getValue("b")), 'C': formatarNumeroPuro(getValue("c")),
-            'D1': formatarNumeroPuro(getValue("d1")), 'D2': formatarNumeroPuro(getValue("d2")),
-            'E': formatarNumeroPuro(getValue("e"))
-        };
-        // Monta a string como "A1:10|A2:20" para não usar o separador principal
-        const depositosDetalhadosFrase = Object.entries(depositosDetalhes)
-            .filter(([key, value]) => Number(value) > 0) 
-            .map(([key, value]) => `${key}:${value}`)
-            .join('|');
+    // Extração de Inputs (Resultados/Execução)
+    const quadrasTrabalhadas = formatarNumeroPuro(getValue("quadrasTrabalhadasInput"));
+    const hdp = getValue("hdpInput");
+    const hdt = getValue("hdtInput");
+    const semanaInicial = getValue("semanaInicial");
+    const semanaFinal = getValue("semanaFinal");
+    const ciclo = getValue("ciclo");
+    const dataInicioReal = formatarData(getValue("dataInicioReal"));
+    const dataTerminoReal = formatarData(getValue("dataTerminoReal"));
+    const imoveisTrabalhados = formatarNumeroPuro(getValue("imoveisTrabalhadosInput"));
+    const fechados = formatarNumeroPuro(getValue("fechadosInput"));
+    const focosPorImovel = getValue("focosPorImovelInput");
+    const totalDepositosPositivos = formatarNumeroPuro(getValue("totalDepositos")); 
+    const depositosEliminados = formatarNumeroPuro(getValue("depositosEliminadosInput"));
+    const responsavel = getValue("responsavel");
+    const obs = getValue("observacoes").replace(/(\r\n|\n|\r)/gm, ' | ').replace(/;/g, ','); // Limpa quebras de linha e ponto-e-vírgula
 
-        // --- MONTAGEM DA TABELA TXT/CSV ---
-        let tabelaContent = `CAMPO${SEPARADOR}VALOR\n`;
+    // Variáveis de Tratamento
+    const btiTratados = formatarNumeroPuro(getValue("imoveisBtiInput"));
+    const espTratados = formatarNumeroPuro(getValue("imoveisEspInput"));
+    const depositosBti = formatarNumeroPuro(getValue("depositosBtiInput"));
+    const depositosEsp = formatarNumeroPuro(getValue("depositosEspInput"));
+    const larvicidaBti = getValue("larvicidaBtiInput");
+    const larvicidaEsp = getValue("larvicidaEspInput");
 
-        // 1. GERAL
-        tabelaContent += `Data de Geração${SEPARADOR}${new Date().toLocaleDateString('pt-BR')}\n`;
-        tabelaContent += `Responsável pela Informação${SEPARADOR}${responsavel}\n`;
-        tabelaContent += `Bairro${SEPARADOR}${bairro}\n`;
-        tabelaContent += `Tipo de Ação${SEPARADOR}${tipoAcao}\n`;
-        tabelaContent += `Quadras Ativas no Bairro${SEPARADOR}${totalQuadrasAtivas}\n`;
-        tabelaContent += `Imóveis Ativos no Bairro${SEPARADOR}${totalImoveisGeral}\n`;
-        tabelaContent += `Habitantes no Bairro${SEPARADOR}${totalHabitantesGeral}\n`;
-        tabelaContent += '\n';
+    // Detalhes dos Depósitos Positivos (Mantendo o formato limpo)
+    const depositosDetalhes = {
+        'A1': formatarNumeroPuro(getValue("a1")), 'A2': formatarNumeroPuro(getValue("a2")),
+        'B': formatarNumeroPuro(getValue("b")), 'C': formatarNumeroPuro(getValue("c")),
+        'D1': formatarNumeroPuro(getValue("d1")), 'D2': formatarNumeroPuro(getValue("d2")),
+        'E': formatarNumeroPuro(getValue("e"))
+    };
+    // Monta a string como "A1:10|A2:20" para não usar o separador principal
+    const depositosDetalhadosFrase = Object.entries(depositosDetalhes)
+        .filter(([key, value]) => Number(value) > 0) 
+        .map(([key, value]) => `${key}:${value}`)
+        .join('|');
 
-        // 2. PROGRAMAÇÃO
-        tabelaContent += `--- PROGRAMAÇÃO ---\n`;
-        tabelaContent += `Quadras Selecionadas (Meta)${SEPARADOR}${quadrasSelecionadasLista}\n`;
-        tabelaContent += `Quadras Positivas (Ação)${SEPARADOR}${quadrasPositivas}\n`;
-        tabelaContent += `Imóveis Programados (Trabalho)${SEPARADOR}${imoveisProgramados}\n`;
-        tabelaContent += `Previsão de Fechados (%) (Meta)${SEPARADOR}${percentualFechadosPrevisto}\n`;
-        tabelaContent += `Servidores Alocados${SEPARADOR}${servidores}\n`;
-        tabelaContent += `Média Imóveis/Servidor${SEPARADOR}${media}\n`;
-        tabelaContent += `Dias Programados${SEPARADOR}${diasProgramados}\n`;
-        tabelaContent += `Data Início Programada${SEPARADOR}${dataInicioProg}\n`;
-        tabelaContent += `Data Término Programada${SEPARADOR}${dataTerminoProg}\n`;
-        tabelaContent += '\n';
+    // --- MONTAGEM DA TABELA TXT/CSV ---
+    let tabelaContent = `CAMPO${SEPARADOR}VALOR\n`;
 
-        // 3. RESULTADOS
-        tabelaContent += `--- RESULTADOS ---\n`;
-        tabelaContent += `Ciclo${SEPARADOR}${ciclo}\n`;
-        tabelaContent += `Semana Inicial${SEPARADOR}${semanaInicial}\n`;
-        tabelaContent += `Semana Final${SEPARADOR}${semanaFinal}\n`;
-        tabelaContent += `Data Início Real${SEPARADOR}${dataInicioReal}\n`;
-        tabelaContent += `Data Término Real${SEPARADOR}${dataTerminoReal}\n`;
-        tabelaContent += `Quadras Trabalhadas${SEPARADOR}${quadrasTrabalhadas}\n`;
-        tabelaContent += `Imóveis Trabalhados (Visitados)${SEPARADOR}${imoveisTrabalhados}\n`;
-        tabelaContent += `Imóveis Fechados${SEPARADOR}${fechados}\n`;
-        tabelaContent += `HDP (Hora/Dia/Profissional)${SEPARADOR}${hdp}\n`;
-        tabelaContent += `HDT (Hora/Dia/Total)${SEPARADOR}${hdt}\n`;
-        tabelaContent += `Índice de Focos/Imóvel${SEPARADOR}${focosPorImovel}\n`;
-        tabelaContent += '\n';
-        
-        // 4. ACHADOS E TRATAMENTO
-        tabelaContent += `--- AÇÕES E TRATAMENTO ---\n`;
-        tabelaContent += `Total Depósitos Positivos${SEPARADOR}${totalDepositosPositivos}\n`;
-        tabelaContent += `Detalhe Depósitos Positivos${SEPARADOR}${depositosDetalhadosFrase}\n`;
-        tabelaContent += `Depósitos Eliminados${SEPARADOR}${depositosEliminados}\n`;
-        tabelaContent += `Imóveis Tratados (BTI)${SEPARADOR}${btiTratados}\n`;
-        tabelaContent += `Imóveis Tratados (ESP)${SEPARADOR}${espTratados}\n`;
-        tabelaContent += `Depósitos Tratados (BTI)${SEPARADOR}${depositosBti}\n`;
-        tabelaContent += `Depósitos Tratados (ESP)${SEPARADOR}${depositosEsp}\n`;
-        tabelaContent += `Larvicida Gasto (BTI)${SEPARADOR}${larvicidaBti}\n`;
-        tabelaContent += `Larvicida Gasto (ESP)${SEPARADOR}${larvicidaEsp}\n`;
-        tabelaContent += '\n';
+    // 1. GERAL
+    tabelaContent += `Data de Geração${SEPARADOR}${new Date().toLocaleDateString('pt-BR')}\n`;
+    tabelaContent += `Responsável pela Informação${SEPARADOR}${responsavel}\n`;
+    tabelaContent += `Bairro${SEPARADOR}${bairro}\n`;
+    tabelaContent += `Tipo de Ação${SEPARADOR}${tipoAcao}\n`;
+    tabelaContent += `Quadras Ativas no Bairro${SEPARADOR}${totalQuadrasAtivas}\n`;
+    tabelaContent += `Imóveis Ativos no Bairro${SEPARADOR}${totalImoveisGeral}\n`;
+    tabelaContent += `Habitantes no Bairro${SEPARADOR}${totalHabitantesGeral}\n`;
+    tabelaContent += '\n';
 
-        // 5. OBSERVAÇÕES
-        tabelaContent += `--- OBSERVAÇÕES ---\n`;
-        tabelaContent += `Observações Adicionais${SEPARADOR}${obs}\n`;
-        
-        // --- FUNÇÃO PARA SALVAR COMO .txt ---
-        const nomeArquivo = `Tabela_Dados_${bairro.replace(/\s/g, '_')}_${new Date().toISOString().slice(0, 10)}.txt`;
-        
-        salvarConteudoComoTxt(tabelaContent, nomeArquivo);
+    // 2. PROGRAMAÇÃO
+    tabelaContent += `--- PROGRAMAÇÃO ---\n`;
+    tabelaContent += `Quadras Selecionadas (Meta)${SEPARADOR}${quadrasSelecionadasLista}\n`;
+    tabelaContent += `Quadras Positivas (Ação)${SEPARADOR}${quadrasPositivas}\n`;
+    tabelaContent += `Imóveis Programados (Trabalho)${SEPARADOR}${imoveisProgramados}\n`;
+    tabelaContent += `Previsão de Fechados (%) (Meta)${SEPARADOR}${percentualFechadosPrevisto}\n`;
+    tabelaContent += `Servidores Alocados${SEPARADOR}${servidores}\n`;
+    tabelaContent += `Média Imóveis/Servidor${SEPARADOR}${media}\n`;
+    tabelaContent += `Dias Programados${SEPARADOR}${diasProgramados}\n`;
+    tabelaContent += `Data Início Programada${SEPARADOR}${dataInicioProg}\n`;
+    tabelaContent += `Data Término Programada${SEPARADOR}${dataTerminoProg}\n`;
+    tabelaContent += '\n';
 
-    } catch (error) {
-        console.error("Erro fatal ao exportar a Tabela TXT:", error);
-        alert("Erro ao tentar exportar a tabela. Verifique o console para detalhes.");
-    }
+    // 3. RESULTADOS
+    tabelaContent += `--- RESULTADOS ---\n`;
+    tabelaContent += `Ciclo${SEPARADOR}${ciclo}\n`;
+    tabelaContent += `Semana Inicial${SEPARADOR}${semanaInicial}\n`;
+    tabelaContent += `Semana Final${SEPARADOR}${semanaFinal}\n`;
+    tabelaContent += `Data Início Real${SEPARADOR}${dataInicioReal}\n`;
+    tabelaContent += `Data Término Real${SEPARADOR}${dataTerminoReal}\n`;
+    tabelaContent += `Quadras Trabalhadas${SEPARADOR}${quadrasTrabalhadas}\n`;
+    tabelaContent += `Imóveis Trabalhados (Visitados)${SEPARADOR}${imoveisTrabalhados}\n`;
+    tabelaContent += `Imóveis Fechados${SEPARADOR}${fechados}\n`;
+    tabelaContent += `HDP (Hora/Dia/Profissional)${SEPARADOR}${hdp}\n`;
+    tabelaContent += `HDT (Hora/Dia/Total)${SEPARADOR}${hdt}\n`;
+    tabelaContent += `Índice de Focos/Imóvel${SEPARADOR}${focosPorImovel}\n`;
+    tabelaContent += '\n';
+
+    // 4. ACHADOS E TRATAMENTO
+    tabelaContent += `--- AÇÕES E TRATAMENTO ---\n`;
+    tabelaContent += `Total Depósitos Positivos${SEPARADOR}${totalDepositosPositivos}\n`;
+    tabelaContent += `Detalhe Depósitos Positivos${SEPARADOR}${depositosDetalhadosFrase}\n`;
+    tabelaContent += `Depósitos Eliminados${SEPARADOR}${depositosEliminados}\n`;
+    tabelaContent += `Imóveis Tratados (BTI)${SEPARADOR}${btiTratados}\n`;
+    tabelaContent += `Imóveis Tratados (ESP)${SEPARADOR}${espTratados}\n`;
+    tabelaContent += `Depósitos Tratados (BTI)${SEPARADOR}${depositosBti}\n`;
+    tabelaContent += `Depósitos Tratados (ESP)${SEPARADOR}${depositosEsp}\n`;
+    tabelaContent += `Larvicida Gasto (BTI)${SEPARADOR}${larvicidaBti}\n`;
+    tabelaContent += `Larvicida Gasto (ESP)${SEPARADOR}${larvicidaEsp}\n`;
+    tabelaContent += '\n';
+
+    // 5. OBSERVAÇÕES
+    tabelaContent += `--- OBSERVAÇÕES ---\n`;
+    tabelaContent += `Observações Adicionais${SEPARADOR}${obs}\n`;
+
+    // --- FUNÇÃO PARA SALVAR COMO .txt ---
+    const nomeArquivo = `Tabela_Dados_${bairro.replace(/\s/g, '_')}_${new Date().toISOString().slice(0, 10)}.txt`;
+
+    salvarConteudoComoTxt(tabelaContent, nomeArquivo);
+
+} catch (error) {
+    console.error("Erro fatal ao exportar a Tabela TXT:", error);
+    alert("Erro ao tentar exportar a tabela. Verifique o console para detalhes.");
+}
+
 }
 // --- FUNÇÕES PRINCIPAIS ---
 // 1. CARREGAR DADOS (bairros + ovitrampas)
@@ -1733,6 +1732,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
