@@ -298,14 +298,14 @@ function exportarTabelaTXT() {
         
         // Extração de Inputs (Programação)
         const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
-        const quadrasSelecionadasBrutas = resumoProgramadosText.match(/Quadras Selecionadas \(Meta\);(.+)/)?.[1] || '';
-        const quadrasSelecionadasLista = quadrasSelecionadasBrutas
+       const quadrasSelecionadasBrutas = resumoProgramadosText.split('Quadras Selecionadas (Meta);')[1] || '';
+const quadrasSelecionadasLista = quadrasSelecionadasBrutas
   .split('|')
   .map(q => q.trim())
   .filter(q => q !== '')
   .join(', ');
         const quadrasPositivasBrutas = getValue("quadrasPositivas");
-const quadrasPositivas = quadrasPositivasBrutas
+        const quadrasPositivas = quadrasPositivasBrutas
   .split('|')
   .map(q => q.trim())
   .filter(q => q !== '')
@@ -1741,6 +1741,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
