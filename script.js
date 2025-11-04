@@ -298,7 +298,7 @@ function exportarTabelaTXT() {
         // Extração de Inputs (Programação)
         const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
   
-    // Extração de Inputs (Programação)
+   // Extração de Inputs (Programação)
     const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
     const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '|'); // Substitui vírgulas por barras para não quebrar o CSV
     const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '|'); 
@@ -1732,6 +1732,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
