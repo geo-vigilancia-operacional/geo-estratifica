@@ -297,22 +297,17 @@ function exportarTabelaTXT() {
         
         // Extração de Inputs (Programação)
         const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
-     // Extração de Inputs (Programação)
+  
+    // Extração de Inputs (Programação)
     const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
-    const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '-'); // Substitui vírgulas por barras para não quebrar o CSV
-        const quadrasPositivasBrutas = getValue("quadrasPositivas");
-        const quadrasPositivas = quadrasPositivasBrutas
-  .split('|')
-  .map(q => q.trim())
-  .filter(q => q !== '')
-  .join(', ');
-        const percentualFechadosPrevisto = getValue("percentualFechados");
-        const media = getValue("media");
-        const servidores = getValue("servidores");
-        const diasProgramados = getValue("dias");
-        const dataInicioProg = formatarData(getValue("dataInicio"));
-        const dataTerminoProg = formatarData(getValue("dataTermino"));
-
+    const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '|'); // Substitui vírgulas por barras para não quebrar o CSV
+    const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '|'); 
+    const percentualFechadosPrevisto = getValue("percentualFechados");
+    const media = getValue("media");
+    const servidores = getValue("servidores");
+    const diasProgramados = getValue("dias");
+    const dataInicioProg = formatarData(getValue("dataInicio"));
+    const dataTerminoProg = formatarData(getValue("dataTermino"));
         // Extração de Inputs (Resultados/Execução)
         const quadrasTrabalhadas = formatarNumeroPuro(getValue("quadrasTrabalhadasInput"));
         const hdp = getValue("hdpInput");
@@ -1737,6 +1732,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
