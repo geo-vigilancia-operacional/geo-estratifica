@@ -292,18 +292,14 @@ function exportarTabelaTXT() {
         const totalImoveisGeral = formatarNumeroPuro(resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1]); 
         const totalHabitantesGeral = formatarNumeroPuro(resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1]); 
         const totalQuadrasAtivas = resumoGeral.match(/Total de Quadras \(ativas\):\s*(\d+)/)?.[1] || 'N/A';
-        
-        // Extração de Variáveis (Programadas/Dinâmica)
+         // Extração de Variáveis (Programadas/Dinâmica)
         const imoveisProgramados = formatarNumeroPuro(resumoProgramadosText.match(/Imóveis Programados:\s*(\d+)/)?.[1]); 
         
         // Extração de Inputs (Programação)
         const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
-       const quadrasSelecionadasBrutas = resumoProgramadosText.split('Quadras Selecionadas (Meta);')[1] || '';
-const quadrasSelecionadasLista = quadrasSelecionadasBrutas
-  .split('|')
-  .map(q => q.trim())
-  .filter(q => q !== '')
-  .join(', ');
+     // Extração de Inputs (Programação)
+    const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
+    const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '-'); // Substitui vírgulas por barras para não quebrar o CSV
         const quadrasPositivasBrutas = getValue("quadrasPositivas");
         const quadrasPositivas = quadrasPositivasBrutas
   .split('|')
@@ -1741,6 +1737,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
