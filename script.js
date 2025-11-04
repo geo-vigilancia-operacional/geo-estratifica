@@ -298,8 +298,18 @@ function exportarTabelaTXT() {
         
         // Extração de Inputs (Programação)
         const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
-        const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '|'); // Substitui vírgulas por barras para não quebrar o CSV
-        const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '|'); 
+        const quadrasSelecionadasBrutas = resumoProgramadosText.match(/Quadras Selecionadas \(Meta\);(.+)/)?.[1] || '';
+        const quadrasSelecionadasLista = quadrasSelecionadasBrutas
+  .split('|')
+  .map(q => q.trim())
+  .filter(q => q !== '')
+  .join(', ');
+        const quadrasPositivasBrutas = getValue("quadrasPositivas");
+const quadrasPositivas = quadrasPositivasBrutas
+  .split('|')
+  .map(q => q.trim())
+  .filter(q => q !== '')
+  .join(', ');
         const percentualFechadosPrevisto = getValue("percentualFechados");
         const media = getValue("media");
         const servidores = getValue("servidores");
@@ -1731,6 +1741,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
