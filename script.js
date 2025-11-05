@@ -299,7 +299,7 @@ try {
     // Extração de Inputs (Programação)
     const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
     const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '-'); // Substitui vírgulas por barras para não quebrar o CSV
-    const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '|'); 
+    const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '-'); 
     const percentualFechadosPrevisto = getValue("percentualFechados");
     const media = getValue("media");
     const servidores = getValue("servidores");
@@ -1732,6 +1732,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
