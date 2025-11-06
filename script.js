@@ -1729,9 +1729,130 @@ function configurarBotoes() {
     if (exportarTabelaTxtBtn) {
         exportarTabelaTxtBtn.addEventListener('click', exportarTabelaTXT);
     }
+    // =================================================================
+// 0. CONFIGURAÇÃO GLOBAL (MUITO IMPORTANTE!)
+// =================================================================
+// ⚠️ SUBSTITUA ESTE VALOR COM O URL COMPLETO DA SUA APLICAÇÃO WEB DO GOOGLE APPS SCRIPT
+const API_URL = "https://script.google.com/macros/s/AKfycbwtxs-mTf-aCfyY2N3Cw0yfU56aPUDhstT6-f477FbZkeOCvahDZul2LCj61jwqlxWs6w/exec"; 
+const FORM_PRINCIPAL_ID = 'formulario-principal-salvar'; // ID do formulário de salvamento (na página como lira.html)
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // =================================================================
+    // A) LÓGICA DE ENVIO DO FORMULÁRIO PRINCIPAL (POST)
+    //    Esta seção SÓ funciona na página onde está o formulário com o ID "formulario-principal-salvar".
+    // =================================================================
+    const form = document.getElementById(FORM_PRINCIPAL_ID);
     
+    if (form) { 
+        const statusDiv = document.getElementById('status-mensagem-post') || form.parentNode.appendChild(document.createElement('div'));
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            statusDiv.textContent = 'Enviando dados...';
+            statusDiv.style.color = 'orange';
+
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded' 
+                },
+                body: params
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Sucesso') {
+                    statusDiv.textContent = `Salvo com sucesso! ID Único para consulta: ${data.id}`;
+                    statusDiv.style.color = 'green';
+                    form.reset(); 
+                } else {
+                    statusDiv.textContent = `Falha: ${data.mensagem}`;
+                    statusDiv.style.color = 'red';
+                }
+            })
+            .catch(error => {
+                statusDiv.textContent = 'Erro de rede ou na API. Consulte o console.';
+                statusDiv.style.color = 'red';
+                console.error('Erro de conexão:', error);
+            });
+        });
+    }
+
+
+    // =================================================================
+    // B) LÓGICA DE BUSCA DE DADOS (GET)
+    //    Esta seção SÓ funciona na página dados.html (que tem o botão "Carregar Dados").
+    // =================================================================
+
+    const buscarBtn = document.getElementById('botao-carregar');
+    
+    if (buscarBtn) { 
+        const limparBtn = document.getElementById('botao-limpar');
+        const campoIdBusca = document.getElementById('campo-id-busca');
+        const displayArea = document.getElementById('area-de-exibicao');
+        const statusMsg = document.getElementById('status-busca-mensagem');
+
+        // Evento de Carregar
+        buscarBtn.addEventListener('click', () => {
+            const idDesejado = campoIdBusca.value.trim();
+            if (idDesejado) {
+                statusMsg.textContent = 'Buscando dados...';
+                displayArea.innerHTML = '';
+                buscarDadosPorId(idDesejado, displayArea, statusMsg);
+            } else {
+                statusMsg.textContent = 'Por favor, digite um ID.';
+                statusMsg.style.color = 'orange';
+            }
+        });
+
+        // Evento de Limpar
+        limparBtn.addEventListener('click', () => {
+            displayArea.innerHTML = '<p>Insira um ID e clique em "Carregar Dados".</p>';
+            campoIdBusca.value = '';
+            statusMsg.textContent = '';
+        });
+
+
+        // Função Central de Busca
+        function buscarDadosPorId(idDesejado, displayArea, statusMsg) {
+            fetch(API_URL) // Faz a requisição GET para o GAS
+                .then(response => response.json()) 
+                .then(listaDados => {
+                    const resultado = listaDados.find(item => item.id_unico === idDesejado);
+
+                    if (resultado) {
+                        let htmlContent = '<h3>Registro Encontrado:</h3>';
+                        for (const chave in resultado) {
+                            let valor = resultado[chave];
+                            if (typeof valor === 'string') {
+                                // Troca as quebras de linha (\n) por <br> para manter a formatação!
+                                valor = valor.replace(/\n/g, '<br>'); 
+                            }
+                            htmlContent += `<p><strong>${chave.replace('_', ' ').toUpperCase()}:</strong> ${valor}</p>`;
+                        }
+                        displayArea.innerHTML = htmlContent;
+                        statusMsg.textContent = 'Busca concluída.';
+                        statusMsg.style.color = 'green';
+                    } else {
+                        displayArea.innerHTML = '<p>Nenhum registro encontrado com este ID.</p>';
+                        statusMsg.textContent = 'ID não encontrado.';
+                        statusMsg.style.color = 'red';
+                    }
+                })
+                .catch(error => {
+                    displayArea.innerHTML = `<p style="color: red;">Erro ao buscar: ${error.message}</p>`;
+                    statusMsg.textContent = 'Erro de comunicação com a API.';
+                });
+        }
+    } 
+});
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
