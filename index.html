@@ -676,405 +676,296 @@ header h1 {
 #btnMaps:hover {
     background-color: #3b78e7;
 }
-/* ======== TELA DE LOGIN ======== */
-#telaLogin {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: linear-gradient(135deg, #0F9588, #0B6E65, #074A44);
-    background-size: 400% 400%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    animation: gradientMove 12s ease infinite;
-    transition: opacity 0.8s ease;
-    z-index: 9999;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* Cabeçalho */
-#telaLogin h2 {
-    color: #f1f1f1;
-    font-size: 32px;
-    margin-bottom: 25px;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    text-align: center;
-}
-
-/* Inputs Usuário e Senha */
-#telaLogin input {
-    width: 100%;
-    max-width: 320px;
-    padding: 14px 16px;
-    margin: 8px 0;
-    border-radius: 10px;
-    border: none;
-    font-size: 18px;
-    background-color: #ffffff;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-    transition: all 0.3s ease;
-}
-
-#telaLogin input:focus {
-    outline: none;
-    transform: scale(1.03);
-}
-
-/* Botão Entrar */
-#telaLogin > button {
-    width: 100%;
-    max-width: 320px;
-    margin-top: 12px;
-    padding: 13px 24px;
-    border: none;
-    border-radius: 10px;
-    background-color: #127c70;
-    color: white;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
-
-#telaLogin > button:hover {
-    background-color: #0c5d54;
-    transform: scale(1.05);
-}
-
-/* Container senha */
-.senha-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 320px;
-    margin: 8px 0;
-}
-
-.senha-container input {
-    width: 100%;
-}
-
-.senha-container #toggleBtn {
-    margin-top: 6px;
-    width: 100%;
-    font-size: 14px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #aaa;
-    background-color: #ddd;
-    color: #222;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.senha-container #toggleBtn:hover {
-    background-color: #ccc;
-    color: #000;
-}
-
-/* Mensagem de erro suavizada */
-#telaLogin #mensagemErro {
-    color: #ffe5e5;
-    background: rgba(255, 200, 200, 0.2);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-weight: 500;
-    margin-top: 15px;
-    font-size: 16px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-/* Conteúdo principal */
-#conteudoPrincipal {
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-#conteudoPrincipal.mostrar {
-    opacity: 1;
-}
-
-/* Fade in */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ======== RESPONSIVO CELULARES ======== */
-@media (max-width: 480px) {
-    #telaLogin h2 {
-        font-size: 26px;
-        margin-bottom: 20px;
-    }
-
-    #telaLogin input,
-    #telaLogin > button,
-    .senha-container #toggleBtn {
-        font-size: 16px;
-        padding: 12px;
-    }
-}
-
-
-
 </style>
 </head>
 <body>
-
-    <!-- =========================================================
-         TELA DE LOGIN
-    ========================================================== -->
- <div id="telaLogin">
-    <h2>Acesso Restrito</h2>
-    <input type="text" id="inputUsuario" placeholder="Usuário">
-       <div class="senha-container">
-        <input type="password" id="inputSenha" placeholder="Senha">
-        <button id="toggleBtn" type="button" onclick="togglePasswordVisibility()">Mostrar senha</button>
-    </div>
-    <button type="button" onclick="tentarLogin()">Entrar</button>
-   <p id="mensagemErro"></p>
-</div>
-
-<!-- Conteúdo principal escondido até o login -->
-<div id="conteudoPrincipal" style="display: none;">
-    <div id="mensagemBoasVindas"></div>
-
-
-        <header>
+<header>
 
 
             <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
     </header>
     
-<div class="container">
-    <div class="menu">
+    <div class="container">
+     <div class="menu">
         <a href="lira.html">LIRA</a>
         <a href="ovitrampas.html">Ovitrampas</a>
         <a href="pesquisas.html">Pesquisas</a>
         <a href="graficos.html">Gráficos</a>
-        <a href="dados.html">Dados</a>
+        <a href="mapas.html">Mapas</a>
+     </div>
     </div>
+                <div class="main-grid">
+                <!-- Seções do grid mantidas iguais -->
+                <div class="box">
+                    <h3>Selecione o Bairro</h3>
+                    <label for="bairro">Bairro:</label>
+                    <select id="bairro">
+                        <option value="">-- Escolha um bairro --</option>
+                    </select>
+                    <div id="resumoGeral"></div>
+                    <button id="limparTudo" class="secondary">Limpar tudo</button>
+                </div>
+
+            <div class="box">
+        <h3>Selecionar Quadras</h3>
+        <input type="text" id="entradaQuadras" placeholder="Ex: 1-3, 1/1, 27/9" />
+        <button id="aplicarTexto" class="primary">Aplicar seleção</button>
+        <div id="listaQuadras"></div>
+        <div id="resumoQuadras"></div>
+    </div>
+
+                <div class="box">
+                    <h3>Programados</h3>
+                    <div id="resumoProgramados">
+                        <em>Selecione quadras para ver os programados.</em>
+                    </div>
+                    <button id="compartilharWhatsapp" class="primary" style="margin-top: 20px;">
+                        Compartilhar no WhatsApp
+                    </button>
+                </div>
+            </div>
+
+<!-- INÍCIO: NOVO TRECHO DE HTML E CAMPOS DE ESTRATIFICAÇÃO (SIMPLIFICADO) -->
+<div class="estratificacao-container">
+    <label for="tipoSelect">Tipo:</label>
+    <select id="tipoSelect" name="tipoEstratificacao">
+        <option value="estratificacaoDeArea" selected>Estratificação de Área</option> 
+        <option value="mutiraoRegional">Mutirão Regional</option>
+        <option value="mutiraoMunicipal">Mutirão Municipal</option>
+        <option value="outros">Outros</option>
+    </select>
 </div>
 
-<form id="formulario-principal-salvar"> 
+<div id="outrosContainer" class="oculto grupo">
+    <label>Especifique:
+        <input type="text" id="inputOutros" name="outrosTipoEstratificacao" placeholder="Especifique o Tipo">
+    </label>
+    <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span> 
+</div>
 
-    <div class="main-grid">
-        <div class="box">
-            <h3>Selecione o Bairro</h3>
-            <label for="bairro">Bairro:</label>
-            <select id="bairro" name="bairro_selecionado"> 
-                <option value="">-- Escolha um bairro --</option>
-            </select>
-            <div id="resumoGeral"></div>
-            <!-- CORRIGIDO: type="button" para evitar o envio do formulário -->
-            <button id="limparTudo" class="secondary" type="button">Limpar tudo</button>
-        </div>
-
-        <div class="box">
-            <h3>Selecionar Quadras</h3>
-            <input type="text" id="entradaQuadras" name="entrada_quadras" placeholder="Ex: 1-3, 1/1, 27/9" />
-            <!-- CORRIGIDO: type="button" para evitar o envio do formulário -->
-            <button id="aplicarTexto" class="primary" type="button">Aplicar seleção</button>
-            <div id="listaQuadras"></div>
-            <div id="resumoQuadras"></div>
-        </div>
-
-        <div class="box">
-            <h3>Programados</h3>
-            <div id="resumoProgramados">
-                <em>Selecione quadras para ver os programados.</em>
-            </div>
-            <!-- CORRIGIDO: type="button" para evitar o envio do formulário -->
-            <button id="compartilharWhatsapp" class="primary" type="button" style="margin-top: 20px;">
-                Compartilhar no WhatsApp
+<div id="mutiraoContainer" class="oculto grupo">
+    <div id="mutiraoCamposContainer" class="mutirao-campos-flex">
+        <div class="endereco-maps-group"> 
+            <label for="inputEndereco">Endereço:</label>
+            <input type="text" id="inputEndereco" name="enderecoLocal" placeholder="Local de Referência ou Ponto Fixo">
+            
+            <button type="button" id="btnMaps" onclick="abrirMapsComEndereco()">
+                Ver no Mapa
             </button>
         </div>
-    </div>
-
-    <div class="estratificacao-container">
-        <label for="tipoSelect">Tipo:</label>
-        <select id="tipoSelect" name="tipo_estrategia">
-            <option value="estratificacaoDeArea" selected>Estratificação de Área</option> 
-            <option value="mutiraoRegional">Mutirão Regional</option>
-            <option value="mutiraoMunicipal">Mutirão Municipal</option>
-            <option value="outros">Outros</option>
-        </select>
-    </div>
-
-    <div id="outrosContainer" class="oculto grupo">
-        <label>Especifique:
-            <input type="text" id="inputOutros" name="outros_tipo_estratificacao" placeholder="Especifique o Tipo">
+        
+        <label>Quadra:
+            <input type="text" id="inputQuadra" name="quadra" placeholder="Quadra">
         </label>
-        <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span> 
+  <label>UAPS:
+            <input type="text" id="inputUAPS" name="uaps" placeholder="UAPS de Ref.">
+        </label>
     </div>
+    <span id="avisoMutirao" class="aviso-obrigatorio oculto">Obrigatório: Preencha Endereço, Quadra e UAPS.</span>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Novos IDs dos elementos
+    const selectTipo = document.getElementById("tipoSelect");
+    const outrosContainer = document.getElementById("outrosContainer");
+    const mutiraoContainer = document.getElementById("mutiraoContainer");
+    
+    const inputOutros = document.getElementById("inputOutros");
+    const avisoOutros = document.getElementById('avisoOutros'); 
+    
+    const inputEndereco = document.getElementById("inputEndereco");
+    const inputQuadra = document.getElementById("inputQuadra");
+    const inputUAPS = document.getElementById("inputUAPS");
+    const avisoMutirao = document.getElementById('avisoMutirao'); 
 
-    <div id="mutiraoContainer" class="oculto grupo">
-        <div id="mutiraoCamposContainer" class="mutirao-campos-flex">
-            <div class="endereco-maps-group"> 
-                <label for="inputEndereco">Endereço:</label>
-                <input type="text" id="inputEndereco" name="endereco_local" placeholder="Local de Referência ou Ponto Fixo">
-                
-                <!-- CORRIGIDO: type="button" já estava presente e é o correto aqui -->
-                <button type="button" id="btnMaps" onclick="abrirMapsComEndereco()">
-                    Ver no Mapa
-                </button>
-            </div>
+    function toggleFields(selectedValue) {
+        // 1. Esconde tudo e limpa avisos
+        outrosContainer.classList.add("oculto");
+        mutiraoContainer.classList.add("oculto");
+        avisoOutros.classList.add('oculto');
+        avisoMutirao.classList.add('oculto');
+
+
+        // 2. Limpa required
+        inputOutros.required = false;
+        inputEndereco.required = false;
+        inputQuadra.required = false;
+        inputUAPS.required = false;
+
+        // Opcional: Limpa os valores quando os campos são escondidos
+        inputOutros.value = '';
+        inputEndereco.value = '';
+        inputQuadra.value = '';
+        inputUAPS.value = '';
+
+        // 3. Mostra conforme a escolha
+        if (selectedValue === "outros") {
+            outrosContainer.classList.remove("oculto");
+            avisoOutros.classList.remove('oculto'); // Mostra aviso
+            inputOutros.required = true;
+        } else if (selectedValue === "mutiraoRegional" || selectedValue === "mutiraoMunicipal") {
+            mutiraoContainer.classList.remove("oculto");
             
-            <label>Quadra:
-                <input type="text" id="inputQuadra" name="quadra_mutirao" placeholder="Quadra">
-            </label>
-            <label>UAPS:
-                <input type="text" id="inputUAPS" name="uaps_referencia" placeholder="UAPS de Ref.">
-            </label>
-        </div>
-        <span id="avisoMutirao" class="aviso-obrigatorio oculto">Obrigatório: Preencha Endereço, Quadra e UAPS.</span>
-    </div>
+            inputEndereco.required = true;
+            inputQuadra.required = true;
+            inputUAPS.required = true;
+            validarMutirao(); // Já chama validação ao abrir para mostrar o aviso se estiver vazio
+        }
+    }
+
+    // Validação dinâmica dos campos do Mutirão
+    function validarMutirao() {
+        if (inputEndereco.value.trim() && inputQuadra.value.trim() && inputUAPS.value.trim()) {
+            avisoMutirao.classList.add('oculto');
+        } else {
+            // Só mostra o aviso se o container do mutirão estiver visível
+            if (!mutiraoContainer.classList.contains('oculto')) {
+                avisoMutirao.classList.remove('oculto');
+            }
+        }
+    }
+
+    // Eventos para validar em tempo real
+    [inputEndereco, inputQuadra, inputUAPS].forEach(campo => {
+        campo.addEventListener('input', validarMutirao);
+    });
+
+    selectTipo.addEventListener("change", (e) => toggleFields(e.target.value));
+
+    // Garante que o estado inicial (Estratificação de Área) está correto
+    toggleFields(selectTipo.value);
+});
+</script>
+
+
     <div class="box" style="margin-top: 30px;">
-        <h3>ESTRATIFICAR</h3>
-        <label for="dataInicio">Data de Início Programado</label>
-        <input type="date" id="dataInicio" name="data_inicio_programado"> 
-        
-        <label for="quadrasEstratificadas">Quadras Estratificadas</label>
-        <textarea id="quadrasEstratificadas" name="quadras_estratificadas" rows="4" readonly></textarea>
-        <div id="contagemQuadrasEstratificadas" class="small"></div>
+    <h3>ESTRATIFICAR</h3>
+    <label for="dataInicio">Data de Início Programado</label>
+    <input type="date" id="dataInicio">
+    
+    <label for="quadrasEstratificadas">Quadras Estratificadas</label>
+    <textarea id="quadrasEstratificadas" rows="4" readonly></textarea>
+    <div id="contagemQuadrasEstratificadas" class="small"></div>
 
-        <div id="dadosDetalhes" class="small"></div>
-        
-        <label for="percentualFechados">% de Imóveis Fechados</label>
-        <input type="number" id="percentualFechados" name="percentual_fechados" placeholder="Ex: 30" min="0" max="100" />
-        
-        <label for="imoveisATrabalhar">Imóveis a Trabalhar</label>
-        <input type="number" id="imoveisATrabalhar" name="imoveis_a_trabalhar" readonly />
-        
-        <label for="media">Média por Servidor</label>
-        <input type="number" id="media" name="media_por_servidor" placeholder="Ex: 20" min="1" />
-        
-        <label for="servidores">Servidores Programados</label>
-        <input type="number" id="servidores" name="servidores_programados" placeholder="Ex: 2" min="1" />
-        
-        <label for="dias">Dias Programados</label>
-        <input type="number" id="dias" name="dias_programados" />
-        <div id="obsDias" class="small"></div>
-        
-        <label for="dataTermino">Data de Término Programado</label>
-        <input type="date" id="dataTermino" name="data_termino_programado" readonly>
-        <span id="obsTermino" class="small" style="color:red;">Adicione a data de início programado</span>
-    </div>
+    <!-- 🔹 Novo: detalhes das quadras -->
+    <div id="dadosDetalhes" class="small"></div>
+    
+    <label for="percentualFechados">% de Imóveis Fechados</label>
+    <input type="number" id="percentualFechados" placeholder="Ex: 30" min="0" max="100" />
+    
+    <label for="imoveisATrabalhar">Imóveis a Trabalhar</label>
+    <input type="number" id="imoveisATrabalhar" readonly />
+    
+    <label for="media">Média por Servidor</label>
+    <input type="number" id="media" placeholder="Ex: 20" min="1" />
+    
+    <label for="servidores">Servidores Programados</label>
+    <input type="number" id="servidores" placeholder="Ex: 2" min="1" />
+    
+    <label for="dias">Dias Programados</label>
+    <input type="number" id="dias" />
+    <div id="obsDias" class="small"></div>
+    
+    <label for="dataTermino">Data de Término Programado</label>
+    <input type="date" id="dataTermino" readonly>
+    <span id="obsTermino" class="small" style="color:red;">Adicione a data de início programado</span>
+</div>
 
-    <div id="RESULTADO" class="box">
-        <h3>RESULTADO</h3>
-        <label for="quadrasPositivas">Quadras Positivas</label>
-        <textarea id="quadrasPositivas" name="quadras_positivas" rows="4" readonly></textarea>
-        <div id="contagemQuadrasPositivas" class="small"></div>
-        
-        <div class="form-group">
-            <label for="quadrasTrabalhadasInput">Total de Quadras Trabalhadas:</label>
-            <input type="number" id="quadrasTrabalhadasInput" name="quadras_trabalhadas_input" value="0">
-            <p id="obsQuadrasTrabalhadas" class="obs-texto"></p>
-        </div>
-        
-        <div id="camposHD">
-            <label>HDP
-                <input type="text" id="hdpInput" name="hdp_input" placeholder="Maior ou igual ao HDT" />
-            </label>
-            <label>HDT
-                <input type="text" id="hdtInput" name="hdt_input" placeholder="Menor ou igual ao HDP" />
-            </label>
+        <div id="RESULTADO" class="box">
+            <h3>RESULTADO</h3>
+            <label for="quadrasPositivas">Quadras Positivas</label>
+            <textarea id="quadrasPositivas" rows="4" readonly></textarea>
+            <div id="contagemQuadrasPositivas" class="small"></div>
             
-            <label>Semana Inicial
-                <select id="semanaInicial" name="semana_inicial">
-                    <option value="">Selecione</option>
-                </select>
-            </label>
+            <div class="form-group">
+                <label for="quadrasTrabalhadasInput">Total de Quadras Trabalhadas:</label>
+                <input type="number" id="quadrasTrabalhadasInput" value="0">
+                <p id="obsQuadrasTrabalhadas" class="obs-texto"></p>
+          <div id="camposHD">
+<label>HDP 
+    <input type="text" id="hdpInput" placeholder="Maior ou igual ao HDT" />
+</label>
+<label>HDT 
+    <input type="text" id="hdtInput" placeholder="Menor ou igual ao HDP" />
+</label>
+            
+          <label>Semana Inicial
+    <select id="semanaInicial">
+        <option value="">Selecione</option>
+    </select>
+</label>
 
-            <label>Semana Final
-                <select id="semanaFinal" name="semana_final" disabled>
-                    <option value="">Preencha a Semana Inicial primeiro</option>
-                </select>
-            </label>
+<label>Semana Final
+    <select id="semanaFinal" disabled>
+        <option value="">Preencha a Semana Inicial primeiro</option>
+    </select>
+</label>
 
+
+            
             <label>Ciclo
-                <select id="ciclo" name="ciclo_selecionado">
+                <select id="ciclo">
                     <option value="">Selecione</option>
                 </select>
             </label>
             
-            <label>QTD De Imóveis Trabalhados <input type="number" id="imoveisTrabalhadosInput" name="imoveis_trabalhados" /></label>
+            <label>QTD De Imóveis Trabalhados <input type="number" id="imoveisTrabalhadosInput" /></label>
             <div id="percImoveisTrabalhados" class="small"></div>
             
-            <label>Fechados <input type="number" id="fechadosInput" name="fechados_input" /></label>
+            <label>Fechados <input type="number" id="fechadosInput" /></label>
             <div id="percFechados" class="small"></div>
             
-            <label>QTD De Focos Por Imóvel <input type="number" step="any" id="focosPorImovelInput" name="focos_por_imovel" /></label>
-            <label>QTD Imóveis Tratados Com BTI <input type="number" id="imoveisBtiInput" name="imoveis_bti" /></label>
-            <label>QTD Imóveis Tratados Com ESP <input type="number" id="imoveisEspInput" name="imoveis_esp" /></label>
+            <label>QTD De Focos Por Imóvel <input type="number" step="any" id="focosPorImovelInput" /></label>
+            <label>QTD Imóveis Tratados Com BTI <input type="number" id="imoveisBtiInput" /></label>
+            <label>QTD Imóveis Tratados Com ESP <input type="number" id="imoveisEspInput" /></label>
             
-            <label>Depósitos Positivos - A1 <input type="number" id="a1" name="depositos_a1" /></label>
-            <label>Depósitos Positivos - A2 <input type="number" id="a2" name="depositos_a2" /></label>
-            <label>Depósitos Positivos - B <input type="number" id="b" name="depositos_b" /></label>
-            <label>Depósitos Positivos - C <input type="number" id="c" name="depositos_c" /></label>
-            <label>Depósitos Positivos - D1 <input type="number" id="d1" name="depositos_d1" /></label>
-            <label>Depósitos Positivos - D2 <input type="number" id="d2" name="depositos_d2" /></label>
-            <label>Depósitos Positivos - E <input type="number" id="e" name="depositos_e" /></label>
+            <label>Depósitos Positivos - A1 <input type="number" id="a1" /></label>
+            <label>Depósitos Positivos - A2 <input type="number" id="a2" /></label>
+            <label>Depósitos Positivos - B <input type="number" id="b" /></label>
+            <label>Depósitos Positivos - C <input type="number" id="c" /></label>
+            <label>Depósitos Positivos - D1 <input type="number" id="d1" /></label>
+            <label>Depósitos Positivos - D2 <input type="number" id="d2" /></label>
+            <label>Depósitos Positivos - E <input type="number" id="e" /></label>
             
-            <label><strong>Total de Depósitos Positivos:</strong> <input type="number" id="totalDepositos" name="total_depositos" readonly /></label>
+            <label><strong>Total de Depósitos Positivos:</strong> <input type="number" id="totalDepositos" readonly /></label>
             
-            <label>Depósitos Tratados Com BTI <input type="number" id="depositosBtiInput" name="depositos_bti" /></label>
-            <label>Depósitos Tratados Com ESP <input type="number" id="depositosEspInput" name="depositos_esp" /></label>
+            <label>Depósitos Tratados Com BTI <input type="number" id="depositosBtiInput" /></label>
+            <label>Depósitos Tratados Com ESP <input type="number" id="depositosEspInput" /></label>
             
-            <label>Larvicida Total Gasto Com BTI <input type="number" step="any" id="larvicidaBtiInput" name="larvicida_bti" /></label>
-            <label>Larvicida Total Gasto Com ESP <input type="number" step="any" id="larvicidaEspInput" name="larvicida_esp" /></label>
+            <!-- CORREÇÃO: Use apenas um ID consistente -->
+            <label>Larvicida Total Gasto Com BTI <input type="number" step="any" id="larvicidaBtiInput" /></label>
+            <label>Larvicida Total Gasto Com ESP <input type="number" step="any" id="larvicidaEspInput" /></label>
+           
+
+            <label>Depósitos Eliminados <input type="number" id="depositosEliminadosInput" /></label>
             
-            <label>Depósitos Eliminados <input type="number" id="depositosEliminadosInput" name="depositos_eliminados" /></label>
-            
-            <label>Data de Início Real <input type="date" id="dataInicioReal" name="data_inicio_real" /></label>
-            <label>Data de Término Real <input type="date" id="dataTerminoReal" name="data_termino_real" /></label>
-        </div>
-        
+            <label>Data de Início Real <input type="date" id="dataInicioReal" /></label>
+            <label>Data de Término Real <input type="date" id="dataTerminoReal" /></label>
         <div class="box">
             <h3>Informações Adicionais</h3>
             <div class="form-group">
                 <label for="observacoes">Observações:</label>
-                <textarea id="observacoes" name="observacoes" rows="3" placeholder="Insira aqui as observações."></textarea>
+                <textarea id="observacoes" rows="3" placeholder="Insira aqui as observações."></textarea>
             </div>
             <div class="form-group">
                 <label for="responsavel">Responsável pela Informação:</label>
-                <input type="text" id="responsavel" name="responsavel" placeholder="Insira o nome do responsável.">
+                <input type="text" id="responsavel" placeholder="Insira o nome do responsável.">
             </div>
         </div>
-    </div>
-        </div>
-    
-    <!-- CORRIGIDO: type="button" para o exportar TXT -->
-    <button id="exportarTabelaTxtBtn" class="secondary" type="button">Exportar Tabela TXT</button> 
-    
-    <!-- CORRIGIDO: type="button" para o gerar Relatório Word -->
-    <button id="gerarRelatorioBtn" class="primary" type="button">Gerar Relatório Word</button>
-    
-    <input type="file" id="inputArquivo" style="display: none;" accept=".json" />
-    
-    <!-- CORRETO: type="submit" para acionar o salvamento via API (script.js) -->
-    <button type="submit" id="botao-salvar-api" class="primary" style="margin-top: 20px;">
-        ✅ SALVAR DADOS E GERAR ID ÚNICO
-    </button>
-    
-    <div id="status-mensagem-post" style="margin-top: 15px; font-weight: bold;"></div>
-
-</form> 
-<script src="index1.js"></script> 
+        </div>
+          
+            
+           
+        <button id="exportarTabelaTxtBtn" class="secondary">Exportar Tabela TXT</button> 
+        <button id="gerarRelatorioBtn" class="primary">Gerar Relatório Word</button>
+         <input type="file" id="inputArquivo" style="display: none;" accept=".json" />
+     <!-- Script deve vir DEPOIS do HTML, não dentro dele -->
 <script src="script.js"></script>
+
+</body>
+</html>
+
+
 
 
 
