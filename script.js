@@ -1846,7 +1846,7 @@ async function salvarNoDrive() {
     dados.id_unico = gerarIdCurto(); // gera ID simples e legível
     dados.timestamp = new Date().toLocaleString("pt-BR");
 
-    const resposta = await fetch("https://script.google.com/macros/s/AKfycbwtxs-mTf-aCfyY2N3Cw0yfU56aPUDhstT6-f477FbZkeOCvahDZul2LCj61jwqlxWs6w/exec", {
+    const resposta = await fetch("https://script.google.com/macros/s/AKfycbxHKSaao65eAYkAeEywI5GeZEMAZYss_fhvUUf5IFOyPZ0OI17In5D7zM9y2TEzaIGh4g/exec", {
       method: "POST",
       body: new URLSearchParams(dados)
     });
@@ -1870,6 +1870,7 @@ function gerarIdCurto() {
 }
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
