@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização de Dados Salvos</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    
+    <div class="container">
+        </div>
+
+    <main class="data-container">
+        <h1>Consultar Dados Salvos</h1>
+
+        <div class="search-controls">
+            <input type="text" id="campo-id-busca" placeholder="Digite o ID Único do Registro">
+            
+            <button id="botao-carregar">Carregar Dados</button>
+            <button id="botao-limpar">Limpar Exibição</button>
+        </div>
+        
+        <div id="area-de-exibicao" class="data-display-area">
+            <p>Insira um ID e clique em "Carregar Dados" para visualizar o registro.</p>
+        </div>
+        <div id="status-busca-mensagem"></div>
+    </main>
+
+    <script src="script.js"></script> 
+</body>
+</html>
