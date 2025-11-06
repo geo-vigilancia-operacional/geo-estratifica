@@ -1729,9 +1729,41 @@ function configurarBotoes() {
     if (exportarTabelaTxtBtn) {
         exportarTabelaTxtBtn.addEventListener('click', exportarTabelaTXT);
     }
-    
+    // === NOVO BOTÃO: SALVAR NO DRIVE ===
+document.getElementById("salvarDriveBtn").addEventListener("click", salvarNoDrive);
+
+async function salvarNoDrive() {
+  try {
+    // Simula coleta dos dados (substituir pela sua função real)
+    const dados = coletarTodosOsDados(); // usa sua função que já existe
+    dados.id_unico = gerarIdCurto(); // gera ID simples e legível
+    dados.timestamp = new Date().toLocaleString("pt-BR");
+
+    const resposta = await fetch("https://script.google.com/macros/s/AKfycbwtxs-mTf-aCfyY2N3Cw0yfU56aPUDhstT6-f477FbZkeOCvahDZul2LCj61jwqlxWs6w/exec", {
+      method: "POST",
+      body: new URLSearchParams(dados)
+    });
+
+    if (resposta.ok) {
+      alert(`✅ Dados salvos com sucesso no Drive!\n🆔 ID: ${dados.id_unico}`);
+    } else {
+      alert("❌ Erro ao salvar no Drive. Tente novamente.");
+    }
+
+  } catch (erro) {
+    alert("❌ Erro: " + erro.message);
+  }
+}
+
+function gerarIdCurto() {
+  const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const parte1 = letras[Math.floor(Math.random() * letras.length)];
+  const parte2 = Math.floor(10000 + Math.random() * 90000);
+  return parte1 + parte2; // Exemplo: "A58329"
+}
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
