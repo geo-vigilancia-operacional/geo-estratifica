@@ -874,7 +874,7 @@ header h1 {
         <div class="box">
             <h3>Selecione o Bairro</h3>
             <label for="bairro">Bairro:</label>
-            <select id="bairro" name="bairro_selecionado">
+            <select id="bairro" name="bairro_selecionado"> 
                 <option value="">-- Escolha um bairro --</option>
             </select>
             <div id="resumoGeral"></div>
@@ -910,6 +910,33 @@ header h1 {
         </select>
     </div>
 
+    <div id="outrosContainer" class="oculto grupo">
+        <label>Especifique:
+            <input type="text" id="inputOutros" name="outros_tipo_estratificacao" placeholder="Especifique o Tipo">
+        </label>
+        <span id="avisoOutros" class="aviso-obrigatorio oculto">obrigatório</span> 
+    </div>
+
+    <div id="mutiraoContainer" class="oculto grupo">
+        <div id="mutiraoCamposContainer" class="mutirao-campos-flex">
+            <div class="endereco-maps-group"> 
+                <label for="inputEndereco">Endereço:</label>
+                <input type="text" id="inputEndereco" name="endereco_local" placeholder="Local de Referência ou Ponto Fixo">
+                
+                <button type="button" id="btnMaps" onclick="abrirMapsComEndereco()">
+                    Ver no Mapa
+                </button>
+            </div>
+            
+            <label>Quadra:
+                <input type="text" id="inputQuadra" name="quadra_mutirao" placeholder="Quadra">
+            </label>
+            <label>UAPS:
+                <input type="text" id="inputUAPS" name="uaps_referencia" placeholder="UAPS de Ref.">
+            </label>
+        </div>
+        <span id="avisoMutirao" class="aviso-obrigatorio oculto">Obrigatório: Preencha Endereço, Quadra e UAPS.</span>
+    </div>
     <div class="box" style="margin-top: 30px;">
         <h3>ESTRATIFICAR</h3>
         <label for="dataInicio">Data de Início Programado</label>
@@ -948,6 +975,70 @@ header h1 {
         <textarea id="quadrasPositivas" name="quadras_positivas" rows="4" readonly></textarea>
         <div id="contagemQuadrasPositivas" class="small"></div>
         
+        <div class="form-group">
+            <label for="quadrasTrabalhadasInput">Total de Quadras Trabalhadas:</label>
+            <input type="number" id="quadrasTrabalhadasInput" name="quadras_trabalhadas_input" value="0">
+            <p id="obsQuadrasTrabalhadas" class="obs-texto"></p>
+        </div>
+        
+        <div id="camposHD">
+            <label>HDP
+                <input type="text" id="hdpInput" name="hdp_input" placeholder="Maior ou igual ao HDT" />
+            </label>
+            <label>HDT
+                <input type="text" id="hdtInput" name="hdt_input" placeholder="Menor ou igual ao HDP" />
+            </label>
+            
+            <label>Semana Inicial
+                <select id="semanaInicial" name="semana_inicial">
+                    <option value="">Selecione</option>
+                </select>
+            </label>
+
+            <label>Semana Final
+                <select id="semanaFinal" name="semana_final" disabled>
+                    <option value="">Preencha a Semana Inicial primeiro</option>
+                </select>
+            </label>
+
+            <label>Ciclo
+                <select id="ciclo" name="ciclo_selecionado">
+                    <option value="">Selecione</option>
+                </select>
+            </label>
+            
+            <label>QTD De Imóveis Trabalhados <input type="number" id="imoveisTrabalhadosInput" name="imoveis_trabalhados" /></label>
+            <div id="percImoveisTrabalhados" class="small"></div>
+            
+            <label>Fechados <input type="number" id="fechadosInput" name="fechados_input" /></label>
+            <div id="percFechados" class="small"></div>
+            
+            <label>QTD De Focos Por Imóvel <input type="number" step="any" id="focosPorImovelInput" name="focos_por_imovel" /></label>
+            <label>QTD Imóveis Tratados Com BTI <input type="number" id="imoveisBtiInput" name="imoveis_bti" /></label>
+            <label>QTD Imóveis Tratados Com ESP <input type="number" id="imoveisEspInput" name="imoveis_esp" /></label>
+            
+            <label>Depósitos Positivos - A1 <input type="number" id="a1" name="depositos_a1" /></label>
+            <label>Depósitos Positivos - A2 <input type="number" id="a2" name="depositos_a2" /></label>
+            <label>Depósitos Positivos - B <input type="number" id="b" name="depositos_b" /></label>
+            <label>Depósitos Positivos - C <input type="number" id="c" name="depositos_c" /></label>
+            <label>Depósitos Positivos - D1 <input type="number" id="d1" name="depositos_d1" /></label>
+            <label>Depósitos Positivos - D2 <input type="number" id="d2" name="depositos_d2" /></label>
+            <label>Depósitos Positivos - E <input type="number" id="e" name="depositos_e" /></label>
+            
+            <label><strong>Total de Depósitos Positivos:</strong> <input type="number" id="totalDepositos" name="total_depositos" readonly /></label>
+            
+            <label>Depósitos Tratados Com BTI <input type="number" id="depositosBtiInput" name="depositos_bti" /></label>
+            <label>Depósitos Tratados Com ESP <input type="number" id="depositosEspInput" name="depositos_esp" /></label>
+            
+            <label>Larvicida Total Gasto Com BTI <input type="number" step="any" id="larvicidaBtiInput" name="larvicida_bti" /></label>
+            <label>Larvicida Total Gasto Com ESP <input type="number" step="any" id="larvicidaEspInput" name="larvicida_esp" /></label>
+            
+            <label>Depósitos Eliminados <input type="number" id="depositosEliminadosInput" name="depositos_eliminados" /></label>
+            
+            <label>Data de Início Real <input type="date" id="dataInicioReal" name="data_inicio_real" /></label>
+            <label>Data de Término Real <input type="date" id="dataTerminoReal" name="data_termino_real" /></label>
+        </div>
+        
         <div class="box">
             <h3>Informações Adicionais</h3>
             <div class="form-group">
@@ -968,13 +1059,9 @@ header h1 {
     <div id="status-mensagem-post" style="margin-top: 15px; font-weight: bold;"></div>
 
 </form> 
-<button id="exportarTabelaTxtBtn" class="secondary">Exportar Tabela TXT</button> 
-<button id="gerarRelatorioBtn" class="primary">Gerar Relatório Word</button>
-
-<input type="file" id="inputArquivo" style="display: none;" accept=".json" />
-
 <script src="index1.js"></script> 
 <script src="script.js"></script>
+
 
 
 
