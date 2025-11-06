@@ -1259,6 +1259,103 @@ document.addEventListener("DOMContentLoaded", () => {
     // Executa logo ao carregar
     verificarTratamentos();
 });
+function coletarTodosOsDados() {
+    const getValue = (id) => document.getElementById(id)?.value.trim() || 'N/A';
+    const getText = (id) => document.getElementById(id)?.textContent.trim() || 'N/A';
+
+    const dados = {};
+
+    try {
+        // Estado e seleção
+        dados.bairro = estado?.bairroSelecionado || 'N/A';
+
+        // Resumo geral
+        const resumoGeral = document.getElementById('resumoGeral')?.textContent || '';
+        const resumoProgramados = document.getElementById('resumoProgramados')?.textContent || '';
+
+        dados.totalQuadrasAtivas = resumoGeral.match(/Total de Quadras \(ativas\):\s*(\d+)/)?.[1] || 'N/A';
+        dados.totalImoveisGeral = resumoGeral.match(/Total de Imóveis:\s*(\d+)/)?.[1] || 'N/A';
+        dados.totalHabitantesGeral = resumoGeral.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A';
+        dados.cãesGeral = resumoGeral.match(/Cães:\s*(\d+)/)?.[1] || 'N/A';
+        dados.gatosGeral = resumoGeral.match(/Gatos:\s*(\d+)/)?.[1] || 'N/A';
+        dados.ovitrampasGeral = resumoGeral.match(/Ovitrampas \(palhetas\):\s*(\d+)/)?.[1] || 'N/A';
+        dados.pontosEstrategicosGeral = resumoGeral.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || 'N/A';
+
+        // Programação
+        dados.totalHabitantesProg = resumoProgramados.match(/Total de Habitantes:\s*(\d+)/)?.[1] || 'N/A';
+        dados.imoveisProgramados = resumoProgramados.match(/Imóveis Programados:\s*(\d+)/)?.[1] || 'N/A';
+        dados.pontosEstrategicosProg = resumoProgramados.match(/Pontos Estratégicos \(PE\):\s*(\d+)/)?.[1] || dados.pontosEstrategicosGeral;
+
+        // Campos da estratificação
+        const selectTipo = document.getElementById('tipoSelect');
+        let motivo = selectTipo ? selectTipo.options[selectTipo.selectedIndex].textContent.trim() : 'N/A';
+        let outrosTipo = getValue('inputOutros');
+        if (motivo.toLowerCase().includes("outros") && outrosTipo !== "N/A") motivo += ` (${outrosTipo})`;
+
+        dados.motivo = motivo;
+        dados.endereco = getValue("inputEndereco");
+        dados.quadraMutirao = getValue("inputQuadra");
+        dados.uaps = getValue("inputUAPS");
+        dados.quadrasSelecionadas = getValue("quadrasEstratificadas");
+        dados.percentualFechados = getValue("percentualFechados");
+        dados.imoveisTrabalhar = getValue("imoveisATrabalhar");
+        dados.media = getValue("media");
+        dados.servidores = getValue("servidores");
+        dados.dias = getValue("dias");
+        dados.dataInicioProg = getValue("dataInicio");
+        dados.dataTerminoProg = getValue("dataTermino");
+
+        // Resultados
+        dados.quadrasPositivas = getValue("quadrasPositivas");
+        dados.quadrasTrabalhadas = getValue("quadrasTrabalhadasInput");
+        dados.hdp = getValue("hdpInput");
+        dados.hdt = getValue("hdtInput");
+        dados.semanaInicial = getValue("semanaInicial");
+        dados.semanaFinal = getValue("semanaFinal");
+        dados.ciclo = getValue("ciclo");
+        dados.dataInicioReal = getValue("dataInicioReal");
+        dados.dataTerminoReal = getValue("dataTerminoReal");
+        dados.responsavel = getValue("responsavel");
+        dados.obs = getValue("observacoes");
+
+        dados.imoveisTrabalhados = getValue("imoveisTrabalhadosInput");
+        dados.fechados = getValue("fechadosInput");
+        dados.focosPorImovel = getValue("focosPorImovelInput");
+        dados.btiTratados = getValue("imoveisBtiInput");
+        dados.espTratados = getValue("imoveisEspInput");
+
+        // Depósitos
+        dados.depositos = {
+            A1: getValue("a1"),
+            A2: getValue("a2"),
+            B: getValue("b"),
+            C: getValue("c"),
+            D1: getValue("d1"),
+            D2: getValue("d2"),
+            E: getValue("e"),
+            total: getValue("totalDepositos")
+        };
+
+        // Larvicidas e eliminação
+        dados.larvicidas = {
+            depositosBti: getValue("depositosBtiInput"),
+            depositosEsp: getValue("depositosEspInput"),
+            larvicidaBti: getValue("larvicidaBtiInput"),
+            larvicidaEsp: getValue("larvicidaEspInput"),
+            eliminados: getValue("depositosEliminadosInput")
+        };
+
+        // Data e versão
+        dados.dataRegistro = new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza" });
+        dados.versao = "1.0";
+
+    } catch (erro) {
+        console.error("Erro ao coletar dados:", erro);
+    }
+
+    return dados;
+}
+
 function compartilharWhatsApp() {
     console.log("Iniciando compartilhamento via WhatsApp (Versão Final Otimizada)...");
 
@@ -1731,6 +1828,16 @@ function configurarBotoes() {
     }
     // === NOVO BOTÃO: SALVAR NO DRIVE ===
 document.getElementById("salvarDriveBtn").addEventListener("click", salvarNoDrive);
+function coletarTodosOsDados() {
+  const dados = {};
+  // Captura todos os inputs, selects e textareas da página
+  document.querySelectorAll("input, select, textarea").forEach(el => {
+    if (el.id) {
+      dados[el.id] = el.value || el.textContent || "";
+    }
+  });
+  return dados;
+}
 
 async function salvarNoDrive() {
   try {
@@ -1763,6 +1870,7 @@ function gerarIdCurto() {
 }
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
