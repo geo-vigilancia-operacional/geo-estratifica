@@ -1,32 +1,112 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualização de Dados Salvos</title>
-    <link rel="stylesheet" href="style.css"> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualização de Dados Salvos</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #painelDados {
+      text-align: center;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin: auto;
+      max-width: 500px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 220px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+    button.primary {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button.primary:hover {
+      background-color: #0056b3;
+    }
+    #resultadoCarregamento {
+      margin-top: 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
 </head>
 <body>
-    
-    <div class="container">
-        </div>
 
-    <main class="data-container">
-        <h1>Consultar Dados Salvos</h1>
+  <h2>🔍 Visualizar Dados Salvos no Drive</h2>
 
-        <div class="search-controls">
-            <input type="text" id="campo-id-busca" placeholder="Digite o ID Único do Registro">
-            
-            <button id="botao-carregar">Carregar Dados</button>
-            <button id="botao-limpar">Limpar Exibição</button>
-        </div>
-        
-        <div id="area-de-exibicao" class="data-display-area">
-            <p>Insira um ID e clique em "Carregar Dados" para visualizar o registro.</p>
-        </div>
-        <div id="status-busca-mensagem"></div>
-    </main>
+  <div id="painelDados">
+    <input type="text" id="inputIdUnico" placeholder="Digite o ID único (ex: A58329)">
+    <button id="carregarDriveBtn" class="primary">Carregar Dados</button>
+  </div>
 
-    <script src="script.js"></script> 
+  <div id="resultadoCarregamento">
+    <p style="text-align:center; color:#888;">Nenhum dado carregado ainda.</p>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      document.getElementById("carregarDriveBtn").addEventListener("click", async () => {
+        const idProcurado = document.getElementById("inputIdUnico").value.trim().toUpperCase();
+        if (!idProcurado) {
+          alert("Por favor, insira o ID único para buscar os dados.");
+          return;
+        }
+
+        try {
+          const resposta = await fetch("https://script.google.com/macros/s/AKfycbwtxs-mTf-aCfyY2N3Cw0yfU56aPUDhstT6-f477FbZkeOCvahDZul2LCj61jwqlxWs6w/exec");
+          const listaDados = await resposta.json();
+
+          // Busca pelo ID único salvo
+          const registro = listaDados.find(item => item.id_unico === idProcurado);
+
+          if (!registro) {
+            document.getElementById("resultadoCarregamento").innerHTML = `
+              <p style="text-align:center; color:#b00;">⚠️ Nenhum dado encontrado com esse ID (${idProcurado}).</p>`;
+            return;
+          }
+
+          // Exibe o conteúdo do registro
+          document.getElementById("resultadoCarregamento").innerHTML = `
+            <h3>📋 Dados encontrados:</h3>
+            <pre>${JSON.stringify(registro, null, 2)}</pre>
+          `;
+
+        } catch (erro) {
+          console.error("Erro ao buscar dados:", erro);
+          alert("❌ Erro ao buscar dados do Drive: " + erro.message);
+        }
+      });
+
+    });
+  </script>
 </body>
 </html>
