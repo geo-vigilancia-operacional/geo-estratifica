@@ -298,8 +298,8 @@ try {
 
     // Extração de Inputs (Programação)
     const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
-    const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '-'); // Substitui vírgulas por barras para não quebrar o CSV
-    const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '-'); 
+    const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '|'); // Substitui vírgulas por barras para não quebrar o CSV
+    const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '|'); 
     const percentualFechadosPrevisto = getValue("percentualFechados");
     const media = getValue("media");
     const servidores = getValue("servidores");
@@ -1729,180 +1729,11 @@ function configurarBotoes() {
     if (exportarTabelaTxtBtn) {
         exportarTabelaTxtBtn.addEventListener('click', exportarTabelaTXT);
     }
-    // =================================================================
-// 0. CONFIGURAÇÃO GLOBAL (MUITO IMPORTANTE!)
-// =================================================================
-// ⚠️ SUBSTITUA ESTE VALOR COM O URL COMPLETO DA SUA APLICAÇÃO WEB DO GOOGLE APPS SCRIPT
-const API_URL = "https://script.google.com/macros/s/AKfycbwtxs-mTf-aCfyY2N3Cw0yfU56aPUDhstT6-f477FbZkeOCvahDZul2LCj61jwqlxWs6w/exec"; 
-const FORM_PRINCIPAL_ID = 'formulario-principal-salvar'; // ID do formulário de salvamento (na página como lira.html)
-
-// As funções gerarRelatorioWord e exportarTabelaTXT devem estar definidas no index1.js
-// ou antes deste ponto. Assumimos que elas existem e são globais.
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Garantir que a inicialização do sistema seja logada
+    
     console.log("Sistema inicializado com sucesso!");
-
-    // =================================================================
-    // C) LÓGICA DOS BOTÕES DE EXPORTAÇÃO (Gerar Relatório e Exportar TXT)
-    //    Movidos para dentro do DOMContentLoaded para segurança.
-    // =================================================================
-    
-    // 9. Event Listener para o botão GERAR RELATÓRIO WORD
-    const gerarRelatorioBtn = document.getElementById('gerarRelatorioBtn');
-    if (gerarRelatorioBtn && typeof gerarRelatorioWord === 'function') {
-        gerarRelatorioBtn.addEventListener('click', gerarRelatorioWord);
-    } else if (gerarRelatorioBtn) {
-        console.warn("A função gerarRelatorioWord não está definida. O botão de Relatório não funcionará.");
-    }
-    
-    // 10. Event Listener para o botão EXPORTAR TABELA TXT
-    const exportarTabelaTxtBtn = document.getElementById('exportarTabelaTxtBtn');
-    if (exportarTabelaTxtBtn && typeof exportarTabelaTXT === 'function') {
-        exportarTabelaTxtBtn.addEventListener('click', exportarTabelaTXT);
-    } else if (exportarTabelaTxtBtn) {
-        console.warn("A função exportarTabelaTXT não está definida. O botão de Exportar TXT não funcionará.");
-    }
-
-
-    // =================================================================
-    // A) LÓGICA DE ENVIO DO FORMULÁRIO PRINCIPAL (POST)
-    // =================================================================
-    const form = document.getElementById(FORM_PRINCIPAL_ID);
-    
-    if (form) { 
-        const statusDiv = document.getElementById('status-mensagem-post') || form.parentNode.appendChild(document.createElement('div'));
-        
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            
-            // Verifica se o botão "SALVAR DADOS" foi o acionador
-            // Isso evita que outros botões "type=submit" (se houverem) acionem o envio indevidamente.
-            if (e.submitter && e.submitter.id !== 'botao-salvar-api') {
-                return; 
-            }
-
-            statusDiv.textContent = 'Enviando dados...';
-            statusDiv.style.color = 'orange';
-
-            // Cria FormData a partir do formulário, que inclui todos os campos com atributo 'name'
-            const formData = new FormData(form);
-            const params = new URLSearchParams(formData).toString();
-
-            fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    // Este Content-Type é o que o Google Apps Script espera para doPost
-                    'Content-Type': 'application/x-www-form-urlencoded' 
-                },
-                body: params
-            })
-            .then(response => {
-                if (!response.ok) {
-                     // Lança erro se o status HTTP não for 2xx (ex: 500 Internal Server Error)
-                    throw new Error(`Erro de HTTP: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status === 'Sucesso') {
-                    statusDiv.textContent = `Salvo com sucesso! ID Único para consulta: ${data.id}`;
-                    statusDiv.style.color = 'green';
-                    // IMPORTANTE: Reseta o formulário após o sucesso
-                    form.reset(); 
-                } else {
-                    // Trata mensagens de falha retornadas pelo Apps Script
-                    statusDiv.textContent = `Falha: ${data.mensagem || 'Resposta de sucesso, mas status de falha.'}`;
-                    statusDiv.style.color = 'red';
-                }
-            })
-            .catch(error => {
-                statusDiv.textContent = `Erro: ${error.message}. Consulte o console.`;
-                statusDiv.style.color = 'red';
-                console.error('Erro ao enviar dados para a API:', error);
-            });
-        });
-    }
-
-
-    // =================================================================
-    // B) LÓGICA DE BUSCA DE DADOS (GET) - Para dados.html
-    // =================================================================
-
-    const buscarBtn = document.getElementById('botao-carregar');
-    
-    if (buscarBtn) { 
-        const limparBtn = document.getElementById('botao-limpar');
-        const campoIdBusca = document.getElementById('campo-id-busca');
-        const displayArea = document.getElementById('area-de-exibicao');
-        const statusMsg = document.getElementById('status-busca-mensagem');
-
-        // Evento de Carregar
-        buscarBtn.addEventListener('click', () => {
-            const idDesejado = campoIdBusca.value.trim();
-            if (idDesejado) {
-                statusMsg.textContent = 'Buscando dados...';
-                statusMsg.style.color = 'orange';
-                displayArea.innerHTML = '';
-                buscarDadosPorId(idDesejado, displayArea, statusMsg);
-            } else {
-                statusMsg.textContent = 'Por favor, digite um ID.';
-                statusMsg.style.color = 'red';
-            }
-        });
-
-        // Evento de Limpar
-        limparBtn.addEventListener('click', () => {
-            displayArea.innerHTML = '<p>Insira um ID e clique em "Carregar Dados".</p>';
-            campoIdBusca.value = '';
-            statusMsg.textContent = '';
-        });
-
-
-        // Função Central de Busca
-        function buscarDadosPorId(idDesejado, displayArea, statusMsg) {
-            // Faz a requisição GET para o GAS (usado para doGet que retorna todos os dados)
-            fetch(API_URL) 
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Erro de HTTP ao buscar: ${response.status}`);
-                    }
-                    return response.json();
-                }) 
-                .then(listaDados => {
-                    // Filtra os dados no lado do cliente
-                    const resultado = listaDados.find(item => item.id_unico === idDesejado);
-
-                    if (resultado) {
-                        let htmlContent = '<h3>Registro Encontrado:</h3>';
-                        for (const chave in resultado) {
-                            let valor = resultado[chave];
-                            if (typeof valor === 'string') {
-                                // Troca as quebras de linha (\n) por <br> para manter a formatação em <textarea>
-                                valor = valor.replace(/\n/g, '<br>'); 
-                            }
-                            // Formatação simples da chave para exibição
-                            const chaveFormatada = chave.replace(/_/g, ' ').toUpperCase();
-                            htmlContent += `<p><strong>${chaveFormatada}:</strong> ${valor}</p>`;
-                        }
-                        displayArea.innerHTML = htmlContent;
-                        statusMsg.textContent = 'Busca concluída.';
-                        statusMsg.style.color = 'green';
-                    } else {
-                        displayArea.innerHTML = '<p>Nenhum registro encontrado com este ID.</p>';
-                        statusMsg.textContent = 'ID não encontrado.';
-                        statusMsg.style.color = 'red';
-                    }
-                })
-                .catch(error => {
-                    displayArea.innerHTML = `<p style="color: red;">Erro ao buscar: ${error.message}</p>`;
-                    statusMsg.textContent = 'Erro de comunicação com a API.';
-                    statusMsg.style.color = 'red';
-                    console.error('Erro de conexão ao buscar dados:', error);
-                });
-        }
-    } 
 });
+
+
 
 
 
