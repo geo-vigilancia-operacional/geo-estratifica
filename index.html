@@ -1049,8 +1049,13 @@ header h1 {
                 <label for="responsavel">Responsável pela Informação:</label>
                 <input type="text" id="responsavel" name="responsavel" placeholder="Insira o nome do responsável.">
             </div>
-        </div>
+  </div>
     </div>
+    
+    <button id="exportarTabelaTxtBtn" class="secondary">Exportar Tabela TXT</button> 
+    <button id="gerarRelatorioBtn" class="primary">Gerar Relatório Word</button>
+    
+    <input type="file" id="inputArquivo" style="display: none;" accept=".json" />
     
     <button type="submit" id="botao-salvar-api" class="primary" style="margin-top: 20px;">
         ✅ SALVAR DADOS E GERAR ID ÚNICO
