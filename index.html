@@ -753,6 +753,23 @@ header h1 {
 </style>
 </head>
 <body>
+<!-- === TELA DE LOGIN === -->
+<div id="telaLogin" class="tela-login">
+  <div class="login-container">
+    <h2>Login</h2>
+    <input type="text" id="inputUsuario" placeholder="Usuário" />
+    <input type="password" id="inputSenha" placeholder="Senha" />
+    <button id="toggleBtn" onclick="togglePasswordVisibility()">Mostrar senha</button>
+    <button onclick="tentarLogin()">Entrar</button>
+    <p id="mensagemErro" class="mensagem-erro"></p>
+  </div>
+</div>
+
+<!-- === CONTEÚDO PRINCIPAL (oculto até logar) === -->
+<div id="conteudoPrincipal" style="display:none;">
+  <h1 id="mensagemBoasVindas"></h1>
+  <!-- Aqui fica seu conteúdo da aplicação -->
+</div>
 <header>
 <!-- === TELA DE LOGIN === -->
 <div id="telaLogin" class="tela-login">
@@ -1056,6 +1073,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
