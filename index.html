@@ -676,58 +676,209 @@ header h1 {
 #btnMaps:hover {
     background-color: #3b78e7;
 }
+/* ======== TELA DE LOGIN ======== */
+#telaLogin {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(135deg, #0F9588, #0B6E65, #074A44);
+    background-size: 400% 400%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: gradientMove 12s ease infinite;
+    transition: opacity 0.8s ease;
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Cabeçalho */
+#telaLogin h2 {
+    color: #f1f1f1;
+    font-size: 32px;
+    margin-bottom: 25px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+/* Inputs Usuário e Senha */
+#telaLogin input {
+    width: 100%;
+    max-width: 320px;
+    padding: 14px 16px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: none;
+    font-size: 18px;
+    background-color: #ffffff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    transition: all 0.3s ease;
+}
+
+#telaLogin input:focus {
+    outline: none;
+    transform: scale(1.03);
+}
+
+/* Botão Entrar */
+#telaLogin > button {
+    width: 100%;
+    max-width: 320px;
+    margin-top: 12px;
+    padding: 13px 24px;
+    border: none;
+    border-radius: 10px;
+    background-color: #127c70;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+#telaLogin > button:hover {
+    background-color: #0c5d54;
+    transform: scale(1.05);
+}
+
+/* Container senha */
+.senha-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    margin: 8px 0;
+}
+
+.senha-container input {
+    width: 100%;
+}
+
+.senha-container #toggleBtn {
+    margin-top: 6px;
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background-color: #ddd;
+    color: #222;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.senha-container #toggleBtn:hover {
+    background-color: #ccc;
+    color: #000;
+}
+
+/* Mensagem de erro suavizada */
+#telaLogin #mensagemErro {
+    color: #ffe5e5;
+    background: rgba(255, 200, 200, 0.2);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-top: 15px;
+    font-size: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* Conteúdo principal */
+#conteudoPrincipal {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+#conteudoPrincipal.mostrar {
+    opacity: 1;
+}
+
+/* Fade in */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ======== RESPONSIVO CELULARES ======== */
+@media (max-width: 480px) {
+    #telaLogin h2 {
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+
+    #telaLogin input,
+    #telaLogin > button,
+    .senha-container #toggleBtn {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
 </style>
 </head>
 <body>
- <div id="telaLogin">
-        <h2>Acesso Restrito</h2>
+<header>
+    <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
+</header>
 
-        <div>
-            <label for="inputUsuario">Usuário:</label><br>
-            <input type="text" id="inputUsuario" placeholder="Digite seu usuário">
-        </div>
+<!-- === TELA DE LOGIN === -->
+<div id="telaLogin">
+    <h2>Acesso Restrito</h2>
 
-        <div style="margin-top:10px;">
-            <label for="inputSenha">Senha:</label><br>
-            <input type="password" id="inputSenha" placeholder="Digite sua senha"><br>
-            <button id="toggleBtn" type="button" onclick="togglePasswordVisibility()">Mostrar senha</button>
-        </div>
+    <!-- Input Usuário -->
+    <input type="text" id="inputUsuario" placeholder="Usuário">
 
-        <button style="margin-top:10px;" onclick="tentarLogin()">Entrar</button>
-        <p id="mensagemErro"></p>
+    <!-- Input Senha e botão Mostrar senha -->
+    <div class="senha-container">
+        <input type="password" id="inputSenha" placeholder="Senha">
+        <button id="toggleBtn" type="button" onclick="togglePasswordVisibility()">Mostrar senha</button>
     </div>
 
-    <!-- =========================================================
-         CONTEÚDO PRINCIPAL (oculto até login)
-    ========================================================== -->
-    <div id="conteudoPrincipal" style="display:none;">
+    <!-- Botão Entrar -->
+    <button type="button" onclick="tentarLogin()">Entrar</button>
 
-        <header>
+    <!-- Mensagem de erro -->
+    <p id="mensagemErro"></p>
+</div>
 
+<!-- Conteúdo principal escondido até o login -->
+<div id="conteudoPrincipal">
+    <div id="mensagemBoasVindas"></div>
 
-            <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
-    </header>
-    
     <div class="container">
-     <div class="menu">
-        <a href="lira.html">LIRA</a>
-        <a href="ovitrampas.html">Ovitrampas</a>
-        <a href="pesquisas.html">Pesquisas</a>
-        <a href="graficos.html">Gráficos</a>
-        <a href="mapas.html">Mapas</a>
-     </div>
+        <div class="menu">
+            <a href="lira.html">LIRA</a>
+            <a href="ovitrampas.html">Ovitrampas</a>
+            <a href="pesquisas.html">Pesquisas</a>
+            <a href="graficos.html">Gráficos</a>
+            <a href="mapas.html">Mapas</a>
+        </div>
     </div>
-                <div class="main-grid">
-                <!-- Seções do grid mantidas iguais -->
-                <div class="box">
-                    <h3>Selecione o Bairro</h3>
-                    <label for="bairro">Bairro:</label>
-                    <select id="bairro">
-                        <option value="">-- Escolha um bairro --</option>
-                    </select>
-                    <div id="resumoGeral"></div>
-                    <button id="limparTudo" class="secondary">Limpar tudo</button>
-                </div>
+
+    <div class="main-grid">
+        <div class="box">
+            <h3>Selecione o Bairro</h3>
+            <label for="bairro">Bairro:</label>
+            <select id="bairro">
+                <option value="">-- Escolha um bairro --</option>
+            </select>
+            <div id="resumoGeral"></div>
+            <button id="limparTudo" class="secondary">Limpar tudo</button>
+        </div>
+    </div>
+</div>
 
             <div class="box">
         <h3>Selecionar Quadras</h3>
@@ -988,6 +1139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
