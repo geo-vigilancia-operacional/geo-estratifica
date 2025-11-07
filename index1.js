@@ -49,17 +49,20 @@ function tentarLogin() {
 
   const nome = buscarCredenciais(usuario, senha);
 
-  if (nome) {
-    // Sucesso no login
-    mensagemBoasVindas.textContent = `BEM-VINDO, ${nome.toUpperCase()}!`;
-    telaLogin.style.display = 'none';
-    conteudoPrincipal.style.display = 'block';
-    tentativasAtuais = 0;
-    localStorage.setItem('usuarioLogado', nome);
+ if (nome) {
+  // Sucesso no login
+  mensagemBoasVindas.textContent = `BEM-VINDO, ${nome.toUpperCase()}!`;
+  telaLogin.style.display = 'none';
+  conteudoPrincipal.style.display = 'block';
+  tentativasAtuais = 0;
+  localStorage.setItem('usuarioLogado', nome);
 
+  setTimeout(() => {
     if (typeof inicializarAplicacao === 'function') {
       inicializarAplicacao();
     }
+  }, 500);
+}
 
   } else {
     tentativasAtuais++;
@@ -117,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   resetTimerInatividade();
 });
+
 
 
 
