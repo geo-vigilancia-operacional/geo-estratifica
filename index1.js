@@ -76,7 +76,6 @@ function tentarLogin() {
       mensagemErro.style.color = 'rgba(255,0,0,0.7)';
     }
   }
-}
 
 // 6. Função de logout manual ou automático
 function logout() {
@@ -102,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     conteudoPrincipal.style.display = 'none';
   }
 
-  // --- Logout automático após 10 minutos de inatividade ---
+  // Logout automático após 10 minutos de inatividade
   const TEMPO_INATIVIDADE = 10 * 60 * 1000;
   let timerInatividade;
 
@@ -117,6 +116,16 @@ document.addEventListener('DOMContentLoaded', () => {
   ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evento =>
     document.addEventListener(evento, resetTimerInatividade)
   );
+
+  // Limpar mensagem de erro ao digitar
+  const inputUsuario = document.getElementById('inputUsuario');
+  const inputSenha = document.getElementById('inputSenha');
+  const mensagemErro = document.getElementById('mensagemErro');
+
+  if (inputUsuario && inputSenha && mensagemErro) {
+    inputUsuario.addEventListener('input', () => mensagemErro.textContent = '');
+    inputSenha.addEventListener('input', () => mensagemErro.textContent = '');
+  }
 
   resetTimerInatividade();
 });
