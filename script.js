@@ -298,8 +298,8 @@ try {
 
     // Extração de Inputs (Programação)
     const tipoAcao = document.getElementById('tipoSelect')?.options[document.getElementById('tipoSelect').selectedIndex].textContent.trim() || 'Estratificação de Área';
-    const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '|'); // Substitui vírgulas por barras para não quebrar o CSV
-    const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '|'); 
+    const quadrasSelecionadasLista = getValue("quadrasEstratificadas").replace(/,/g, '-'); // Substitui vírgulas por barras para não quebrar o CSV
+    const quadrasPositivas = getValue("quadrasPositivas").replace(/,/g, '-'); 
     const percentualFechadosPrevisto = getValue("percentualFechados");
     const media = getValue("media");
     const servidores = getValue("servidores");
@@ -1376,7 +1376,7 @@ function compartilharWhatsApp() {
         
         
         // --- MONTAGEM DA MENSAGEM ---
-        let mensagem = `*🦟 RESUMO DA ESTRATIFICAÇÃO - ${bairro.toUpperCase()} 🗓️*\n`;
+      let mensagem = `* RESUMO DA ESTRATIFICAÇÃO -\n  BAIRRO: ${bairro.toUpperCase()} *`;
         mensagem += `*Responsável:* ${responsavel !== 'N/A' ? responsavel : 'Não Informado'}\n\n`;
 
         // 1. DADOS GERAIS DO BAIRRO (ESTÁTICOS)
@@ -1396,7 +1396,7 @@ function compartilharWhatsApp() {
         }
         
         // Bloco de Quadras Programadas/Foco
-        mensagem += `*🗺 Quadras Programadas (Meta):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'}\n`;
+        mensagem += `*Quadras Programadas (Meta):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'}\n`;
         if (quadrasPositivas !== 'Nenhuma' && quadrasPositivas !== 'N/A') {
             mensagem += `*🚨 Quadras Foco (Positivas):* ${quadrasPositivas}\n`;
         } 
@@ -1732,6 +1732,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
