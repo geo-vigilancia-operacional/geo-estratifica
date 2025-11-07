@@ -749,6 +749,143 @@ header h1 {
     font-size: 1em;
   }
 }
+/* =========================================================
+   ESTILO GERAL DA TELA DE LOGIN (RESPONSIVO E MODERNO)
+   ========================================================= */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #0F9588, #064E48);
+  color: #fff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* === Container da tela de login === */
+.tela-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  transition: opacity 0.5s ease;
+}
+
+/* === Caixa central de login === */
+.login-container {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+  padding: 40px 35px;
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.login-container h2 {
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+/* === Campos de texto e senha === */
+.login-container input[type="text"],
+.login-container input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  color: #333;
+  outline: none;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.login-container input:focus {
+  box-shadow: 0 0 0 3px rgba(15, 149, 136, 0.4);
+  transform: scale(1.02);
+}
+
+/* === Botão "Mostrar senha" === */
+#toggleBtn {
+  width: 100%;
+  margin-top: -5px;
+  margin-bottom: 14px;
+  background: transparent;
+  color: #bff3ee;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+#toggleBtn:hover {
+  color: #ffffff;
+}
+
+/* === Botão principal (Entrar) === */
+.login-container button:not(#toggleBtn) {
+  width: 100%;
+  padding: 12px;
+  background-color: #0F9588;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.login-container button:not(#toggleBtn):hover {
+  background-color: #0c7d70;
+  transform: scale(1.03);
+}
+
+/* === Mensagem de erro === */
+.mensagem-erro {
+  color: rgba(255, 100, 100, 0.85);
+  font-size: 0.9rem;
+  margin-top: 10px;
+  min-height: 18px;
+  transition: opacity 0.4s ease;
+}
+
+/* === Animação de entrada === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+@media (max-width: 480px) {
+  .login-container {
+    max-width: 90%;
+    padding: 30px 20px;
+  }
+
+  .login-container h2 {
+    font-size: 1.4rem;
+  }
+
+  .login-container input,
+  .login-container button {
+    font-size: 0.95rem;
+  }
+}
 
 </style>
 </head>
@@ -1054,6 +1191,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
