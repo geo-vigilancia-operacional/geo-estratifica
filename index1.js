@@ -112,7 +112,7 @@ function tentarLogin() {
     }
 }
 
-// --- 7. Logout opcional ---
+// --- 7. Logout ---
 function logout() {
     localStorage.removeItem('usuarioLogado');
     location.reload();
@@ -145,7 +145,26 @@ window.addEventListener('DOMContentLoaded', () => {
         inputUsuario.addEventListener('input', () => mensagemErro.textContent = '');
         inputSenha.addEventListener('input', () => mensagemErro.textContent = '');
     }
+
+    // --- Logout automático após 10 minutos de inatividade ---
+    const TEMPO_INATIVIDADE = 10 * 60 * 1000; // 10 minutos
+    let timerInatividade;
+
+    function resetTimerInatividade() {
+        clearTimeout(timerInatividade);
+        timerInatividade = setTimeout(() => {
+            alert('Você ficou inativo por 10 minutos. Faça login novamente.');
+            logout();
+        }, TEMPO_INATIVIDADE);
+    }
+
+    ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evento => {
+        document.addEventListener(evento, resetTimerInatividade);
+    });
+
+    resetTimerInatividade();
 });
+
 
 
 
