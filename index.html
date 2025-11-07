@@ -676,239 +676,13 @@ header h1 {
 #btnMaps:hover {
     background-color: #3b78e7;
 }
-/* === Estilo da tela de login === */
-.tela-login {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, #0077ff, #00c6ff);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  transition: opacity 0.5s ease;
-}
-
-.login-container {
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  text-align: center;
-  width: 300px;
-  transition: all 0.3s ease;
-}
-
-.login-container h2 {
-  margin-bottom: 15px;
-  font-size: 1.5em;
-}
-
-.login-container input {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.login-container button {
-  margin-top: 10px;
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #0077ff;
-  color: white;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.login-container button:hover {
-  background: #005fcc;
-}
-
-.mensagem-erro {
-  color: #c0392b;
-  margin-top: 10px;
-  font-size: 0.9em;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-/* === Responsivo === */
-@media (max-width: 500px) {
-  .login-container {
-    width: 85%;
-    padding: 25px;
-  }
-  .login-container h2 {
-    font-size: 1.2em;
-  }
-  .login-container input, .login-container button {
-    font-size: 1em;
-  }
-}
-/* =========================================================
-   ESTILO GERAL DA TELA DE LOGIN (RESPONSIVO E MODERNO)
-   ========================================================= */
-body {
-  margin: 0;
-  font-family: "Segoe UI", Roboto, sans-serif;
-  background: linear-gradient(135deg, #0F9588, #064E48);
-  color: #fff;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* === Container da tela de login === */
-.tela-login {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  transition: opacity 0.5s ease;
-}
-
-/* === Caixa central de login === */
-.login-container {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(6px);
-  border-radius: 16px;
-  padding: 40px 35px;
-  width: 100%;
-  max-width: 350px;
-  text-align: center;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
-  animation: fadeIn 0.8s ease forwards;
-}
-
-.login-container h2 {
-  margin-bottom: 20px;
-  font-size: 1.6rem;
-  color: #ffffff;
-  letter-spacing: 1px;
-}
-
-/* === Campos de texto e senha === */
-.login-container input[type="text"],
-.login-container input[type="password"] {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 14px;
-  border: none;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.9);
-  font-size: 1rem;
-  color: #333;
-  outline: none;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
-}
-
-.login-container input:focus {
-  box-shadow: 0 0 0 3px rgba(15, 149, 136, 0.4);
-  transform: scale(1.02);
-}
-
-/* === Botão "Mostrar senha" === */
-#toggleBtn {
-  width: 100%;
-  margin-top: -5px;
-  margin-bottom: 14px;
-  background: transparent;
-  color: #bff3ee;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-decoration: underline;
-  transition: color 0.3s ease;
-}
-
-#toggleBtn:hover {
-  color: #ffffff;
-}
-
-/* === Botão principal (Entrar) === */
-.login-container button:not(#toggleBtn) {
-  width: 100%;
-  padding: 12px;
-  background-color: #0F9588;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.login-container button:not(#toggleBtn):hover {
-  background-color: #0c7d70;
-  transform: scale(1.03);
-}
-
-/* === Mensagem de erro === */
-.mensagem-erro {
-  color: rgba(255, 100, 100, 0.85);
-  font-size: 0.9rem;
-  margin-top: 10px;
-  min-height: 18px;
-  transition: opacity 0.4s ease;
-}
-
-/* === Animação de entrada === */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* =========================================================
-   RESPONSIVIDADE
-   ========================================================= */
-@media (max-width: 480px) {
-  .login-container {
-    max-width: 90%;
-    padding: 30px 20px;
-  }
-
-  .login-container h2 {
-    font-size: 1.4rem;
-  }
-
-  .login-container input,
-  .login-container button {
-    font-size: 0.95rem;
-  }
-}
-
 </style>
 </head>
 <body>
-<!-- === TELA DE LOGIN === -->
-<div id="telaLogin" class="tela-login">
-  <div class="login-container">
-    <h2>Login</h2>
-    <input type="text" id="inputUsuario" placeholder="Usuário" />
-    <input type="password" id="inputSenha" placeholder="Senha" />
-    <button id="toggleBtn" onclick="togglePasswordVisibility()">Mostrar senha</button>
-    <button onclick="tentarLogin()">Entrar</button>
-    <p id="mensagemErro" class="mensagem-erro"></p>
-  </div>
-</div>
-
-<!-- === CONTEÚDO PRINCIPAL (oculto até logar) === -->
-<div id="conteudoPrincipal" style="display:none;">
-  <h1 id="mensagemBoasVindas"></h1>
-  <!-- Aqui fica seu conteúdo da aplicação -->
-</div>
 <header>
-<h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
+
+
+            <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
     </header>
     
     <div class="container">
@@ -1186,11 +960,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <button id="gerarRelatorioBtn" class="primary">Gerar Relatório Word</button>
          <input type="file" id="inputArquivo" style="display: none;" accept=".json" />
      <!-- Script deve vir DEPOIS do HTML, não dentro dele -->
-                <script src="index1.js"></script>
-                <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
+
+
 
 
 
