@@ -147,13 +147,13 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Logout automático após 10 minutos de inatividade ---
-    const TEMPO_INATIVIDADE = 10 * 60 * 1000; // 10 minutos
+    const TEMPO_INATIVIDADE = 10 * 60 * 500; // 5 minutos
     let timerInatividade;
 
     function resetTimerInatividade() {
         clearTimeout(timerInatividade);
         timerInatividade = setTimeout(() => {
-            alert('Você ficou inativo por 10 minutos. Faça login novamente.');
+            alert('Você ficou inativo por 5 minutos. Faça login novamente.');
             logout();
         }, TEMPO_INATIVIDADE);
     }
@@ -164,6 +164,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     resetTimerInatividade();
 });
+
 
 
 
