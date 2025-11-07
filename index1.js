@@ -12,158 +12,112 @@ const CREDENCIAIS_OFUSCADAS = {
     'NILO': { name: 'Nilo', pass: '130151' },
 };
 
-// --- 2. Variáveis de controle ---
+// 2. Controle de tentativas e bloqueio
 let tentativasAtuais = 0;
 const TENTATIVAS_MAXIMAS = 3;
 let bloqueado = false;
-let tempoBloqueio = 30; // segundos
-let timer;
 
-// --- 3. Buscar credenciais ---
+// 3. Função auxiliar de busca de credenciais
 function buscarCredenciais(usuario, senha) {
-    const credencial = CREDENCIAIS_OFUSCADAS[usuario.toUpperCase()];
-    return (credencial && credencial.pass === senha) ? credencial.name : null;
+  const credencial = CREDENCIAIS_OFUSCADAS[usuario.toUpperCase()];
+  return credencial && credencial.pass === senha ? credencial.name : null;
 }
 
-// --- 4. Alternar visibilidade da senha ---
+// 4. Alternar visibilidade da senha
 function togglePasswordVisibility() {
-    const senhaInput = document.getElementById('inputSenha');
-    const toggleBtn = document.getElementById('toggleBtn');
-    if (senhaInput.type === 'password') {
-        senhaInput.type = 'text';
-        toggleBtn.textContent = 'Ocultar senha';
-    } else {
-        senhaInput.type = 'password';
-        toggleBtn.textContent = 'Mostrar senha';
-    }
+  const senhaInput = document.getElementById('loginSenha');
+  const toggleBtn = document.getElementById('toggleBtn');
+  if (senhaInput.type === 'password') {
+    senhaInput.type = 'text';
+    toggleBtn.textContent = 'Ocultar senha';
+  } else {
+    senhaInput.type = 'password';
+    toggleBtn.textContent = 'Mostrar senha';
+  }
 }
 
-// --- 5. Bloqueio temporizado ---
-function iniciarContagemBloqueio() {
-    const mensagemErro = document.getElementById('mensagemErro');
-    const botaoLogin = document.querySelector('#telaLogin > button');
-
-    let segundosRestantes = tempoBloqueio;
-    bloqueado = true;
-    botaoLogin.disabled = true;
-
-    mensagemErro.textContent = `Acesso bloqueado. Tente novamente em ${segundosRestantes}s.`;
-
-    timer = setInterval(() => {
-        segundosRestantes--;
-        if (segundosRestantes > 0) {
-            mensagemErro.textContent = `Acesso bloqueado. Tente novamente em ${segundosRestantes}s.`;
-        } else {
-            clearInterval(timer);
-            bloqueado = false;
-            tentativasAtuais = 0;
-            mensagemErro.textContent = '';
-            botaoLogin.disabled = false;
-        }
-    }, 1000);
-}
-
-// --- 6. Login principal ---
+// 5. Função principal de login
 function tentarLogin() {
-    const inputUsuario = document.getElementById('inputUsuario');
-    const inputSenha = document.getElementById('inputSenha');
-    const mensagemErro = document.getElementById('mensagemErro');
-    const telaLogin = document.getElementById('telaLogin');
-    const conteudoPrincipal = document.getElementById('conteudoPrincipal');
-    const mensagemBoasVindas = document.getElementById('mensagemBoasVindas');
+  if (bloqueado) return alert('Acesso bloqueado. Recarregue a página.');
 
-    if (bloqueado) {
-        mensagemErro.textContent = 'Acesso bloqueado. Aguarde o tempo de espera.';
-        return;
+  const usuario = document.getElementById('loginUsuario').value.trim();
+  const senha = document.getElementById('loginSenha').value.trim();
+  const mensagemErro = document.getElementById('mensagemErro');
+  const telaLogin = document.getElementById('telaLogin');
+  const conteudoPrincipal = document.getElementById('conteudoPrincipal');
+  const mensagemBoasVindas = document.getElementById('mensagemBoasVindas');
+
+  const nome = buscarCredenciais(usuario, senha);
+
+  if (nome) {
+    // Sucesso no login
+    mensagemBoasVindas.textContent = `BEM-VINDO, ${nome.toUpperCase()}!`;
+    telaLogin.style.display = 'none';
+    conteudoPrincipal.style.display = 'block';
+    tentativasAtuais = 0;
+    localStorage.setItem('usuarioLogado', nome);
+
+    if (typeof inicializarAplicacao === 'function') {
+      inicializarAplicacao();
     }
 
-    const usuario = inputUsuario.value.trim();
-    const senha = inputSenha.value.trim();
-    const nomePersonalizado = buscarCredenciais(usuario, senha);
-
-    if (nomePersonalizado) {
-        // --- login bem-sucedido ---
-        localStorage.setItem('usuarioLogado', nomePersonalizado);
-
-        mensagemBoasVindas.textContent = `BEM-VINDO, ${nomePersonalizado.toUpperCase()}!`;
-        telaLogin.style.opacity = '0';
-        setTimeout(() => {
-            telaLogin.style.display = 'none';
-            conteudoPrincipal.style.display = 'block';
-            conteudoPrincipal.style.opacity = '0';
-            setTimeout(() => conteudoPrincipal.style.opacity = '1', 100);
-
-            if (typeof inicializarAplicacao === 'function') {
-                inicializarAplicacao();
-            }
-        }, 400);
-
+  } else {
+    tentativasAtuais++;
+    document.getElementById('loginSenha').value = '';
+    const restantes = TENTATIVAS_MAXIMAS - tentativasAtuais;
+    if (tentativasAtuais >= TENTATIVAS_MAXIMAS) {
+      bloqueado = true;
+      mensagemErro.textContent = 'Acesso bloqueado. Recarregue a página.';
     } else {
-        // --- login falhou ---
-        tentativasAtuais++;
-        inputSenha.value = '';
-        mensagemErro.style.opacity = '0';
-        mensagemErro.textContent = `Usuário ou senha incorretos. Tentativas restantes: ${TENTATIVAS_MAXIMAS - tentativasAtuais}`;
-        setTimeout(() => { mensagemErro.style.opacity = '1'; }, 50);
-
-        if (tentativasAtuais >= TENTATIVAS_MAXIMAS) {
-            iniciarContagemBloqueio();
-        }
+      mensagemErro.textContent = `Usuário ou senha incorretos. Tentativas restantes: ${restantes}`;
+      mensagemErro.style.color = 'rgba(255,0,0,0.7)';
     }
+  }
 }
 
-// --- 7. Logout ---
+// 6. Função de logout manual ou automático
 function logout() {
-    localStorage.removeItem('usuarioLogado');
-    location.reload();
+  localStorage.removeItem('usuarioLogado');
+  document.getElementById('conteudoPrincipal').style.display = 'none';
+  document.getElementById('telaLogin').style.display = 'flex';
 }
 
-// --- 8. Inicialização após DOM carregado ---
-window.addEventListener('DOMContentLoaded', () => {
-    const telaLogin = document.getElementById('telaLogin');
-    const conteudoPrincipal = document.getElementById('conteudoPrincipal');
-    const mensagemBoasVindas = document.getElementById('mensagemBoasVindas');
-    const inputUsuario = document.getElementById('inputUsuario');
-    const inputSenha = document.getElementById('inputSenha');
-    const mensagemErro = document.getElementById('mensagemErro');
+// 7. Verificar sessão ao carregar
+document.addEventListener('DOMContentLoaded', () => {
+  const usuarioLogado = localStorage.getItem('usuarioLogado');
+  const telaLogin = document.getElementById('telaLogin');
+  const conteudoPrincipal = document.getElementById('conteudoPrincipal');
+  const mensagemBoasVindas = document.getElementById('mensagemBoasVindas');
 
-    // --- Mantém login ativo ---
-    const usuarioLogado = localStorage.getItem('usuarioLogado');
-    if (usuarioLogado) {
-        telaLogin.style.display = 'none';
-        conteudoPrincipal.style.display = 'block';
-        conteudoPrincipal.style.opacity = '1';
-        mensagemBoasVindas.textContent = `BEM-VINDO, ${usuarioLogado.toUpperCase()}!`;
+  if (usuarioLogado) {
+    telaLogin.style.display = 'none';
+    conteudoPrincipal.style.display = 'block';
+    mensagemBoasVindas.textContent = `BEM-VINDO, ${usuarioLogado.toUpperCase()}!`;
+    if (typeof inicializarAplicacao === 'function') inicializarAplicacao();
+  } else {
+    telaLogin.style.display = 'flex';
+    conteudoPrincipal.style.display = 'none';
+  }
 
-        if (typeof inicializarAplicacao === 'function') {
-            inicializarAplicacao();
-        }
-    }
+  // --- Logout automático após 10 minutos de inatividade ---
+  const TEMPO_INATIVIDADE = 10 * 60 * 1000;
+  let timerInatividade;
 
-    // --- Limpar mensagem de erro ao digitar ---
-    if (inputUsuario && inputSenha && mensagemErro) {
-        inputUsuario.addEventListener('input', () => mensagemErro.textContent = '');
-        inputSenha.addEventListener('input', () => mensagemErro.textContent = '');
-    }
+  function resetTimerInatividade() {
+    clearTimeout(timerInatividade);
+    timerInatividade = setTimeout(() => {
+      alert('Você ficou inativo por 10 minutos. Faça login novamente.');
+      logout();
+    }, TEMPO_INATIVIDADE);
+  }
 
-    // --- Logout automático após 10 minutos de inatividade ---
-    const TEMPO_INATIVIDADE = 10 * 60 * 500; // 5 minutos
-    let timerInatividade;
+  ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evento =>
+    document.addEventListener(evento, resetTimerInatividade)
+  );
 
-    function resetTimerInatividade() {
-        clearTimeout(timerInatividade);
-        timerInatividade = setTimeout(() => {
-            alert('Você ficou inativo por 5 minutos. Faça login novamente.');
-            logout();
-        }, TEMPO_INATIVIDADE);
-    }
-
-    ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evento => {
-        document.addEventListener(evento, resetTimerInatividade);
-    });
-
-    resetTimerInatividade();
+  resetTimerInatividade();
 });
+
 
 
 
