@@ -679,7 +679,30 @@ header h1 {
 </style>
 </head>
 <body>
-<header>
+ <div id="telaLogin">
+        <h2>Acesso Restrito</h2>
+
+        <div>
+            <label for="inputUsuario">Usuário:</label><br>
+            <input type="text" id="inputUsuario" placeholder="Digite seu usuário">
+        </div>
+
+        <div style="margin-top:10px;">
+            <label for="inputSenha">Senha:</label><br>
+            <input type="password" id="inputSenha" placeholder="Digite sua senha"><br>
+            <button id="toggleBtn" type="button" onclick="togglePasswordVisibility()">Mostrar senha</button>
+        </div>
+
+        <button style="margin-top:10px;" onclick="tentarLogin()">Entrar</button>
+        <p id="mensagemErro"></p>
+    </div>
+
+    <!-- =========================================================
+         CONTEÚDO PRINCIPAL (oculto até login)
+    ========================================================== -->
+    <div id="conteudoPrincipal" style="display:none;">
+
+        <header>
 
 
             <h1>ESTRATIFICAÇÃO DE ÁREAS - DTE VI 2025</h1>
@@ -965,6 +988,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
