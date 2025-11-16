@@ -1,3 +1,5 @@
+// A SENHA SECRETA PARA LIBERAR A EXPORTAÇÃO
+const SENHA_SECRETA_EXPORTACAO = '1234';
 let bairros = [];
 let dadosOvitrampas = []; // ✅ novo
 let estado = {
@@ -43,7 +45,17 @@ function salvarConteudoComoDoc(html, filename) {
 // =================================================================
 function gerarRelatorioWord() {
     console.log("Iniciando a geração do Relatório Word (com tratamentos detalhados)...");
+// ========================================================
+    // 🛑 INÍCIO DA CHECAGEM DE SENHA 🛑
+    // ========================================================
+    const senhaDigitada = prompt("Para gerar o Relatório Word, insira a senha:");
 
+    if (senhaDigitada !== SENHA_SECRETA_EXPORTACAO) {
+        if (senhaDigitada !== null) { // Se não for 'null' (usuário não cancelou)
+            alert("Senha incorreta. O relatório não será gerado.");
+        }
+        return; // Sai da função se a senha for incorreta ou cancelada
+    }
     if (!estado || !estado.bairroSelecionado) {
         alert("Selecione um bairro e defina a estratificação primeiro!");
         return;
@@ -255,7 +267,21 @@ function salvarConteudoComoTxt(conteudo, filename) {
 // =================================================================
 function exportarTabelaTXT() {
     console.log("Iniciando a exportação da Tabela TXT...");
+// ========================================================
+    // 🛑 INÍCIO DA CHECAGEM DE SENHA 🛑
+    // ========================================================
+    const senhaDigitada = prompt("Para exportar como TXT, insira a senha:");
 
+    if (senhaDigitada !== SENHA_SECRETA_EXPORTACAO) {
+        if (senhaDigitada !== null) { // Se não for 'null' (usuário não cancelou)
+            alert("Senha incorreta. A exportação não será realizada.");
+        }
+        return; // Sai da função se a senha for incorreta ou cancelada
+    }
+    // ========================================================
+    // 🛑 FIM DA CHECAGEM DE SENHA 🛑
+    // ========================================================
+    
   if (!estado || !estado.bairroSelecionado) {
     alert("Selecione um bairro e defina a estratificação primeiro!");
     return;
@@ -1735,6 +1761,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
