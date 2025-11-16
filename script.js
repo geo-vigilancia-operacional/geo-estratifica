@@ -1389,14 +1389,14 @@ function compartilharWhatsApp() {
         mensagem += `*Ovitrampas:* ${ovitrampasGeral} PE: ${pontosEstrategicosGeral}\n\n`;
         
         // 2. PROGRAMAÇÃO E ESFORÇO (DINÂMICOS)
-        mensagem += `*--- PROGRAMAÇÃO ---\n`;
-        mensagem += `*Tipo:* ${motivo}\n`;
+      mensagem += `--- PROGRAMAÇÃO ---\n`;
+mensagem += `Tipo: ${motivo}\n`; // Removido o asterisco (motivo não é título)
         
-        if (selectTipo?.value.includes("mutirao")) { 
-            mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao})\n`;
-            UAPS: ${uaps}\n`;
-        
-        }
+if (selectTipo?.value.includes("mutirao")) { 
+    // Garante que o endereço, quadra e UAPS fiquem em linhas limpas
+    mensagem += `Endereço: ${endereço} (Quadra ${quadraMutirao})\n`; 
+    mensagem += `UAPS: ${uaps}\n`; // CORREÇÃO: Adicionado 'mensagem +='
+}
         
         // Bloco de Quadras Programadas/Foco
         mensagem += `*Quadras Programadas (Meta):* ${quadrasSelecionadas.length > 0 ? quadrasSelecionadas : 'N/A'}\n`;
@@ -1735,6 +1735,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
