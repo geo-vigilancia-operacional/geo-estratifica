@@ -1376,8 +1376,9 @@ function compartilharWhatsApp() {
         
         
         // --- MONTAGEM DA MENSAGEM ---
-      let mensagem = `* RESUMO DA ESTRATIFICAÇÃO -\n  BAIRRO: ${bairro.toUpperCase()} *`;
-        mensagem += `*Responsável:* ${responsavel !== 'N/A' ? responsavel : 'Não Informado'}\n\n`;
+      let mensagem = `RESUMO DA ESTRATIFICAÇÃO - \n`; // Adiciona \n para a próxima linha
+    mensagem += `BAIRRO: ${bairro.toUpperCase()}\n`; // Adiciona \n para a próxima linha
+    mensagem += `Responsável: ${responsavel !== 'N/A' ? responsavel : 'Não Informado'}\n\n`; // Adiciona \n\n para pular uma linha após
 
         // 1. DADOS GERAIS DO BAIRRO (ESTÁTICOS)
         mensagem += `*--- DADOS GERAIS DO BAIRRO ---\n`;
@@ -1732,6 +1733,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
