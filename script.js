@@ -1376,7 +1376,7 @@ function compartilharWhatsApp() {
         
         
         // --- MONTAGEM DA MENSAGEM ---
-      let mensagem = `RESUMO DA ESTRATIFICAÇÃO - \n`; // Adiciona \n para a próxima linha
+      let mensagem = `RESUMO DA ESTRATIFICAÇÃO \n`; // Adiciona \n para a próxima linha
     mensagem += `BAIRRO: ${bairro.toUpperCase()}\n`; // Adiciona \n para a próxima linha
     mensagem += `Responsável: ${responsavel !== 'N/A' ? responsavel : 'Não Informado'}\n\n`; // Adiciona \n\n para pular uma linha após
 
@@ -1386,14 +1386,16 @@ function compartilharWhatsApp() {
         mensagem += `*Total Imóveis (Ativos):* ${totalImoveisGeral}\n`;
         mensagem += `*Total Habitantes:* ${totalHabitantesGeral}\n`; 
         mensagem += `*Cães/Gatos:* ${cãesGeral}/${gatosGeral}\n`;
-        mensagem += `*Ovitrampas:* ${ovitrampasGeral} /(PE) ${pontosEstrategicosGeral}\n\n`;
+        mensagem += `*Ovitrampas:* ${ovitrampasGeral} PE: ${pontosEstrategicosGeral}\n\n`;
         
         // 2. PROGRAMAÇÃO E ESFORÇO (DINÂMICOS)
         mensagem += `*--- PROGRAMAÇÃO ---\n`;
         mensagem += `*Tipo:* ${motivo}\n`;
         
         if (selectTipo?.value.includes("mutirao")) { 
-            mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao}) - UAPS: ${uaps}\n`;
+            mensagem += `*Endereço:* ${endereço} (Quadra ${quadraMutirao})\n`;
+            UAPS: ${uaps}\n`;
+        
         }
         
         // Bloco de Quadras Programadas/Foco
@@ -1406,7 +1408,7 @@ function compartilharWhatsApp() {
         mensagem += `*Total Habitantes:* ${totalHabitantesProg}\n`; 
         mensagem += `*Pontos Estratégicos (PE):* ${pontosEstrategicosProg}\n`; 
         // REMOVIDA A LINHA DE REPETIÇÃO: *Imóveis Programados: ${imoveisProgramados}\n
-        mensagem += `*Imóveis Programados:* ${imoveisProgramados} /Á trabalhar ${imoveisTrabalhar}\n`;
+        mensagem += `*Imóveis Programados:* ${imoveisProgramados} / Á trabalhar ${imoveisTrabalhar}\n`;
         mensagem += `*(% Fechados Previsto:* ${percentualFechados}%) \n`;
 
         mensagem += `*Período Programado:* ${formatarData(dataInicioProg)} á ${formatarData(dataTerminoProg)}\n`;
@@ -1421,7 +1423,7 @@ function compartilharWhatsApp() {
             mensagem += `*--- RESULTADOS ---\n`;
             mensagem += `*Período Real:* ${formatarData(dataInicioReal)} á ${formatarData(dataTerminoReal)}\n`;
             mensagem += `*Semana:* ${semanaInicial} a ${semanaFinal} (Ciclo ${ciclo})\n`;
-            mensagem += `*HDP:* ${hdp} /HDT ${hdt}\n`;
+            mensagem += `*HDP:* ${hdp} / HDT ${hdt}\n`;
             mensagem += `*Quadras Trabalhadas:* ${quadrasTrabalhadas}\n`;
             
             // Imóveis e Focos (AGORA USANDO O percLimpo)
@@ -1430,7 +1432,7 @@ function compartilharWhatsApp() {
             mensagem += `*QTD Focos/Imóvel:* ${focosPorImovel}\n`;
             
             // Tratamentos (Imóveis)
-            mensagem += `*Imóveis Tratados BTI:* ${btiTratados} /ESP ${espTratados}\n`;
+            mensagem += `*Imóveis Tratados BTI:* ${btiTratados} / ESP ${espTratados}\n`;
             
             // Depósitos Positivos (FORMATO ESPECÍFICO SOLICITADO)
            mensagem += `*Total Dep. Positivos:* ${totalDepositosPositivos}\n`;
@@ -1733,6 +1735,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
