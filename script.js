@@ -1,5 +1,5 @@
 // A SENHA SECRETA PARA LIBERAR A EXPORTAÇÃO
-const SENHA_SECRETA_EXPORTACAO = '1234';
+const SENHA_SECRETA_EXPORTACAO = '1212121513';
 let bairros = [];
 let dadosOvitrampas = []; // ✅ novo
 let estado = {
@@ -1761,6 +1761,7 @@ function configurarBotoes() {
     
     console.log("Sistema inicializado com sucesso!");
 });
+
 
 
 
