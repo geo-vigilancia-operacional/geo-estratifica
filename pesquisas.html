@@ -1378,58 +1378,65 @@ async function automatizarPreenchimento() {
     const textoSelecionado = selectCodigo.options[selectCodigo.selectedIndex].text;
     const extratoAlvo = textoSelecionado.split('-')[0].trim(); 
     
-    console.log("🔍 Buscando dados para o Extrato:", extratoAlvo);
+    console.log("🔍 Iniciando busca profunda para o Extrato:", extratoAlvo);
 
     try {
-        // Busca o JSON com timestamp para ignorar o cache do navegador
         const response = await fetch('resultado_extrato.json?t=' + Date.now());
         const dados = await response.json();
 
-        // Filtra todos os itens que batem com o número do extrato
+        // Filtra os bairros do extrato no JSON
         const resultados = dados.filter(item => String(item.ID_EXTRATO) === extratoAlvo);
 
         if (resultados.length > 0) {
+            // Pega todos os inputs da página para comparar
+            const todosOsInputs = document.querySelectorAll('input');
+
             resultados.forEach(registro => {
-                // LÓGICA DE PADRONIZAÇÃO:
-                // 1. Remove acentos (ex: São -> Sao)
-                // 2. Transforma em MAIÚSCULAS
-                // 3. Troca espaços por _ (ex: BOA VISTA -> BOA_VISTA)
-                const bairroNormalizado = registro.BAIRRO
-                    .normalize("NFD")
+                // Prepara o nome do bairro do JSON (Ex: "Passaré" -> "PASSARE")
+                const nomeBairroLimpo = registro.BAIRRO.normalize("NFD")
                     .replace(/[\u0300-\u036f]/g, "")
                     .toUpperCase()
                     .trim()
                     .replace(/\s+/g, '_');
 
-                const idRealDoCampo = `ids_sorteadas_${bairroNormalizado}_0`;
-                const campoInput = document.getElementById(idRealDoCampo);
+                let campoEncontrado = false;
 
-                if (campoInput) {
-                    campoInput.value = registro.VALORES.join('-');
-                    
-                    // Cores para confirmar o preenchimento
-                    campoInput.style.backgroundColor = "#1a3a5a";
-                    campoInput.style.color = "#00efff";
-                    
-                    // Dispara eventos para o site salvar a informação
-                    campoInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    campoInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    console.log(`✅ Sucesso: ${idRealDoCampo}`);
-                } else {
-                    console.warn(`⚠️ Campo não encontrado na tela: ${idRealDoCampo}`);
-                    console.log("Dica: Verifique se o nome do bairro no JSON está igual ao do site.");
+                // Tenta encontrar o campo que contém o nome do bairro no ID
+                todosOsInputs.forEach(input => {
+                    const idInput = input.id.toUpperCase();
+                    if (idInput.includes(nomeBairroLimpo) && idInput.includes('SORTEADAS')) {
+                        const textoValores = registro.VALORES.join('-');
+                        input.value = textoValores;
+                        
+                        // Feedback visual
+                        input.style.backgroundColor = "#004411"; // Verde escuro para sucesso
+                        input.style.color = "#ffffff";
+                        
+                        // Dispara eventos
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                        
+                        console.log(`✅ Campo encontrado e preenchido: ${input.id}`);
+                        campoEncontrado = true;
+                    }
+                });
+
+                if (!campoEncontrado) {
+                    console.warn(`⚠️ Não encontrei nenhum campo na tela para o bairro: ${nomeBairroLimpo}`);
                 }
             });
+            alert(`Processamento do Extrato ${extratoAlvo} concluído.`);
         } else {
-            console.warn(`❌ O Extrato ${extratoAlvo} não foi encontrado dentro do seu arquivo JSON.`);
+            console.error(`❌ Extrato ${extratoAlvo} não existe no JSON.`);
         }
     } catch (erro) {
-        console.error("Erro ao carregar o arquivo JSON:", erro);
+        console.error("Erro crítico:", erro);
     }
 }
 </script>
 </body>
 </html>
+
 
 
 
