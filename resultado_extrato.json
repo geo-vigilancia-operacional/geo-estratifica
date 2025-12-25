@@ -63,7 +63,7 @@
   },
   {
     "ID_EXTRATO": "86",
-    "BAIRRO": "Parque Dois Irmaos ",
+    "BAIRRO": "Parque Dois Irmaos",
     "VALORES": [
       3,
       8,
@@ -175,7 +175,7 @@
   },
   {
     "ID_EXTRATO": "87",
-    "BAIRRO": "Passaré ",
+    "BAIRRO": "Passaré",
     "VALORES": [
       5,
       9,
@@ -227,7 +227,7 @@
   },
   {
     "ID_EXTRATO": "88",
-    "BAIRRO": "Passaré ",
+    "BAIRRO": "Passaré",
     "VALORES": [
       2,
       6,
@@ -1363,4 +1363,5 @@
   }
 
 ]
+
 
