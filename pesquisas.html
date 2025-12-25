@@ -1371,51 +1371,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 async function automatizarPreenchimento() {
-    // 1. Pega o ID correto da lista (no seu HTML analisei que é 'selecaoCodigo')
     const selectBairro = document.getElementById('selecaoCodigo') || document.getElementById('bairroSelecionado');
-    
-    if (!selectBairro) {
-        console.error("Lista suspensa não encontrada.");
-        return;
-    }
+    if (!selectBairro) return;
 
-    // Pega o texto: "85 - PARQUE DOIS IRMAOS"
     let textoCompleto = selectBairro.options[selectBairro.selectedIndex].text;
-    
-    // MÁGICA: Remove o "85 - " e deixa apenas "PARQUE DOIS IRMAOS"
-    // E converte para maiúsculas para não ter erro de comparação
+    // Extrai o nome do bairro (ex: PARQUE DOIS IRMAOS)
     let bairroLimpo = textoCompleto.split('-').pop().trim().toUpperCase();
-
-    console.log("Bairro processado para busca:", bairroLimpo);
+    
+    // Transforma o nome para o formato do ID do seu input (troca espaços por _)
+    let bairroParaID = bairroLimpo.replace(/\s+/g, '_');
 
     try {
         const response = await fetch('resultado_extrato.json');
         const dados = await response.json();
 
-        // Procura no JSON comparando os nomes em maiúsculas
-        const extrato = dados.find(item => {
-            return item.BAIRRO.trim().toUpperCase() === bairroLimpo;
-        });
+        const extrato = dados.find(item => item.BAIRRO.trim().toUpperCase() === bairroLimpo);
 
         if (extrato) {
-            console.log("Dados encontrados para o extrato:", extrato.ID_EXTRATO);
+            // 1. Cria o ID dinâmico exato: ids_sorteadas_NOME_DO_BAIRRO_0
+            const idRealDoCampo = `ids_sorteadas_${bairroParaID}_0`;
+            const campoInput = document.getElementById(idRealDoCampo);
 
-            // Preenche os campos de quadras (IDs q1, q2, q3...)
-            extrato.VALORES.forEach((valor, index) => {
-                const idCampo = `q${index + 1}`; // Ajuste para o ID real dos seus inputs
-                const campo = document.getElementById(idCampo);
+            if (campoInput) {
+                // 2. Junta os números com hífen (ex: 1-6-11-17-22)
+                const valoresFormatados = extrato.VALORES.join('-');
                 
-                if (campo) {
-                    campo.value = valor;
-                    campo.style.backgroundColor = "#2a2a47"; 
-                    campo.style.color = "#00b4d8";
-                    // Dispara um evento de mudança caso seu site precise calcular algo
-                    campo.dispatchEvent(new Event('change'));
+                campoInput.value = valoresFormatados;
+                
+                // Estilização para você ver que funcionou
+                campoInput.style.backgroundColor = "#2a2a47";
+                campoInput.style.color = "#00b4d8";
+                campoInput.style.fontWeight = "bold";
+
+                // 3. Dispara os eventos para o seu sistema processar os números
+                campoInput.dispatchEvent(new Event('input', { bubbles: true }));
+                campoInput.dispatchEvent(new Event('change', { bubbles: true }));
+                
+                console.log(`✅ Sucesso! Campo ${idRealDoCampo} preenchido com: ${valoresFormatados}`);
+            } else {
+                console.error(`❌ Não encontrei o campo com ID: ${idRealDoCampo}`);
+                // Caso o ID não tenha o _0 no final em alguns casos, tentamos sem:
+                const campoAlternativo = document.querySelector(`[data-bairro-normalizado="${bairroLimpo}"]`);
+                if(campoAlternativo) {
+                    campoAlternativo.value = extrato.VALORES.join('-');
+                    campoAlternativo.dispatchEvent(new Event('input', { bubbles: true }));
                 }
-            });
-            console.log("✅ Sucesso! Quadras preenchidas.");
-        } else {
-            console.warn("❌ Não encontrei correspondência para: " + bairroLimpo);
+            }
         }
     } catch (erro) {
         console.error("Erro ao carregar o JSON:", erro);
@@ -1424,6 +1425,7 @@ async function automatizarPreenchimento() {
 </script>
 </body>
 </html>
+
 
 
 
