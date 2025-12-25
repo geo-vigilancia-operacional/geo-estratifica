@@ -1,6 +1,6 @@
 [
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "85",
     "BAIRRO": "Parque Dois Irmaos",
     "VALORES": [
       1,
@@ -62,7 +62,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "86",
     "BAIRRO": "Parque Dois Irmaos I",
     "VALORES": [
       3,
@@ -122,7 +122,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "86",
     "BAIRRO": "Passaré",
     "VALORES": [
       4,
@@ -174,8 +174,8 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
-    "BAIRRO": "PassaréI",
+    "ID_EXTRATO": "87",
+    "BAIRRO": "Passaré I",
     "VALORES": [
       5,
       9,
@@ -226,8 +226,8 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
-    "BAIRRO": "PassaréII",
+    "ID_EXTRATO": "88",
+    "BAIRRO": "Passaré II",
     "VALORES": [
       2,
       6,
@@ -276,7 +276,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "89",
     "BAIRRO": "Boa Vista",
     "VALORES": [
       4,
@@ -323,7 +323,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "89",
     "BAIRRO": "Dias Macedo",
     "VALORES": [
       5,
@@ -368,8 +368,8 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
-    "BAIRRO": "Boa Vista",
+    "ID_EXTRATO": "90",
+    "BAIRRO": "Boa Vista I",
     "VALORES": [
       1,
       5,
@@ -410,7 +410,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "90",
     "BAIRRO": "Cajazeiras",
     "VALORES": [
       3,
@@ -451,8 +451,8 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
-    "BAIRRO": "BarrosoI",
+    "ID_EXTRATO": "91",
+    "BAIRRO": "Barroso I",
     "VALORES": [
       3,
       7,
@@ -491,7 +491,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "92",
     "BAIRRO": "Barroso",
     "VALORES": [
       4,
@@ -531,7 +531,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "93",
     "BAIRRO": "Jangurussú",
     "VALORES": [
       1,
@@ -570,7 +570,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "93",
     "BAIRRO": "Conjunto Palmeiras",
     "VALORES": [
       1,
@@ -607,7 +607,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "94",
     "BAIRRO": "Conjunto Palmeiras I",
     "VALORES": [
       4,
@@ -643,7 +643,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "95",
     "BAIRRO": "Jangurussú I",
     "VALORES": [
       1,
@@ -678,7 +678,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "96",
     "BAIRRO": "Jangurussú II",
     "VALORES": [
       3,
@@ -712,7 +712,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "97",
     "BAIRRO": "Jangurussú III",
     "VALORES": [
       2,
@@ -745,7 +745,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "98",
     "BAIRRO": "Pedras",
     "VALORES": [
       4,
@@ -777,7 +777,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "98",
     "BAIRRO": "Ancuri",
     "VALORES": [
       1,
@@ -808,7 +808,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "99",
     "BAIRRO": "Parque Santa Maria",
     "VALORES": [
       1,
@@ -839,7 +839,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "99",
     "BAIRRO": "Paupina",
     "VALORES": [
       3,
@@ -869,7 +869,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "100",
     "BAIRRO": "Paupina I",
     "VALORES": [
       6,
@@ -898,8 +898,8 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
-    "BAIRRO": "SãoBento",
+    "ID_EXTRATO": "100",
+    "BAIRRO": "São Bento",
     "VALORES": [
       1,
       6,
@@ -927,8 +927,8 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
-    "BAIRRO": "SãoBento I",
+    "ID_EXTRATO": "101",
+    "BAIRRO": "São Bento I",
     "VALORES": [
       3,
       8,
@@ -955,7 +955,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "101",
     "BAIRRO": "Coaçu",
     "VALORES": [
       2,
@@ -979,7 +979,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "101",
     "BAIRRO": "Guajeru",
     "VALORES": [
       2,
@@ -1002,7 +1002,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "102",
     "BAIRRO": "Messejana",
     "VALORES": [
       2,
@@ -1025,7 +1025,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "103",
     "BAIRRO": "Messejana I",
     "VALORES": [
       1,
@@ -1047,7 +1047,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "104",
     "BAIRRO": "Curió",
     "VALORES": [
       4,
@@ -1069,7 +1069,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "104",
     "BAIRRO": "Jose de Alencar",
     "VALORES": [
       2,
@@ -1091,7 +1091,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "105",
     "BAIRRO": "Lagoa Redonda",
     "VALORES": [
       3,
@@ -1134,7 +1134,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "106",
     "BAIRRO": "Sabiaguaba",
     "VALORES": [
       2,
@@ -1154,8 +1154,8 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
-    "BAIRRO": "EdsonQueiroz",
+    "ID_EXTRATO": "107",
+    "BAIRRO": "Edson Queiroz",
     "VALORES": [
       2,
       6,
@@ -1174,7 +1174,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "107",
     "BAIRRO": "Sapiranga Coité I",
     "VALORES": [
       2,
@@ -1193,7 +1193,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "108",
     "BAIRRO": "Edson Queiroz I",
     "VALORES": [
       1,
@@ -1212,7 +1212,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "109",
     "BAIRRO": "Sapiranga Coité",
     "VALORES": [
       4,
@@ -1229,7 +1229,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "110",
     "BAIRRO": "Cambeba",
     "VALORES": [
       3,
@@ -1246,7 +1246,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "110",
     "BAIRRO": "Parque Iracema",
     "VALORES": [
       1,
@@ -1263,7 +1263,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "110",
     "BAIRRO": "Parque Manibura",
     "VALORES": [
       1,
@@ -1280,7 +1280,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "110",
     "BAIRRO": "Cidade dos Funcionários I",
     "VALORES": [
       3,
@@ -1296,7 +1296,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "111",
     "BAIRRO": "Aerolândia I",
     "VALORES": [
       2,
@@ -1310,7 +1310,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "111",
     "BAIRRO": "Cidade dos Funcionários",
     "VALORES": [
       1,
@@ -1321,7 +1321,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "111",
     "BAIRRO": "Jardim das Oliveiras",
     "VALORES": [
       5,
@@ -1332,7 +1332,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "112",
     "BAIRRO": "Jardim das Oliveiras I",
     "VALORES": [
       5,
@@ -1342,7 +1342,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "113",
     "BAIRRO": "Aerolândia",
     "VALORES": [
       4,
@@ -1352,7 +1352,7 @@
     ]
   },
   {
-    "ID_EXTRATO": "",
+    "ID_EXTRATO": "113",
     "BAIRRO": "Alto da Balança",
     "VALORES": [
       5,
@@ -1361,4 +1361,5 @@
       20
     ]
   }
+
 ]
