@@ -1374,53 +1374,63 @@ async function automatizarPreenchimento() {
     const selectCodigo = document.getElementById('selecaoCodigo');
     if (!selectCodigo) return;
     
-    // Pega apenas o número antes do hífen (ex: "86")
+    // Pega o número do extrato (ex: 86)
     const textoSelecionado = selectCodigo.options[selectCodigo.selectedIndex].text;
     const extratoAlvo = textoSelecionado.split('-')[0].trim(); 
     
-    console.log("Buscando dados para o Extrato número:", extratoAlvo);
+    console.log("🔍 Buscando dados para o Extrato:", extratoAlvo);
 
     try {
-        // Busca o JSON com timestamp para evitar cache
+        // Busca o JSON com timestamp para ignorar o cache do navegador
         const response = await fetch('resultado_extrato.json?t=' + Date.now());
         const dados = await response.json();
 
-        // Filtra TODOS os bairros que têm esse ID_EXTRATO no JSON
+        // Filtra todos os itens que batem com o número do extrato
         const resultados = dados.filter(item => String(item.ID_EXTRATO) === extratoAlvo);
 
         if (resultados.length > 0) {
             resultados.forEach(registro => {
-                // Prepara o ID do campo (ex: ids_sorteadas_PASSARÉ_0)
-                const bairroID = registro.BAIRRO.trim().toUpperCase().replace(/\s+/g, '_');
-                const idCampo = `ids_sorteadas_${bairroID}_0`;
-                
-                const campoInput = document.getElementById(idCampo);
+                // LÓGICA DE PADRONIZAÇÃO:
+                // 1. Remove acentos (ex: São -> Sao)
+                // 2. Transforma em MAIÚSCULAS
+                // 3. Troca espaços por _ (ex: BOA VISTA -> BOA_VISTA)
+                const bairroNormalizado = registro.BAIRRO
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toUpperCase()
+                    .trim()
+                    .replace(/\s+/g, '_');
+
+                const idRealDoCampo = `ids_sorteadas_${bairroNormalizado}_0`;
+                const campoInput = document.getElementById(idRealDoCampo);
 
                 if (campoInput) {
                     campoInput.value = registro.VALORES.join('-');
                     
-                    // Feedback visual
+                    // Cores para confirmar o preenchimento
                     campoInput.style.backgroundColor = "#1a3a5a";
                     campoInput.style.color = "#00efff";
                     
-                    // Dispara eventos para o sistema validar
+                    // Dispara eventos para o site salvar a informação
                     campoInput.dispatchEvent(new Event('input', { bubbles: true }));
                     campoInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    console.log(`✅ Preenchido: ${registro.BAIRRO}`);
+                    console.log(`✅ Sucesso: ${idRealDoCampo}`);
                 } else {
-                    console.warn(`⚠️ Campo não encontrado para: ${idCampo}`);
+                    console.warn(`⚠️ Campo não encontrado na tela: ${idRealDoCampo}`);
+                    console.log("Dica: Verifique se o nome do bairro no JSON está igual ao do site.");
                 }
             });
         } else {
-            console.error(`❌ Nenhuma informação no JSON para o Extrato ${extratoAlvo}`);
+            console.warn(`❌ O Extrato ${extratoAlvo} não foi encontrado dentro do seu arquivo JSON.`);
         }
     } catch (erro) {
-        console.error("Erro na automação:", erro);
+        console.error("Erro ao carregar o arquivo JSON:", erro);
     }
 }
 </script>
 </body>
 </html>
+
 
 
 
