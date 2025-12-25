@@ -1371,63 +1371,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 async function automatizarPreenchimento() {
-    // 1. Pega o Extrato selecionado (Ex: "85", "89", "110")
     const selectCodigo = document.getElementById('selecaoCodigo');
     if (!selectCodigo) return;
     
-    const extratoSelecionado = selectCodigo.value; // O valor numérico, ex: "110"
-    console.log("Iniciando preenchimento para o Extrato:", extratoSelecionado);
+    // Pega o número do extrato (ex: 85, 89, 110)
+    const extratoAlvo = selectCodigo.value.trim(); 
+    console.log("Buscando dados para o Extrato:", extratoAlvo);
 
     try {
-        // 2. Busca o JSON no GitHub
-        const response = await fetch('resultado_extrato.json');
+        // Busca o JSON (adicionamos um timestamp para evitar cache do navegador)
+        const response = await fetch('resultado_extrato.json?t=' + Date.now());
         const dados = await response.json();
 
-        // 3. Filtra TODOS os itens que pertencem a esse extrato
-        // Isso resolve o caso de extratos com 2 ou mais bairros
-        const itensEncontrados = dados.filter(item => String(item.ID_EXTRATO) === String(extratoSelecionado));
+        // Filtra todos os bairros que pertencem a esse extrato no JSON
+        const resultados = dados.filter(item => String(item.ID_EXTRATO) === extratoAlvo);
 
-        if (itensEncontrados.length > 0) {
-            console.log(`${itensEncontrados.length} áreas encontradas no extrato ${extratoSelecionado}`);
-
-            itensEncontrados.forEach(registro => {
-                // Prepara o nome do bairro para o formato do ID (Substitui espaços por _)
-                const bairroLimpo = registro.BAIRRO.trim().toUpperCase();
-                const bairroParaID = bairroLimpo.replace(/\s+/g, '_');
+        if (resultados.length > 0) {
+            resultados.forEach(registro => {
+                // Normaliza o nome do bairro para o formato do ID do seu sistema
+                const bairroID = registro.BAIRRO.trim().toUpperCase().replace(/\s+/g, '_');
+                const idCampo = `ids_sorteadas_${bairroID}_0`;
                 
-                // Constrói o ID do input esperado pelo seu sistema
-                const idRealDoCampo = `ids_sorteadas_${bairroParaID}_0`;
-                const campoInput = document.getElementById(idRealDoCampo);
+                const campoInput = document.getElementById(idCampo);
 
                 if (campoInput) {
-                    const valoresFormatados = registro.VALORES.join('-');
-                    campoInput.value = valoresFormatados;
+                    const textoValores = registro.VALORES.join('-');
+                    campoInput.value = textoValores;
                     
-                    // Estilo para destacar o preenchimento automático
-                    campoInput.style.backgroundColor = "#112244";
-                    campoInput.style.border = "1px solid #00b4d8";
-                    campoInput.style.color = "#ffffff";
-
-                    // Dispara eventos para que o site processe os dados inseridos
+                    // Estilo para confirmar visualmente
+                    campoInput.style.backgroundColor = "#1a3a5a";
+                    campoInput.style.color = "#00efff";
+                    
+                    // Avisa ao sistema que o valor mudou
                     campoInput.dispatchEvent(new Event('input', { bubbles: true }));
                     campoInput.dispatchEvent(new Event('change', { bubbles: true }));
                     
-                    console.log(`✅ Preenchido: ${bairroLimpo} -> ${valoresFormatados}`);
+                    console.log(`✅ Preenchido bairro: ${registro.BAIRRO}`);
                 } else {
-                    console.warn(`⚠️ Campo não encontrado para o bairro: ${bairroLimpo} (ID: ${idRealDoCampo})`);
+                    console.warn(`⚠️ Campo ${idCampo} não encontrado na tela para o extrato ${extratoAlvo}`);
                 }
             });
-            alert(`Sucesso! ${itensEncontrados.length} área(s) preenchida(s) no Extrato ${extratoSelecionado}.`);
         } else {
-            console.warn(`❌ Nenhuma informação encontrada no JSON para o Extrato ${extratoSelecionado}`);
+            console.error(`❌ Nenhuma informação para o Extrato ${extratoAlvo} no JSON.`);
         }
     } catch (erro) {
-        console.error("Erro ao processar preenchimento multi-bairros:", erro);
+        console.error("Erro na automação:", erro);
     }
 }
 </script>
 </body>
 </html>
+
 
 
 
