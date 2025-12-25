@@ -1371,51 +1371,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 async function automatizarPreenchimento() {
-    console.log("Iniciando automação...");
+    console.log("Iniciando busca de dados...");
 
-    // 1. Tentar encontrar o select (testando os dois nomes mais prováveis)
-    const selectBairro = document.getElementById('selecaoBairro') || document.getElementById('listaBairros');
+    // 1. No seu HTML o ID correto é 'bairroSelecionado'
+    const selectBairro = document.getElementById('bairroSelecionado');
     
     if (!selectBairro) {
-        alert("Erro: O sistema não encontrou o campo de seleção de bairros no HTML.");
+        console.error("Elemento 'bairroSelecionado' não encontrado. Verificando alternativas...");
         return;
     }
 
-    const bairroSelecionado = selectBairro.options[selectBairro.selectedIndex].text;
-    console.log("Bairro identificado no site:", bairroSelecionado);
+    const nomeDoBairro = selectBairro.value || selectBairro.options[selectBairro.selectedIndex].text;
+    console.log("Bairro selecionado para busca:", nomeDoBairro);
 
     try {
         const response = await fetch('resultado_extrato.json');
-        if (!response.ok) {
-            alert("Erro: O arquivo 'resultado_extrato.json' não foi encontrado no GitHub.");
-            return;
-        }
-        
         const dados = await response.json();
-        const extrato = dados.find(item => item.BAIRRO.trim() === bairroSelecionado.trim());
 
-        if (extrato) {
-            extrato.VALORES.forEach((valor, index) => {
-                // Tentamos v1, v2... ou num1, num2...
-                const idCampo = `v${index + 1}`; 
-                const campoInput = document.getElementById(idCampo);
+        // Procura o bairro ignorando espaços extras
+        const registro = dados.find(item => item.BAIRRO.trim() === nomeDoBairro.trim());
+
+        if (registro) {
+            console.log("Registro encontrado!", registro.VALORES);
+
+            // 2. No seu HTML, os campos de quadras usam o ID 'q' + número (q1, q2...)
+            // Se os seus IDs forem v1, v2, mude para 'v' abaixo:
+            registro.VALORES.forEach((valor, index) => {
+                const idCampo = `q${index + 1}`; 
+                const campo = document.getElementById(idCampo);
                 
-                if (campoInput) {
-                    campoInput.value = valor;
-                    campoInput.style.backgroundColor = "#2d4a3e";
+                if (campo) {
+                    campo.value = valor;
+                    campo.style.backgroundColor = "#2a2a47"; // Cor de destaque do seu tema
+                    campo.style.color = "#00b4d8"; // Cor azul do seu tema
                 }
             });
-            alert("Sucesso! Os dados foram preenchidos.");
         } else {
-            alert("Atenção: O bairro '" + bairroSelecionado + "' não foi encontrado dentro do arquivo JSON. Verifique se os nomes são idênticos.");
+            console.warn("O bairro '" + nomeDoBairro + "' não existe no JSON.");
         }
     } catch (erro) {
-        alert("Erro técnico: " + erro.message);
+        console.error("Erro ao carregar JSON:", erro);
     }
 }
 </script>
 </body>
 </html>
+
 
 
 
