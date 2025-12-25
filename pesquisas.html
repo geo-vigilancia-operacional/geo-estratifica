@@ -1067,12 +1067,16 @@ function verificarSenha() {
         isInputUnlocked = true;
         esconderModalSenha();
         gerarSelecaoQuadras(bairrosAtuais);
+
+        // AQUI ENTRA A NOVIDADE:
+        // Chama a função para ler o JSON e preencher os campos v1, v2...
+        automatizarPreenchimento();
+    
     } else {
         erroSenha.textContent = 'Senha incorreta. Tente novamente.';
         inputSenha.value = '';
         inputSenha.focus();
 
-        // Limpa a mensagem após 3 segundos
         setTimeout(() => {
             erroSenha.textContent = '';
         }, 3000);
@@ -1366,9 +1370,50 @@ document.addEventListener('DOMContentLoaded', async () => {
         // bairroDisplay.textContent = 'Erro ao carregar os dados. Tente novamente mais tarde.';
     }
 });
+async function automatizarPreenchimento() {
+    // 1. Pegando o bairro selecionado (Ajustado para o ID 'selecaoBairro')
+    const selectBairro = document.getElementById('selecaoBairro'); 
+    
+    if (!selectBairro) {
+        console.error("Erro: Elemento 'selecaoBairro' não encontrado.");
+        return;
+    }
+
+    const bairroSelecionado = selectBairro.options[selectBairro.selectedIndex].text;
+
+    try {
+        // 2. Busca o JSON no seu repositório GitHub Pages
+        const response = await fetch('resultado_extrato.json');
+        const dados = await response.json();
+
+        // 3. Filtra o JSON pelo nome do bairro
+        const extrato = dados.find(item => item.BAIRRO.trim() === bairroSelecionado.trim());
+
+        if (extrato) {
+            // 4. Preenche os campos v1, v2, v3... 
+            extrato.VALORES.forEach((valor, index) => {
+                const idCampo = `v${index + 1}`; 
+                const campoInput = document.getElementById(idCampo);
+                
+                if (campoInput) {
+                    campoInput.value = valor;
+                    // Muda a cor para um verde suave (estilo Dark do seu site)
+                    campoInput.style.backgroundColor = "#2d4a3e"; 
+                    campoInput.style.color = "#ffffff";
+                }
+            });
+            console.log("✅ Sucesso: Dados carregados para " + bairroSelecionado);
+        } else {
+            console.warn("⚠️ Bairro '" + bairroSelecionado + "' não encontrado no JSON.");
+        }
+    } catch (erro) {
+        console.error("❌ Erro ao buscar dados do JSON:", erro);
+    }
+}
 </script>
 </body>
 </html>
+
 
 
 
