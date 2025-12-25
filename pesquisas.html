@@ -1371,60 +1371,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 async function automatizarPreenchimento() {
-    const selectBairro = document.getElementById('selecaoCodigo') || document.getElementById('bairroSelecionado');
-    if (!selectBairro) return;
-
-    let textoCompleto = selectBairro.options[selectBairro.selectedIndex].text;
-    // Extrai o nome do bairro (ex: PARQUE DOIS IRMAOS)
-    let bairroLimpo = textoCompleto.split('-').pop().trim().toUpperCase();
+    // 1. Pega o Extrato selecionado (Ex: "85", "89", "110")
+    const selectCodigo = document.getElementById('selecaoCodigo');
+    if (!selectCodigo) return;
     
-    // Transforma o nome para o formato do ID do seu input (troca espaços por _)
-    let bairroParaID = bairroLimpo.replace(/\s+/g, '_');
+    const extratoSelecionado = selectCodigo.value; // O valor numérico, ex: "110"
+    console.log("Iniciando preenchimento para o Extrato:", extratoSelecionado);
 
     try {
+        // 2. Busca o JSON no GitHub
         const response = await fetch('resultado_extrato.json');
         const dados = await response.json();
 
-        const extrato = dados.find(item => item.BAIRRO.trim().toUpperCase() === bairroLimpo);
+        // 3. Filtra TODOS os itens que pertencem a esse extrato
+        // Isso resolve o caso de extratos com 2 ou mais bairros
+        const itensEncontrados = dados.filter(item => String(item.ID_EXTRATO) === String(extratoSelecionado));
 
-        if (extrato) {
-            // 1. Cria o ID dinâmico exato: ids_sorteadas_NOME_DO_BAIRRO_0
-            const idRealDoCampo = `ids_sorteadas_${bairroParaID}_0`;
-            const campoInput = document.getElementById(idRealDoCampo);
+        if (itensEncontrados.length > 0) {
+            console.log(`${itensEncontrados.length} áreas encontradas no extrato ${extratoSelecionado}`);
 
-            if (campoInput) {
-                // 2. Junta os números com hífen (ex: 1-6-11-17-22)
-                const valoresFormatados = extrato.VALORES.join('-');
+            itensEncontrados.forEach(registro => {
+                // Prepara o nome do bairro para o formato do ID (Substitui espaços por _)
+                const bairroLimpo = registro.BAIRRO.trim().toUpperCase();
+                const bairroParaID = bairroLimpo.replace(/\s+/g, '_');
                 
-                campoInput.value = valoresFormatados;
-                
-                // Estilização para você ver que funcionou
-                campoInput.style.backgroundColor = "#2a2a47";
-                campoInput.style.color = "#00b4d8";
-                campoInput.style.fontWeight = "bold";
+                // Constrói o ID do input esperado pelo seu sistema
+                const idRealDoCampo = `ids_sorteadas_${bairroParaID}_0`;
+                const campoInput = document.getElementById(idRealDoCampo);
 
-                // 3. Dispara os eventos para o seu sistema processar os números
-                campoInput.dispatchEvent(new Event('input', { bubbles: true }));
-                campoInput.dispatchEvent(new Event('change', { bubbles: true }));
-                
-                console.log(`✅ Sucesso! Campo ${idRealDoCampo} preenchido com: ${valoresFormatados}`);
-            } else {
-                console.error(`❌ Não encontrei o campo com ID: ${idRealDoCampo}`);
-                // Caso o ID não tenha o _0 no final em alguns casos, tentamos sem:
-                const campoAlternativo = document.querySelector(`[data-bairro-normalizado="${bairroLimpo}"]`);
-                if(campoAlternativo) {
-                    campoAlternativo.value = extrato.VALORES.join('-');
-                    campoAlternativo.dispatchEvent(new Event('input', { bubbles: true }));
+                if (campoInput) {
+                    const valoresFormatados = registro.VALORES.join('-');
+                    campoInput.value = valoresFormatados;
+                    
+                    // Estilo para destacar o preenchimento automático
+                    campoInput.style.backgroundColor = "#112244";
+                    campoInput.style.border = "1px solid #00b4d8";
+                    campoInput.style.color = "#ffffff";
+
+                    // Dispara eventos para que o site processe os dados inseridos
+                    campoInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    campoInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    
+                    console.log(`✅ Preenchido: ${bairroLimpo} -> ${valoresFormatados}`);
+                } else {
+                    console.warn(`⚠️ Campo não encontrado para o bairro: ${bairroLimpo} (ID: ${idRealDoCampo})`);
                 }
-            }
+            });
+            alert(`Sucesso! ${itensEncontrados.length} área(s) preenchida(s) no Extrato ${extratoSelecionado}.`);
+        } else {
+            console.warn(`❌ Nenhuma informação encontrada no JSON para o Extrato ${extratoSelecionado}`);
         }
     } catch (erro) {
-        console.error("Erro ao carregar o JSON:", erro);
+        console.error("Erro ao processar preenchimento multi-bairros:", erro);
     }
 }
 </script>
 </body>
 </html>
+
 
 
 
