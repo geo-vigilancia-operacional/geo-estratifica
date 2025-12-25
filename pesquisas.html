@@ -1371,48 +1371,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 async function automatizarPreenchimento() {
-    // 1. Pegando o bairro selecionado (Ajustado para o ID 'selecaoBairro')
-    const selectBairro = document.getElementById('selecaoBairro'); 
+    console.log("Iniciando automação...");
+
+    // 1. Tentar encontrar o select (testando os dois nomes mais prováveis)
+    const selectBairro = document.getElementById('selecaoBairro') || document.getElementById('listaBairros');
     
     if (!selectBairro) {
-        console.error("Erro: Elemento 'selecaoBairro' não encontrado.");
+        alert("Erro: O sistema não encontrou o campo de seleção de bairros no HTML.");
         return;
     }
 
     const bairroSelecionado = selectBairro.options[selectBairro.selectedIndex].text;
+    console.log("Bairro identificado no site:", bairroSelecionado);
 
     try {
-        // 2. Busca o JSON no seu repositório GitHub Pages
         const response = await fetch('resultado_extrato.json');
+        if (!response.ok) {
+            alert("Erro: O arquivo 'resultado_extrato.json' não foi encontrado no GitHub.");
+            return;
+        }
+        
         const dados = await response.json();
-
-        // 3. Filtra o JSON pelo nome do bairro
         const extrato = dados.find(item => item.BAIRRO.trim() === bairroSelecionado.trim());
 
         if (extrato) {
-            // 4. Preenche os campos v1, v2, v3... 
             extrato.VALORES.forEach((valor, index) => {
+                // Tentamos v1, v2... ou num1, num2...
                 const idCampo = `v${index + 1}`; 
                 const campoInput = document.getElementById(idCampo);
                 
                 if (campoInput) {
                     campoInput.value = valor;
-                    // Muda a cor para um verde suave (estilo Dark do seu site)
-                    campoInput.style.backgroundColor = "#2d4a3e"; 
-                    campoInput.style.color = "#ffffff";
+                    campoInput.style.backgroundColor = "#2d4a3e";
                 }
             });
-            console.log("✅ Sucesso: Dados carregados para " + bairroSelecionado);
+            alert("Sucesso! Os dados foram preenchidos.");
         } else {
-            console.warn("⚠️ Bairro '" + bairroSelecionado + "' não encontrado no JSON.");
+            alert("Atenção: O bairro '" + bairroSelecionado + "' não foi encontrado dentro do arquivo JSON. Verifique se os nomes são idênticos.");
         }
     } catch (erro) {
-        console.error("❌ Erro ao buscar dados do JSON:", erro);
+        alert("Erro técnico: " + erro.message);
     }
 }
 </script>
 </body>
 </html>
+
 
 
 
