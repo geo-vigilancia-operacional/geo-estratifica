@@ -1374,45 +1374,45 @@ async function automatizarPreenchimento() {
     const selectCodigo = document.getElementById('selecaoCodigo');
     if (!selectCodigo) return;
     
-    // Pega o número do extrato (ex: 85, 89, 110)
-    const extratoAlvo = selectCodigo.value.trim(); 
-    console.log("Buscando dados para o Extrato:", extratoAlvo);
+    // Pega apenas o número antes do hífen (ex: "86")
+    const textoSelecionado = selectCodigo.options[selectCodigo.selectedIndex].text;
+    const extratoAlvo = textoSelecionado.split('-')[0].trim(); 
+    
+    console.log("Buscando dados para o Extrato número:", extratoAlvo);
 
     try {
-        // Busca o JSON (adicionamos um timestamp para evitar cache do navegador)
+        // Busca o JSON com timestamp para evitar cache
         const response = await fetch('resultado_extrato.json?t=' + Date.now());
         const dados = await response.json();
 
-        // Filtra todos os bairros que pertencem a esse extrato no JSON
+        // Filtra TODOS os bairros que têm esse ID_EXTRATO no JSON
         const resultados = dados.filter(item => String(item.ID_EXTRATO) === extratoAlvo);
 
         if (resultados.length > 0) {
             resultados.forEach(registro => {
-                // Normaliza o nome do bairro para o formato do ID do seu sistema
+                // Prepara o ID do campo (ex: ids_sorteadas_PASSARÉ_0)
                 const bairroID = registro.BAIRRO.trim().toUpperCase().replace(/\s+/g, '_');
                 const idCampo = `ids_sorteadas_${bairroID}_0`;
                 
                 const campoInput = document.getElementById(idCampo);
 
                 if (campoInput) {
-                    const textoValores = registro.VALORES.join('-');
-                    campoInput.value = textoValores;
+                    campoInput.value = registro.VALORES.join('-');
                     
-                    // Estilo para confirmar visualmente
+                    // Feedback visual
                     campoInput.style.backgroundColor = "#1a3a5a";
                     campoInput.style.color = "#00efff";
                     
-                    // Avisa ao sistema que o valor mudou
+                    // Dispara eventos para o sistema validar
                     campoInput.dispatchEvent(new Event('input', { bubbles: true }));
                     campoInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    
-                    console.log(`✅ Preenchido bairro: ${registro.BAIRRO}`);
+                    console.log(`✅ Preenchido: ${registro.BAIRRO}`);
                 } else {
-                    console.warn(`⚠️ Campo ${idCampo} não encontrado na tela para o extrato ${extratoAlvo}`);
+                    console.warn(`⚠️ Campo não encontrado para: ${idCampo}`);
                 }
             });
         } else {
-            console.error(`❌ Nenhuma informação para o Extrato ${extratoAlvo} no JSON.`);
+            console.error(`❌ Nenhuma informação no JSON para o Extrato ${extratoAlvo}`);
         }
     } catch (erro) {
         console.error("Erro na automação:", erro);
@@ -1421,6 +1421,7 @@ async function automatizarPreenchimento() {
 </script>
 </body>
 </html>
+
 
 
 
