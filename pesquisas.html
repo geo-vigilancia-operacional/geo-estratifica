@@ -1371,51 +1371,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 async function automatizarPreenchimento() {
-    console.log("Iniciando busca de dados...");
-
-    // 1. No seu HTML o ID correto é 'bairroSelecionado'
-    const selectBairro = document.getElementById('bairroSelecionado');
+    // 1. Pega o ID correto da lista (no seu HTML analisei que é 'selecaoCodigo')
+    const selectBairro = document.getElementById('selecaoCodigo') || document.getElementById('bairroSelecionado');
     
     if (!selectBairro) {
-        console.error("Elemento 'bairroSelecionado' não encontrado. Verificando alternativas...");
+        console.error("Lista suspensa não encontrada.");
         return;
     }
 
-    const nomeDoBairro = selectBairro.value || selectBairro.options[selectBairro.selectedIndex].text;
-    console.log("Bairro selecionado para busca:", nomeDoBairro);
+    // Pega o texto: "85 - PARQUE DOIS IRMAOS"
+    let textoCompleto = selectBairro.options[selectBairro.selectedIndex].text;
+    
+    // MÁGICA: Remove o "85 - " e deixa apenas "PARQUE DOIS IRMAOS"
+    // E converte para maiúsculas para não ter erro de comparação
+    let bairroLimpo = textoCompleto.split('-').pop().trim().toUpperCase();
+
+    console.log("Bairro processado para busca:", bairroLimpo);
 
     try {
         const response = await fetch('resultado_extrato.json');
         const dados = await response.json();
 
-        // Procura o bairro ignorando espaços extras
-        const registro = dados.find(item => item.BAIRRO.trim() === nomeDoBairro.trim());
+        // Procura no JSON comparando os nomes em maiúsculas
+        const extrato = dados.find(item => {
+            return item.BAIRRO.trim().toUpperCase() === bairroLimpo;
+        });
 
-        if (registro) {
-            console.log("Registro encontrado!", registro.VALORES);
+        if (extrato) {
+            console.log("Dados encontrados para o extrato:", extrato.ID_EXTRATO);
 
-            // 2. No seu HTML, os campos de quadras usam o ID 'q' + número (q1, q2...)
-            // Se os seus IDs forem v1, v2, mude para 'v' abaixo:
-            registro.VALORES.forEach((valor, index) => {
-                const idCampo = `q${index + 1}`; 
+            // Preenche os campos de quadras (IDs q1, q2, q3...)
+            extrato.VALORES.forEach((valor, index) => {
+                const idCampo = `q${index + 1}`; // Ajuste para o ID real dos seus inputs
                 const campo = document.getElementById(idCampo);
                 
                 if (campo) {
                     campo.value = valor;
-                    campo.style.backgroundColor = "#2a2a47"; // Cor de destaque do seu tema
-                    campo.style.color = "#00b4d8"; // Cor azul do seu tema
+                    campo.style.backgroundColor = "#2a2a47"; 
+                    campo.style.color = "#00b4d8";
+                    // Dispara um evento de mudança caso seu site precise calcular algo
+                    campo.dispatchEvent(new Event('change'));
                 }
             });
+            console.log("✅ Sucesso! Quadras preenchidas.");
         } else {
-            console.warn("O bairro '" + nomeDoBairro + "' não existe no JSON.");
+            console.warn("❌ Não encontrei correspondência para: " + bairroLimpo);
         }
     } catch (erro) {
-        console.error("Erro ao carregar JSON:", erro);
+        console.error("Erro ao carregar o JSON:", erro);
     }
 }
 </script>
 </body>
 </html>
+
 
 
 
