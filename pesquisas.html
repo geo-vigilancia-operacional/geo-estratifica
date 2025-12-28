@@ -1132,27 +1132,30 @@ function verificarSenha() {
                     } else {
                         registro.ID_SEQUENCIAL = 0;
                     }
-            }); 
+      // Fechamento do loop de bairros (forEach)
+        }); 
 
-        // Removemos toda a construção de quadrasHtml e a tabela visual
-        // O container fica vazio e escondido para não gerar erros de renderização
-        container.innerHTML = ''; 
+        // Limpa o container e esconde, pois o mapa não será mais exibido
+        container.innerHTML = "";
         container.style.display = 'none';
+
+    } catch (error) {
+        console.error("Erro ao processar resultados:", error);
     }
+} // Fim da função exibirResultsPorCodigo
 
-    // Evento de mudança: Chama a exibição (lógica interna) e a automação
-    selecaoCodigo.addEventListener('change', async (event) => {
-        const valorSelecionado = event.target.value;
+// Evento de mudança no select
+selecaoCodigo.addEventListener('change', (event) => {
+    const valor = event.target.value;
+    if (valor) {
+        exibirResultsPorCodigo(valor);
         
-        // 1. Executa a lógica de busca/processamento
-        exibirResultsPorCodigo(valorSelecionado);
-        
-        // 2. Chama a função que preenche os campos automaticamente
+        // Chama a automação de preenchimento que criamos
         if (typeof automatizarPreenchimento === "function") {
-            await automatizarPreenchimento();
+            automatizarPreenchimento();
         }
-    });
-
+    }
+});
         document.addEventListener('DOMContentLoaded', async () => {
             carregarDadosPersistidos();
             await carregarDados();
@@ -1416,6 +1419,7 @@ async function automatizarPreenchimento() {
 </script>
 </body>
 </html>
+
 
 
 
