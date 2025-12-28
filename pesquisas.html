@@ -1132,17 +1132,26 @@ function verificarSenha() {
                     } else {
                         registro.ID_SEQUENCIAL = 0;
                     }
-                });
-             
-            container.innerHTML = `<h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
-                                  <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
-                                  ${html}`;
-            container.style.display = 'none';
-        }
+            }); 
 
-        selecaoCodigo.addEventListener('change', (event) => {
-            exibirResultsPorCodigo(event.target.value);
-        });
+        // Removemos toda a construção de quadrasHtml e a tabela visual
+        // O container fica vazio e escondido para não gerar erros de renderização
+        container.innerHTML = ''; 
+        container.style.display = 'none';
+    }
+
+    // Evento de mudança: Chama a exibição (lógica interna) e a automação
+    selecaoCodigo.addEventListener('change', async (event) => {
+        const valorSelecionado = event.target.value;
+        
+        // 1. Executa a lógica de busca/processamento
+        exibirResultsPorCodigo(valorSelecionado);
+        
+        // 2. Chama a função que preenche os campos automaticamente
+        if (typeof automatizarPreenchimento === "function") {
+            await automatizarPreenchimento();
+        }
+    });
 
         document.addEventListener('DOMContentLoaded', async () => {
             carregarDadosPersistidos();
@@ -1407,6 +1416,7 @@ async function automatizarPreenchimento() {
 </script>
 </body>
 </html>
+
 
 
 
