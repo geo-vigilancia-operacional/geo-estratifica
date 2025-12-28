@@ -1132,30 +1132,47 @@ function verificarSenha() {
                     } else {
                         registro.ID_SEQUENCIAL = 0;
                     }
-      // Fechamento do loop de bairros (forEach)
-        }); 
-
-        // Limpa o container e esconde, pois o mapa não será mais exibido
-        container.innerHTML = "";
-        container.style.display = 'none';
-
-    } catch (error) {
-        console.error("Erro ao processar resultados:", error);
-    }
-} // Fim da função exibirResultsPorCodigo
-
-// Evento de mudança no select
-selecaoCodigo.addEventListener('change', (event) => {
-    const valor = event.target.value;
-    if (valor) {
-        exibirResultsPorCodigo(valor);
-        
-        // Chama a automação de preenchimento que criamos
-        if (typeof automatizarPreenchimento === "function") {
-            automatizarPreenchimento();
+                });
+                let quadrasHtml = '<div class="quadra-item-lista">';
+                quadrasOrdenadas.forEach(registro => {
+                    const idDisplay = registro.ID_SEQUENCIAL > 0 ? registro.ID_SEQUENCIAL : '—';
+                    const status = registro.ID_SEQUENCIAL > 0 ? 'Útil' : 'Extinta';
+                    const corStatus = registro.ID_SEQUENCIAL > 0 ? 'color: var(--sucess-color);' : 'color: var(--danger-color);';
+                    quadrasHtml += `
+                        <div class="quadra-item-mapa">
+                            <span class="quadra-id">${idDisplay}</span>
+                            <span class="quadra-numero">${registro[CHAVE_QUADRA]}</span>
+                            <span class="quadra-total">${parseInt(registro[CHAVE_IMOVEIS_QUADRA]) || 0}</span>
+                            <span class="quadra-status" style="${corStatus}">${status}</span>
+                        </div>
+                    `;
+                });
+                quadrasHtml += '</div>';
+                html += `
+                    <div class="mapa-bairro">
+                        <h5>${nomeBairroClean} (QT ${inicio} a ${fim}):</h5>
+                        <div class="mapa-grid">
+                            <div class="mapa-header">
+                                <span>ID</span>
+                                <span>Quadra</span>
+                                <span>Total</span>
+                                <span>Status</span>
+                            </div>
+                            ${quadrasHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = `<h4>Mapa de Quadras por Bairro (Intervalo Completo)</h4>
+                                  <p>Mostra todas as quadras do intervalo selecionado, com seus IDs sequenciais (apenas para quadras úteis).</p>
+                                  ${html}`;
+            container.style.display = 'block';
         }
-    }
-});
+
+        selecaoCodigo.addEventListener('change', (event) => {
+            exibirResultsPorCodigo(event.target.value);
+        });
+
         document.addEventListener('DOMContentLoaded', async () => {
             carregarDadosPersistidos();
             await carregarDados();
@@ -1419,9 +1436,6 @@ async function automatizarPreenchimento() {
 </script>
 </body>
 </html>
-
-
-
 
 
 
