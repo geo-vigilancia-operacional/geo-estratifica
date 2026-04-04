@@ -1824,17 +1824,26 @@ function abrirTabelaQGIS() {
     const body = document.getElementById('body-qgis');
     const contagem = document.getElementById('contagem-registros');
 
-    // Usamos os dados que você já carregou no mapa
-    // Se você usa a variável geojsonData, use ela aqui
     if (!geojsonData || !geojsonData.features) {
         alert("Nenhum dado carregado para exibir a tabela.");
         return;
     }
 
-    const features = geojsonData.features;
+    // ============================================================
+    // 🚀 NOVO: ORDENAÇÃO CRESCENTE POR QUADRA
+    // ============================================================
+    // Criamos uma cópia dos dados para não bagunçar o mapa original
+    const features = [...geojsonData.features].sort((a, b) => {
+        // Usamos Number() para garantir que 10 venha depois de 2
+        let qA = Number(a.properties.QUADRA) || 0;
+        let qB = Number(b.properties.QUADRA) || 0;
+        return qA - qB;
+    });
+    // ============================================================
+
     contagem.innerText = `Tabela de Atributos - ${features.length} feições encontradas`;
 
-    // 1. Criar Cabeçalho (Baseado na primeira feição)
+    // 1. Criar Cabeçalho (Usamos a primeira feição da lista ordenada)
     head.innerHTML = "";
     let colunas = Object.keys(features[0].properties);
     let trHead = document.createElement('tr');
@@ -1847,7 +1856,7 @@ function abrirTabelaQGIS() {
     });
     head.appendChild(trHead);
 
-    // 2. Criar Linhas
+    // 2. Criar Linhas (Já virão na ordem 1, 2, 3...)
     body.innerHTML = "";
     features.forEach(feat => {
         let tr = document.createElement('tr');
@@ -1856,14 +1865,16 @@ function abrirTabelaQGIS() {
         colunas.forEach(col => {
             let td = document.createElement('td');
             td.style.cssText = "border: 1px solid #eee; padding: 8px; white-space: nowrap;";
-            td.innerText = feat.properties[col] !== undefined ? feat.properties[col] : "-";
+            
+            // Se o valor for nulo ou undefined, coloca "-"
+            let valor = feat.properties[col];
+            td.innerText = (valor !== undefined && valor !== null) ? valor : "-";
+            
             tr.appendChild(td);
         });
 
-        // Efeito de seleção ao clicar na linha (opcional)
         tr.onclick = function() {
             this.style.background = "#fff9c4"; 
-            // Aqui você poderia adicionar um zoom na quadra se quisesse
         };
 
         body.appendChild(tr);
