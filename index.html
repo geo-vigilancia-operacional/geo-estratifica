@@ -713,16 +713,29 @@ body, html {
     <meta http-equiv="expires" content="0">
     <meta http-equiv="pragma" content="no-cache">
 
-    <script>
-     if ('serviceWorker' in navigator) {
-  // Adicionamos um número aleatório ou data para garantir que ele baixe o NOVO sw.js
-  navigator.serviceWorker.register('sw.js?v=' + Date.now()) 
-    .then(reg => {
-      console.log("Versão atualizada detectada!");
-      reg.update();
+   <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      // Usamos o timestamp para garantir que o navegador veja um arquivo novo
+      navigator.serviceWorker.register('sw.js?v=' + Date.now())
+        .then(reg => {
+          reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  // MÁGICA: Avisa o usuário e força o recarregamento
+                  if (confirm("Nova atualização disponível! Deseja atualizar agora?")) {
+                    window.location.reload();
+                  }
+                }
+              }
+            };
+          };
+        });
     });
-}
-    </script>
+  }
+</script>
 </head>
 
 <body>
