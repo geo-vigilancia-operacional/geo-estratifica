@@ -713,27 +713,47 @@ body, html {
     <meta http-equiv="expires" content="0">
     <meta http-equiv="pragma" content="no-cache">
 
-   <script>
+ <script>
   if ('serviceWorker' in navigator) {
+    let refreshing = false; // TRAVA DE SEGURANÇA: Impede o loop de reload
+
+    // Este evento dispara quando o novo Service Worker assume o controle
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
+
     window.addEventListener('load', () => {
-      // Usamos o timestamp para garantir que o navegador veja um arquivo novo
+      // Usamos o timestamp para garantir que o navegador baixe o arquivo novo do sw.js
       navigator.serviceWorker.register('sw.js?v=' + Date.now())
         .then(reg => {
+          // Se houver uma atualização esperando...
+          if (reg.waiting) {
+            processarUpdate(reg);
+            return;
+          }
+
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
             installingWorker.onstatechange = () => {
-              if (installingWorker.state === 'installed') {
-                if (navigator.serviceWorker.controller) {
-                  // MÁGICA: Avisa o usuário e força o recarregamento
-                  if (confirm("Nova atualização disponível! Deseja atualizar agora?")) {
-                    window.location.reload();
-                  }
-                }
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                processarUpdate(reg);
               }
             };
           };
         });
     });
+
+    function processarUpdate(reg) {
+      if (confirm("Nova atualização do Geo-EstratiFic@ disponível! Deseja carregar agora?")) {
+        // Envia mensagem para o Service Worker (sw.js) mandando ele pular a espera
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+      }
+    }
   }
 </script>
 </head>
