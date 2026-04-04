@@ -714,15 +714,14 @@ body, html {
     <meta http-equiv="pragma" content="no-cache">
 
     <script>
-      if ('serviceWorker' in navigator) {
-        // O ?v=2 força o navegador a buscar o arquivo novo
-        navigator.serviceWorker.register('sw.js?v=2')
-          .then(reg => {
-            console.log("GeoEstratifica pronto!");
-            reg.update(); // Força a verificação de nova versão
-          })
-          .catch(err => console.log("Erro no registro:", err));
-      }
+     if ('serviceWorker' in navigator) {
+  // Adicionamos um número aleatório ou data para garantir que ele baixe o NOVO sw.js
+  navigator.serviceWorker.register('sw.js?v=' + Date.now()) 
+    .then(reg => {
+      console.log("Versão atualizada detectada!");
+      reg.update();
+    });
+}
     </script>
 </head>
 
