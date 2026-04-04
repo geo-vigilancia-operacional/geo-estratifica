@@ -649,7 +649,58 @@ body, html {
 }
 .btn-menu:active { transform: scale(0.98); }
 /* No seu CSS ou na tag style do side-menu */
+.barra-busca-container {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza perfeitamente */
+    width: 90%;
+    max-width: 400px; /* Aumentei um pouco para caber os 3 ícones */
+    z-index: 1000;
+    background: white;
+    padding: 5px 15px;
+    border-radius: 30px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    height: 50px;
+}
 
+.input-transparente {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: transparent;
+    color: #333;
+}
+
+.btn-icone {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    padding: 5px;
+}
+
+.btn-icone:active {
+    transform: scale(0.9); /* Efeito de clique */
+}
+
+.btn-verde { color: #28a745; }
+.btn-azul { color: #007bff; }
+.btn-escuro { color: #2c3e50; }
+
+.divisor-vertical {
+    width: 1px;
+    height: 20px;
+    background: #ddd;
+}
 
 </style>
 </head>
@@ -732,62 +783,27 @@ body, html {
 </div>
 
 <div id="overlay" onclick="toggleMenu()"></div>
-    <div id="map"></div>
-    <div id="painel-carregar"
-     style="position: absolute; 
-            top: 10px; 
-            right: 5%; 
-            width: 90%; 
-            max-width: 300px; /* Evita que fique gigante em tablets */
-            margin: 0 auto;
-            z-index: 1000; 
-            background: white; 
-            padding: 5px 10px;
-            border-radius: 25px; /* Deixa com cara de barra de busca */
-            display: flex; 
-            gap: 5px;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            height: 45px;">
+<div id="map"></div>
 
-    <input id="input-dataset"
-           type="text"
-           placeholder="URL do GeoJSON..."
-           style="flex: 1; 
-                  border: none; 
-                  outline: none; 
-                  font-size: 15px; 
-                  padding-left: 10px;
-                  background: transparent;">
+<div id="painel-carregar" class="barra-busca-container">
+    
+    <input id="input-dataset" type="text" placeholder="URL do GeoJSON..." class="input-transparente">
 
-    <button onclick="carregarDataset()"
-            title="Carregar via URL"
-            style="border: none; 
-                   background: transparent; 
-                   color: #28a745;
-                   font-size: 20px;
-                   padding: 5px; 
-                   cursor: pointer;
-                   display: flex;
-                   align-items: center;">
+    <button onclick="carregarDataset()" title="Carregar via URL" class="btn-icone btn-verde">
         🌐
     </button>
 
-    <div style="width: 1px; height: 25px; background: #eee;"></div>
+    <div class="divisor-vertical"></div>
 
-    <label title="Carregar arquivo local"
-           style="background: transparent; 
-                  color: #007bff; 
-                  padding: 5px;
-                  font-size: 20px;
-                  cursor: pointer;
-                  display: flex;
-                  align-items: center;">
+    <button onclick="abrirTabelaQGIS()" title="Abrir Tabela de Atributos" class="btn-icone btn-escuro">
+        📊
+    </button>
+
+    <div class="divisor-vertical"></div>
+
+    <label title="Carregar arquivo local" class="btn-icone btn-azul">
         📂
-        <input type="file"
-               accept=".geojson,.json"
-               onchange="carregarGeoJSON(this)"
-               style="display: none;">
+        <input type="file" accept=".geojson,.json" onchange="carregarGeoJSON(this)" style="display: none;">
     </label>
 </div>
 
@@ -1691,7 +1707,21 @@ body, html {
 <div style="font-size: 10px; color: #888; text-align: center; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
     Dados do mapa &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" style="color: #888; text-decoration: none;">OpenStreetMap contributors</a>
 </div>
-
+<div id="janela-tabela" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; overflow: hidden; font-family: sans-serif;">
+    <div style="background: #390158; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <strong id="contagem-registros">Tabela de Atributos</strong>
+        <button onclick="document.getElementById('janela-tabela').style.display='none'" style="background: #ff4444; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">Sair</button>
+    </div>
+    
+    <div style="width: 100%; height: calc(100% - 45px); overflow: auto;">
+        <table id="tabela-qgis" style="border-collapse: collapse; min-width: 100%; font-size: 12px;">
+            <thead id="head-qgis" style="position: sticky; top: 0; background: #f2f2f2; z-index: 2;">
+                </thead>
+            <tbody id="body-qgis">
+                </tbody>
+        </table>
+    </div>
+</div>
  <script>
 
 // VARIÁVEIS GLOBAIS
@@ -1732,7 +1762,8 @@ var map = L.map('map', {
     center: [-3.73, -38.52],
     zoom: 13,
     zoomControl: false,
-    attributionControl: false // <--- ISSO REMOVE A BARRA BRANCA DO CANTO
+    attributionControl: false,
+    renderer: L.canvas() // <--- ESSA LINHA É A MÁGICA PARA O CELULAR!
 });
 
 // Adiciona controle de zoom na parte inferior direita
@@ -1766,7 +1797,60 @@ osm.addTo(map);
 // ==============================
 grupoLabels = L.layerGroup().addTo(map);
 // ==============================
-// FUNÇÕES DE INTERAÇÃO 31/03/2026
+// FUNÇÕES DE INTERAÇÃO 03/04/2026
+function abrirTabelaQGIS() {
+    const janela = document.getElementById('janela-tabela');
+    const head = document.getElementById('head-qgis');
+    const body = document.getElementById('body-qgis');
+    const contagem = document.getElementById('contagem-registros');
+
+    // Usamos os dados que você já carregou no mapa
+    // Se você usa a variável geojsonData, use ela aqui
+    if (!geojsonData || !geojsonData.features) {
+        alert("Nenhum dado carregado para exibir a tabela.");
+        return;
+    }
+
+    const features = geojsonData.features;
+    contagem.innerText = `Tabela de Atributos - ${features.length} feições encontradas`;
+
+    // 1. Criar Cabeçalho (Baseado na primeira feição)
+    head.innerHTML = "";
+    let colunas = Object.keys(features[0].properties);
+    let trHead = document.createElement('tr');
+    
+    colunas.forEach(col => {
+        let th = document.createElement('th');
+        th.style.cssText = "border: 1px solid #ccc; padding: 8px; text-align: left; background: #eee; color: #333;";
+        th.innerText = col;
+        trHead.appendChild(th);
+    });
+    head.appendChild(trHead);
+
+    // 2. Criar Linhas
+    body.innerHTML = "";
+    features.forEach(feat => {
+        let tr = document.createElement('tr');
+        tr.style.borderBottom = "1px solid #eee";
+        
+        colunas.forEach(col => {
+            let td = document.createElement('td');
+            td.style.cssText = "border: 1px solid #eee; padding: 8px; white-space: nowrap;";
+            td.innerText = feat.properties[col] !== undefined ? feat.properties[col] : "-";
+            tr.appendChild(td);
+        });
+
+        // Efeito de seleção ao clicar na linha (opcional)
+        tr.onclick = function() {
+            this.style.background = "#fff9c4"; 
+            // Aqui você poderia adicionar um zoom na quadra se quisesse
+        };
+
+        body.appendChild(tr);
+    });
+
+    janela.style.display = 'block';
+}
 function proximaEtapa(num) {
     if (num === 2) {
         // Mostra a data após preencher imóveis
@@ -2037,75 +2121,80 @@ function carregarGeoJSON(input) {
     reader.onload = function (e) {
         try {
             const geojson = JSON.parse(e.target.result);
+            geojsonData = geojson; // Alimenta a variável global para a tabela
 
-            // Remove camada antiga
+            // Remove camada antiga com segurança
             if (window.minhaCamadaJSON) {
                 map.removeLayer(window.minhaCamadaJSON);
             }
 
-            grupoLabels.clearLayers();
+            if (grupoLabels) {
+                grupoLabels.clearLayers();
+            }
 
-            // Adiciona camada principal com associação do layer
+            // Adiciona camada principal
             window.minhaCamadaJSON = L.geoJSON(geojson, {
-                style: { color:"#000", weight:2, fillOpacity:0 },
-                onEachFeature: function(feature, layer){
-                    // Associa o layer à feature
+                // MÁGICA DA PERFORMANCE AQUI:
+                smoothFactor: 1.5, 
+                
+                style: { 
+                    color: "#000", 
+                    weight: 2, 
+                    fillOpacity: 0,
+                    fillColor: "#FFFFFF" // Define uma cor base para o Canvas não se perder
+                },
+
+                onEachFeature: function(feature, layer) {
                     feature.leafletLayer = layer;
 
-                    // Clique para pintar/despintar
-                  layer.on("click", () => { 
-    if(modoSelecao){
-        const corAtual = layer.options.fillColor;
-        
-        if(corAtual === corManual){
-            // 1. Desmarcar
-            layer.setStyle({
-                fillColor: "#FFFFFF",
-                fillOpacity: 0,
-                color: "#000"
-            });
-            quadrasSelecionadas = quadrasSelecionadas.filter(f => f !== feature);
-        } else {
-            // 2. Marcar
-            layer.setStyle({
-                fillColor: corManual,
-                fillOpacity: 0.5,
-                color: corManual
-            });
-            if(!quadrasSelecionadas.includes(feature)){
-                quadrasSelecionadas.push(feature);
-            }
-        }
+                    layer.on("click", () => { 
+                        if (modoSelecao) {
+                            const corAtual = layer.options.fillColor;
+                            
+                            if (corAtual === corManual) {
+                                // 1. Desmarcar
+                                layer.setStyle({
+                                    fillColor: "#FFFFFF",
+                                    fillOpacity: 0,
+                                    color: "#000"
+                                });
+                                quadrasSelecionadas = quadrasSelecionadas.filter(f => f !== feature);
+                            } else {
+                                // 2. Marcar
+                                layer.setStyle({
+                                    fillColor: corManual,
+                                    fillOpacity: 0.5,
+                                    color: corManual
+                                });
+                                if (!quadrasSelecionadas.includes(feature)) {
+                                    quadrasSelecionadas.push(feature);
+                                }
+                            }
 
-        // 3. Atualiza os cálculos automáticos que já existem
-        atualizarCardSelecionadas(); 
+                            // 3. Atualiza cálculos e painel
+                            atualizarCardSelecionadas(); 
+                            const listaPainel = document.getElementById('lista-quadras-selecionadas');
+                            if (listaPainel) {
+                                if (quadrasSelecionadas.length > 0) {
+                                    const numeros = quadrasSelecionadas
+                                        .map(f => f.properties.QUADRA || f.properties.id_quadra || "?")
+                                        .sort((a, b) => a - b)
+                                        .join(", ");
+                                    listaPainel.innerHTML = `<strong style="color: #2c3e50;">${numeros}</strong>`;
+                                } else {
+                                    listaPainel.innerHTML = "Nenhuma quadra selecionada.";
+                                }
+                            }
+                        } else {
+                            // Lógica do Popup normal ou Tabela de Atributos
+                            // DICA: Se for usar a barra horizontal, chame montarCardAtributos(feature.properties) aqui
+                            const p = feature.properties || {};
+                            const popup = `<b>Bairro:</b> ${p.BAIRRO || "-"}<br><b>Quadra:</b> ${p.QUADRA || "-"}`;
+                            layer.bindPopup(popup).openPopup();
+                        }
+                    });
 
-        // 4. PREENCHIMENTO DIRETO (Sem depender de outros cards)
-        const listaPainel = document.getElementById('lista-quadras-selecionadas');
-        
-        if (listaPainel) {
-            if (quadrasSelecionadas.length > 0) {
-                // Extrai o número da quadra de cada item selecionado, ordena e junta com vírgula
-                const numeros = quadrasSelecionadas
-                    .map(f => f.properties.QUADRA || f.properties.id_quadra || "?")
-                    .sort((a, b) => a - b)
-                    .join(", ");
-                
-                listaPainel.innerHTML = `<strong style="color: #2c3e50;">${numeros}</strong>`;
-            } else {
-                listaPainel.innerHTML = "Nenhuma quadra selecionada.";
-            }
-        }
-
-    } else {
-        // Lógica do Popup normal
-        const p = feature.properties || {};
-        const popup = `<b>Bairro:</b> ${p.BAIRRO || "-"}<br><b>Quadra:</b> ${p.QUADRA || "-"}`;
-        layer.bindPopup(popup).openPopup();
-    }
-});
-
-                    // Adiciona label da quadra
+                    // Adiciona label da quadra (Cuidado: Muitos labels pesam no celular!)
                     const p = feature.properties || {};
                     if (p.QUADRA) {
                         const centro = calcularCentroide(feature);
@@ -2123,13 +2212,16 @@ function carregarGeoJSON(input) {
                 }
             }).addTo(map);
 
-            calcularDadosGlobais(geojson);
-            geojsonData = geojson;
+            // Cálculos Finais
+            if (typeof calcularDadosGlobais === "function") {
+                calcularDadosGlobais(geojson);
+            }
+            
             map.fitBounds(window.minhaCamadaJSON.getBounds());
 
         } catch (err) {
             console.error("Erro ao carregar GeoJSON:", err);
-            alert("Erro ao ler o arquivo.");
+            alert("Erro ao ler o arquivo ou formato inválido.");
         }
     };
 
