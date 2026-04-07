@@ -1,4 +1,4 @@
-const CACHE_NAME = 'geoestrat-v3'; // <--- Mude aqui sempre que atualizar o mapa
+const CACHE_NAME = 'geoestrat-v4'; // <--- Mude aqui sempre que atualizar o mapa
 const assets = [
   './',
   './index.html',
