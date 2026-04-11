@@ -1253,7 +1253,44 @@ function calcularCentroide(feature) {
 /* ============================================================
    PROCESSAR GEOJSON (Otimizado com labels inteligentes)
    ============================================================ */
-const ZOOM_LABELS = 10;
+// 1. Defina o zoom de corte (16 é um bom equilíbrio para celular)
+const ZOOM_LABELS = 16; 
+
+const gerenciarLabelsRefinado = () => {
+    // Se o geojson ainda não carregou, não faz nada
+    if (!geojsonData) return;
+
+    // 2. Limpeza Total (Garante que a memória RAM seja liberada)
+    grupoLabels.clearLayers();
+    
+    const zoomAtual = map.getZoom();
+    
+    // 3. Só processa se o zoom for detalhado
+    if (zoomAtual >= ZOOM_LABELS) {
+        const limitesTela = map.getBounds();
+
+        geojsonData.features.forEach(f => {
+            if (f._label) {
+                // Pegamos a posição real da label
+                const posicao = f._label.getLatLng();
+                
+                // 4. SÓ ADICIONA SE ESTIVER NO CAMPO DE VISÃO
+                // O padding (margem) de 0.001 ajuda a carregar um pouquinho além da borda
+                if (limitesTela.contains(posicao)) {
+                    grupoLabels.addLayer(f._label);
+                }
+            }
+        });
+    }
+};
+
+// 5. REGISTRO DE EVENTOS (O segredo está aqui)
+// 'moveend' dispara quando você para de arrastar ou termina o zoom
+map.on('moveend', gerenciarLabelsRefinado);
+
+// 6. EXECUÇÃO FORÇADA APÓS O CARREGAMENTO
+// (Coloque isso dentro da sua função processarGeoJSON, no final dela)
+setTimeout(gerenciarLabelsRefinado, 500);
 
 function processarGeoJSON(geojson) {
     geojsonData = geojson;
