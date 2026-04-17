@@ -17,6 +17,43 @@
 
 <style>
 /* ============================================================
+   VARIÁVEIS GLOBAIS — Sistema de design unificado
+   ============================================================ */
+:root {
+  /* Paleta */
+  --roxo-escuro:  #390158;
+  --roxo:         #6f42c1;
+  --roxo-claro:   #f0e8ff;
+  --laranja:      #f57804;
+  --verde:        #28a745;
+  --vermelho:     #dc3545;
+  --cinza-bg:     #f4f4f4;
+  --cinza-borda:  #e0e0e0;
+  --cinza-texto:  #555;
+  --texto-escuro: #2c3e50;
+
+  /* Tipografia — 4 tamanhos apenas */
+  --fxs:  10px;   /* micro labels */
+  --fsm:  12px;   /* labels de campo */
+  --fmd:  14px;   /* corpo / inputs */
+  --flg:  16px;   /* títulos de seção */
+
+  /* Fonte única */
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* Espaçamento */
+  --gap-xs: 4px;
+  --gap-sm: 8px;
+  --gap-md: 12px;
+  --gap-lg: 16px;
+
+  /* Raio */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+/* ============================================================
    RESET E BASE
    ============================================================ */
 *, *::before, *::after { box-sizing: border-box; }
@@ -25,7 +62,9 @@ body, html {
     margin: 0; padding: 0;
     height: 100%; width: 100%;
     overflow: hidden;
-    font-family: sans-serif;
+    font-family: var(--font);
+    font-size: var(--fmd);
+    color: var(--texto-escuro);
 }
 
 /* ============================================================
@@ -33,1963 +72,1397 @@ body, html {
    ============================================================ */
 #map {
     height: 100%; width: 100%;
-    position: absolute;
-    top: 0; bottom: 0;
-    z-index: 0;
+    position: absolute; top: 0; bottom: 0; z-index: 0;
 }
 
 /* ============================================================
    CARD DE ATRIBUTOS
    ============================================================ */
 #card-atributos {
-    position: fixed;
-    bottom: 2px;
-    left: 50%;
+    position: fixed; bottom: 2px; left: 50%;
     transform: translateX(-50%);
-    width: 95%;
-    max-width: 380px;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
+    width: 95%; max-width: 380px;
+    background: white;
+    display: flex; flex-direction: column;
     z-index: 1000;
     transition: bottom 0.4s ease-in-out, height 0.4s ease-in-out;
-    border-radius: 20px 20px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
-
 #conteudo-card {
-    display: block;
-    height: 4vh;
-    max-height: 14vh;
-    overflow-y: auto;
-    flex: none;
-    padding: 5px 10px;
+    display: block; height: 4vh; max-height: 14vh;
+    overflow-y: auto; flex: none; padding: 5px 10px;
 }
+#conteudo-card table { width: 100%; font-size: var(--fmd); border-collapse: collapse; }
+#conteudo-card table tr.total { position: sticky; bottom: 0; background: #f0f0f0; font-weight: 700; z-index: 10; }
 
-#conteudo-card table {
-    width: 100%;
-    font-size: 14px;
-    border-collapse: collapse;
-}
-
-#conteudo-card table tr.total {
-    position: sticky;
-    bottom: 0;
-    background: #f0f0f0;
-    font-weight: bold;
-    z-index: 10;
-}
-
-/* Estados do card */
 .card-minimizado { bottom: -100vh !important; }
-
 .card-medio {
-    bottom: 70px !important;
-    height: 12vh !important;
-    max-height: 150px !important;
-    display: flex !important;
-    flex-direction: column;
-    width: 95% !important;
-    max-width: 380px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
-    overflow: hidden !important;
+    bottom: 70px !important; height: 12vh !important; max-height: 150px !important;
+    display: flex !important; flex-direction: column;
+    width: 95% !important; max-width: 380px !important;
+    left: 50% !important; transform: translateX(-50%) !important;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.15); overflow: hidden !important;
 }
-
 .card-cheio {
-    bottom: 70px !important;
-    height: 85vh !important;
-    width: 95% !important;
-    max-width: 380px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    border-radius: 20px 20px 0 0 !important;
+    bottom: 70px !important; height: 85vh !important;
+    width: 95% !important; max-width: 380px !important;
+    left: 50% !important; transform: translateX(-50%) !important;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
 }
-
-.card-cheio #conteudo-card {
-    height: 75vh !important;
-    max-height: 75vh !important;
-}
+.card-cheio #conteudo-card { height: 75vh !important; max-height: 75vh !important; }
 
 /* ============================================================
    BARRA NAVEGAÇÃO INFERIOR
    ============================================================ */
 .barra-navegacao-app {
-    position: fixed;
-    bottom: 0; left: 0;
-    width: 100%;
-    background: #ffffff;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 0 15px 0;
-    border-top: 1px solid #ddd;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: white;
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 10px 0 15px;
+    border-top: 1px solid var(--cinza-borda);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
     z-index: 9999;
 }
-
 .item-grade { text-align: center; cursor: pointer; flex: 1; }
-.item-grade span { font-size: 24px; display: block; }
-.item-grade p { margin: 5px 0 0; font-size: 10px; text-transform: uppercase; font-weight: bold; }
+.item-grade span { font-size: 22px; display: block; }
+.item-grade p {
+    margin: 4px 0 0; font-size: var(--fxs);
+    text-transform: uppercase; font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.selecao-ativa   { color: var(--verde); }
+.selecao-inativa { color: #aaa; }
 
-.selecao-ativa  { color: #28a745; }
-.selecao-inativa { color: #6c757d; }
-
-/* ============================================================
-   ZOOM LEAFLET (acima da barra)
-   ============================================================ */
+/* Zoom acima da barra */
 .leaflet-bottom.leaflet-right .leaflet-control-zoom,
 .leaflet-bottom.leaflet-left  .leaflet-control-zoom {
-    margin-bottom: 120px !important;
-    margin-right: 15px;
+    margin-bottom: 120px !important; margin-right: 15px;
 }
 
 /* ============================================================
    BOTÕES FLUTUANTES
    ============================================================ */
-.btn-flutuante-inferior-esquerda {
+.btn-flutuante {
     width: 50px; height: 50px;
-    color: #fff;
-    border-radius: 50%;
-    border: white 2px solid;
-    font-size: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: white; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+    font-size: 22px;
+    display: flex; justify-content: center; align-items: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    transition: transform 0.2s cubic-bezier(0.4,0,0.2,1), filter 0.2s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    transition: transform 0.18s cubic-bezier(0.4,0,0.2,1), filter 0.18s;
 }
-.btn-flutuante-inferior-esquerda:active {
-    transform: scale(0.9);
-    filter: brightness(0.8);
-}
-
-/* Hover apenas em dispositivos com mouse real */
-@media (hover: hover) {
-    .btn-flutuante-inferior-esquerda:hover { transform: scale(1.07); }
-}
+.btn-flutuante:active { transform: scale(0.88); filter: brightness(0.82); }
+@media (hover: hover) { .btn-flutuante:hover { transform: scale(1.08); } }
 
 /* ============================================================
    PAINEL CLASSIFICAR
    ============================================================ */
 #PAINEL_CLASSIFICAR {
-    display: none;
-    position: fixed;
-    top: 250px;
-    left: 15px; /* CORRIGIDO: era "left: 90" sem unidade */
-    z-index: 999999;
-    background: white;
-    width: 250px;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 25px rgba(0,0,0,0.4);
-    font-family: sans-serif;
-    border: 1px solid #ccc;
+    display: none; position: fixed; top: 250px; left: 15px;
+    z-index: 999999; background: white; width: 260px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 6px 28px rgba(0,0,0,0.3);
+    overflow: hidden;
 }
-
 #PAINEL_CLASSIFICAR h4 {
-    margin: -15px -15px 15px -15px;
-    padding: 12px;
-    font-size: 16px;
-    text-align: center;
-    background: #f57804;
-    color: white;
-    border-radius: 12px 12px 0 0;
-    font-weight: bold;
+    margin: 0; padding: 12px 15px;
+    font-size: var(--fmd); text-align: center;
+    background: var(--laranja); color: white;
+    font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
+#PAINEL_CLASSIFICAR .painel-corpo { padding: 15px; }
 
 /* ============================================================
    PAINEL ESTRATIFICAÇÃO (deslizante)
    ============================================================ */
 .painel-estratificacao {
-    position: fixed;
-    top: 0; right: -100%;
+    position: fixed; top: 0; right: -100%;
     width: 100%; height: 100%;
-    background: #f4f4f4;
+    background: var(--cinza-bg);
     z-index: 999999999;
     transition: right 0.4s ease-in-out;
     visibility: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
 .painel-estratificacao.abrir { right: 0; visibility: visible; }
 
 .painel-conteudo {
-    padding: 20px;
-    padding-top: 50px;
-    padding-bottom: 80px;
-    max-width: 500px;
-    margin: 0 auto;
+    padding: var(--gap-lg);
+    padding-top: 52px;
+    padding-bottom: 90px;
+    max-width: 520px; margin: 0 auto;
 }
-
 .fechar-painel {
-    font-size: 32px; font-weight: bold;
-    cursor: pointer;
-    position: absolute; right: 20px; top: 10px;
-    color: #444; z-index: 10;
+    font-size: 28px; font-weight: 700; cursor: pointer;
+    position: absolute; right: 18px; top: 12px;
+    color: #666; z-index: 10; line-height: 1;
 }
+.fechar-painel:hover { color: var(--roxo); }
 
 /* ============================================================
    MENU HAMBURGER E LATERAL
    ============================================================ */
 #menu-hamburger {
-    position: fixed; top: 13px; left: 25px;
-    z-index: 2000;
-    background: #fafafa;
-    color: #390158;
-    width: 45px; height: 45px;
+    position: fixed; top: 13px; left: 25px; z-index: 2000;
+    background: white; color: var(--roxo-escuro);
+    width: 44px; height: 44px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    border-radius: 20px;
+    font-size: 22px; border-radius: var(--radius-md);
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    transition: transform 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    transition: transform 0.18s;
 }
-#menu-hamburger:active { transform: scale(0.93); }
+#menu-hamburger:active { transform: scale(0.92); }
 
 #side-menu {
     height: 100%; width: 280px;
-    position: fixed; z-index: 2001;
-    top: 0; left: -280px;
-    background-color: white;
-    transition: left 0.4s cubic-bezier(0.4,0,0.2,1);
-    box-shadow: 5px 0 15px rgba(0,0,0,0.2);
-    overflow-x: hidden;
-    display: flex; flex-direction: column;
+    position: fixed; z-index: 2001; top: 0; left: -280px;
+    background: white;
+    transition: left 0.38s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 5px 0 20px rgba(0,0,0,0.15);
+    overflow-x: hidden; display: flex; flex-direction: column;
 }
 #side-menu.open { left: 0; }
-
 #overlay {
-    display: none;
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 2000;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.38); z-index: 2000;
 }
-
 .btn-menu {
-    width: 100%; padding: 12px; margin-bottom: 10px;
-    border: none; border-radius: 6px;
-    background: #6f42c1; color: white;
-    font-weight: bold; cursor: pointer;
-    text-align: left; transition: transform 0.2s;
+    width: 100%; padding: 12px var(--gap-md); margin-bottom: 8px;
+    border: none; border-radius: var(--radius-sm);
+    background: var(--roxo); color: white;
+    font-family: var(--font); font-size: var(--fmd); font-weight: 700;
+    cursor: pointer; text-align: left;
+    transition: transform 0.15s, filter 0.15s;
 }
-.btn-menu:active { transform: scale(0.98); }
+.btn-menu:active { transform: scale(0.97); filter: brightness(0.88); }
 
 /* ============================================================
-   BARRA DE BUSCA / CARREGAR
+   BARRA CARREGAR DATASET
    ============================================================ */
 .barra-busca-container {
-    position: absolute;
-    top: 10px; left: 50%;
+    position: absolute; top: 10px; left: 50%;
     transform: translateX(-50%);
-    width: 90%; max-width: 350px;
-    z-index: 1000;
-    background: white;
-    padding: 5px 15px;
+    width: 90%; max-width: 360px; z-index: 1000;
+    background: white; padding: 5px 14px;
     border-radius: 30px;
-    display: flex; gap: 8px; align-items: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    height: 50px;
+    display: flex; gap: var(--gap-sm); align-items: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.14); height: 50px;
 }
-
 .input-transparente {
     flex: 1; border: none; outline: none;
-    font-size: 14px; background: transparent; color: #333;
+    font-family: var(--font); font-size: var(--fmd);
+    background: transparent; color: #333;
 }
-
 .btn-icone {
     border: none; background: transparent;
     font-size: 20px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: transform 0.2s; padding: 5px;
+    transition: transform 0.15s; padding: 5px;
 }
-.btn-icone:active { transform: scale(0.9); }
-
-.btn-verde  { color: #28a745; }
+.btn-icone:active { transform: scale(0.88); }
+.btn-verde  { color: var(--verde); }
 .btn-azul   { color: #007bff; }
-.btn-escuro { color: #2c3e50; }
-
-.divisor-vertical { width: 1px; height: 20px; background: #ddd; }
+.btn-escuro { color: var(--texto-escuro); }
+.divisor-v  { width: 1px; height: 20px; background: var(--cinza-borda); }
 
 /* ============================================================
-   COMPONENTES REUTILIZÁVEIS
+   SISTEMA DE CARDS DO PAINEL — Tipografia unificada
    ============================================================ */
-.section-header {
-    background: #6f42c1;
-    font-weight: bold; font-size: 16px;
-    margin-top: 18px; color: #ffffff;
-    text-align: center; padding: 10px;
-    border-radius: 8px 8px 0 0;
+
+/* Cabeçalho de card (roxo, uppercase) */
+.card-header {
+    background: var(--roxo);
+    color: white;
+    padding: 11px 14px;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    font-size: var(--fsm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 14px;
+}
+.card-header:first-child { margin-top: 0; }
+
+/* Corpo de card */
+.card-body {
+    background: white;
+    border: 1px solid rgba(111,66,193,0.2);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    padding: 14px;
+    margin-bottom: 4px;
+}
+
+/* Card completo (header + body integrados com sombra) */
+.card-bloco {
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    margin-top: 14px;
+    overflow: hidden;
+}
+.card-bloco .card-header { margin-top: 0; border-radius: 0; }
+.card-bloco .card-body   { border-radius: 0; border: none; border-top: 1px solid var(--roxo-claro); }
+
+/* Sub-cabeçalho dentro de card (texto escuro, linha inferior) */
+.sub-header {
+    font-size: var(--fsm);
+    font-weight: 700;
+    color: var(--roxo-escuro);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--roxo-claro);
+    display: flex; align-items: center; gap: 6px;
+}
+
+/* Label de campo padrão */
+.label-campo {
+    display: block;
+    font-size: var(--fsm);
+    font-weight: 700;
+    color: var(--cinza-texto);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+    margin-top: 10px;
+}
+.label-campo:first-child { margin-top: 0; }
+
+/* Input padrão */
+.input-painel {
+    width: 100%; padding: 10px 12px;
+    border: 1.5px solid var(--cinza-borda);
+    border-radius: var(--radius-sm);
+    font-family: var(--font); font-size: var(--fmd);
+    color: var(--texto-escuro);
+    background: white;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+}
+.input-painel:focus { outline: none; border-color: var(--roxo); }
+.input-painel[readonly] { background: #f5f5f5; color: #888; cursor: not-allowed; }
+
+/* Select padrão */
+select.input-painel { cursor: pointer; appearance: auto; }
+
+/* Linha de info (label: valor) */
+.linha-info {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: var(--fmd);
+}
+.linha-info:last-child  { border-bottom: none; }
+.linha-info:nth-child(even) { background: #fafafa; }
+.linha-info .li-label { color: var(--cinza-texto); font-weight: 500; }
+.linha-info .li-valor {
+    font-weight: 700; color: var(--texto-escuro);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--fmd);
+}
+
+/* Linha de destaque (meta) */
+.linha-destaque {
+    background: #e8f5e9 !important;
+    border-radius: var(--radius-sm);
+    margin-top: 6px;
+}
+.linha-destaque .li-label { color: #1b5e20; font-size: var(--flg); font-weight: 700; }
+.linha-destaque .li-valor { color: #1b5e20; font-size: var(--flg); }
+
+/* Cards de totais globais (chips) */
+.chips-grid {
+    display: flex; flex-wrap: wrap; gap: var(--gap-sm);
+    margin-bottom: 12px;
+}
+.chip {
+    background: white; border: 1px solid var(--cinza-borda);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px; text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    min-width: 70px; flex: 1;
+}
+.chip-label {
+    font-size: var(--fxs); font-weight: 700;
+    color: var(--cinza-texto); text-transform: uppercase;
+    letter-spacing: 0.4px; display: block; margin-bottom: 4px;
+}
+.chip-valor {
+    font-size: var(--flg); font-weight: 700;
+    color: var(--roxo-escuro); display: block;
+}
+
+/* Meta destaque grande */
+.meta-destaque {
+    background: var(--roxo-claro);
+    border: 2px solid var(--roxo);
+    border-radius: var(--radius-md);
+    padding: 14px; text-align: center;
+    margin-top: 8px;
+}
+.meta-destaque .meta-label {
+    font-size: var(--fsm); font-weight: 700;
+    color: var(--roxo); text-transform: uppercase;
+    letter-spacing: 0.5px; display: block; margin-bottom: 4px;
+}
+.meta-destaque .meta-valor {
+    font-size: 32px; font-weight: 800; color: var(--roxo); display: block;
+}
+
+/* Seção de cabeçalho bairro */
+.bairro-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 10px; margin-bottom: 14px;
+    border-bottom: 3px solid var(--roxo);
+}
+.bairro-nome {
+    font-size: var(--flg); font-weight: 700; color: var(--texto-escuro);
+}
+.bairro-cod {
+    background: #f0f0f0; padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    font-size: var(--fsm); font-weight: 700; color: var(--roxo-escuro);
     text-transform: uppercase;
 }
 
-.section-body {
-    background: #f8f9fa;
-    padding: 15px;
-    border: 1px solid #390158;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
+/* Radio cards */
+.radio-card {
+    display: flex; align-items: center;
+    background: white; padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--cinza-borda);
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    font-size: var(--fmd); font-weight: 500; color: #333;
+    gap: 10px;
 }
-
-.form-section {
-    background: #ffffff; border-radius: 12px;
-    padding: 15px; margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+.radio-card input[type="radio"] {
+    accent-color: var(--roxo);
+    transform: scale(1.2); flex-shrink: 0;
 }
-
-.form-header {
-    background: #6f42c1; border-radius: 12px;
-    font-weight: bold; color: #f8f9fa;
-    text-align: center; display: flex;
-    justify-content: center; align-items: center;
-    padding: 15px 10px; margin-bottom: 15px;
-    font-size: 20px; min-height: 15px;
-}
-
-.input-painel {
-    width: 100%; padding: 10px;
-    border: 1px solid #ccc; border-radius: 6px;
-    font-size: 14px; box-sizing: border-box;
-}
-
-.label-mobile {
-    font-size: 11px; color: #666; font-weight: bold;
-    display: block; margin-bottom: 3px; margin-top: 5px;
-}
-
-/* CORRIGIDO: label-sutil movido do HTML para o CSS */
-.label-sutil {
-    display: block; font-size: 10px; color: #7f8c8d;
-    text-transform: uppercase; margin-bottom: 2px;
-    margin-top: 5px; font-weight: bold; letter-spacing: 0.5px;
-}
-
-.linha-info {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 10px; background: #fdfdfd;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 14px;
-}
-.linha-info:nth-child(odd) { background: #f8f9fa; }
-.linha-info label { color: #444; font-weight: 500; }
-.linha-info span  { font-weight: bold; color: #2c3e50; font-family: monospace; font-size: 15px; }
-
-.destaque-programados {
-    background: #c8e6c9 !important;
-    margin-top: 8px; border-radius: 4px;
-    border: 1px solid #b3d7ff;
-}
-.destaque-programados label { color: #004085; font-size: 20px; font-weight: 500; }
-
-/* Labels do mapa */
-.minha-label-customizada {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-.quadra-label {
-    color: black; font-size: 14px;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px white;
+.radio-card:has(input:checked) {
+    border-color: var(--roxo); background: var(--roxo-claro);
 }
 
 /* Depósitos */
 .linha-deposito {
-    display: flex; gap: 8px; align-items: flex-start;
-    margin-bottom: 12px;
-    border-bottom: 1px solid #eee; padding-bottom: 8px;
+    display: flex; gap: var(--gap-sm); align-items: flex-start;
+    padding-bottom: 10px; margin-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
 }
-.label-tipo { font-size:12px; color:#9b0404; font-weight:bold; display:block; margin-bottom:2px; }
-.label-desc { font-size:10px; color:#555; display:block; margin-bottom:2px; font-weight:bold; }
-.input-num  { width:100%; font-weight:bold; text-align:center; height:38px; border:1px solid #ccc; border-radius:4px; }
-.input-txt  { width:100%; font-size:12px; height:38px; min-height:38px; resize:none; overflow:hidden; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; background:#fff; }
+.linha-deposito:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.deposito-tipo { font-size: var(--fsm); color: #9b0404; font-weight: 700; display: block; margin-bottom: 3px; }
+.deposito-desc { font-size: var(--fxs); color: var(--cinza-texto); font-weight: 700; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.3px; }
+.input-num { width: 100%; font-weight: 700; text-align: center; height: 38px; border: 1.5px solid var(--cinza-borda); border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--fmd); }
+.input-txt { width: 100%; font-size: var(--fsm); height: 38px; min-height: 38px; resize: none; overflow: hidden; padding: 8px; border: 1.5px solid var(--cinza-borda); border-radius: var(--radius-sm); box-sizing: border-box; background: white; font-family: var(--font); }
+
+/* Total focos */
+.total-focos-box {
+    background: white; padding: 12px 14px;
+    border-radius: var(--radius-sm); border: 2px solid #2e7d32;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 12px;
+}
+.total-focos-label { font-size: var(--fsm); color: #2e7d32; font-weight: 700; text-transform: uppercase; }
+.total-focos-valor { font-weight: 700; color: #2e7d32; font-size: 22px; }
+
+/* Grid dois inputs lado a lado */
+.duo-grid { display: flex; gap: var(--gap-md); }
+.duo-grid > div { flex: 1; }
+
+/* Quadras positivas (texto vermelho) */
+#input-destaque {
+    width: 100%; color: #c0392b; font-weight: 700;
+    min-height: 42px; resize: vertical; overflow-y: hidden;
+    border: 1.5px solid var(--cinza-borda); border-radius: var(--radius-sm);
+    padding: 9px 12px; font-family: var(--font); font-size: var(--fmd);
+    box-sizing: border-box; background: white;
+}
+#input-destaque:focus { outline: none; border-color: #c0392b; }
+
+/* Positivos grid */
+.positivos-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: var(--gap-sm); align-items: end; margin-bottom: 16px;
+}
+.positivo-total {
+    background: white; border: 1.5px solid var(--roxo);
+    border-radius: var(--radius-sm); height: 54px;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center; gap: 2px;
+}
+.positivo-total-label { font-size: var(--fxs); color: var(--cinza-texto); font-weight: 700; text-transform: uppercase; }
+.positivo-total-valor { font-size: 18px; font-weight: 700; color: #9b0404; }
+
+/* Select de ciclo com fundo roxo */
+.ciclo-wrapper {
+    background: var(--roxo); border-radius: var(--radius-md);
+    padding: 12px 14px; margin-top: 14px;
+}
+.ciclo-label {
+    font-size: var(--fsm); font-weight: 700; color: white;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    display: block; margin-bottom: 6px;
+}
+.ciclo-select {
+    width: 100%; padding: 8px 10px; border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font); font-size: var(--fmd);
+    font-weight: 700; color: var(--roxo-escuro);
+    cursor: pointer;
+}
+
+/* Semana epi */
+.sepi-grid {
+    display: flex; gap: var(--gap-sm); align-items: center; justify-content: center;
+}
+.sepi-grid > div { flex: 1; }
+.sepi-sep { font-weight: 700; color: var(--roxo-escuro); font-size: var(--fmd); padding-top: 14px; }
+.sepi-sub { font-size: var(--fxs); color: #999; text-align: center; margin-bottom: 3px; text-transform: uppercase; }
+
+/* Imóvel desprogramado destaque */
+.desp-valor {
+    height: 44px; font-weight: 700; color: #c0392b;
+    background: white; border: 1.5px solid var(--roxo);
+    border-radius: var(--radius-sm); text-align: center;
+    font-size: 18px; font-family: var(--font); width: 100%;
+}
+
+/* Botão de ação */
+.btn-acao {
+    width: 100%; padding: 14px;
+    border: none; border-radius: var(--radius-md);
+    font-family: var(--font); font-size: var(--fmd); font-weight: 700;
+    cursor: pointer; margin-top: 10px;
+    transition: transform 0.15s, filter 0.15s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+.btn-acao:active { transform: scale(0.97); filter: brightness(0.88); }
+.btn-acao-verde  { background: var(--verde); color: white; }
 
 /* Tabela de Atributos */
 #janela-tabela {
-    display: none;
-    position: fixed; top:0; left:0; width:100%; height:100%;
-    background: white; z-index: 10000;
-    overflow: hidden; font-family: sans-serif;
+    display: none; position: fixed; inset: 0;
+    background: white; z-index: 10000; overflow: hidden;
 }
 
-/* Indicador de carregamento */
+/* Loading */
 #loading-indicator {
-    display: none;
-    position: fixed; top:50%; left:50%;
+    display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%,-50%);
-    background: rgba(57,1,88,0.88);
-    color: white; padding: 16px 28px;
-    border-radius: 12px; font-size: 15px; font-weight: bold;
-    z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    background: rgba(57,1,88,0.9); color: white;
+    padding: 16px 28px; border-radius: var(--radius-md);
+    font-size: var(--fmd); font-weight: 700;
+    z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     pointer-events: none;
 }
+
+/* Labels do mapa */
 .minha-label-customizada {
     background: transparent !important;
-    border: none !important;
+    border: none !important; box-shadow: none !important;
 }
 .quadra-label {
-    font-size: 12px;
-    color: #333;
-    pointer-events: none; /* Evita que o clique no número atrapalhe o clique na quadra */
+    font-size: 12px; font-weight: 700; color: #1a1a1a;
+    pointer-events: none;
+    text-shadow: 1px 1px 0 white,-1px -1px 0 white,1px -1px 0 white,-1px 1px 0 white;
 }
-/* Misc */
-#sel-total-programados { font-size: 20px; }
 
+/* Misc */
+#sel-total-programados { font-size: var(--flg) !important; }
 @media (max-width: 500px) {
     .barra-busca-container { gap: 4px; padding: 5px 10px; }
-    .btn-icone { font-size: 18px; padding: 3px; }
+    .btn-icone { font-size: 18px; }
 }
 </style>
 </head>
-
 <body>
 
-<!-- Indicador de carregamento -->
 <div id="loading-indicator">⏳ Carregando...</div>
-
-<!-- ============================================================
-     MENU HAMBURGER
-     ============================================================ -->
 <div id="menu-hamburger" onclick="toggleMenu()" aria-label="Abrir menu">&#9776;</div>
 
 <!-- ============================================================
      MENU LATERAL
      ============================================================ -->
-<div id="side-menu" style="display:flex;flex-direction:column;background:white;height:100vh;overflow-y:auto;">
-
-    <div style="background:#390158;padding:20px;text-align:center;color:white;flex-shrink:0;">
-        <h3 style="margin:0;font-size:18px;">GeoEstratific@ 2026</h3>
-        <small>Fortaleza - CE</small>
+<div id="side-menu" style="display:flex;flex-direction:column;height:100vh;overflow-y:auto;">
+    <div style="background:var(--roxo-escuro);padding:20px;text-align:center;color:white;flex-shrink:0;">
+        <h3 style="margin:0;font-size:var(--flg);font-weight:700;letter-spacing:0.5px;">GEOESTRATIFIC@ — 1° CICLO 2026</h3>
+        <small style="opacity:0.8;font-size:var(--fsm);">Fortaleza - CE</small>
     </div>
 
-    <div id="fluxo-planejamento" style="padding:20px;flex-grow:1;">
+    <div id="fluxo-planejamento" style="padding:18px;flex-grow:1;">
         <div id="step-1">
-            <p style="font-size:14px;color:#390158;font-weight:bold;">1. Qual a quantidade de imóveis?</p>
-            <small style="color:#666;display:block;margin-bottom:5px;">(Apague 0 para continuar ou insira o valor)</small>
-            <input type="number" id="input-valor-manual" value="0"
-                   style="width:100%;padding:10px;border:1px solid #ddd;border-radius:5px;box-sizing:border-box;"
-                   oninput="proximaEtapa(2)">
+            <p class="label-campo" style="font-size:var(--fmd);color:var(--roxo-escuro);margin-bottom:6px;">1. QUAL A QUANTIDADE DE IMÓVEIS?</p>
+            <small style="color:#888;display:block;margin-bottom:6px;font-size:var(--fsm);">(Apague 0 para continuar ou insira o valor)</small>
+            <input type="number" id="input-valor-manual" value="0" class="input-painel" oninput="proximaEtapa(2)">
         </div>
-
-        <div id="step-2" style="display:none;margin-top:20px;">
-            <p style="font-size:14px;color:#390158;font-weight:bold;">2. Qual a data de início?</p>
-            <input type="date" id="input-data-manual"
-                   style="width:100%;padding:10px;border:1px solid #ddd;border-radius:5px;box-sizing:border-box;"
-                   onchange="proximaEtapa(3)">
+        <div id="step-2" style="display:none;margin-top:16px;">
+            <p class="label-campo" style="font-size:var(--fmd);color:var(--roxo-escuro);margin-bottom:6px;">2. QUAL A DATA DE INÍCIO?</p>
+            <input type="date" id="input-data-manual" class="input-painel" onchange="proximaEtapa(3)">
         </div>
-
-        <div id="step-3" style="display:none;margin-top:20px;">
-            <p style="font-size:14px;color:#390158;font-weight:bold;">3. Quantos agentes terá na equipe?</p>
-            <input type="number" id="input-agentes-manual" placeholder="Ex: 10"
-                   style="width:100%;padding:10px;border:1px solid #ddd;border-radius:5px;box-sizing:border-box;"
-                   oninput="proximaEtapa(4)">
+        <div id="step-3" style="display:none;margin-top:16px;">
+            <p class="label-campo" style="font-size:var(--fmd);color:var(--roxo-escuro);margin-bottom:6px;">3. QUANTOS AGENTES NA EQUIPE?</p>
+            <input type="number" id="input-agentes-manual" placeholder="Ex: 10" class="input-painel" oninput="proximaEtapa(4)">
         </div>
-
-        <div id="step-4" style="display:none;margin-top:20px;">
-            <p style="font-size:14px;color:#390158;font-weight:bold;">4. Quantos dias programados?</p>
-            <input type="number" id="input-dias-programados" placeholder="Ex: 5"
-                   style="width:100%;padding:10px;border:1px solid #ddd;border-radius:5px;box-sizing:border-box;"
-                   oninput="finalizarPlanejamento()">
+        <div id="step-4" style="display:none;margin-top:16px;">
+            <p class="label-campo" style="font-size:var(--fmd);color:var(--roxo-escuro);margin-bottom:6px;">4. QUANTOS DIAS PROGRAMADOS?</p>
+            <input type="number" id="input-dias-programados" placeholder="Ex: 5" class="input-painel" oninput="finalizarPlanejamento()">
         </div>
-
-        <div id="respostas-robo" style="display:none;margin-top:25px;background:#f9f9f9;border:2px solid #390158;border-radius:10px;padding:15px;"></div>
-
-        <button onclick="reiniciarFluxo()"
-                style="margin-top:20px;width:100%;background:#eee;border:none;padding:10px;border-radius:5px;cursor:pointer;font-size:12px;color:#555;">
-            🔄 Refazer Planejamento
+        <div id="respostas-robo" style="display:none;margin-top:20px;background:#f9f9f9;border:2px solid var(--roxo-escuro);border-radius:var(--radius-md);padding:14px;font-size:var(--fmd);"></div>
+        <button onclick="reiniciarFluxo()" style="margin-top:16px;width:100%;background:#eee;border:none;padding:10px;border-radius:var(--radius-sm);cursor:pointer;font-size:var(--fsm);font-weight:700;color:#666;font-family:var(--font);">
+            🔄 REFAZER PLANEJAMENTO
         </button>
     </div>
 
-    <div style="padding:20px;border-top:1px solid #eee;flex-shrink:0;">
-        <p style="font-size:14px;color:#555;font-weight:bold;margin-top:0;">CENTRAL DO USUÁRIO</p>
-        <hr style="border:0;border-top:1px solid #eee;margin-bottom:15px;">
-
-        <button class="btn-menu" onclick="enviarFeedbackWhats()"
-                style="background-color:#25D366;width:100%;margin-bottom:8px;padding:10px;">
-            💬 Dúvidas no WhatsApp
-        </button>
-
-        <button class="btn-menu" onclick="window.open('https://forms.gle/aze1KKmnLyGebhyaA')"
-                style="width:100%;margin-bottom:8px;padding:10px;">
-            📝 Sugestões e Críticas
-        </button>
-
-        <button class="btn-menu"
-                style="width:100%;background:#f8f9fa;color:#333;border:1px solid #ddd;padding:10px;"
-                onclick="location.reload()">
-            🔄 Atualizar Mapa
-        </button>
+    <div style="padding:18px;border-top:1px solid #eee;flex-shrink:0;">
+        <p style="font-size:var(--fsm);color:#888;font-weight:700;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px;">Central do Usuário</p>
+        <button class="btn-menu" onclick="enviarFeedbackWhats()" style="background:#25D366;">💬 Dúvidas no WhatsApp</button>
+        <button class="btn-menu" onclick="window.open('https://forms.gle/aze1KKmnLyGebhyaA')">📝 Sugestões e Críticas</button>
+        <button class="btn-menu" style="background:#f8f9fa;color:#333;border:1px solid #ddd;" onclick="location.reload()">🔄 Atualizar Mapa</button>
     </div>
-
-    <div style="padding:20px;text-align:center;font-size:11px;color:#999;flex-shrink:0;">
-        Versão 1.0 - 2026
-    </div>
+    <div style="padding:16px;text-align:center;font-size:var(--fxs);color:#bbb;flex-shrink:0;">Versão 1.0 — 2026</div>
 </div>
 
-<!-- Overlay do menu -->
 <div id="overlay" onclick="toggleMenu()"></div>
-
-<!-- Mapa -->
 <div id="map"></div>
 
-<!-- ============================================================
-     BARRA DE CARREGAR DATASET
-     ============================================================ -->
+<!-- Barra carregar -->
 <div id="painel-carregar" class="barra-busca-container">
-    <input id="input-dataset" type="text" placeholder="." class="input-transparente">
-
+    <input id="input-dataset" type="text" placeholder="URL do GeoJSON..." class="input-transparente">
     <button onclick="carregarDataset()" title="Carregar via URL" class="btn-icone btn-verde">🌐</button>
-    <div class="divisor-vertical"></div>
-    <button onclick="abrirTabelaQGIS()" title="Abrir Tabela de Atributos" class="btn-icone btn-escuro">📊</button>
-    <div class="divisor-vertical"></div>
+    <div class="divisor-v"></div>
+    <button onclick="abrirTabelaQGIS()" title="Tabela de Atributos" class="btn-icone btn-escuro">📊</button>
+    <div class="divisor-v"></div>
     <label title="Carregar arquivo local" class="btn-icone btn-azul">
-        📂
-        <input type="file" accept=".geojson,.json" onchange="carregarGeoJSON(this)" style="display:none;">
+        📂<input type="file" accept=".geojson,.json" onchange="carregarGeoJSON(this)" style="display:none;">
     </label>
 </div>
 
-<!-- ============================================================
-     BARRA NAVEGAÇÃO INFERIOR
-     ============================================================ -->
+<!-- Barra navegação -->
 <div class="barra-navegacao-app">
-    <div class="item-grade" onclick="resetarMapa()">
-        <span>🔄</span><p>Limpar</p>
-    </div>
-
+    <div class="item-grade" onclick="resetarMapa()"><span>🔄</span><p>Limpar</p></div>
     <div class="item-grade selecao-ativa" id="item-selecao" onclick="ativarModoSelecao()">
         <input type="checkbox" id="modo_selecao" checked style="display:none;">
-        <span id="icone-selecao">🎯</span>
-        <p id="texto-selecao">Seleção ON</p>
+        <span id="icone-selecao">🎯</span><p id="texto-selecao">Seleção ON</p>
     </div>
-
     <div class="item-grade">
-        <input type="color" id="cor_manual" value="#3388ff"
-               style="width:25px;height:25px;border:none;background:none;cursor:pointer;">
+        <input type="color" id="cor_manual" value="#3388ff" style="width:24px;height:24px;border:none;background:none;cursor:pointer;">
         <p>Cor</p>
     </div>
-
-    <div class="item-grade" onclick="toggleCamadas()">
-        <span>🗺️</span><p>Fundo</p>
-    </div>
+    <div class="item-grade" onclick="toggleCamadas()"><span>🗺️</span><p>Fundo</p></div>
 </div>
 
-<!-- ============================================================
-     CARD DE ATRIBUTOS
-     ============================================================ -->
+<!-- Card atributos -->
 <div id="card-atributos" class="card-minimizado">
-    <div onclick="toggleCard()"
-         style="width:100%;height:30px;background:#6f42c1;border-radius:20px 20px 0 0;display:flex;justify-content:center;align-items:center;cursor:pointer;">
-        <div style="width:50px;height:6px;background:#dbdbdb;border-radius:10px;"></div>
+    <div onclick="toggleCard()" style="width:100%;height:30px;background:var(--roxo);border-radius:var(--radius-lg) var(--radius-lg) 0 0;display:flex;justify-content:center;align-items:center;cursor:pointer;">
+        <div style="width:44px;height:5px;background:rgba(255,255,255,0.4);border-radius:10px;"></div>
     </div>
-    <div style="padding:15px;height:calc(100% - 30px);overflow-y:auto;">
+    <div style="padding:12px;height:calc(100% - 30px);overflow-y:auto;">
         <div id="conteudo-card">
-            <div id="area-da-soma">
-                <h3 style="text-align:center;margin:0;font-size:18px;">Análise de Seleção</h3>
-                <p style="text-align:center;color:#888;font-size:14px;">Toque em uma quadra para ver os dados</p>
+            <div id="area-da-soma" style="text-align:center;padding:8px 0;">
+                <p style="margin:0;font-size:var(--fmd);font-weight:700;color:var(--roxo-escuro);text-transform:uppercase;">ANÁLISE DE SELEÇÃO</p>
+                <p style="margin:6px 0 0;color:#aaa;font-size:var(--fsm);">Toque em uma quadra para ver os dados</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ============================================================
-     BOTÃO CLASSIFICAR
-     ============================================================ -->
-<div style="position:fixed;bottom:280px;right:10px;z-index:9999;">
-    <div id="BOTAO_CLASSIFICAR" class="btn-flutuante-inferior-esquerda"
-         onclick="abrirFecharFiltro()"
-         style="background:#f57804;">
-        <span style="font-size:24px;">📊</span>
-    </div>
+<!-- Botão Classificar -->
+<div style="position:fixed;bottom:280px;right:12px;z-index:9999;">
+    <div class="btn-flutuante" onclick="abrirFecharFiltro()" style="background:var(--laranja);">📊</div>
 </div>
 
-<!-- ============================================================
-     PAINEL CLASSIFICAR
-     ============================================================ -->
+<!-- Painel Classificar -->
 <div id="PAINEL_CLASSIFICAR">
     <h4>Classificar Mapa</h4>
+    <div class="painel-corpo">
+        <label class="label-campo">Atributo:</label>
+        <select id="SELECT_COLUNA" class="input-painel" onchange="obterValoresUnicos()"></select>
 
-    <label>Atributo:</label>
-    <select id="SELECT_COLUNA" style="width:100%;padding:8px;margin-bottom:10px;"
-            onchange="obterValoresUnicos()"></select>
+        <label class="label-campo">Intervalo:</label>
+        <div class="duo-grid">
+            <input type="number" id="MIN_VAL" placeholder="Mín." class="input-painel">
+            <input type="number" id="MAX_VAL" placeholder="Máx." class="input-painel">
+        </div>
 
-    <label>Intervalo:</label>
-    <div style="display:flex;gap:5px;margin-bottom:10px;">
-        <input type="number" id="MIN_VAL" placeholder="Mín." style="width:50%;padding:5px;">
-        <input type="number" id="MAX_VAL" placeholder="Máx." style="width:50%;padding:5px;">
-    </div>
+        <label class="label-campo">Cor:</label>
+        <input type="color" id="COR_FILTRO" value="#28a745" style="width:100%;height:36px;border:1.5px solid var(--cinza-borda);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:10px;">
 
-    <label>Cor:</label>
-    <input type="color" id="COR_FILTRO" value="#28a745"
-           style="width:100%;height:35px;border:none;margin-bottom:10px;cursor:pointer;">
-
-    <button onclick="addRegra()"
-            style="width:100%;background:#007bff;color:white;border:none;padding:10px;border-radius:8px;margin-bottom:10px;">
-        + Adicionar regra
-    </button>
-
-    <div id="LISTA_REGRAS"
-         style="border:1px solid #ddd;padding:8px;border-radius:8px;height:100px;overflow:auto;margin-bottom:10px;font-size:12px;">
-    </div>
-
-    <button onclick="aplicarRegras()"
-            style="width:100%;background:#28a745;color:white;border:none;padding:12px;border-radius:8px;font-weight:bold;margin-bottom:5px;">
-        APLICAR TODAS
-    </button>
-
-    <button onclick="resetarMapa()"
-            style="width:100%;background:#dc3545;color:white;border:none;padding:10px;border-radius:8px;">
-        RESETAR
-    </button>
-</div>
-
-<!-- ============================================================
-     BOTÃO ESTRATIFICAR
-     ============================================================ -->
-<div style="position:fixed;bottom:200px;right:10px;z-index:9999;">
-    <div id="BOTAO_ESTRATIFICAR" class="btn-flutuante-inferior-esquerda"
-         onclick="abrirEstratificacao()"
-         style="background:#6f42c1;">
-        <span style="font-size:28px;">E</span>
+        <button onclick="addRegra()" style="width:100%;background:#007bff;color:white;border:none;padding:10px;border-radius:var(--radius-sm);font-family:var(--font);font-size:var(--fmd);font-weight:700;cursor:pointer;margin-bottom:8px;">+ ADICIONAR REGRA</button>
+        <div id="LISTA_REGRAS" style="border:1px solid var(--cinza-borda);padding:8px;border-radius:var(--radius-sm);height:90px;overflow:auto;margin-bottom:8px;font-size:var(--fsm);"></div>
+        <button onclick="aplicarRegras()" style="width:100%;background:var(--verde);color:white;border:none;padding:11px;border-radius:var(--radius-sm);font-family:var(--font);font-size:var(--fmd);font-weight:700;cursor:pointer;margin-bottom:6px;">APLICAR TODAS</button>
+        <button onclick="resetarMapa()" style="width:100%;background:var(--vermelho);color:white;border:none;padding:10px;border-radius:var(--radius-sm);font-family:var(--font);font-size:var(--fmd);font-weight:700;cursor:pointer;">RESETAR</button>
     </div>
 </div>
 
+<!-- Botão Estratificar -->
+<div style="position:fixed;bottom:200px;right:12px;z-index:9999;">
+    <div class="btn-flutuante" onclick="abrirEstratificacao()" style="background:var(--roxo);font-size:20px;font-weight:700;">E</div>
+</div>
+
 <!-- ============================================================
-     PAINEL ESTRATIFICAÇÃO (deslizante)
+     PAINEL ESTRATIFICAÇÃO
      ============================================================ -->
 <div id="painel-estratificacao" class="painel-estratificacao" onclick="fecharAoTocarFora(event)">
-    <div class="painel-conteudo" onclick="event.stopPropagation()">
+<div class="painel-conteudo" onclick="event.stopPropagation()">
+<div class="fechar-painel" onclick="fecharEstratificacao()">×</div>
 
-        <div class="fechar-painel" onclick="fecharEstratificacao()">×</div>
-
-        <!-- Informações Gerais -->
-        <div class="form-header">Informações Gerais do Bairro</div>
-
-        <div style="padding:15px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:3px solid #6f42c1;padding-bottom:8px;">
-                <div>
-                    <strong style="color:#2c3e50;font-size:16px;">Bairro:</strong>
-                    <span id="global-bairro" style="font-size:16px;font-weight:bold;color:#2c3e50;">Aguardando...</span>
-                </div>
-                <div style="background:#f1f1f1;padding:2px 8px;border-radius:4px;">
-                    <strong style="color:#7f8c8d;font-size:12px;text-transform:uppercase;">Código:</strong>
-                    <span id="global-codigo" style="font-weight:bold;color:#422c50;">---</span>
-                </div>
+<!-- ── BLOCO 1: INFORMAÇÕES GERAIS ── -->
+<div class="card-bloco">
+    <div class="card-header">📍 Informações Gerais do Bairro</div>
+    <div class="card-body">
+        <div class="bairro-header">
+            <div>
+                <span style="font-size:var(--fsm);color:var(--cinza-texto);text-transform:uppercase;font-weight:700;">Bairro</span><br>
+                <span id="global-bairro" style="font-size:var(--flg);font-weight:700;color:var(--texto-escuro);">Aguardando...</span>
             </div>
-
-            <!-- Resumo Geral -->
-            <div class="section-header">📊 Resumo Geral da Área</div>
-            <div class="section-body">
-                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px;">
-                    <div style="background:#fff;padding:10px;border-radius:6px;border:1px solid #ddd;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,0.03);">
-                        <label style="font-size:10px;color:#555;font-weight:bold;display:block;margin-bottom:5px;">QUADRAS</label>
-                        <span id="global-total-quadras" style="font-size:18px;font-weight:bold;color:#390158;">0</span>
-                    </div>
-                    <div style="background:#fff;padding:10px;border-radius:6px;border:1px solid #ddd;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,0.03);">
-                        <label style="font-size:10px;color:#555;font-weight:bold;display:block;margin-bottom:5px;">IMÓVEIS</label>
-                        <span id="global-total-imoveis" style="font-size:18px;font-weight:bold;color:#390158;">0</span>
-                    </div>
-                    <div style="background:#fff;padding:10px;border-radius:6px;border:1px solid #ddd;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,0.03);">
-                        <label style="font-size:10px;color:#555;font-weight:bold;display:block;margin-bottom:5px;">AP. TÉRREO</label>
-                        <span id="global-total-ap" style="font-size:18px;font-weight:bold;color:#390158;">0</span>
-                    </div>
-                    <div style="background:#fff;padding:10px;border-radius:6px;border:1px solid #ddd;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,0.03);">
-                        <label style="font-size:10px;color:#555;font-weight:bold;display:block;margin-bottom:5px;">HABITANTES</label>
-                        <span id="global-total-hab" style="font-size:18px;font-weight:bold;color:#390158;">0</span>
-                    </div>
-                    <div style="background:#fff;padding:10px;border-radius:6px;border:1px solid #ddd;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,0.03);">
-                        <label style="font-size:10px;color:#555;font-weight:bold;display:block;margin-bottom:5px;">P.E</label>
-                        <span id="global-total-pe" style="font-size:18px;font-weight:bold;color:#390158;">0</span>
-                    </div>
-                </div>
-                <div style="background:#fff;padding:15px;border-radius:8px;border:2px solid #6f42c1;text-align:center;box-shadow:0 4px 6px rgba(111,66,193,0.1);">
-                    <label style="font-size:13px;color:#555;font-weight:bold;display:block;margin-bottom:5px;">🏠 Imóveis Programados (Meta do Bairro)</label>
-                    <span id="global-total-programados" style="font-size:32px;font-weight:800;color:#6f42c1;display:block;">0</span>
-                </div>
-            </div>
-
-            <!-- Totais Selecionadas -->
-            <div class="form-header" style="margin-top:15px;">📊 Totais de Quadras Selecionadas: <span id="sel-qtd-quadras">0</span></div>
-            <div style="border:3px solid #6f42c1;border-radius:8px;padding:10px;">
-                <div class="linha-info"><label>Total de Imóveis Programados:</label><span id="sel-total-imoveis">0</span></div>
-                <div class="linha-info"><label>Ap. Acima do Térreo:</label><span id="sel-total-ap">0</span></div>
-                <div class="linha-info"><label>Total de Habi. na Área Estratificada:</label><span id="sel-total-hab">0</span></div>
-                <div class="linha-info"><label>Total de PE:</label><span id="sel-total-pe">0</span></div>
-                <div class="linha-info"><label>🐶 Total de Cães:</label><span id="sel-total-caes">0</span></div>
-                <div class="linha-info"><label>🐱 Total de Gatos:</label><span id="sel-total-gatos">0</span></div>
-                <div class="linha-info destaque-programados">
-                    <label>🏠 Imóveis Programados:</label>
-                    <span id="sel-total-programados">0</span>
-                </div>
-            </div>
-
-            <!-- Configuração -->
-            <div style="background:#6f42c1;border-radius:8px;padding:12px;margin-top:10px;">
-                <div style="font-weight:bold;font-size:14px;color:#f4f7f4;border-bottom:1px solid rgba(255,255,255,0.3);text-align:center;padding-bottom:8px;margin-bottom:12px;">
-                    CONFIGURAÇÃO DA ESTRATIFICAÇÃO / ABRANGÊNCIA
-                </div>
-                <div style="border:1px solid #ccc;border-radius:4px;background:white;padding:10px;">
-                    <label class="label-sutil">1. Tipo de Estratificação:</label>
-                    <select id="tipo-estratificacao" class="input-painel" style="width:100%;padding:8px;">
-                        <option value="">Selecione o tipo de estratificação...</option>
-                        <option value="m1">Estratificação Local</option>
-                        <option value="m2">Mutirão Intermunicipal</option>
-                        <option value="m3">Mutirão Municipal</option>
-                        <option value="m4">Mutirão Regional</option>
-                        <option value="m5">Outros</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Detalhes Ação -->
-            <div style="background:#fdfdfd;border:1px solid #04025f;border-radius:8px;padding:12px;margin-top:10px;">
-                <div style="font-weight:bold;font-size:12px;color:#2c3e50;border-bottom:1px solid #eee;text-align:center;padding-bottom:8px;margin-bottom:12px;">
-                    📋 DETALHES DA AÇÃO / MUTIRÃO
-                </div>
-                <div style="margin-bottom:12px;">
-                    <label class="label-sutil">2. Tipo de Mutirão:</label>
-                    <select id="tipo-mutirao" class="input-painel" style="width:100%;padding:8px;">
-                        <option value="">Selecione o mutirão...</option>
-                        <option value="m1">Preventivo</option>
-                        <option value="m2">Bloqueios de casos</option>
-                        <option value="m3">Resposta Rápida</option>
-                        <option value="m4">Intensificação da Rotina</option>
-                    </select>
-                </div>
-                <div style="margin-bottom:12px;">
-                    <label class="label-sutil">3. Ação Gerada:</label>
-                    <select id="acao-gerada" class="input-painel" style="width:100%;padding:8px;">
-                        <option value="">Selecione a ação...</option>
-                        <option value="a1">IIP Elevado</option>
-                        <option value="a2">Aumento das Notificações de Casos</option>
-                        <option value="a3">Perfil de Alta Incidência na Área</option>
-                        <option value="a4">Sinal de Alerta de Casos Graves</option>
-                        <option value="a5">Óbito Suspeito de Arbovirose</option>
-                    </select>
-                </div>
-                <div style="margin-bottom:5px;">
-                    <label class="label-sutil">4. Indicador Base:</label>
-                    <select id="indicios-encontrados" class="input-painel" style="width:100%;padding:8px;">
-                        <option value="">Selecione o indicador...</option>
-                        <option value="i1">IIP - Infestação Predial</option>
-                        <option value="i2">IPO - Ovitrampas</option>
-                        <option value="i3">IIP + IPO</option>
-                        <option value="i4">Incidência</option>
-                        <option value="i5">Infestação + Incidência</option>
-                        <option value="i6">Notificação de Óbito</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Seleção de Campo -->
-            <div class="section-header" style="margin-top:15px;">📍 Seleção de Campo</div>
-            <div class="section-body">
-                <label style="font-size:12px;color:#555;font-weight:bold;display:block;margin-bottom:8px;">Quadras Selecionadas no Mapa:</label>
-                <div id="lista-quadras-selecionadas"
-                     style="width:100%;background:#fff;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:13px;min-height:45px;word-wrap:break-word;color:#333;line-height:1.4;box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);">
-                    Nenhuma quadra selecionada.
-                </div>
-            </div>
-
-            <!-- Informações Adicionais -->
-            <div style="background:#fdfdfd;border:1px solid #6e05ac;border-radius:8px;padding:12px;margin-top:15px;">
-                <label style="font-weight:bold;font-size:13px;color:#2c3e50;margin-bottom:8px;display:block;">📝 Informações Adicionais:</label>
-                <input type="text" id="input-obs-uaps" placeholder="Exemplo: Uaps"
-                       style="width:100%;margin-bottom:8px;padding:10px;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
-                <input type="text" id="input-obs-end" placeholder="Exemplo: Endereço do Mutirão e QT"
-                       style="width:100%;margin-bottom:8px;padding:10px;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
-                <input type="text" id="input-responsavel" placeholder="Responsável"
-                       style="width:100%;padding:10px;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
-            </div>
-
-            <!-- Estratificação Operacional -->
-            <div class="form-section" style="border:3px solid #640092;margin-top:15px;">
-                <div class="form-header">🛠️ Estratificação (Operacional)</div>
-                <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
-                    <div>
-                        <span class="label-sutil">Início Programado:</span>
-                        <input type="date" id="data-inicio" class="input-painel" value="2026-03-24" onchange="calcularOperacional()">
-                    </div>
-                    <div>
-                        <span class="label-sutil">Término Programado:</span>
-                        <input type="date" id="data-termino" class="input-painel" readonly
-                               style="background-color:#eee;border:1px solid #ccc;color:#555;cursor:not-allowed;">
-                    </div>
-                </div>
-                <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
-                    <div>
-                        <span class="label-sutil">Média/Serv:</span>
-                        <input type="number" id="media-servidor" class="input-painel" value="24" min="1" oninput="calcularOperacional()" style="width:50px;">
-                    </div>
-                    <div>
-                        <span class="label-sutil">Servidores:</span>
-                        <input type="number" id="quantidade-servidores" class="input-painel" value="1" min="1" oninput="calcularOperacional()" style="width:50px;">
-                    </div>
-                    <div>
-                        <span class="label-sutil">Dias:</span>
-                        <span id="dias-trabalho" style="font-weight:bold;color:#2c3e50;font-size:1.1em;">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tipo Estratificação / Resultado -->
-            <div class="section-header">📋 Estratificação ou Resultado</div>
-            <div class="section-body" style="margin-bottom:20px;">
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <label style="display:flex;align-items:center;background:#fff;padding:12px;border-radius:6px;border:1px solid #ccc;cursor:pointer;">
-                        <!-- CORRIGIDO: name único para não conflitar com o select#tipo-estratificacao -->
-                        <input type="radio" name="tipo-estratificacao-resultado" value="simples" checked
-                               style="margin-right:10px;accent-color:#6f42c1;transform:scale(1.2);">
-                        <span style="font-size:14px;color:#333;font-weight:500;">1. Estratificação Simples</span>
-                    </label>
-                    <label style="display:flex;align-items:center;background:#fff;padding:12px;border-radius:6px;border:1px solid #ccc;cursor:pointer;">
-                        <input type="radio" name="tipo-estratificacao-resultado" value="resultado"
-                               style="margin-right:10px;accent-color:#6f42c1;transform:scale(1.2);">
-                        <span style="font-size:14px;color:#333;font-weight:500;">2. Resultado da Estratificação</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- REALIZADO -->
-            <div style="font-weight:bold;font-size:16px;color:#2c3e50;border-bottom:1px solid #eee;text-align:center;padding-bottom:8px;margin-bottom:12px;">
-                📋 REALIZADO
-            </div>
-
-            <!-- Quadras Positivas -->
-            <div class="form-section" style="border:3px solid #3c0386;">
-                <div class="form-header">Digitar Quadras Positivas</div>
-                <div style="display:flex;gap:5px;padding:10px;">
-                    <textarea id="input-destaque" class="input-painel"
-                              placeholder="Ex: 10, 15, 2-1, 22"
-                              onblur="organizarQuadras()"
-                              oninput="ajustarAltura(this)"
-                              style="width:100%;color:red;font-weight:bold;min-height:40px;resize:vertical;overflow-y:hidden;border:1px solid #ccc;border-radius:4px;padding:8px;font-family:inherit;"></textarea>
-                </div>
-            </div>
-
-            <!-- Período e Cronograma -->
-            <div style="background:#fdfdfd;border:1px solid #6e05ac;border-radius:8px;padding:12px;margin-top:15px;">
-                <div class="section-header">📅 Período e Cronograma</div>
-                <div class="section-body">
-                    <div style="display:flex;gap:12px;margin-bottom:15px;">
-                        <div style="flex:1;">
-                            <label style="font-size:11px;color:#555;display:block;margin-bottom:4px;font-weight:bold;">INÍCIO REAL:</label>
-                            <input type="date" id="res-inicio" class="input-painel" style="width:100%;height:35px;">
-                        </div>
-                        <div style="flex:1;">
-                            <label style="font-size:11px;color:#555;display:block;margin-bottom:4px;font-weight:bold;">TÉRMINO REAL:</label>
-                            <!-- CORRIGIDO: onchange agora chama calcularSemanaEpi que lê este campo -->
-                            <input type="date" id="res-termino" class="input-painel" style="width:100%;height:35px;" onchange="calcularSemanaEpi()">
-                        </div>
-                    </div>
-                    <div style="border-top:1px dashed #ccc;padding-top:15px;">
-                        <label style="font-size:12px;color:#555;display:block;margin-bottom:10px;font-weight:bold;text-align:center;text-transform:uppercase;">Semana Epidemiológica</label>
-                        <div style="display:flex;gap:8px;align-items:center;justify-content:center;">
-                            <div style="flex:1;">
-                                <div style="font-size:10px;color:#888;text-align:center;margin-bottom:2px;">Início</div>
-                                <input type="number" id="semana-epi-inicio" class="input-painel" min="1" max="53" placeholder="5ª"
-                                       style="width:100%;height:35px;text-align:center;">
-                            </div>
-                            <div style="font-weight:bold;color:#390158;font-size:14px;margin-top:12px;">a</div>
-                            <div style="flex:1;">
-                                <div style="font-size:10px;color:#888;text-align:center;margin-bottom:2px;">Fim</div>
-                                <input type="number" id="semana-epi-fim" class="input-painel" min="1" max="53" placeholder="6ª"
-                                       style="width:100%;height:35px;text-align:center;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ciclo -->
-            <div style="background:#6f42c1;font-weight:bold;font-size:18px;margin-top:18px;color:#fff;text-align:center;padding:10px;border-radius:8px;">
-                Ciclo
-                <select id="res-ciclo" class="input-painel" style="width:100%;height:32px;padding:2px;margin-top:8px;border-radius:4px;border:none;font-size:16px;">
-                    <option value="">Selecione...</option>
-                    <option value="1">1° Ciclo</option><option value="2">2° Ciclo</option>
-                    <option value="3">3° Ciclo</option><option value="4">4° Ciclo</option>
-                    <option value="5">5° Ciclo</option><option value="6">6° Ciclo</option>
-                    <option value="7">7° Ciclo</option><option value="8">8° Ciclo</option>
-                    <option value="9">9° Ciclo</option><option value="10">10° Ciclo</option>
-                </select>
-            </div>
-
-            <!-- Quadras Trabalhadas / HDP / HDT -->
-            <div style="margin-top:8px;">
-                <label style="font-size:16px;color:#555;">Total de Quadras Trabalhadas:</label>
-                <input type="number" id="res-quadras-trab" class="input-painel" style="font-weight:bold;color:#2c3e50;" value="0">
-            </div>
-            <div style="display:flex;gap:8px;margin-top:8px;">
-                <div style="flex:1;">
-                    <label style="font-size:12px;color:#555;">HDP (Programado):</label>
-                    <input type="number" id="res-hdp" class="input-painel" style="background:#f9f9f9;font-weight:bold;" readonly>
-                </div>
-                <div style="flex:1;">
-                    <label style="font-size:12px;color:#555;">HDT (Trabalhado):</label>
-                    <input type="number" id="res-hdt-trabalhado" class="input-painel" placeholder="0">
-                </div>
-            </div>
-
-            <!-- Imóveis -->
-            <div class="section-header" style="margin-top:18px;">🏠 Imóveis</div>
-            <div class="section-body">
-                <div style="display:flex;gap:12px;margin-bottom:15px;">
-                    <div style="flex:1;">
-                        <label style="font-size:12px;color:#555;font-weight:bold;display:block;margin-bottom:5px;">Trabalhados/visitados:</label>
-                        <input type="number" id="res-imov-trab" class="input-painel" style="width:100%;height:35px;" oninput="calcularImoveisDesprogramados()">
-                    </div>
-                    <div style="flex:1;">
-                        <label style="font-size:12px;color:#555;font-weight:bold;display:block;margin-bottom:5px;">Fechados/pendências:</label>
-                        <input type="number" id="res-fechados" class="input-painel" style="width:100%;height:35px;" oninput="calcularImoveisDesprogramados()">
-                    </div>
-                </div>
-                <div style="border-top:1px dashed #ccc;margin-top:10px;padding-top:10px;">
-                    <label style="font-size:14px;color:#390158;font-weight:bold;display:block;margin-bottom:5px;">Imóveis Desprogramados (Sobra):</label>
-                    <input type="number" id="res-imov-desprogram" class="input-painel"
-                           style="height:40px;font-weight:bold;color:#d63384;background:#fff;border:1px solid #6f42c1;text-align:center;font-size:18px;"
-                           value="0" readonly>
-                </div>
-            </div>
-
-            <!-- Focos e Tratamento -->
-            <div class="section-header" style="margin-top:18px;">🏠 Resumo de Focos e Tratamento</div>
-            <div class="section-body">
-                <label style="font-size:13px;color:#555;display:block;text-align:center;font-weight:bold;border-bottom:1px solid #ddd;padding-bottom:5px;margin-bottom:10px;">
-                    Total de Imóveis Positivos Por Tipo
-                </label>
-                <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;margin-bottom:20px;">
-                    <div style="text-align:center;"><label style="font-size:12px;font-weight:bold;color:#555;display:block;margin-bottom:4px;">R</label>
-                        <input type="number" id="pos-r" value="0" oninput="somarPositivos()" style="width:100%;text-align:center;border:1px solid #ccc;border-radius:4px;padding:5px 2px;font-size:13px;height:35px;box-sizing:border-box;"></div>
-                    <div style="text-align:center;"><label style="font-size:12px;font-weight:bold;color:#555;display:block;margin-bottom:4px;">C</label>
-                        <input type="number" id="pos-c" value="0" oninput="somarPositivos()" style="width:100%;text-align:center;border:1px solid #ccc;border-radius:4px;padding:5px 2px;font-size:13px;height:35px;box-sizing:border-box;"></div>
-                    <div style="text-align:center;"><label style="font-size:12px;font-weight:bold;color:#555;display:block;margin-bottom:4px;">TB</label>
-                        <input type="number" id="pos-tb" value="0" oninput="somarPositivos()" style="width:100%;text-align:center;border:1px solid #ccc;border-radius:4px;padding:5px 2px;font-size:13px;height:35px;box-sizing:border-box;"></div>
-                    <div style="text-align:center;"><label style="font-size:12px;font-weight:bold;color:#555;display:block;margin-bottom:4px;">OU</label>
-                        <input type="number" id="pos-ou" value="0" oninput="somarPositivos()" style="width:100%;text-align:center;border:1px solid #ccc;border-radius:4px;padding:5px 2px;font-size:13px;height:35px;box-sizing:border-box;"></div>
-                    <div style="text-align:center;background:#fff;border-radius:4px;border:1px solid #6f42c1;height:55px;display:flex;flex-direction:column;justify-content:center;">
-                        <label style="font-size:10px;color:#555;font-weight:bold;display:block;margin-bottom:2px;">TOTAL</label>
-                        <span id="total-positivos" style="font-weight:bold;color:#9b0404;font-size:18px;">0</span>
-                    </div>
-                </div>
-                <div style="border-top:1px dashed #ccc;padding-top:15px;">
-                    <label style="font-size:13px;color:#555;display:block;text-align:center;font-weight:bold;border-bottom:1px solid #eee;padding-bottom:5px;margin-bottom:12px;">Total de imóveis tratados com:</label>
-                    <div style="display:flex;gap:12px;">
-                        <div style="flex:1;"><label style="font-size:12px;color:#555;font-weight:bold;display:block;margin-bottom:4px;">BTI:</label>
-                            <input type="number" id="res-imov-bti" class="input-painel" style="width:100%;height:35px;"></div>
-                        <div style="flex:1;"><label style="font-size:12px;color:#555;font-weight:bold;display:block;margin-bottom:4px;">ESP:</label>
-                            <input type="number" id="res-imov-esp" class="input-painel" style="width:100%;height:35px;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Depósitos e Focos -->
-            <div class="section-header" style="margin-top:18px;">🧪 Classificação de Depósitos e Focos</div>
-            <div class="section-body">
-                <div class="linha-deposito">
-                    <div style="width:22%;"><label class="label-tipo">A1:</label><input type="number" id="res-a1" class="input-num" oninput="calcularTotalFocos()"></div>
-                    <div style="width:78%;"><label class="label-desc">Depósitos elevados:</label><textarea id="res-a1-txt" oninput="autoExpand(this)" placeholder="Ex: Caixa d'água..." class="input-txt"></textarea></div>
-                </div>
-                <div class="linha-deposito">
-                    <div style="width:22%;"><label class="label-tipo">A2:</label><input type="number" id="res-a2" class="input-num" oninput="calcularTotalFocos()"></div>
-                    <div style="width:78%;"><label class="label-desc">Depósitos de água potável:</label><textarea id="res-a2-txt" oninput="autoExpand(this)" placeholder="Ex: Cacimba, tonel..." class="input-txt"></textarea></div>
-                </div>
-                <div class="linha-deposito">
-                    <div style="width:22%;"><label class="label-tipo">B:</label><input type="number" id="res-b" class="input-num" oninput="calcularTotalFocos()"></div>
-                    <div style="width:78%;"><label class="label-desc">Depósitos móveis:</label><textarea id="res-b-txt" oninput="autoExpand(this)" placeholder="Ex: Vasos, pratos..." class="input-txt"></textarea></div>
-                </div>
-                <div class="linha-deposito">
-                    <div style="width:22%;"><label class="label-tipo">C:</label><input type="number" id="res-c" class="input-num" oninput="calcularTotalFocos()"></div>
-                    <div style="width:78%;"><label class="label-desc">Depósitos fixos:</label><textarea id="res-c-txt" oninput="autoExpand(this)" placeholder="Ex: Ralo, piscina..." class="input-txt"></textarea></div>
-                </div>
-                <div class="linha-deposito">
-                    <div style="width:22%;"><label class="label-tipo">D1:</label><input type="number" id="res-d1" class="input-num" oninput="calcularTotalFocos()"></div>
-                    <div style="width:78%;"><label class="label-desc">Pneus e outros:</label><textarea id="res-d1-txt" oninput="autoExpand(this)" class="input-txt"></textarea></div>
-                </div>
-                <div class="linha-deposito">
-                    <div style="width:22%;"><label class="label-tipo">D2:</label><input type="number" id="res-d2" class="input-num" oninput="calcularTotalFocos()"></div>
-                    <div style="width:78%;"><label class="label-desc">Construção, lixo, sucatas:</label><textarea id="res-d2-txt" oninput="autoExpand(this)" class="input-txt"></textarea></div>
-                </div>
-                <div class="linha-deposito" style="border-bottom:none;">
-                    <div style="width:22%;"><label class="label-tipo">E:</label><input type="number" id="res-e" class="input-num" oninput="calcularTotalFocos()"></div>
-                    <div style="width:78%;"><label class="label-desc">Naturais:</label><textarea id="res-e-txt" oninput="autoExpand(this)" placeholder="Ex: Bromélias, ocos de árvore..." class="input-txt"></textarea></div>
-                </div>
-                <div style="background:#fff;padding:12px;border-radius:6px;border:2px solid #2e7d32;text-align:center;margin-top:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                    <label style="font-size:12px;color:#2e7d32;font-weight:bold;margin-left:5px;">TOTAL DE FOCOS (Geral):</label>
-                    <div id="res-total-focos" style="font-weight:bold;color:#2e7d32;font-size:24px;margin-right:10px;">0</div>
-                </div>
-            </div>
-
-            <!-- Tratamentos Realizados -->
-            <div class="section-header" style="margin-top:18px;">💊 Tratamentos Realizados</div>
-            <div class="section-body">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                    <div><label style="font-size:11px;color:#555;font-weight:bold;display:block;margin-bottom:4px;">Dep. Trat. BTI:</label>
-                        <input type="number" id="res-dep-bti" class="input-painel" style="width:100%;height:35px;"></div>
-                    <div><label style="font-size:11px;color:#555;font-weight:bold;display:block;margin-bottom:4px;">Dep. Trat. ESP:</label>
-                        <input type="number" id="res-dep-esp" class="input-painel" style="width:100%;height:35px;"></div>
-                    <div><label style="font-size:11px;color:#555;font-weight:bold;display:block;margin-bottom:4px;">Gasto BTI (g):</label>
-                        <input type="number" id="res-gasto-bti" class="input-painel" style="width:100%;height:35px;"></div>
-                    <div><label style="font-size:11px;color:#555;font-weight:bold;display:block;margin-bottom:4px;">Gasto ESP (ml):</label>
-                        <input type="number" id="res-gasto-esp" class="input-painel" style="width:100%;height:35px;"></div>
-                    <div style="grid-column:span 2;margin-top:10px;padding-top:10px;border-top:1px dashed #ccc;">
-                        <label style="font-size:13px;color:#390158;font-weight:bold;display:block;margin-bottom:5px;text-align:center;">Total de Depósitos Eliminados:</label>
-                        <input type="number" id="res-dep-eliminados" class="input-painel"
-                               style="height:40px;background:#fff;border:1px solid #6f42c1;text-align:center;font-weight:bold;font-size:18px;color:#2c3e50;"
-                               value="0">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Botão Relatório -->
-            <button onclick="copiarRelatorio()"
-                    style="width:100%;padding:15px;background:#28a745;color:white;border:none;border-radius:8px;font-weight:bold;margin-top:10px;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
-                Copiar Relatório WhatsApp
-            </button>
-
-            <div style="font-size:10px;color:#888;text-align:center;margin-top:20px;border-top:1px solid #eee;padding-top:10px;">
-                Dados do mapa &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" style="color:#888;text-decoration:none;">OpenStreetMap contributors</a>
-            </div>
-        </div><!-- /painel-conteudo -->
-    </div><!-- /painel-estratificacao -->
+            <div class="bairro-cod">Cód: <span id="global-codigo">---</span></div>
+        </div>
+        <div class="sub-header">📊 Resumo Geral da Área</div>
+        <div class="chips-grid">
+            <div class="chip"><span class="chip-label">Quadras</span><span class="chip-valor" id="global-total-quadras">0</span></div>
+            <div class="chip"><span class="chip-label">Imóveis</span><span class="chip-valor" id="global-total-imoveis">0</span></div>
+            <div class="chip"><span class="chip-label">AP Térreo</span><span class="chip-valor" id="global-total-ap">0</span></div>
+            <div class="chip"><span class="chip-label">Habitantes</span><span class="chip-valor" id="global-total-hab">0</span></div>
+            <div class="chip"><span class="chip-label">P.E.</span><span class="chip-valor" id="global-total-pe">0</span></div>
+        </div>
+        <div class="meta-destaque">
+            <span class="meta-label">🏠 Imóveis Programados — Meta do Bairro</span>
+            <span class="meta-valor" id="global-total-programados">0</span>
+        </div>
+    </div>
 </div>
 
-<!-- ============================================================
-     TABELA DE ATRIBUTOS
-     ============================================================ -->
-<div id="janela-tabela">
-    <div style="background:#390158;color:white;padding:10px;display:flex;justify-content:space-between;align-items:center;">
-        <strong id="contagem-registros">Tabela de Atributos</strong>
-        <button onclick="document.getElementById('janela-tabela').style.display='none'"
-                style="background:#ff4444;color:white;border:none;padding:5px 15px;border-radius:3px;cursor:pointer;">Sair</button>
+<!-- ── BLOCO 2: TOTAIS DA SELEÇÃO ── -->
+<div class="card-bloco">
+    <div class="card-header">📊 Totais de Quadras Selecionadas — <span id="sel-qtd-quadras">0</span></div>
+    <div class="card-body" style="padding:0;">
+        <div class="linha-info"><span class="li-label">Total de Imóveis</span><span class="li-valor" id="sel-total-imoveis">0</span></div>
+        <div class="linha-info"><span class="li-label">Ap. Acima do Térreo</span><span class="li-valor" id="sel-total-ap">0</span></div>
+        <div class="linha-info"><span class="li-label">Habitantes na Área</span><span class="li-valor" id="sel-total-hab">0</span></div>
+        <div class="linha-info"><span class="li-label">Total de PE</span><span class="li-valor" id="sel-total-pe">0</span></div>
+        <div class="linha-info"><span class="li-label">🐶 Cães</span><span class="li-valor" id="sel-total-caes">0</span></div>
+        <div class="linha-info"><span class="li-label">🐱 Gatos</span><span class="li-valor" id="sel-total-gatos">0</span></div>
+        <div class="linha-info linha-destaque" style="padding:12px;">
+            <span class="li-label">🏠 Imóveis Programados</span>
+            <span class="li-valor" id="sel-total-programados">0</span>
+        </div>
     </div>
-    <div style="width:100%;height:calc(100% - 45px);overflow:auto;">
-        <table id="tabela-qgis" style="border-collapse:collapse;min-width:100%;font-size:12px;">
+</div>
+
+<!-- ── BLOCO 3: CONFIGURAÇÃO ── -->
+<div class="card-bloco">
+    <div class="card-header">⚙️ Configuração da Estratificação</div>
+    <div class="card-body">
+        <label class="label-campo">1. Tipo de Estratificação</label>
+        <select id="tipo-estratificacao" class="input-painel">
+            <option value="">Selecione...</option>
+            <option value="m1">Estratificação Local</option>
+            <option value="m2">Mutirão Intermunicipal</option>
+            <option value="m3">Mutirão Municipal</option>
+            <option value="m4">Mutirão Regional</option>
+            <option value="m5">Outros</option>
+        </select>
+
+        <label class="label-campo">2. Tipo de Mutirão</label>
+        <select id="tipo-mutirao" class="input-painel">
+            <option value="">Selecione...</option>
+            <option value="m1">Preventivo</option>
+            <option value="m2">Bloqueios de Casos</option>
+            <option value="m3">Resposta Rápida</option>
+            <option value="m4">Intensificação da Rotina</option>
+        </select>
+
+        <label class="label-campo">3. Ação Gerada</label>
+        <select id="acao-gerada" class="input-painel">
+            <option value="">Selecione...</option>
+            <option value="a1">IIP Elevado</option>
+            <option value="a2">Aumento das Notificações de Casos</option>
+            <option value="a3">Perfil de Alta Incidência na Área</option>
+            <option value="a4">Sinal de Alerta de Casos Graves</option>
+            <option value="a5">Óbito Suspeito de Arbovirose</option>
+        </select>
+
+        <label class="label-campo">4. Indicador Base</label>
+        <select id="indicios-encontrados" class="input-painel">
+            <option value="">Selecione...</option>
+            <option value="i1">IIP — Infestação Predial</option>
+            <option value="i2">IPO — Ovitrampas</option>
+            <option value="i3">IIP + IPO</option>
+            <option value="i4">Incidência</option>
+            <option value="i5">Infestação + Incidência</option>
+            <option value="i6">Notificação de Óbito</option>
+        </select>
+    </div>
+</div>
+
+<!-- ── BLOCO 4: SELEÇÃO DE CAMPO ── -->
+<div class="card-bloco">
+    <div class="card-header">📍 Seleção de Campo</div>
+    <div class="card-body">
+        <label class="label-campo">Quadras Selecionadas no Mapa</label>
+        <div id="lista-quadras-selecionadas"
+             style="background:#fafafa;padding:12px;border:1.5px solid var(--cinza-borda);border-radius:var(--radius-sm);font-size:var(--fmd);min-height:44px;word-wrap:break-word;color:#333;line-height:1.5;">
+            Nenhuma quadra selecionada.
+        </div>
+        <label class="label-campo">UAPS / Unidade</label>
+        <input type="text" id="input-obs-uaps" placeholder="Ex: UAPS Jangurussu" class="input-painel">
+        <label class="label-campo">Endereço do Mutirão / QT</label>
+        <input type="text" id="input-obs-end" placeholder="Ex: Rua das Flores, QT 10" class="input-painel">
+        <label class="label-campo">Responsável</label>
+        <input type="text" id="input-responsavel" placeholder="Nome do responsável" class="input-painel">
+    </div>
+</div>
+
+<!-- ── BLOCO 5: OPERACIONAL ── -->
+<div class="card-bloco">
+    <div class="card-header">🛠️ Estratificação Operacional</div>
+    <div class="card-body">
+        <div class="duo-grid">
+            <div>
+                <label class="label-campo">Início Programado</label>
+                <input type="date" id="data-inicio" class="input-painel" onchange="calcularOperacional()">
+            </div>
+            <div>
+                <label class="label-campo">Término Programado</label>
+                <input type="date" id="data-termino" class="input-painel" readonly>
+            </div>
+        </div>
+        <div style="display:flex;gap:var(--gap-md);align-items:flex-end;margin-top:10px;flex-wrap:wrap;">
+            <div>
+                <label class="label-campo">Média / Serv.</label>
+                <input type="number" id="media-servidor" class="input-painel" value="24" min="1" oninput="calcularOperacional()" style="width:60px;">
+            </div>
+            <div>
+                <label class="label-campo">Servidores</label>
+                <input type="number" id="quantidade-servidores" class="input-painel" value="1" min="1" oninput="calcularOperacional()" style="width:60px;">
+            </div>
+            <div style="padding-bottom:2px;">
+                <label class="label-campo">Dias</label>
+                <span id="dias-trabalho" style="font-size:22px;font-weight:700;color:var(--roxo-escuro);display:block;">0</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── BLOCO 6: TIPO DE RESULTADO ── -->
+<div class="card-bloco">
+    <div class="card-header">📋 Tipo de Estratificação / Resultado</div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+        <label class="radio-card">
+            <input type="radio" name="tipo-estratificacao-resultado" value="simples" checked>
+            <span>1. Estratificação Simples</span>
+        </label>
+        <label class="radio-card">
+            <input type="radio" name="tipo-estratificacao-resultado" value="resultado">
+            <span>2. Resultado da Estratificação</span>
+        </label>
+    </div>
+</div>
+
+<!-- ── BLOCO 7: REALIZADO ── -->
+<div class="card-bloco">
+    <div class="card-header" style="background:#2e7d32;">✅ Realizado / Resultado</div>
+    <div class="card-body">
+
+        <!-- Quadras positivas -->
+        <div class="sub-header">Quadras Positivas</div>
+        <textarea id="input-destaque"
+                  placeholder="Ex: 10, 15, 2-1, 22"
+                  onblur="organizarQuadras()"
+                  oninput="ajustarAltura(this)"></textarea>
+
+        <!-- Período real -->
+        <div class="sub-header" style="margin-top:14px;">📅 Período e Cronograma</div>
+        <div class="duo-grid">
+            <div>
+                <label class="label-campo">Início Real</label>
+                <input type="date" id="res-inicio" class="input-painel">
+            </div>
+            <div>
+                <label class="label-campo">Término Real</label>
+                <input type="date" id="res-termino" class="input-painel" onchange="calcularSemanaEpi()">
+            </div>
+        </div>
+
+        <!-- Semana epidemiológica -->
+        <label class="label-campo" style="margin-top:12px;">Semana Epidemiológica</label>
+        <div class="sepi-grid">
+            <div><div class="sepi-sub">Início</div><input type="number" id="semana-epi-inicio" class="input-painel" min="1" max="53" placeholder="—" style="text-align:center;"></div>
+            <div class="sepi-sep">a</div>
+            <div><div class="sepi-sub">Fim</div><input type="number" id="semana-epi-fim" class="input-painel" min="1" max="53" placeholder="—" style="text-align:center;"></div>
+        </div>
+
+        <!-- Ciclo -->
+        <div class="ciclo-wrapper">
+            <span class="ciclo-label">Ciclo</span>
+            <select id="res-ciclo" class="ciclo-select">
+                <option value="">Selecione...</option>
+                <option value="1">1° Ciclo</option><option value="2">2° Ciclo</option>
+                <option value="3">3° Ciclo</option><option value="4">4° Ciclo</option>
+                <option value="5">5° Ciclo</option><option value="6">6° Ciclo</option>
+                <option value="7">7° Ciclo</option><option value="8">8° Ciclo</option>
+                <option value="9">9° Ciclo</option><option value="10">10° Ciclo</option>
+            </select>
+        </div>
+
+        <!-- Quadras trab / HDP / HDT -->
+        <div class="sub-header" style="margin-top:14px;">Produtividade</div>
+        <label class="label-campo">Total de Quadras Trabalhadas</label>
+        <input type="number" id="res-quadras-trab" class="input-painel" value="0">
+        <div class="duo-grid" style="margin-top:10px;">
+            <div>
+                <label class="label-campo">HDP (Programado)</label>
+                <input type="number" id="res-hdp" class="input-painel" readonly>
+            </div>
+            <div>
+                <label class="label-campo">HDT (Trabalhado)</label>
+                <input type="number" id="res-hdt-trabalhado" class="input-painel" placeholder="0">
+            </div>
+        </div>
+
+        <!-- Imóveis -->
+        <div class="sub-header" style="margin-top:14px;">🏠 Imóveis</div>
+        <div class="duo-grid">
+            <div>
+                <label class="label-campo">Trabalhados / Visitados</label>
+                <input type="number" id="res-imov-trab" class="input-painel" oninput="calcularImoveisDesprogramados()">
+            </div>
+            <div>
+                <label class="label-campo">Fechados / Pendências</label>
+                <input type="number" id="res-fechados" class="input-painel" oninput="calcularImoveisDesprogramados()">
+            </div>
+        </div>
+        <label class="label-campo" style="margin-top:10px;">Imóveis Desprogramados (Sobra)</label>
+        <input type="number" id="res-imov-desprogram" class="desp-valor" value="0" readonly>
+
+        <!-- Positivos por tipo -->
+        <div class="sub-header" style="margin-top:14px;">🏠 Imóveis Positivos por Tipo</div>
+        <div class="positivos-grid">
+            <div style="text-align:center;"><label class="label-campo" style="text-align:center;">R</label><input type="number" id="pos-r" value="0" oninput="somarPositivos()" class="input-painel" style="text-align:center;padding:6px 4px;"></div>
+            <div style="text-align:center;"><label class="label-campo" style="text-align:center;">C</label><input type="number" id="pos-c" value="0" oninput="somarPositivos()" class="input-painel" style="text-align:center;padding:6px 4px;"></div>
+            <div style="text-align:center;"><label class="label-campo" style="text-align:center;">TB</label><input type="number" id="pos-tb" value="0" oninput="somarPositivos()" class="input-painel" style="text-align:center;padding:6px 4px;"></div>
+            <div style="text-align:center;"><label class="label-campo" style="text-align:center;">OU</label><input type="number" id="pos-ou" value="0" oninput="somarPositivos()" class="input-painel" style="text-align:center;padding:6px 4px;"></div>
+            <div class="positivo-total"><span class="positivo-total-label">Total</span><span class="positivo-total-valor" id="total-positivos">0</span></div>
+        </div>
+
+        <!-- Tratamento imóveis -->
+        <label class="label-campo">Imóveis Tratados com:</label>
+        <div class="duo-grid">
+            <div><label class="label-campo">BTI</label><input type="number" id="res-imov-bti" class="input-painel"></div>
+            <div><label class="label-campo">ESP</label><input type="number" id="res-imov-esp" class="input-painel"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ── BLOCO 8: DEPÓSITOS E FOCOS ── -->
+<div class="card-bloco">
+    <div class="card-header">🧪 Classificação de Depósitos e Focos</div>
+    <div class="card-body">
+        <div class="linha-deposito">
+            <div style="width:22%;"><span class="deposito-tipo">A1</span><input type="number" id="res-a1" class="input-num" oninput="calcularTotalFocos()"></div>
+            <div style="width:78%;"><span class="deposito-desc">Depósitos elevados</span><textarea id="res-a1-txt" oninput="autoExpand(this)" placeholder="Ex: Caixa d'água..." class="input-txt"></textarea></div>
+        </div>
+        <div class="linha-deposito">
+            <div style="width:22%;"><span class="deposito-tipo">A2</span><input type="number" id="res-a2" class="input-num" oninput="calcularTotalFocos()"></div>
+            <div style="width:78%;"><span class="deposito-desc">Depósitos de água potável</span><textarea id="res-a2-txt" oninput="autoExpand(this)" placeholder="Ex: Cacimba, tonel..." class="input-txt"></textarea></div>
+        </div>
+        <div class="linha-deposito">
+            <div style="width:22%;"><span class="deposito-tipo">B</span><input type="number" id="res-b" class="input-num" oninput="calcularTotalFocos()"></div>
+            <div style="width:78%;"><span class="deposito-desc">Depósitos móveis</span><textarea id="res-b-txt" oninput="autoExpand(this)" placeholder="Ex: Vasos, pratos..." class="input-txt"></textarea></div>
+        </div>
+        <div class="linha-deposito">
+            <div style="width:22%;"><span class="deposito-tipo">C</span><input type="number" id="res-c" class="input-num" oninput="calcularTotalFocos()"></div>
+            <div style="width:78%;"><span class="deposito-desc">Depósitos fixos</span><textarea id="res-c-txt" oninput="autoExpand(this)" placeholder="Ex: Ralo, piscina..." class="input-txt"></textarea></div>
+        </div>
+        <div class="linha-deposito">
+            <div style="width:22%;"><span class="deposito-tipo">D1</span><input type="number" id="res-d1" class="input-num" oninput="calcularTotalFocos()"></div>
+            <div style="width:78%;"><span class="deposito-desc">Pneus e outros</span><textarea id="res-d1-txt" oninput="autoExpand(this)" class="input-txt"></textarea></div>
+        </div>
+        <div class="linha-deposito">
+            <div style="width:22%;"><span class="deposito-tipo">D2</span><input type="number" id="res-d2" class="input-num" oninput="calcularTotalFocos()"></div>
+            <div style="width:78%;"><span class="deposito-desc">Construção, lixo, sucatas</span><textarea id="res-d2-txt" oninput="autoExpand(this)" class="input-txt"></textarea></div>
+        </div>
+        <div class="linha-deposito">
+            <div style="width:22%;"><span class="deposito-tipo">E</span><input type="number" id="res-e" class="input-num" oninput="calcularTotalFocos()"></div>
+            <div style="width:78%;"><span class="deposito-desc">Naturais</span><textarea id="res-e-txt" oninput="autoExpand(this)" placeholder="Ex: Bromélias..." class="input-txt"></textarea></div>
+        </div>
+        <div class="total-focos-box">
+            <span class="total-focos-label">Total de Focos (Geral)</span>
+            <span class="total-focos-valor" id="res-total-focos">0</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── BLOCO 9: TRATAMENTOS ── -->
+<div class="card-bloco">
+    <div class="card-header">💊 Tratamentos Realizados</div>
+    <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--gap-md);">
+            <div><label class="label-campo">Dep. Trat. BTI</label><input type="number" id="res-dep-bti" class="input-painel"></div>
+            <div><label class="label-campo">Dep. Trat. ESP</label><input type="number" id="res-dep-esp" class="input-painel"></div>
+            <div><label class="label-campo">Gasto BTI (g)</label><input type="number" id="res-gasto-bti" class="input-painel"></div>
+            <div><label class="label-campo">Gasto ESP (ml)</label><input type="number" id="res-gasto-esp" class="input-painel"></div>
+        </div>
+        <label class="label-campo" style="margin-top:12px;">Total de Depósitos Eliminados</label>
+        <input type="number" id="res-dep-eliminados" class="input-painel"
+               style="text-align:center;font-size:18px;font-weight:700;color:var(--texto-escuro);border-color:var(--roxo);"
+               value="0">
+    </div>
+</div>
+
+<!-- Botão copiar -->
+<button onclick="copiarRelatorio()" class="btn-acao btn-acao-verde">
+    📋 COPIAR RELATÓRIO WHATSAPP
+</button>
+
+<div style="font-size:var(--fxs);color:#bbb;text-align:center;margin-top:18px;padding-top:12px;border-top:1px solid #eee;">
+    Dados do mapa &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" style="color:#bbb;text-decoration:none;">OpenStreetMap contributors</a>
+</div>
+
+</div><!-- /painel-conteudo -->
+</div><!-- /painel-estratificacao -->
+
+<!-- Tabela de Atributos -->
+<div id="janela-tabela">
+    <div style="background:var(--roxo-escuro);color:white;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <strong id="contagem-registros" style="font-size:var(--fmd);">Tabela de Atributos</strong>
+        <button onclick="document.getElementById('janela-tabela').style.display='none'"
+                style="background:#ff4444;color:white;border:none;padding:5px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:var(--fsm);font-weight:700;">Sair</button>
+    </div>
+    <div style="width:100%;height:calc(100% - 44px);overflow:auto;">
+        <table id="tabela-qgis" style="border-collapse:collapse;min-width:100%;font-size:var(--fsm);">
             <thead id="head-qgis" style="position:sticky;top:0;background:#f2f2f2;z-index:2;"></thead>
             <tbody id="body-qgis"></tbody>
         </table>
     </div>
 </div>
 
-<!-- ============================================================
-     SERVICE WORKER (com lógica de atualização automática)
-     ============================================================ -->
+<!-- Service Worker -->
 <script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js?v=2')
             .then(reg => {
                 reg.onupdatefound = () => {
-                    const worker = reg.installing;
-                    worker.onstatechange = () => {
-                        if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-                            if (confirm('Nova atualização disponível! Deseja atualizar agora?')) {
-                                window.location.reload();
-                            }
+                    const w = reg.installing;
+                    w.onstatechange = () => {
+                        if (w.state === 'installed' && navigator.serviceWorker.controller) {
+                            if (confirm('Nova atualização disponível! Deseja atualizar agora?')) window.location.reload();
                         }
                     };
                 };
-            })
-            .catch(err => console.error('Erro no Service Worker:', err));
+            }).catch(err => console.error('SW:', err));
     });
 }
 </script>
 
-<!-- ============================================================
-     JAVASCRIPT PRINCIPAL
-     ============================================================ -->
 <script>
 'use strict';
 
-/* ============================================================
-   ESTADO GLOBAL
-   ============================================================ */
+/* ── ESTADO GLOBAL ─────────────────────────────────── */
 let quadrasSelecionadas = [];
-let geojsonData         = null;
-let camadaPoligonos     = null;
-let camadaPontos        = null;
-let grupoLabels         = null;
-let modoSelecao         = true;
-let corManual           = '#3388ff';
-let regras              = [];
-let baseAtual           = 0; // 0 = OSM ativo, 1 = desligado
+let geojsonData  = null;
+let grupoLabels  = null;
+let modoSelecao  = true;
+let corManual    = '#3388ff';
+let regras       = [];
+let baseAtual    = 0;
 
-/* ============================================================
-   DADOS DE EXEMPLO
-   ============================================================ */
+/* ── INICIALIZAR DATAS COM HOJE ────────────────────── */
+// Todos os campos de data abrem sempre na data de hoje
+function dataHoje() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function setDataHoje(id) {
+    const el = document.getElementById(id);
+    if (el && !el.value) el.value = dataHoje();
+}
+// Aplica em todos os campos de data ao carregar
+window.addEventListener('DOMContentLoaded', () => {
+    setDataHoje('input-data-manual');
+    setDataHoje('data-inicio');
+    setDataHoje('res-inicio');
+    setDataHoje('res-termino');
+    // data-termino é readonly/calculado — não precisa
+});
+
+/* ── DADOS DE EXEMPLO ──────────────────────────────── */
 geojsonData = {
-    type: 'FeatureCollection',
-    features: [
-        {
-            type: 'Feature',
-            properties: {
-                QUADRA:'57', R:'36', C:'1', TB:'1', OU:'2', PE:'0', TOTAL:'40',
-                APARTAMENTOS:'0', APARTAMENTOS_TÉRREO:'0', AP_ACIMA_TÉRREO:'0',
-                HABITANTES:'41', TANQUES:'0', 'TANQUE PEIXADO':'0', TAMBORES:'1',
-                'TAMBOR PEIXADO':'0', CISTERNAS:'0', 'CISTERNA VEDADA':'0',
-                'CISTERNA PEIXADA':'0', CACIMBAS:'0', 'CACIMBA VEDADA':'0',
-                'CACIMBA PEIXADA':'0', 'CAIXAS DE AGUA':'7', 'CAIXAS NORMAL':'0',
-                'CAIXAS VEDADA':'7', 'CAIXAS ED':'0', 'CAIXAS ED VEDADA':'0',
-                FILTRO:'0', 'VASO PLANTA':'0', POTE:'0', TINA:'0', CAO:'0', GATO:'0'
-            },
-            geometry: { type:'MultiPolygon', coordinates:[] }
-        },
-        {
-            type: 'Feature',
-            properties: { QUADRA:'53', R:'76', C:'7', TB:'2' },
-            geometry: { type:'MultiPolygon', coordinates:[] }
-        }
+    type:'FeatureCollection',
+    features:[
+        { type:'Feature', properties:{ QUADRA:'57',R:'36',C:'1',TB:'1',OU:'2',PE:'0',TOTAL:'40',AP_ACIMA_TÉRREO:'0',HABITANTES:'41',CAO:'0',GATO:'0' }, geometry:{type:'MultiPolygon',coordinates:[]} },
+        { type:'Feature', properties:{ QUADRA:'53',R:'76',C:'7',TB:'2' }, geometry:{type:'MultiPolygon',coordinates:[]} }
     ]
 };
 
-/* ============================================================
-   MAPA
-   ============================================================ */
+/* ── MAPA ──────────────────────────────────────────── */
 const map = L.map('map', {
-    center: [-3.73, -38.52],
-    zoom: 13,
-    zoomControl: false,
-    attributionControl: false,
-    renderer: L.canvas()
+    center:[-3.73,-38.52], zoom:13,
+    zoomControl:false, attributionControl:false,
+    renderer:L.canvas()
 });
-
-L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-const osm = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png',
-    { maxZoom: 22, subdomains: 'abcd' }
-);
+L.control.zoom({position:'bottomright'}).addTo(map);
+const osm = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png',{maxZoom:22,subdomains:'abcd'});
 osm.addTo(map);
-
 grupoLabels = L.layerGroup().addTo(map);
-
-// Popula o select de atributos com os dados de exemplo
 carregarAtributos();
 
-/* ============================================================
-   TOGGLE MAPA BASE
-   ============================================================ */
+/* ── TOGGLE BASE ──────────────────────────────────── */
 function toggleCamadas() {
-    if (baseAtual === 0) {
-        map.removeLayer(osm);
-        baseAtual = 1;
-    } else {
-        map.addLayer(osm);
-        baseAtual = 0;
-    }
+    if(baseAtual===0){map.removeLayer(osm);baseAtual=1;}
+    else{map.addLayer(osm);baseAtual=0;}
 }
 
-/* ============================================================
-   MENU HAMBURGER
-   ============================================================ */
+/* ── MENU ─────────────────────────────────────────── */
 function toggleMenu() {
-    const menu    = document.getElementById('side-menu');
-    const overlay = document.getElementById('overlay');
-    const isOpen  = menu.classList.contains('open');
-    menu.classList.toggle('open', !isOpen);
-    overlay.style.display = isOpen ? 'none' : 'block';
+    const m=document.getElementById('side-menu'), o=document.getElementById('overlay');
+    const open=m.classList.contains('open');
+    m.classList.toggle('open',!open);
+    o.style.display=open?'none':'block';
 }
 
-/* ============================================================
-   MODO DE SELEÇÃO  — CORRIGIDO: função única, sem duplicata
-   ============================================================ */
+/* ── MODO SELEÇÃO ─────────────────────────────────── */
 function ativarModoSelecao() {
-    modoSelecao = !modoSelecao;
-    const container = document.getElementById('item-selecao');
-    document.getElementById('modo_selecao').checked   = modoSelecao;
-    document.getElementById('texto-selecao').textContent = modoSelecao ? 'Seleção ON' : 'Seleção OFF';
-    container.classList.toggle('selecao-ativa',   modoSelecao);
-    container.classList.toggle('selecao-inativa', !modoSelecao);
+    modoSelecao=!modoSelecao;
+    const c=document.getElementById('item-selecao');
+    document.getElementById('modo_selecao').checked=modoSelecao;
+    document.getElementById('texto-selecao').textContent=modoSelecao?'Seleção ON':'Seleção OFF';
+    c.classList.toggle('selecao-ativa',modoSelecao);
+    c.classList.toggle('selecao-inativa',!modoSelecao);
 }
+document.getElementById('cor_manual').addEventListener('change',e=>{corManual=e.target.value;});
 
-document.getElementById('cor_manual').addEventListener('change', e => { corManual = e.target.value; });
-
-/* ============================================================
-   CARD DE ATRIBUTOS  — CORRIGIDO: função única com 3 estados
-   ============================================================ */
+/* ── CARD ─────────────────────────────────────────── */
 function abrirCard(props) {
-    let html = '<h3>Atributos</h3><table>';
-    for (const k in props) html += `<tr><td><strong>${k}</strong></td><td>${props[k]}</td></tr>`;
-    html += '</table>';
-    document.getElementById('conteudo-card').innerHTML = html;
-    const card = document.getElementById('card-atributos');
-    card.classList.remove('card-minimizado', 'card-cheio');
+    let html='<table style="width:100%;font-size:13px;">';
+    for(const k in props) html+=`<tr><td style="padding:4px;font-weight:700;color:var(--roxo-escuro);width:40%">${k}</td><td style="padding:4px;">${props[k]}</td></tr>`;
+    html+='</table>';
+    document.getElementById('conteudo-card').innerHTML=html;
+    const card=document.getElementById('card-atributos');
+    card.classList.remove('card-minimizado','card-cheio');
     card.classList.add('card-medio');
 }
-
 function toggleCard() {
-    const card = document.getElementById('card-atributos');
-    if (card.classList.contains('card-medio')) {
-        card.classList.replace('card-medio', 'card-cheio');
-    } else if (card.classList.contains('card-cheio')) {
-        card.classList.replace('card-cheio', 'card-minimizado');
-    } else {
-        card.classList.replace('card-minimizado', 'card-medio');
-    }
+    const card=document.getElementById('card-atributos');
+    if(card.classList.contains('card-medio')) card.classList.replace('card-medio','card-cheio');
+    else if(card.classList.contains('card-cheio')) card.classList.replace('card-cheio','card-minimizado');
+    else card.classList.replace('card-minimizado','card-medio');
 }
 
-/* ============================================================
-   CENTRÓIDE
-   ============================================================ */
+/* ── CENTRÓIDE ────────────────────────────────────── */
 function calcularCentroide(feature) {
-    // Se a camada já foi criada, o Leaflet já sabe o centro
-    if (feature.leafletLayer && feature.leafletLayer.getBounds) {
-        return feature.leafletLayer.getBounds().getCenter();
-    }
-    
-    // Caso contrário, usamos a lógica de fallback (coordenadas brutas)
+    if(feature.leafletLayer?.getBounds) return feature.leafletLayer.getBounds().getCenter();
     try {
-        let coords = feature.geometry.coordinates;
-        if (feature.geometry.type === 'MultiPolygon') coords = coords[0][0];
-        else if (feature.geometry.type === 'Polygon') coords = coords[0];
-
-        let lat = 0, lng = 0;
-        coords.forEach(p => { lng += p[0]; lat += p[1]; });
-        return [lat / coords.length, lng / coords.length];
-    } catch (e) {
-        return map.getCenter(); // Retorna o centro do mapa se tudo falhar
-    }
+        let c=feature.geometry.coordinates;
+        if(feature.geometry.type==='MultiPolygon') c=c[0][0];
+        else if(feature.geometry.type==='Polygon') c=c[0];
+        let lat=0,lng=0;
+        c.forEach(p=>{lng+=p[0];lat+=p[1];});
+        return [lat/c.length,lng/c.length];
+    } catch(e){ return map.getCenter(); }
 }
 
-/* ============================================================
-   PROCESSAR GEOJSON (Otimizado com labels inteligentes)
-   ============================================================ */
-// 1. Defina o zoom de corte (16 é um bom equilíbrio para celular)
-const ZOOM_LABELS = 16; 
-
-const gerenciarLabelsRefinado = () => {
-    // Se o geojson ainda não carregou, não faz nada
-    if (!geojsonData) return;
-
-    // 2. Limpeza Total (Garante que a memória RAM seja liberada)
+/* ── LABELS INTELIGENTES ──────────────────────────── */
+const ZOOM_LABELS=16;
+function gerenciarLabels() {
     grupoLabels.clearLayers();
-    
-    const zoomAtual = map.getZoom();
-    
-    // 3. Só processa se o zoom for detalhado
-    if (zoomAtual >= ZOOM_LABELS) {
-        const limitesTela = map.getBounds();
+    if(!geojsonData||map.getZoom()<ZOOM_LABELS) return;
+    const b=map.getBounds();
+    geojsonData.features.forEach(f=>{
+        if(f._label&&b.contains(f._label.getLatLng())) grupoLabels.addLayer(f._label);
+    });
+}
+map.on('moveend',gerenciarLabels);
 
-        geojsonData.features.forEach(f => {
-            if (f._label) {
-                // Pegamos a posição real da label
-                const posicao = f._label.getLatLng();
-                
-                // 4. SÓ ADICIONA SE ESTIVER NO CAMPO DE VISÃO
-                // O padding (margem) de 0.001 ajuda a carregar um pouquinho além da borda
-                if (limitesTela.contains(posicao)) {
-                    grupoLabels.addLayer(f._label);
-                }
-            }
-        });
-    }
-};
-
-// 5. REGISTRO DE EVENTOS (O segredo está aqui)
-// 'moveend' dispara quando você para de arrastar ou termina o zoom
-map.on('moveend', gerenciarLabelsRefinado);
-
-// 6. EXECUÇÃO FORÇADA APÓS O CARREGAMENTO
-// (Coloque isso dentro da sua função processarGeoJSON, no final dela)
-setTimeout(gerenciarLabelsRefinado, 500);
-
+/* ── PROCESSAR GEOJSON ────────────────────────────── */
 function processarGeoJSON(geojson) {
-    geojsonData = geojson;
-
-    // 1. LIMPEZA TOTAL DE MEMÓRIA
-    if (window.minhaCamadaJSON) map.removeLayer(window.minhaCamadaJSON);
-    
-    // Limpa o grupo de labels e garante que ele esteja no mapa
+    geojsonData=geojson;
+    if(window.minhaCamadaJSON) map.removeLayer(window.minhaCamadaJSON);
     grupoLabels.clearLayers();
-    if (!map.hasLayer(grupoLabels)) {
-        grupoLabels.addTo(map);
-    }
+    if(!map.hasLayer(grupoLabels)) grupoLabels.addTo(map);
 
-    // 2. CARREGAMENTO DAS FEIÇÕES (POLÍGONOS)
-    window.minhaCamadaJSON = L.geoJSON(geojson, {
-        smoothFactor: 1.5,
-        renderer: L.canvas(), // Crucial para não travar no celular
-        style: { color: '#000', weight: 2, fillOpacity: 0, fillColor: '#FFFFFF' },
-        onEachFeature(feature, layer) {
-            feature.leafletLayer = layer;
-
-            // Lógica de Seleção / Clique
-            layer.on('click', () => {
-                if (modoSelecao) {
-                    const selecionada = layer.options.fillColor === corManual;
-                    if (selecionada) {
-                        layer.setStyle({ fillColor: '#FFFFFF', fillOpacity: 0, color: '#000' });
-                        quadrasSelecionadas = quadrasSelecionadas.filter(f => f !== feature);
-                    } else {
-                        layer.setStyle({ fillColor: corManual, fillOpacity: 0.5, color: corManual });
-                        if (!quadrasSelecionadas.includes(feature)) quadrasSelecionadas.push(feature);
-                    }
-                    atualizarCardSelecionadas();
-                    atualizarEstratificacao();
-                    atualizarListaQuadrasPainel();
+    window.minhaCamadaJSON=L.geoJSON(geojson,{
+        smoothFactor:1.5, renderer:L.canvas(),
+        style:{color:'#000',weight:2,fillOpacity:0,fillColor:'#FFFFFF'},
+        onEachFeature(feature,layer) {
+            feature.leafletLayer=layer;
+            layer.on('click',()=>{
+                if(modoSelecao){
+                    const sel=layer.options.fillColor===corManual;
+                    if(sel){ layer.setStyle({fillColor:'#FFFFFF',fillOpacity:0,color:'#000'}); quadrasSelecionadas=quadrasSelecionadas.filter(f=>f!==feature); }
+                    else   { layer.setStyle({fillColor:corManual,fillOpacity:0.5,color:corManual}); if(!quadrasSelecionadas.includes(feature)) quadrasSelecionadas.push(feature); }
+                    atualizarCardSelecionadas(); atualizarEstratificacao(); atualizarListaQuadrasPainel();
                 } else {
-                    const p = feature.properties || {};
-                    layer.bindPopup(`<b>Bairro:</b> ${p.BAIRRO || '-'}<br><b>Quadra:</b> ${p.QUADRA || '-'}`).openPopup();
+                    const p=feature.properties||{};
+                    layer.bindPopup(`<b>Bairro:</b> ${p.BAIRRO||'-'}<br><b>Quadra:</b> ${p.QUADRA||'-'}`).openPopup();
                 }
             });
-
-            // 3. CRIAÇÃO DA LABEL (Sempre acontece para cada feição)
-            const p = feature.properties || {};
-            if (p.QUADRA) {
-                // Criamos o marcador de texto usando o centroide
-                feature._label = L.marker(calcularCentroide(feature), {
-                    interactive: false, // O clique passa direto para o polígono
-                    icon: L.divIcon({
-                        className: 'minha-label-customizada',
-                        html: `<b class="quadra-label" style="text-shadow: 2px 2px 4px white;">${p.QUADRA}</b>`,
-                        iconSize: [40, 20],
-                        iconAnchor: [20, 10]
-                    })
+            const p=feature.properties||{};
+            if(p.QUADRA) {
+                feature._label=L.marker(calcularCentroide(feature),{
+                    interactive:false,
+                    icon:L.divIcon({className:'minha-label-customizada',html:`<b class="quadra-label">${p.QUADRA}</b>`,iconSize:[40,20],iconAnchor:[20,10]})
                 });
             }
         }
     }).addTo(map);
 
-    // 4. FUNÇÃO DE CONTROLE DE EXIBIÇÃO POR ZOOM
-    const gerenciarLabels = () => {
-        grupoLabels.clearLayers();
-        const zoomAtual = map.getZoom();
-        
-        // Só adiciona ao grupo se o zoom for maior ou igual ao limite
-        if (zoomAtual >= ZOOM_LABELS && geojsonData) {
-            geojsonData.features.forEach(f => { 
-                if (f._label) {
-                    grupoLabels.addLayer(f._label);
-                }
-            });
-        }
-    };
-
-    // 5. REGISTRO DE EVENTOS
-    // Removemos eventos antigos para não duplicar processamento
-    map.off('zoomend.labels').on('zoomend.labels', gerenciarLabels);
-
-    // 6. FINALIZAÇÃO E AJUSTE DE TELA
-    calcularDadosGlobais(geojson);
-    carregarAtributos();
-
-    try { 
-        const bounds = window.minhaCamadaJSON.getBounds();
-        map.fitBounds(bounds, { padding: [20, 20] }); 
-        
-        // Após o fitBounds (que muda o zoom), verificamos se as labels devem aparecer
-        setTimeout(gerenciarLabels, 300); 
-    } catch(e) {
-        console.warn("Erro ao ajustar limites do mapa:", e);
-    }
+    calcularDadosGlobais(geojson); carregarAtributos();
+    try { map.fitBounds(window.minhaCamadaJSON.getBounds(),{padding:[20,20]}); setTimeout(gerenciarLabels,350); } catch(e){}
 }
 
-/* ============================================================
-   CARREGAR GEOJSON — arquivo local
-   ============================================================ */
+/* ── CARREGAR GEOJSON ─────────────────────────────── */
 function carregarGeoJSON(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        try { processarGeoJSON(JSON.parse(e.target.result)); }
-        catch (err) { console.error(err); alert('Erro ao ler o arquivo. Verifique se é um GeoJSON válido.'); }
-    };
-    reader.readAsText(file);
+    const file=input.files[0]; if(!file) return;
+    const r=new FileReader();
+    r.onload=e=>{ try{processarGeoJSON(JSON.parse(e.target.result));}catch(err){alert('GeoJSON inválido.');} };
+    r.readAsText(file);
 }
-
-/* ============================================================
-   CARREGAR GEOJSON — via URL (com loading e tratamento de erro)
-   ============================================================ */
 function carregarDataset() {
-    const url = document.getElementById('input-dataset').value.trim();
-    if (!url) { alert('Digite a URL do GeoJSON'); return; }
-
-    const loading = document.getElementById('loading-indicator');
-    loading.style.display = 'block';
-
-    fetch(url)
-        .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
-        .then(data => processarGeoJSON(data))
-        .catch(err => { console.error(err); alert('Erro ao carregar a URL. Verifique o endereço e tente novamente.'); })
-        .finally(() => { loading.style.display = 'none'; });
+    const url=document.getElementById('input-dataset').value.trim();
+    if(!url){alert('Digite a URL do GeoJSON');return;}
+    const li=document.getElementById('loading-indicator'); li.style.display='block';
+    fetch(url).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();})
+        .then(d=>processarGeoJSON(d))
+        .catch(err=>{alert('Erro ao carregar URL.');})
+        .finally(()=>{li.style.display='none';});
 }
 
-/* ============================================================
-   TABELA DE ATRIBUTOS — com ordenação por QUADRA (preservada)
-   ============================================================ */
+/* ── TABELA QGIS ──────────────────────────────────── */
 function abrirTabelaQGIS() {
-    if (!geojsonData?.features) { alert('Nenhum dado carregado para exibir a tabela.'); return; }
-
-    // Ordenação crescente por QUADRA
-    const features = [...geojsonData.features].sort((a, b) =>
-        (Number(a.properties.QUADRA) || 0) - (Number(b.properties.QUADRA) || 0)
-    );
-
-    document.getElementById('contagem-registros').innerText =
-        `Tabela de Atributos - ${features.length} feições encontradas`;
-
-    const colunas = Object.keys(features[0].properties);
-    const head = document.getElementById('head-qgis');
-    head.innerHTML = '';
-    const trHead = document.createElement('tr');
-    colunas.forEach(col => {
-        const th = document.createElement('th');
-        th.style.cssText = 'border:1px solid #ccc;padding:8px;text-align:left;background:#eee;color:#333;';
-        th.innerText = col;
-        trHead.appendChild(th);
-    });
-    head.appendChild(trHead);
-
-    const body = document.getElementById('body-qgis');
-    body.innerHTML = '';
-    const frag = document.createDocumentFragment();
-    features.forEach(feat => {
-        const tr = document.createElement('tr');
-        tr.style.borderBottom = '1px solid #eee';
-        colunas.forEach(col => {
-            const td = document.createElement('td');
-            td.style.cssText = 'border:1px solid #eee;padding:8px;white-space:nowrap;';
-            const v = feat.properties[col];
-            td.innerText = (v !== undefined && v !== null) ? v : '-';
-            tr.appendChild(td);
-        });
-        tr.onclick = function() { this.style.background = '#fff9c4'; };
+    if(!geojsonData?.features){alert('Nenhum dado carregado.');return;}
+    const features=[...geojsonData.features].sort((a,b)=>(Number(a.properties.QUADRA)||0)-(Number(b.properties.QUADRA)||0));
+    document.getElementById('contagem-registros').innerText=`Tabela — ${features.length} feições`;
+    const colunas=Object.keys(features[0].properties);
+    const head=document.getElementById('head-qgis'); head.innerHTML='';
+    const tr=document.createElement('tr');
+    colunas.forEach(c=>{const th=document.createElement('th');th.style.cssText='border:1px solid #ccc;padding:8px;text-align:left;background:#eee;';th.innerText=c;tr.appendChild(th);});
+    head.appendChild(tr);
+    const body=document.getElementById('body-qgis'); body.innerHTML='';
+    const frag=document.createDocumentFragment();
+    features.forEach(f=>{
+        const tr=document.createElement('tr'); tr.style.borderBottom='1px solid #eee';
+        colunas.forEach(c=>{const td=document.createElement('td');td.style.cssText='border:1px solid #eee;padding:8px;white-space:nowrap;';const v=f.properties[c];td.innerText=(v!=null)?v:'-';tr.appendChild(td);});
+        tr.onclick=function(){this.style.background='#fff9c4';};
         frag.appendChild(tr);
     });
     body.appendChild(frag);
-    document.getElementById('janela-tabela').style.display = 'block';
+    document.getElementById('janela-tabela').style.display='block';
 }
 
-/* ============================================================
-   RESET DO MAPA
-   ============================================================ */
+/* ── RESET ────────────────────────────────────────── */
 function resetarMapaTotal() {
-    regras = [];
-    quadrasSelecionadas = [];
-
-    const el = id => document.getElementById(id);
-    if (el('LISTA_REGRAS'))              el('LISTA_REGRAS').innerHTML = '';
-    if (el('conteudo-card'))             el('conteudo-card').innerHTML = '<h3>Quadras Selecionadas</h3>';
-    if (el('lista-quadras-selecionadas'))el('lista-quadras-selecionadas').innerHTML = 'Nenhuma quadra selecionada.';
-
-    if (window.minhaCamadaJSON) {
-        window.minhaCamadaJSON.eachLayer(layer =>
-            layer.setStyle({ color:'#000', weight:2, fillOpacity:0, fillColor:'#FFFFFF' })
-        );
-    }
-
-    atualizarEstratificacao();
-    atualizarCardSelecionadas();
+    regras=[];quadrasSelecionadas=[];
+    const el=id=>document.getElementById(id);
+    if(el('LISTA_REGRAS')) el('LISTA_REGRAS').innerHTML='';
+    if(el('conteudo-card')) el('conteudo-card').innerHTML='<p style="text-align:center;color:#aaa;padding:10px;">Nenhuma quadra selecionada</p>';
+    if(el('lista-quadras-selecionadas')) el('lista-quadras-selecionadas').innerHTML='Nenhuma quadra selecionada.';
+    if(window.minhaCamadaJSON) window.minhaCamadaJSON.eachLayer(l=>l.setStyle({color:'#000',weight:2,fillOpacity:0,fillColor:'#FFFFFF'}));
+    atualizarEstratificacao(); atualizarCardSelecionadas();
 }
-function resetMapa()   { resetarMapaTotal(); }
-function resetarMapa() { resetarMapaTotal(); }
+function resetMapa(){resetarMapaTotal();}
+function resetarMapa(){resetarMapaTotal();}
 
-/* ============================================================
-   ATUALIZAR CARD DE SELECIONADAS
-   ============================================================ */
+/* ── CARD SELECIONADAS ────────────────────────────── */
 function atualizarCardSelecionadas() {
-    const card = document.getElementById('conteudo-card');
-    if (!card) return;
-
-    if (!quadrasSelecionadas?.length) {
-        card.innerHTML = '<p>Nenhuma quadra selecionada</p>';
-        return;
-    }
-
-    quadrasSelecionadas.sort((a, b) =>
-        Number(a.properties.QUADRA||0) - Number(b.properties.QUADRA||0)
-    );
-
-    let tImoveis=0, tHab=0, tAcima=0, tDif=0, rows='';
-    quadrasSelecionadas.forEach(f => {
-        const p = f.properties || {};
-        const q = p.QUADRA||'-', t = Number(p.TOTAL||0),
-              hab = Number(p.HABITANTES||0), ac = Number(p.AP_ACIMA_TÉRREO||0), dif = t - ac;
-        tImoveis+=t; tHab+=hab; tAcima+=ac; tDif+=dif;
-        rows += `<tr style="border-bottom:1px dashed #ccc;">
-                   <td>${q}</td><td>${t}</td><td>${hab}</td><td>${ac}</td><td>${dif}</td>
-                 </tr>`;
+    const card=document.getElementById('conteudo-card'); if(!card) return;
+    if(!quadrasSelecionadas?.length){card.innerHTML='<p style="text-align:center;color:#aaa;padding:8px;font-size:13px;">Nenhuma quadra selecionada</p>';return;}
+    quadrasSelecionadas.sort((a,b)=>Number(a.properties.QUADRA||0)-Number(b.properties.QUADRA||0));
+    let tIm=0,tHab=0,tAc=0,tDif=0,rows='';
+    quadrasSelecionadas.forEach(f=>{
+        const p=f.properties||{},q=p.QUADRA||'-',t=Number(p.TOTAL||0),hab=Number(p.HABITANTES||0),ac=Number(p.AP_ACIMA_TÉRREO||0),dif=t-ac;
+        tIm+=t;tHab+=hab;tAc+=ac;tDif+=dif;
+        rows+=`<tr style="border-bottom:1px dashed #eee;"><td style="padding:2px 4px;">${q}</td><td style="padding:2px 4px;">${t}</td><td style="padding:2px 4px;">${hab}</td><td style="padding:2px 4px;">${ac}</td><td style="padding:2px 4px;">${dif}</td></tr>`;
     });
-
-    card.innerHTML = `
-        <h3 style="text-align:left;">Quadras Selecionadas</h3>
-        <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
-            <tr style="border-bottom:1px solid #000;">
-                <th style="padding:2px 4px;">Qt</th><th style="padding:2px 4px;">Im.</th>
-                <th style="padding:2px 4px;">Hab</th><th style="padding:2px 4px;">AP↑T</th>
-                <th style="padding:2px 4px;">PROG.</th>
-            </tr>${rows}
-            <tr style="font-weight:bold;border-top:1px solid #000;">
-                <td>Total</td><td>${tImoveis}</td><td>${tHab}</td><td>${tAcima}</td><td>${tDif}</td>
-            </tr>
-        </table>`;
-
-    const cardDiv = document.getElementById('card-atributos');
-    if (cardDiv?.classList.contains('card-minimizado'))
-        cardDiv.classList.replace('card-minimizado', 'card-medio');
+    card.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <tr style="border-bottom:2px solid var(--roxo);font-weight:700;font-size:11px;text-transform:uppercase;">
+            <td style="padding:2px 4px;">Qt</td><td style="padding:2px 4px;">Im.</td><td style="padding:2px 4px;">Hab</td><td style="padding:2px 4px;">AP↑T</td><td style="padding:2px 4px;">Prog.</td>
+        </tr>${rows}
+        <tr style="font-weight:700;border-top:2px solid #333;">
+            <td style="padding:3px 4px;">Total</td><td>${tIm}</td><td>${tHab}</td><td>${tAc}</td><td>${tDif}</td>
+        </tr></table>`;
+    const cardDiv=document.getElementById('card-atributos');
+    if(cardDiv?.classList.contains('card-minimizado')) cardDiv.classList.replace('card-minimizado','card-medio');
 }
 
-/* ============================================================
-   LISTA DE QUADRAS NO PAINEL
-   ============================================================ */
+/* ── LISTA PAINEL ─────────────────────────────────── */
 function atualizarListaQuadrasPainel() {
-    const div = document.getElementById('lista-quadras-selecionadas');
-    if (!div) return;
-    if (!quadrasSelecionadas.length) { div.textContent = 'Nenhuma quadra selecionada.'; return; }
-    const nums = quadrasSelecionadas
-        .map(f => f.properties.QUADRA || f.properties.id_quadra || '?')
-        .sort((a,b) => Number(a) - Number(b))
-        .join(', ');
-    div.innerHTML = `<strong style="color:#2c3e50;">${nums}</strong>`;
+    const div=document.getElementById('lista-quadras-selecionadas'); if(!div) return;
+    if(!quadrasSelecionadas.length){div.textContent='Nenhuma quadra selecionada.';return;}
+    const nums=quadrasSelecionadas.map(f=>f.properties.QUADRA||'?').sort((a,b)=>Number(a)-Number(b)).join(', ');
+    div.innerHTML=`<strong style="color:var(--roxo-escuro);">${nums}</strong>`;
 }
 
-/* ============================================================
-   ATUALIZAR ESTRATIFICAÇÃO  — CORRIGIDO: sem setInterval
-   ============================================================ */
+/* ── ESTRATIFICAÇÃO ───────────────────────────────── */
 function atualizarEstratificacao() {
-    const ids = ['sel-qtd-quadras','sel-total-imoveis','sel-total-ap','sel-total-hab',
-                 'sel-total-pe','sel-total-caes','sel-total-gatos','sel-total-programados'];
-
-    if (!quadrasSelecionadas?.length) {
-        ids.forEach(id => { const e = document.getElementById(id); if(e) e.textContent='0'; });
-        return;
-    }
-
-    let tIm=0, tAp=0, tHab=0, tCaes=0, tGatos=0, tPe=0;
-    quadrasSelecionadas.forEach(f => {
-        const p = f.properties || {};
-        tIm    += Number(p.TOTAL            || 0);
-        tAp    += Number(p.AP_ACIMA_TÉRREO  || p[' AP_ACIMA_TÉRREO'] || 0);
-        tHab   += Number(p.HABITANTES       || 0);
-        tPe    += Number(p.PE               || 0);
-        tCaes  += Number(p.CAO              || 0);
-        tGatos += Number(p.GATO             || 0);
-    });
-
-    const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
-    set('sel-qtd-quadras',     quadrasSelecionadas.length);
-    set('sel-total-imoveis',   tIm);
-    set('sel-total-ap',        tAp);
-    set('sel-total-hab',       tHab);
-    set('sel-total-pe',        tPe);
-    set('sel-total-caes',      tCaes);
-    set('sel-total-gatos',     tGatos);
-    set('sel-total-programados', tIm - tAp);
-
+    const ids=['sel-qtd-quadras','sel-total-imoveis','sel-total-ap','sel-total-hab','sel-total-pe','sel-total-caes','sel-total-gatos','sel-total-programados'];
+    if(!quadrasSelecionadas?.length){ids.forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='0';});return;}
+    let tIm=0,tAp=0,tHab=0,tCaes=0,tGatos=0,tPe=0;
+    quadrasSelecionadas.forEach(f=>{const p=f.properties||{};tIm+=Number(p.TOTAL||0);tAp+=Number(p.AP_ACIMA_TÉRREO||p[' AP_ACIMA_TÉRREO']||0);tHab+=Number(p.HABITANTES||0);tPe+=Number(p.PE||0);tCaes+=Number(p.CAO||0);tGatos+=Number(p.GATO||0);});
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('sel-qtd-quadras',quadrasSelecionadas.length);set('sel-total-imoveis',tIm);set('sel-total-ap',tAp);
+    set('sel-total-hab',tHab);set('sel-total-pe',tPe);set('sel-total-caes',tCaes);set('sel-total-gatos',tGatos);
+    set('sel-total-programados',tIm-tAp);
     calcularOperacional();
 }
 
-/* ============================================================
-   CALCULAR DADOS GLOBAIS DO BAIRRO
-   ============================================================ */
+/* ── DADOS GLOBAIS ────────────────────────────────── */
 function calcularDadosGlobais(geojson) {
-    if (!geojson?.features?.length) return;
-    let tIm=0, tAP=0, tHab=0, tPE=0;
-    const nomeBairro   = geojson.features[0].properties.BAIRRO  || 'Não informado';
-    const codigoBairro = geojson.features[0].properties.CODIGO  || 'N/A';
+    if(!geojson?.features?.length) return;
+    let tIm=0,tAP=0,tHab=0,tPE=0;
+    const nome=geojson.features[0].properties.BAIRRO||'Não informado';
+    const cod=geojson.features[0].properties.CODIGO||'N/A';
+    geojson.features.forEach(f=>{const p=f.properties||{};tIm+=Number(p.TOTAL||0);tAP+=Number(p.AP_ACIMA_TÉRREO||0);tHab+=Number(p.HABITANTES||0);tPE+=Number(p.PE||0);});
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('global-bairro',nome);set('global-codigo',cod);set('global-total-quadras',geojson.features.length);
+    set('global-total-imoveis',tIm);set('global-total-ap',tAP);set('global-total-hab',tHab);
+    set('global-total-pe',tPE);set('global-total-programados',tIm-tAP);
+}
 
-    geojson.features.forEach(f => {
-        const p = f.properties||{};
-        tIm  += Number(p.TOTAL          ||0);
-        tAP  += Number(p.AP_ACIMA_TÉRREO||0);
-        tHab += Number(p.HABITANTES     ||0);
-        tPE  += Number(p.PE             ||0);
+/* ── PAINEL ───────────────────────────────────────── */
+function abrirEstratificacao()  {document.getElementById('painel-estratificacao')?.classList.add('abrir');}
+function fecharEstratificacao() {document.getElementById('painel-estratificacao')?.classList.remove('abrir');}
+function fecharAoTocarFora(e)   {if(!document.querySelector('.painel-conteudo')?.contains(e.target)) fecharEstratificacao();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharEstratificacao();});
+
+/* ── FILTRO ───────────────────────────────────────── */
+function abrirFecharFiltro(){const p=document.getElementById('PAINEL_CLASSIFICAR');p.style.display=(p.style.display==='none'||p.style.display==='')?'block':'none';}
+function carregarAtributos(){const s=document.getElementById('SELECT_COLUNA');if(!s)return;s.innerHTML='';if(!geojsonData?.features?.length)return;Object.keys(geojsonData.features[0].properties).forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;s.appendChild(o);});}
+function obterValoresUnicos(){if(!geojsonData)return[];const a=document.getElementById('SELECT_COLUNA')?.value;return[...new Set(geojsonData.features.map(f=>f.properties[a]))];}
+function addRegra(){
+    const a=document.getElementById('SELECT_COLUNA').value,mn=document.getElementById('MIN_VAL').value,mx=document.getElementById('MAX_VAL').value,c=document.getElementById('COR_FILTRO').value;
+    if(!a||mn===''||mx===''||isNaN(mn)||isNaN(mx)){alert('Preencha o atributo e os valores mínimo/máximo!');return;}
+    regras.push({atributo:a,min:Number(mn),max:Number(mx),cor:c});atualizarListaRegras();
+    document.getElementById('MIN_VAL').value='';document.getElementById('MAX_VAL').value='';
+}
+function atualizarListaRegras(){const l=document.getElementById('LISTA_REGRAS');l.innerHTML='';regras.forEach(r=>{const d=document.createElement('div');d.textContent=`${r.atributo}: ${r.min}→${r.max} = ${r.cor}`;l.appendChild(d);});}
+function aplicarRegras(){
+    if(!geojsonData?.features){alert('Carregue o GeoJSON primeiro.');return;}
+    if(!window.minhaCamadaJSON){alert('Carregue o GeoJSON primeiro.');return;}
+    quadrasSelecionadas=[];
+    window.minhaCamadaJSON.eachLayer(layer=>{
+        const p=layer.feature.properties;let cor=null;
+        regras.forEach(r=>{if(Number(p[r.atributo]||0)>=r.min&&Number(p[r.atributo]||0)<=r.max)cor=r.cor;});
+        if(cor){layer.setStyle({fillColor:cor,fillOpacity:0.7,color:cor,weight:2});quadrasSelecionadas.push(layer.feature);}
+        else{layer.setStyle({fillColor:'#3388ff',fillOpacity:0.2,color:'#3388ff',weight:1});}
     });
-
-    const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
-    set('global-bairro',            nomeBairro);
-    set('global-codigo',            codigoBairro);
-    set('global-total-quadras',     geojson.features.length);
-    set('global-total-imoveis',     tIm);
-    set('global-total-ap',          tAP);
-    set('global-total-hab',         tHab);
-    set('global-total-pe',          tPE);
-    set('global-total-programados', tIm - tAP);
+    atualizarEstratificacao();atualizarCardSelecionadas();atualizarListaQuadrasPainel();
 }
+document.getElementById('SELECT_COLUNA').addEventListener('change',obterValoresUnicos);
 
-/* ============================================================
-   PAINEL ESTRATIFICAÇÃO
-   ============================================================ */
-function abrirEstratificacao()  { document.getElementById('painel-estratificacao')?.classList.add('abrir'); }
-function fecharEstratificacao() { document.getElementById('painel-estratificacao')?.classList.remove('abrir'); }
-function fecharAoTocarFora(e)   {
-    if (!document.querySelector('.painel-conteudo')?.contains(e.target)) fecharEstratificacao();
-}
-document.addEventListener('keydown', e => { if (e.key==='Escape') fecharEstratificacao(); });
-
-/* ============================================================
-   FILTRO / CLASSIFICAR
-   ============================================================ */
-function abrirFecharFiltro() {
-    const p = document.getElementById('PAINEL_CLASSIFICAR');
-    p.style.display = (p.style.display==='none'||p.style.display==='') ? 'block' : 'none';
-}
-
-function carregarAtributos() {
-    const select = document.getElementById('SELECT_COLUNA');
-    if (!select) return;
-    select.innerHTML = '';
-    if (!geojsonData?.features?.length) return;
-    Object.keys(geojsonData.features[0].properties).forEach(attr => {
-        const opt = document.createElement('option');
-        opt.value = attr; opt.textContent = attr;
-        select.appendChild(opt);
-    });
-}
-
-function obterValoresUnicos() {
-    if (!geojsonData) return [];
-    const attr = document.getElementById('SELECT_COLUNA')?.value;
-    return [...new Set(geojsonData.features.map(f => f.properties[attr]))];
-}
-
-function addRegra() {
-    const atributo = document.getElementById('SELECT_COLUNA').value;
-    const min = document.getElementById('MIN_VAL').value;
-    const max = document.getElementById('MAX_VAL').value;
-    const cor = document.getElementById('COR_FILTRO').value;
-    if (!atributo || min==='' || max==='' || isNaN(min) || isNaN(max)) {
-        alert('Preencha corretamente o atributo e os valores mínimo/máximo!'); return;
-    }
-    regras.push({ atributo, min:Number(min), max:Number(max), cor });
-    atualizarListaRegras();
-    document.getElementById('MIN_VAL').value = '';
-    document.getElementById('MAX_VAL').value = '';
-}
-
-function atualizarListaRegras() {
-    const lista = document.getElementById('LISTA_REGRAS');
-    lista.innerHTML = '';
-    regras.forEach(r => {
-        const div = document.createElement('div');
-        div.textContent = `${r.atributo}: ${r.min} → ${r.max} = ${r.cor}`;
-        lista.appendChild(div);
-    });
-}
-
-/* CORRIGIDO: função única (a versão correta que usa minhaCamadaJSON) */
-function aplicarRegras() {
-    if (!geojsonData?.features) { alert('Carregue o GeoJSON primeiro.'); return; }
-    if (!window.minhaCamadaJSON) { alert('Carregue o GeoJSON primeiro.'); return; }
-
-    quadrasSelecionadas = [];
-
-    window.minhaCamadaJSON.eachLayer(layer => {
-        const p = layer.feature.properties;
-        let cor = null;
-        regras.forEach(r => {
-            if (Number(p[r.atributo]||0) >= r.min && Number(p[r.atributo]||0) <= r.max) cor = r.cor;
-        });
-        if (cor) {
-            layer.setStyle({ fillColor:cor, fillOpacity:0.7, color:cor, weight:2 });
-            quadrasSelecionadas.push(layer.feature);
-        } else {
-            layer.setStyle({ fillColor:'#3388ff', fillOpacity:0.2, color:'#3388ff', weight:1 });
-        }
-    });
-
-    atualizarEstratificacao();
-    atualizarCardSelecionadas();
-    atualizarListaQuadrasPainel();
-}
-
-document.getElementById('SELECT_COLUNA').addEventListener('change', obterValoresUnicos);
-
-/* ============================================================
-   CÁLCULOS OPERACIONAIS
-   ============================================================ */
-function calcularOperacional() {
-    const dataIni      = document.getElementById('data-inicio')?.value;
-    const mediaServ    = parseInt(document.getElementById('media-servidor')?.value)       || 0;
-    const qtdServ      = parseInt(document.getElementById('quantidade-servidores')?.value) || 0;
-    const totalMeta    = parseInt(document.getElementById('sel-total-programados')?.textContent) || 0;
-
-    let dias = 0;
-    if (mediaServ>0 && qtdServ>0 && totalMeta>0)
-        dias = Math.ceil(totalMeta / (mediaServ * qtdServ));
-
-    const campoDias = document.getElementById('dias-trabalho');
-    if (campoDias) { campoDias.tagName==='INPUT' ? campoDias.value=dias : campoDias.innerText=dias; }
-
-    const campoHDP = document.getElementById('res-hdp');
-    if (campoHDP) campoHDP.value = qtdServ * dias;
-
-    if (dataIni && dias > 0) {
-        let dataFim = new Date(dataIni + 'T00:00:00');
-        let cont = 0;
-        while (cont < (dias-1)) {
-            dataFim.setDate(dataFim.getDate()+1);
-            const d = dataFim.getDay();
-            if (d!==0 && d!==6) cont++;
-        }
-        const inputTermino = document.getElementById('data-termino');
-        if (inputTermino) {
-            const y=dataFim.getFullYear(), m=String(dataFim.getMonth()+1).padStart(2,'0'), d=String(dataFim.getDate()).padStart(2,'0');
-            inputTermino.value = `${y}-${m}-${d}`;
-        }
+/* ── OPERACIONAL ──────────────────────────────────── */
+function calcularOperacional(){
+    const ini=document.getElementById('data-inicio')?.value;
+    const ms=parseInt(document.getElementById('media-servidor')?.value)||0;
+    const qs=parseInt(document.getElementById('quantidade-servidores')?.value)||0;
+    const meta=parseInt(document.getElementById('sel-total-programados')?.textContent)||0;
+    let dias=0;
+    if(ms>0&&qs>0&&meta>0) dias=Math.ceil(meta/(ms*qs));
+    const cd=document.getElementById('dias-trabalho');
+    if(cd){cd.tagName==='INPUT'?cd.value=dias:cd.innerText=dias;}
+    const hdp=document.getElementById('res-hdp');if(hdp)hdp.value=qs*dias;
+    if(ini&&dias>0){
+        let df=new Date(ini+'T00:00:00');let c=0;
+        while(c<(dias-1)){df.setDate(df.getDate()+1);const d=df.getDay();if(d!==0&&d!==6)c++;}
+        const it=document.getElementById('data-termino');
+        if(it){const y=df.getFullYear(),m=String(df.getMonth()+1).padStart(2,'0'),d=String(df.getDate()).padStart(2,'0');it.value=`${y}-${m}-${d}`;}
     }
 }
-
-/* ============================================================
-   SEMANA EPIDEMIOLÓGICA — CORRIGIDO: lê res-termino
-   ============================================================ */
-function calcularSemanaEpi() {
-    const dataInput = document.getElementById('res-termino')?.value;
-    if (!dataInput) return;
-    const data = new Date(dataInput + 'T00:00:00');
-    const jan1 = new Date(data.getFullYear(), 0, 1);
-    const dias  = Math.floor((data - jan1) / 86400000);
-    const semana = Math.ceil((dias + jan1.getDay() + 1) / 7);
-    const campoFim = document.getElementById('semana-epi-fim');
-    if (campoFim) campoFim.value = semana;
+function calcularSemanaEpi(){
+    const di=document.getElementById('res-termino')?.value;if(!di)return;
+    const d=new Date(di+'T00:00:00'),j=new Date(d.getFullYear(),0,1);
+    const dias=Math.floor((d-j)/86400000);
+    const sem=Math.ceil((dias+j.getDay()+1)/7);
+    const cf=document.getElementById('semana-epi-fim');if(cf)cf.value=sem;
+}
+function calcularImoveisDesprogramados(){
+    const m=parseInt(document.getElementById('sel-total-programados')?.textContent)||0;
+    const t=parseInt(document.getElementById('res-imov-trab')?.value)||0;
+    const f=parseInt(document.getElementById('res-fechados')?.value)||0;
+    const s=m-(t+f);
+    const c=document.getElementById('res-imov-desprogram');
+    if(c){c.value=s>=0?s:0;c.style.color=s<0?'#c0392b':'var(--texto-escuro)';}
+}
+function somarPositivos(){const s=['pos-r','pos-c','pos-tb','pos-ou'].reduce((a,id)=>a+(parseInt(document.getElementById(id)?.value)||0),0);const c=document.getElementById('total-positivos');if(c)c.textContent=s;}
+function calcularTotalFocos(){const t=['res-a1','res-a2','res-b','res-c','res-d1','res-d2','res-e'].reduce((a,id)=>a+(+document.getElementById(id)?.value||0),0);const c=document.getElementById('res-total-focos');if(c)c.textContent=t;}
+function autoExpand(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function ajustarAltura(el){autoExpand(el);}
+function organizarQuadras(){
+    const c=document.getElementById('input-destaque');if(!c?.value)return;
+    let l=c.value.split(',').map(n=>n.trim()).filter(n=>n!=='');
+    const d=l.filter((x,i)=>l.indexOf(x)!==i);
+    if(d.length){alert('Atenção: quadra(s) repetida(s): ['+[...new Set(d)].join(', ')+']');l=[...new Set(l)];}
+    l.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));
+    c.value=l.join(', ');autoExpand(c);
 }
 
-/* ============================================================
-   IMÓVEIS DESPROGRAMADOS
-   ============================================================ */
-function calcularImoveisDesprogramados() {
-    const meta        = parseInt(document.getElementById('sel-total-programados')?.textContent) || 0;
-    const trabalhados = parseInt(document.getElementById('res-imov-trab')?.value)  || 0;
-    const fechados    = parseInt(document.getElementById('res-fechados')?.value)   || 0;
-    const sobra = meta - (trabalhados + fechados);
-    const campo = document.getElementById('res-imov-desprogram');
-    if (campo) { campo.value = sobra>=0 ? sobra : 0; campo.style.color = sobra<0 ? 'red':'#2c3e50'; }
+/* ── PLANEJAMENTO ─────────────────────────────────── */
+function proximaEtapa(n){
+    const sh=id=>document.getElementById(id).style.display='block';
+    if(n===2)sh('step-2');
+    if(n===3&&document.getElementById('input-data-manual').value)sh('step-3');
+    if(n===4&&parseInt(document.getElementById('input-agentes-manual').value)>0)sh('step-4');
 }
-
-/* ============================================================
-   SOMA DE POSITIVOS
-   ============================================================ */
-function somarPositivos() {
-    const soma = ['pos-r','pos-c','pos-tb','pos-ou']
-        .reduce((s,id) => s + (parseInt(document.getElementById(id)?.value)||0), 0);
-    const campo = document.getElementById('total-positivos');
-    if (campo) campo.innerText = soma;
+function finalizarPlanejamento(){
+    const im=parseInt(document.getElementById('input-valor-manual').value)||0;
+    const ds=document.getElementById('input-data-manual').value;
+    const ag=parseInt(document.getElementById('input-agentes-manual').value)||0;
+    const di=parseInt(document.getElementById('input-dias-programados')?.value)||0;
+    const cp=document.getElementById('respostas-robo');
+    if(!ds||ag<=0||di<=0)return;
+    cp.style.display='block';
+    const rend=ag*25;let df=new Date(ds+'T00:00:00');let c=0;
+    while(c<(di-1)){df.setDate(df.getDate()+1);if(df.getDay()!==0&&df.getDay()!==6)c++;}
+    let msg=`<div style="font-weight:700;color:var(--roxo-escuro);margin-bottom:8px;text-transform:uppercase;">📊 Planejamento Gerado</div>
+             📅 Período: <b>${di} dias úteis</b><br>
+             🏗️ Capacidade: <b>${(rend*di).toLocaleString('pt-BR')} imóveis</b><br>
+             🏁 Data Prevista: <b>${df.toLocaleDateString('pt-BR')}</b>`;
+    if(im>0) msg+=`<br><hr style="border:0;border-top:1px dashed #ccc;margin:8px 0;">🎯 Para ${im} imóveis: <b>${Math.ceil(im/rend)} dias úteis</b>.`;
+    cp.innerHTML=msg;
 }
-
-/* ============================================================
-   TOTAL DE FOCOS
-   ============================================================ */
-function calcularTotalFocos() {
-    const total = ['res-a1','res-a2','res-b','res-c','res-d1','res-d2','res-e']
-        .reduce((s,id) => s + (+document.getElementById(id)?.value||0), 0);
-    const campo = document.getElementById('res-total-focos');
-    if (campo) campo.innerText = total;
+function reiniciarFluxo(){
+    ['input-valor-manual','input-data-manual','input-agentes-manual','input-dias-programados'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=id==='input-valor-manual'?'0':'';});
+    ['step-2','step-3','step-4','respostas-robo'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
 }
+function enviarFeedbackWhats(){window.open('https://wa.me/5585999999999?text='+encodeURIComponent('Olá! Sou usuário do GeoEstratifica e gostaria de tirar uma dúvida.'));}
 
-/* ============================================================
-   TEXTAREA AUTO-EXPAND — CORRIGIDO: função única
-   ============================================================ */
-function autoExpand(el) { el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
-function ajustarAltura(el) { autoExpand(el); }
-
-/* ============================================================
-   ORGANIZAR QUADRAS POSITIVAS
-   ============================================================ */
-function organizarQuadras() {
-    const campo = document.getElementById('input-destaque');
-    if (!campo?.value) return;
-    let lista = campo.value.split(',').map(n=>n.trim()).filter(n=>n!=='');
-    const dups = lista.filter((item,i) => lista.indexOf(item)!==i);
-    if (dups.length) {
-        alert('Atenção: A(s) quadra(s) ['+[...new Set(dups)].join(', ')+'] foram digitadas repetidas vezes.');
-        lista = [...new Set(lista)];
-    }
-    lista.sort((a,b) => a.localeCompare(b, undefined, {numeric:true, sensitivity:'base'}));
-    campo.value = lista.join(', ');
-    autoExpand(campo);
+/* ── COPIAR RELATÓRIO ─────────────────────────────── */
+function copiarRelatorio(){
+    try{
+        const fD=d=>{if(!d)return'--/--/----';const p=d.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d;};
+        const g=id=>document.getElementById(id)?.innerText||'---';
+        const gv=id=>document.getElementById(id)?.value||'';
+        const gs=id=>{const e=document.getElementById(id);return e?.options?.[e.selectedIndex]?.text||'---';};
+        const radio=document.querySelector('input[name="tipo-estratificacao-resultado"]:checked');
+        const tipo=radio?(radio.value==='simples'?'1. ESTRATIFICAÇÃO SIMPLES':'2. RESULTADO DA ESTRATIFICAÇÃO'):'NÃO INFORMADO';
+        const fks=[{l:'A1',q:'res-a1',t:'res-a1-txt'},{l:'A2',q:'res-a2',t:'res-a2-txt'},{l:'B',q:'res-b',t:'res-b-txt'},{l:'C',q:'res-c',t:'res-c-txt'},{l:'D1',q:'res-d1',t:'res-d1-txt'},{l:'D2',q:'res-d2',t:'res-d2-txt'},{l:'E',q:'res-e',t:'res-e-txt'}];
+        let focos='';fks.forEach(f=>{const v=parseInt(gv(f.q));if(v>0)focos+=`${f.l}: ${v} foco(s) (${gv(f.t)})\n`;});
+        let m=`RELATÓRIO DA ESTRATIFICAÇÃO\nBAIRRO: ${g('global-bairro')} | CÓD: ${g('global-codigo')}\nTIPO: ${tipo}\n`;
+        m+=`--------------------------------\nIMÓVEIS DO BAIRRO: ${g('global-total-imoveis')}\nQUADRAS: ${g('global-total-quadras')}\nHABITANTES: ${g('global-total-hab')} | PE: ${g('global-total-pe')}\nAP ACIMA TÉRREO: ${g('global-total-ap')}\nMETA DO BAIRRO: ${g('global-total-programados')}\n`;
+        m+=`--------------------------------\nESTRATIFICAÇÃO: ${gs('tipo-estratificacao')}\nMUTIRÃO: ${gs('tipo-mutirao')}\nMOTIVO: ${gs('acao-gerada')}\nINDICADOR: ${gs('indicios-encontrados')}\n`;
+        m+=`--------------------------------\nMETA DA SELEÇÃO: ${g('sel-total-programados')}\nQUADRAS SELECIONADAS: ${g('sel-qtd-quadras')}\nLISTA:\n${document.getElementById('lista-quadras-selecionadas')?.innerText||'0'}\n`;
+        m+=`UAPS: ${gv('input-obs-uaps')||'---'}\nENDEREÇO: ${gv('input-obs-end')||'---'}\nRESPONSÁVEL: ${gv('input-responsavel')||'---'}\n`;
+        m+=`--------------------------------\nINÍCIO PROG.: ${fD(gv('data-inicio'))}\nTÉRMINO PROG.: ${fD(gv('data-termino'))}\nMÉDIA/SERV: ${gv('media-servidor')}\nSERVIDORES: ${gv('quantidade-servidores')}\nDIAS: ${g('dias-trabalho')}\nCICLO: ${gv('res-ciclo')||'---'}\nCÃES: ${g('sel-total-caes')} | GATOS: ${g('sel-total-gatos')}\n`;
+        m+=`--------------------------------\nREALIZADO:\nINÍCIO: ${fD(gv('res-inicio'))}\nTÉRMINO: ${fD(gv('res-termino'))}\nS.EPI: ${gv('semana-epi-inicio')||'--'} a ${gv('semana-epi-fim')||'--'}\nHDP: ${gv('res-hdp')} | HDT: ${gv('res-hdt-trabalhado')||'0'}\nQUADRAS TRAB.: ${gv('res-quadras-trab')}\nIMÓVEIS TRAB.: ${gv('res-imov-trab')||'0'}\nFECHADOS: ${gv('res-fechados')||'0'}\nDESPROGRAMADOS: ${gv('res-imov-desprogram')||'0'}\nQUADRAS POSITIVAS:\n${gv('input-destaque')||'---'}\n`;
+        m+=`--------------------------------\nIMÓVEIS POSITIVOS: ${g('total-positivos')} (R:${gv('pos-r')} C:${gv('pos-c')} TB:${gv('pos-tb')} OU:${gv('pos-ou')})\nFOCOS: ${g('res-total-focos')}\n${focos||'Sem focos\n'}`;
+        m+=`--------------------------------\nTRATAMENTO:\nIMÓV BTI:${gv('res-imov-bti')||'0'} | ESP:${gv('res-imov-esp')||'0'}\nDEP BTI:${gv('res-dep-bti')||'0'} | ESP:${gv('res-dep-esp')||'0'}\nGASTO BTI:${gv('res-gasto-bti')||'0'}g | ESP:${gv('res-gasto-esp')||'0'}ml\nELIMINADOS:${gv('res-dep-eliminados')||'0'}\n`;
+        if(navigator.clipboard?.writeText) navigator.clipboard.writeText(m).then(()=>alert('Relatório Copiado!')).catch(()=>fbCopy(m));
+        else fbCopy(m);
+    }catch(e){console.error(e);alert('Erro ao copiar.');}
 }
+function fbCopy(t){const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);alert('Relatório Copiado!');}
 
-/* ============================================================
-   PLANEJAMENTO (menu lateral)
-   ============================================================ */
-function proximaEtapa(num) {
-    const show = id => document.getElementById(id).style.display='block';
-    if (num===2) show('step-2');
-    if (num===3 && document.getElementById('input-data-manual').value) show('step-3');
-    if (num===4 && parseInt(document.getElementById('input-agentes-manual').value)>0) show('step-4');
-}
-
-function finalizarPlanejamento() {
-    const imoveis = parseInt(document.getElementById('input-valor-manual').value)||0;
-    const dataStr = document.getElementById('input-data-manual').value;
-    const agentes = parseInt(document.getElementById('input-agentes-manual').value)||0;
-    const dias    = parseInt(document.getElementById('input-dias-programados')?.value)||0;
-    const campo   = document.getElementById('respostas-robo');
-    if (!dataStr||agentes<=0||dias<=0) return;
-
-    campo.style.display='block';
-    const rendimento = agentes * 25;
-    let dataFim = new Date(dataStr+'T00:00:00');
-    let cont=0;
-    while (cont<(dias-1)) {
-        dataFim.setDate(dataFim.getDate()+1);
-        if (dataFim.getDay()!==0 && dataFim.getDay()!==6) cont++;
-    }
-
-    let msg = `<div style="color:#390158;font-weight:bold;border-bottom:1px solid #ddd;margin-bottom:8px;">📊 PLANEJAMENTO GERADO</div>
-               📅 Período: <b>${dias} dias úteis</b><br>
-               🏗️ Capacidade: <b>${(rendimento*dias).toLocaleString('pt-BR')} imóveis</b><br>
-               🏁 Data Prevista: <b>${dataFim.toLocaleDateString('pt-BR')}</b>`;
-    if (imoveis>0) {
-        msg += `<br><hr style="border:0;border-top:1px dashed #ccc;">
-                🎯 Para ${imoveis} imóveis: <b>${Math.ceil(imoveis/rendimento)} dias úteis</b>.`;
-    }
-    campo.innerHTML = msg;
-}
-
-function reiniciarFluxo() {
-    ['input-valor-manual','input-data-manual','input-agentes-manual','input-dias-programados']
-        .forEach(id => { const e=document.getElementById(id); if(e) e.value=id==='input-valor-manual'?'0':''; });
-    ['step-2','step-3','step-4','respostas-robo']
-        .forEach(id => { const e=document.getElementById(id); if(e) e.style.display='none'; });
-}
-
-/* ============================================================
-   WHATSAPP
-   ============================================================ */
-function enviarFeedbackWhats() {
-    window.open('https://wa.me/5585999999999?text=' +
-        encodeURIComponent('Olá! Sou usuário do GeoEstratifica e gostaria de tirar uma dúvida.'));
-}
-
-/* ============================================================
-   COPIAR RELATÓRIO — CORRIGIDO: Clipboard API moderna + fallback
-   ============================================================ */
-function copiarRelatorio() {
-    try {
-        const fData = d => {
-            if (!d) return '--/--/----';
-            const p = d.split('-');
-            return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : d;
-        };
-        const g  = id => document.getElementById(id)?.innerText  || '---';
-        const gv = id => document.getElementById(id)?.value      || '';
-        const gs = id => { const e=document.getElementById(id); return e?.options?.[e.selectedIndex]?.text||'---'; };
-
-        // Dados gerais
-        const bairro       = g('global-bairro'),       cod         = g('global-codigo');
-        const tQuadras     = g('global-total-quadras'), tImoveis    = g('global-total-imoveis');
-        const tHab         = g('global-total-hab'),     tPE         = g('global-total-pe');
-        const tAP          = g('global-total-ap'),      tProgramados= g('global-total-programados');
-        const tipoEstrat   = gs('tipo-estratificacao'), tipoMutirao = gs('tipo-mutirao');
-        const acaoGerada   = gs('acao-gerada'),         indBase     = gs('indicios-encontrados');
-        const resp         = gv('input-responsavel');
-        const obs1         = gv('input-obs-uaps'),      obs2        = gv('input-obs-end');
-        const listaquadras = document.getElementById('lista-quadras-selecionadas')?.innerText||'0';
-        // CORRIGIDO: radio com name correto
-        const radioSel     = document.querySelector('input[name="tipo-estratificacao-resultado"]:checked');
-        const dataIni      = fData(gv('data-inicio')),  dataTerm    = fData(gv('data-termino'));
-        const mediaServ    = gv('media-servidor'),      qtdServ     = gv('quantidade-servidores');
-        const diasTrab     = g('dias-trabalho');
-        const qSel         = g('sel-qtd-quadras'),      meta        = g('sel-total-programados');
-        const caes         = g('sel-total-caes'),       gatos       = g('sel-total-gatos');
-        const ciclo        = gv('res-ciclo');
-        const iniR         = fData(gv('res-inicio')),   terR        = fData(gv('res-termino'));
-        const sIni         = gv('semana-epi-inicio')||'--', sFim    = gv('semana-epi-fim')||'--';
-        const qTrab        = gv('res-quadras-trab'),    hdp         = gv('res-hdp');
-        const hdt          = gv('res-hdt-trabalhado'),  iTrab       = gv('res-imov-trab');
-        const iFech        = gv('res-fechados'),        iDesp       = gv('res-imov-desprogram');
-        const pr=gv('pos-r'), pc=gv('pos-c'), ptb=gv('pos-tb'), pou=gv('pos-ou');
-        const tPos         = g('total-positivos'),      qPos        = gv('input-destaque')||'---';
-        const tFocos       = g('res-total-focos');
-        const iBti=gv('res-imov-bti'), iEsp=gv('res-imov-esp');
-        const dBti=gv('res-dep-bti'),  dEsp=gv('res-dep-esp');
-        const gBti=gv('res-gasto-bti'),gEsp=gv('res-gasto-esp');
-        const elim         = gv('res-dep-eliminados');
-
-        const fks = [{l:'A1',q:'res-a1',t:'res-a1-txt'},{l:'A2',q:'res-a2',t:'res-a2-txt'},
-                     {l:'B',q:'res-b',t:'res-b-txt'},{l:'C',q:'res-c',t:'res-c-txt'},
-                     {l:'D1',q:'res-d1',t:'res-d1-txt'},{l:'D2',q:'res-d2',t:'res-d2-txt'},
-                     {l:'E',q:'res-e',t:'res-e-txt'}];
-        let detalheFocos = '';
-        fks.forEach(f => {
-            const v = parseInt(gv(f.q));
-            if (v>0) detalheFocos += `${f.l}: ${v} foco(s) (${gv(f.t)})\n`;
-        });
-
-        const tipoTexto = radioSel
-            ? (radioSel.value==='simples' ? '1. ESTRATIFICAÇÃO SIMPLES' : '2. RESULTADO DA ESTRATIFICAÇÃO')
-            : 'NÃO INFORMADO';
-
-        let m = `RELATORIO DA ESTRATIFICAÇÃO\n`;
-        m += `BAIRRO: ${bairro} | CODIGO: ${cod}\n`;
-        m += `TIPO: ${tipoTexto}\n`;
-        m += `--------------------------------\n`;
-        m += `TOTAL DE IMÓVEIS DO BAIRRO: ${tImoveis}\n`;
-        m += `TOTAL DE QUADRAS: ${tQuadras}\n`;
-        m += `TOTAL DE HABITANTES: ${tHab} | PE: ${tPE}\n`;
-        m += `TOTAL AP_ACIMA_TÉRREO: ${tAP}\n`;
-        m += `TOTAL DE IMÓVEIS PROGRAMADOS: ${tProgramados}\n`;
-        m += `--------------------------------\n`;
-        m += `TIPO DE ESTRATIFICAÇÃO: ${tipoEstrat}\n`;
-        m += `TIPO DE MUTIRÃO: ${tipoMutirao}\n`;
-        m += `MOTIVO: ${acaoGerada}\n`;
-        m += `INDICADOR: ${indBase}\n`;
-        m += `--------------------------------\n`;
-        m += `IMÓVEIS PROGRAMADOS (META): ${meta}\n`;
-        m += `TOTAL DE QUADRAS SELECIONADAS: ${qSel}\n`;
-        m += `LISTA DE QUADRAS SELECIONADAS:\n${listaquadras}\n`;
-        m += `--------------------------------\n`;
-        m += `DATA INÍCIO PROGRAMADO: ${dataIni}\n`;
-        m += `DATA TÉRMINO PROGRAMADO: ${dataTerm}\n`;
-        m += `MÉDIA/SERVIDOR: ${mediaServ}\n`;
-        m += `QTDE SERVIDORES: ${qtdServ}\n`;
-        m += `DIAS PROGRAMADOS: ${diasTrab}\n`;
-        m += `CICLO: ${ciclo}\n`;
-        m += `ANIMAIS: Cães: ${caes} | Gatos: ${gatos}\n`;
-        m += `RESPONSÁVEL: ${resp}\n`;
-        if (obs1||obs2) { m+=`OBSERVAÇÕES:\n`; if(obs1) m+=`${obs1}\n`; if(obs2) m+=`${obs2}\n`; }
-        m += `--------------------------------\n`;
-        m += `REALIZADO / RESULTADO:\n`;
-        m += `INÍCIO REAL: ${iniR}\n`;
-        m += `TÉRMINO REAL: ${terR}\n`;
-        m += `IMÓVEIS TRABALHADOS: ${iTrab}\n`;
-        m += `FECHADOS: ${iFech}\n`;
-        m += `DESPROGRAMADOS: ${iDesp}\n`;
-        m += `QUADRAS TRABALHADAS: ${qTrab}\n`;
-        m += `QUADRAS POSITIVAS:\n${qPos}\n`;
-        m += `--------------------------------\n`;
-        m += `IMÓVEIS POSITIVOS: ${tPos} (R:${pr} C:${pc} TB:${ptb} OU:${pou})\n`;
-        m += `TOTAL DE DEPÓSITOS POSITIVOS: ${tFocos}\n`;
-        m += detalheFocos || 'Sem focos registrados\n';
-        m += `--------------------------------\n`;
-        m += `SEMANA EPIDEMIOLÓGICA: ${sIni} a ${sFim}\n`;
-        m += `CICLO: ${ciclo} | HDP: ${hdp} | HDT: ${hdt}\n`;
-        m += `--------------------------------\n`;
-        m += `TRATAMENTO E ELIMINAÇÃO:\n`;
-        m += `IMÓVEIS TRATADOS: BTI:${iBti} | ESP:${iEsp}\n`;
-        m += `DEPÓSITOS TRATADOS: BTI:${dBti} | ESP:${dEsp}\n`;
-        m += `GASTO: BTI:${gBti}g | ESP:${gEsp}ml\n`;
-        m += `DEPÓSITOS ELIMINADOS: ${elim}\n`;
-
-        // Clipboard API moderna com fallback
-        if (navigator.clipboard?.writeText) {
-            navigator.clipboard.writeText(m)
-                .then(() => alert('Relatório Copiado!'))
-                .catch(() => fallbackCopy(m));
-        } else { fallbackCopy(m); }
-
-    } catch(e) {
-        console.error(e);
-        alert('Erro ao copiar. Verifique se todos os campos estão preenchidos corretamente.');
-    }
-}
-
-function fallbackCopy(text) {
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.cssText='position:fixed;opacity:0;';
-    document.body.appendChild(ta); ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    alert('Relatório Copiado!');
-}
-
-/* ============================================================
-   EVENT LISTENERS
-   ============================================================ */
-document.getElementById('media-servidor').addEventListener('input', calcularOperacional);
-document.getElementById('quantidade-servidores').addEventListener('input', calcularOperacional);
-document.getElementById('data-inicio').addEventListener('change', calcularOperacional);
+/* ── EVENT LISTENERS ──────────────────────────────── */
+document.getElementById('media-servidor').addEventListener('input',calcularOperacional);
+document.getElementById('quantidade-servidores').addEventListener('input',calcularOperacional);
+document.getElementById('data-inicio').addEventListener('change',calcularOperacional);
 </script>
 </body>
 </html>
