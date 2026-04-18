@@ -159,7 +159,7 @@ body, html {
    PAINEL CLASSIFICAR
    ============================================================ */
 #PAINEL_CLASSIFICAR {
-    display: none; position: fixed; top: 250px; left: 15px;
+    display: none; position: fixed; top: 200px; left: 15px;
     z-index: 999999; background: white; width: 260px;
     border-radius: var(--radius-md);
     box-shadow: 0 6px 28px rgba(0,0,0,0.3);
@@ -1201,7 +1201,7 @@ function processarGeoJSON(geojson) {
                     atualizarCardSelecionadas(); atualizarEstratificacao(); atualizarListaQuadrasPainel();
                 } else {
                     const p=feature.properties||{};
-                    layer.bindPopup(`<b>Bairro:</b> ${p.BAIRRO||'-'}<br><b>Quadra:</b> ${p.QUADRA||'-'}`).openPopup();
+                    layer.bindPopup(`<b>Bairro:</b> ${p.BAIRRO||'-'}<br><b>Quadra:</b> ${p.QUADRA||'-'}<br><b>P.E:</b> ${p.PE||'-'}<br><b>Ovitrampas:</b> ${p.OVITRAMPAS||'-'}`).openPopup();
                 }
             });
             const p=feature.properties||{};
