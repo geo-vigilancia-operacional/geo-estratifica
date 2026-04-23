@@ -14,6 +14,7 @@
 <meta http-equiv="pragma" content="no-cache">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
 /* ============================================================
@@ -159,7 +160,7 @@ body, html {
    PAINEL CLASSIFICAR
    ============================================================ */
 #PAINEL_CLASSIFICAR {
-    display: none; position: fixed; top: 200px; left: 15px;
+    display: none; position: fixed; top: 250px; left: 15px;
     z-index: 999999; background: white; width: 260px;
     border-radius: var(--radius-md);
     box-shadow: 0 6px 28px rgba(0,0,0,0.3);
@@ -579,6 +580,142 @@ select.input-painel { cursor: pointer; appearance: auto; }
     .barra-busca-container { gap: 4px; padding: 5px 10px; }
     .btn-icone { font-size: 18px; }
 }
+
+/* ============================================================
+   LEGENDA DINÂMICA DO MAPA
+   ============================================================ */
+#btn-legenda {
+    position: fixed; bottom: 120px; right: 12px;
+    z-index: 9999;
+}
+
+/* Painel da legenda — desliza de baixo para cima */
+#painel-legenda {
+    position: fixed;
+    bottom: -100%;          /* começa escondido */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 94%;
+    max-width: 420px;
+    background: white;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -6px 30px rgba(0,0,0,0.22);
+    z-index: 99999;
+    transition: bottom 0.38s cubic-bezier(0.4,0,0.2,1);
+    overflow: hidden;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+#painel-legenda.aberto { bottom: 0; }
+
+/* Cabeçalho da legenda */
+#legenda-header {
+    background: var(--roxo-escuro);
+    color: white;
+    padding: 14px 16px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+#legenda-header h3 {
+    margin: 0;
+    font-size: var(--fmd);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+#legenda-fechar {
+    font-size: 22px; cursor: pointer;
+    color: rgba(255,255,255,0.75);
+    line-height: 1;
+    padding: 0 2px;
+    transition: color 0.15s;
+}
+#legenda-fechar:hover { color: white; }
+
+/* Indicador de atualização automática */
+#legenda-status {
+    font-size: var(--fxs);
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 2px;
+}
+
+/* Corpo da legenda */
+#legenda-corpo {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 14px 16px 20px;
+    flex: 1;
+}
+
+/* Item da legenda — estilo mapa técnico */
+.legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 5px;
+    transition: background 0.12s;
+}
+.legenda-item:last-child { margin-bottom: 0; }
+.legenda-item:hover { background: #f5f5f5; }
+
+/* Retângulo de cor — estilo legenda de mapa */
+.legenda-cor {
+    width: 22px; height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(0,0,0,0.18);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.25);
+}
+
+/* Rótulo da legenda */
+.legenda-titulo {
+    font-size: var(--fsm);
+    font-weight: 600;
+    color: var(--texto-escuro);
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+/* Estado vazio da legenda */
+.legenda-vazia {
+    text-align: center;
+    padding: 28px 16px;
+    color: #bbb;
+}
+.legenda-vazia-icone { font-size: 36px; display: block; margin-bottom: 8px; }
+.legenda-vazia-texto { font-size: var(--fsm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; display: block; }
+.legenda-vazia-dica  { font-size: var(--fxs); margin-top: 4px; display: block; }
+
+/* Overlay ao abrir legenda */
+#legenda-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 99998;
+}
+#legenda-overlay.aberto { display: block; }
+
+/* Linha divisora de seção dentro da legenda */
+.legenda-secao {
+    font-size: var(--fxs);
+    font-weight: 700;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 12px 0 6px;
+}
+.legenda-secao:first-child { margin-top: 0; }
+
 </style>
 </head>
 <body>
@@ -690,8 +827,29 @@ select.input-painel { cursor: pointer; appearance: auto; }
             <input type="number" id="MAX_VAL" placeholder="Máx." class="input-painel">
         </div>
 
+        <div style="position:relative;margin:10px 0 4px;">
+            <div style="border-top:1px dashed var(--cinza-borda);margin:0;"></div>
+            <span style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:white;padding:0 8px;font-size:var(--fxs);color:#aaa;font-weight:700;text-transform:uppercase;">ou por lista</span>
+        </div>
+
+        <label class="label-campo" style="margin-top:10px;">Quadras específicas:</label>
+        <textarea id="INPUT_LISTA_QUADRAS" placeholder="Ex: 1, 6, 10, 45, 89, 100"
+            style="width:100%;min-height:52px;resize:none;overflow:hidden;
+                   padding:8px 10px;border:1.5px solid var(--cinza-borda);
+                   border-radius:var(--radius-sm);font-family:var(--font);
+                   font-size:var(--fsm);box-sizing:border-box;background:white;
+                   color:var(--texto-escuro);"
+            oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';"></textarea>
+        <button onclick="selecionarPorLista()"
+            style="width:100%;background:var(--roxo-escuro);color:white;border:none;
+                   padding:9px;border-radius:var(--radius-sm);font-family:var(--font);
+                   font-size:var(--fsm);font-weight:700;cursor:pointer;margin-top:6px;
+                   margin-bottom:4px;">
+            🎯 SELECIONAR LISTADAS
+        </button>
+
         <label class="label-campo">Cor:</label>
-        <input type="color" id="COR_FILTRO" value="#28a745" style="width:100%;height:36px;border:1.5px solid var(--cinza-borda);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:10px;">
+        <input type="color" id="COR_FILTRO" value="#3388ff" style="width:100%;height:36px;border:1.5px solid var(--cinza-borda);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:10px;">
 
         <button onclick="addRegra()" style="width:100%;background:#007bff;color:white;border:none;padding:10px;border-radius:var(--radius-sm);font-family:var(--font);font-size:var(--fmd);font-weight:700;cursor:pointer;margin-bottom:8px;">+ ADICIONAR REGRA</button>
         <div id="LISTA_REGRAS" style="border:1px solid var(--cinza-borda);padding:8px;border-radius:var(--radius-sm);height:90px;overflow:auto;margin-bottom:8px;font-size:var(--fsm);"></div>
@@ -1020,6 +1178,14 @@ select.input-painel { cursor: pointer; appearance: auto; }
 <button onclick="copiarRelatorio()" class="btn-acao btn-acao-verde">
     📋 COPIAR RELATÓRIO WHATSAPP
 </button>
+<button onclick="exportarPlanilha()" class="btn-acao"
+        style="background:#1a73e8;color:white;margin-top:8px;">
+    📊 EXPORTAR PLANILHA (.xlsx)
+</button>
+<button onclick="abrirGoogleForms()" class="btn-acao"
+        style="background:#ea4335;color:white;margin-top:8px;">
+    ☁️ ENVIAR PARA O GOOGLE DRIVE
+</button>
 
 <div style="font-size:var(--fxs);color:#bbb;text-align:center;margin-top:18px;padding-top:12px;border-top:1px solid #eee;">
     Dados do mapa &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" style="color:#bbb;text-decoration:none;">OpenStreetMap contributors</a>
@@ -1137,7 +1303,18 @@ function ativarModoSelecao() {
     c.classList.toggle('selecao-ativa',modoSelecao);
     c.classList.toggle('selecao-inativa',!modoSelecao);
 }
-document.getElementById('cor_manual').addEventListener('change',e=>{corManual=e.target.value;});
+document.getElementById('cor_manual').addEventListener('change', e => {
+    corManual = e.target.value;
+    // Sincroniza com o seletor do Painel Classificar
+    const cf = document.getElementById('COR_FILTRO');
+    if (cf) cf.value = corManual;
+});
+// Sincroniza COR_FILTRO → cor_manual (painel classificar → barra inferior)
+document.getElementById('COR_FILTRO').addEventListener('change', e => {
+    corManual = e.target.value;
+    const cm = document.getElementById('cor_manual');
+    if (cm) cm.value = corManual;
+});
 
 /* ── CARD ─────────────────────────────────────────── */
 function abrirCard(props) {
@@ -1201,7 +1378,7 @@ function processarGeoJSON(geojson) {
                     atualizarCardSelecionadas(); atualizarEstratificacao(); atualizarListaQuadrasPainel();
                 } else {
                     const p=feature.properties||{};
-                    layer.bindPopup(`<b>Bairro:</b> ${p.BAIRRO||'-'}<br><b>Quadra:</b> ${p.QUADRA||'-'}<br><b>P.E:</b> ${p.PE||'-'}<br><b>Ovitrampas:</b> ${p.OVITRAMPAS||'-'}`).openPopup();
+                    layer.bindPopup(`<b>Bairro:</b> ${p.BAIRRO||'-'}<br><b>Quadra:</b> ${p.QUADRA||'-'}`).openPopup();
                 }
             });
             const p=feature.properties||{};
@@ -1259,13 +1436,14 @@ function abrirTabelaQGIS() {
 
 /* ── RESET ────────────────────────────────────────── */
 function resetarMapaTotal() {
-    regras=[];quadrasSelecionadas=[];
+    regras=[];quadrasSelecionadas=[];window._regraLista=[];
     const el=id=>document.getElementById(id);
     if(el('LISTA_REGRAS')) el('LISTA_REGRAS').innerHTML='';
+    if(el('INPUT_LISTA_QUADRAS')){ el('INPUT_LISTA_QUADRAS').value=''; el('INPUT_LISTA_QUADRAS').style.height='auto'; }
     if(el('conteudo-card')) el('conteudo-card').innerHTML='<p style="text-align:center;color:#aaa;padding:10px;">Nenhuma quadra selecionada</p>';
     if(el('lista-quadras-selecionadas')) el('lista-quadras-selecionadas').innerHTML='Nenhuma quadra selecionada.';
     if(window.minhaCamadaJSON) window.minhaCamadaJSON.eachLayer(l=>l.setStyle({color:'#000',weight:2,fillOpacity:0,fillColor:'#FFFFFF'}));
-    atualizarEstratificacao(); atualizarCardSelecionadas();
+    atualizarEstratificacao(); atualizarCardSelecionadas(); _atualizarLegendaSeAberta();
 }
 function resetMapa(){resetarMapaTotal();}
 function resetarMapa(){resetarMapaTotal();}
@@ -1342,6 +1520,69 @@ function addRegra(){
     regras.push({atributo:a,min:Number(mn),max:Number(mx),cor:c});atualizarListaRegras();
     document.getElementById('MIN_VAL').value='';document.getElementById('MAX_VAL').value='';
 }
+
+/* ── Selecionar quadras por lista digitada ── */
+window._regraLista = []; // armazena registros para a legenda
+
+function selecionarPorLista() {
+    if (!geojsonData?.features) { alert('Carregue o GeoJSON primeiro.'); return; }
+    if (!window.minhaCamadaJSON) { alert('Carregue o GeoJSON primeiro.'); return; }
+
+    const campo = document.getElementById('INPUT_LISTA_QUADRAS');
+    const cor   = document.getElementById('COR_FILTRO').value;
+    const raw   = campo?.value || '';
+
+    if (!raw.trim()) { alert('Digite ao menos um número de quadra.'); return; }
+
+    // Parseia a lista: aceita vírgula, ponto-e-vírgula, espaço ou quebra de linha
+    const nums = raw
+        .split(/[\s,;]+/)
+        .map(s => s.trim())
+        .filter(s => s !== '')
+        .map(s => s.replace(/\D/g, ''))   // remove não-dígitos dentro de cada token
+        .filter(s => s !== '');
+
+    if (nums.length === 0) { alert('Nenhum número válido encontrado na lista.'); return; }
+
+    let encontradas = 0;
+
+    window.minhaCamadaJSON.eachLayer(layer => {
+        const qProp = String(layer.feature.properties.QUADRA || '').trim();
+        if (nums.includes(qProp)) {
+            // Pinta com a cor escolhida
+            layer.setStyle({ fillColor: cor, fillOpacity: 0.6, color: cor, weight: 2 });
+            // Adiciona em quadrasSelecionadas se ainda não estiver
+            if (!quadrasSelecionadas.includes(layer.feature)) {
+                quadrasSelecionadas.push(layer.feature);
+            }
+            encontradas++;
+        }
+    });
+
+    if (encontradas === 0) {
+        alert('Nenhuma quadra encontrada com os números informados.\n\nVerifique se o atributo "QUADRA" existe no GeoJSON carregado.');
+        return;
+    }
+
+    // Registra na legenda com descrição resumida
+    const descricao = nums.length <= 6
+        ? nums.join(', ')
+        : nums.slice(0, 5).join(', ') + ` ... (+${nums.length - 5})`;
+
+    window._regraLista.push({ cor, descricao, nums });
+
+    // Limpa o campo
+    campo.value = '';
+    campo.style.height = 'auto';
+
+    // Atualiza tudo
+    atualizarCardSelecionadas();
+    atualizarEstratificacao();
+    atualizarListaQuadrasPainel();
+    _atualizarLegendaSeAberta();
+
+    alert(`✅ ${encontradas} quadra${encontradas !== 1 ? 's' : ''} selecionada${encontradas !== 1 ? 's' : ''} com sucesso!`);
+}
 function atualizarListaRegras(){const l=document.getElementById('LISTA_REGRAS');l.innerHTML='';regras.forEach(r=>{const d=document.createElement('div');d.textContent=`${r.atributo}: ${r.min}→${r.max} = ${r.cor}`;l.appendChild(d);});}
 function aplicarRegras(){
     if(!geojsonData?.features){alert('Carregue o GeoJSON primeiro.');return;}
@@ -1351,9 +1592,9 @@ function aplicarRegras(){
         const p=layer.feature.properties;let cor=null;
         regras.forEach(r=>{if(Number(p[r.atributo]||0)>=r.min&&Number(p[r.atributo]||0)<=r.max)cor=r.cor;});
         if(cor){layer.setStyle({fillColor:cor,fillOpacity:0.7,color:cor,weight:2});quadrasSelecionadas.push(layer.feature);}
-        else{layer.setStyle({fillColor:'#3388ff',fillOpacity:0.2,color:'#3388ff',weight:1});}
+        else{layer.setStyle({fillColor:'#FFFFFF',fillOpacity:0,color:'#000',weight:2});}
     });
-    atualizarEstratificacao();atualizarCardSelecionadas();atualizarListaQuadrasPainel();
+    atualizarEstratificacao();atualizarCardSelecionadas();atualizarListaQuadrasPainel();_atualizarLegendaSeAberta();_atualizarLegendaSeAberta();
 }
 document.getElementById('SELECT_COLUNA').addEventListener('change',obterValoresUnicos);
 
@@ -1459,10 +1700,374 @@ function copiarRelatorio(){
 }
 function fbCopy(t){const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);alert('Relatório Copiado!');}
 
+
+/* ============================================================
+   LEGENDA DINÂMICA — lê seleções e classificações do mapa
+   ============================================================ */
+
+let _legendaAberta = false;
+
+function toggleLegenda() {
+    if (_legendaAberta) fecharLegenda();
+    else               abrirLegenda();
+}
+
+function abrirLegenda() {
+    atualizarLegenda();   // sempre atualiza antes de mostrar
+    document.getElementById('painel-legenda').classList.add('aberto');
+    document.getElementById('legenda-overlay').classList.add('aberto');
+    _legendaAberta = true;
+}
+
+function fecharLegenda() {
+    document.getElementById('painel-legenda').classList.remove('aberto');
+    document.getElementById('legenda-overlay').classList.remove('aberto');
+    _legendaAberta = false;
+}
+
+/* ── Converte cor hex → rgb array ── */
+function hexParaRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return [r,g,b];
+}
+
+/* ── Clareia a cor para o fundo do chip da legenda ── */
+function hexParaFundo(hex) {
+    const [r,g,b] = hexParaRgb(hex);
+    return `rgba(${r},${g},${b},0.15)`;
+}
+
+/* ── Formata número com separador de milhar ── */
+function fmt(n) { return Number(n).toLocaleString('pt-BR'); }
+
+/* ── Calcula totais das features de uma lista ── */
+function calcTotais(features) {
+    let qtd=0, imoveis=0, hab=0, pe=0, prog=0;
+    features.forEach(f => {
+        const p = f.properties || {};
+        qtd++;
+        const t  = Number(p.TOTAL           || 0);
+        const ap = Number(p.AP_ACIMA_TÉRREO || p[' AP_ACIMA_TÉRREO'] || 0);
+        imoveis += t;
+        hab     += Number(p.HABITANTES || 0);
+        pe      += Number(p.PE         || 0);
+        prog    += (t - ap);
+    });
+    return { qtd, imoveis, hab, pe, prog };
+}
+
+/* ── FUNÇÃO PRINCIPAL ── */
+function atualizarLegenda() {
+    const corpo = document.getElementById('legenda-corpo');
+    if (!corpo) return;
+
+    const itens = [];   // { cor, icone, titulo, linhas[], badge }
+
+    // ── 1. Quadras selecionadas manualmente ──────────────────
+    if (quadrasSelecionadas && quadrasSelecionadas.length > 0) {
+        itens.push({
+            tipo:   'selecao',
+            cor:    corManual,
+            titulo: 'Quadras Selecionadas',
+        });
+    }
+
+    // ── 2. Regras do Painel Classificar ──────────────────────
+    if (regras && regras.length > 0) {
+        regras.forEach(r => {
+            // Rótulo simples: atributo + intervalo
+            const titulo = r.min === r.max
+                ? `${r.atributo} = ${r.min}`
+                : `${r.atributo}: ${r.min} – ${r.max}`;
+            itens.push({
+                tipo:   'regra',
+                cor:    r.cor,
+                titulo: titulo,
+            });
+        });
+    }
+
+    // ── 2b. Seleções por lista de quadras ────────────────────
+    if (window._regraLista && window._regraLista.length > 0) {
+        window._regraLista.forEach(rl => {
+            itens.push({
+                tipo:   'lista',
+                cor:    rl.cor,
+                titulo: `Quadras: ${rl.descricao}`,
+            });
+        });
+    }
+
+    // ── 3. Monta o HTML da legenda ───────────────────────────
+    if (itens.length === 0) {
+        corpo.innerHTML = `
+            <div class="legenda-vazia">
+                <span class="legenda-vazia-icone">🗺️</span>
+                <span class="legenda-vazia-texto">Nenhuma seleção ativa</span>
+                <span class="legenda-vazia-dica">Selecione quadras no mapa ou aplique classificações</span>
+            </div>`;
+        return;
+    }
+
+    // Separa por tipo para criar seções
+    const selecoes = itens.filter(i => i.tipo === 'selecao');
+    const regras_i = itens.filter(i => i.tipo === 'regra');
+
+    let html = '';
+
+    if (selecoes.length > 0) {
+        html += `<div class="legenda-secao">Seleção Manual</div>`;
+        selecoes.forEach(item => { html += montarItemLegenda(item); });
+    }
+
+    if (regras_i.length > 0) {
+        html += `<div class="legenda-secao">Classificações</div>`;
+        regras_i.forEach(item => { html += montarItemLegenda(item); });
+    }
+
+    const listas = itens.filter(i => i.tipo === 'lista');
+    if (listas.length > 0) {
+        html += `<div class="legenda-secao">Seleção por Lista</div>`;
+        listas.forEach(item => { html += montarItemLegenda(item); });
+    }
+
+    corpo.innerHTML = html;
+}
+
+function montarItemLegenda(item) {
+    // Estilo mapa técnico: retângulo de cor + rótulo, sem números
+    return `
+        <div class="legenda-item">
+            <div class="legenda-cor" style="background:${item.cor};"></div>
+            <span class="legenda-titulo">${item.titulo}</span>
+        </div>`;
+}
+
+/* ── Atualiza legenda automaticamente se estiver aberta ── */
+function _atualizarLegendaSeAberta() {
+    if (_legendaAberta) atualizarLegenda();
+}
+
+
+
+/* ── EXPORTAR PLANILHA XLSX ───────────────────────────────── */
+function gerarCodigoUnico(bairro) {
+    const d   = new Date();
+    const dt  = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+    const rnd = Math.random().toString(36).substring(2,6).toUpperCase();
+    const nb  = (bairro||'GEO').replace(/\s+/g,'').substring(0,10).toUpperCase();
+    return `GEO-${nb}-${dt}-${rnd}`;
+}
+
+function exportarPlanilha() {
+    if (typeof XLSX === 'undefined') {
+        alert('Biblioteca SheetJS não carregada. Verifique a conexão.');
+        return;
+    }
+
+    const gv  = id => document.getElementById(id)?.value      || '';
+    const g   = id => document.getElementById(id)?.innerText  || '';
+    const gs  = id => { const e=document.getElementById(id); return e?.options?.[e.selectedIndex]?.text||''; };
+    const fD  = d  => { if(!d) return ''; const p=d.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d; };
+    const num = v  => { const n=Number(String(v).replace(/\D/g,'')); return isNaN(n)?0:n; };
+
+    const bairro  = g('global-bairro')  || 'SEM_BAIRRO';
+    const cod     = g('global-codigo')  || '';
+    const hoje    = new Date().toLocaleDateString('pt-BR');
+    const codigo  = gerarCodigoUnico(bairro);
+    const radio   = document.querySelector('input[name="tipo-estratificacao-resultado"]:checked');
+    const tipoRes = radio?.value==='simples' ? 'Estratificação Simples' : 'Resultado da Estratificação';
+
+    // ── Monta todas as linhas em uma única aba ───────────────
+    // Formato: [ [Título, Valor], ... ] com separadores visuais
+    const linhas = [
+        // Cabeçalho do documento
+        ['GEOESTRATIFICA — RELATÓRIO DE ESTRATIFICAÇÃO', ''],
+        ['Código Único', codigo],
+        ['Data de Geração', hoje],
+        ['', ''],
+
+        // Identificação
+        ['═══ IDENTIFICAÇÃO DO BAIRRO ═══', ''],
+        ['Bairro', bairro],
+        ['Código', cod],
+        ['Total de Quadras', num(g('global-total-quadras'))],
+        ['Total de Imóveis', num(g('global-total-imoveis'))],
+        ['AP Acima do Térreo', num(g('global-total-ap'))],
+        ['Habitantes', num(g('global-total-hab'))],
+        ['P.E.', num(g('global-total-pe'))],
+        ['Imóveis Programados (Meta do Bairro)', num(g('global-total-programados'))],
+        ['', ''],
+
+        // Configuração
+        ['═══ CONFIGURAÇÃO DA ESTRATIFICAÇÃO ═══', ''],
+        ['Tipo de Estratificação', gs('tipo-estratificacao')],
+        ['Tipo de Mutirão', gs('tipo-mutirao')],
+        ['Ação Gerada', gs('acao-gerada')],
+        ['Indicador Base', gs('indicios-encontrados')],
+        ['Tipo de Resultado', tipoRes],
+        ['', ''],
+
+        // Seleção de campo
+        ['═══ SELEÇÃO DE CAMPO ═══', ''],
+        ['Qtde de Quadras Selecionadas', num(g('sel-qtd-quadras'))],
+        ['Imóveis Programados (Seleção)', num(g('sel-total-programados'))],
+        ['Total de Imóveis (Seleção)', num(g('sel-total-imoveis'))],
+        ['AP Acima do Térreo (Seleção)', num(g('sel-total-ap'))],
+        ['Habitantes na Área', num(g('sel-total-hab'))],
+        ['PE', num(g('sel-total-pe'))],
+        ['Cães', num(g('sel-total-caes'))],
+        ['Gatos', num(g('sel-total-gatos'))],
+        ['Quadras Selecionadas', document.getElementById('lista-quadras-selecionadas')?.innerText || ''],
+        ['UAPS / Unidade', gv('input-obs-uaps')],
+        ['Endereço do Mutirão / QT', gv('input-obs-end')],
+        ['Responsável', gv('input-responsavel')],
+        ['', ''],
+
+        // Operacional
+        ['═══ DADOS OPERACIONAIS ═══', ''],
+        ['Início Programado', fD(gv('data-inicio'))],
+        ['Término Programado', fD(gv('data-termino'))],
+        ['Média por Servidor', num(gv('media-servidor'))],
+        ['Quantidade de Servidores', num(gv('quantidade-servidores'))],
+        ['Dias de Trabalho', num(g('dias-trabalho'))],
+        ['HDP (Homem-Dia Programado)', num(gv('res-hdp'))],
+        ['Ciclo', gv('res-ciclo')],
+        ['', ''],
+
+        // Realizado
+        ['═══ REALIZADO / RESULTADO ═══', ''],
+        ['Quadras Positivas', gv('input-destaque')],
+        ['Início Real', fD(gv('res-inicio'))],
+        ['Término Real', fD(gv('res-termino'))],
+        ['Semana Epi. Início', gv('semana-epi-inicio')],
+        ['Semana Epi. Fim', gv('semana-epi-fim')],
+        ['HDT (Homem-Dia Trabalhado)', num(gv('res-hdt-trabalhado'))],
+        ['Quadras Trabalhadas', num(gv('res-quadras-trab'))],
+        ['Imóveis Trabalhados', num(gv('res-imov-trab'))],
+        ['Imóveis Fechados', num(gv('res-fechados'))],
+        ['Imóveis Desprogramados', num(gv('res-imov-desprogram'))],
+        ['', ''],
+
+        // Imóveis positivos
+        ['═══ IMÓVEIS POSITIVOS ═══', ''],
+        ['Residencial (R)', num(gv('pos-r'))],
+        ['Comércio (C)', num(gv('pos-c'))],
+        ['Terreno Baldio (TB)', num(gv('pos-tb'))],
+        ['Outros (OU)', num(gv('pos-ou'))],
+        ['Total de Positivos', num(g('total-positivos'))],
+        ['', ''],
+
+        // Depósitos e focos
+        ['═══ DEPÓSITOS E FOCOS ═══', ''],
+        ['A1 — Depósitos Elevados (qtd)', num(gv('res-a1'))],
+        ['A1 — Descrição', gv('res-a1-txt')],
+        ['A2 — Água Potável (qtd)', num(gv('res-a2'))],
+        ['A2 — Descrição', gv('res-a2-txt')],
+        ['B — Móveis (qtd)', num(gv('res-b'))],
+        ['B — Descrição', gv('res-b-txt')],
+        ['C — Fixos (qtd)', num(gv('res-c'))],
+        ['C — Descrição', gv('res-c-txt')],
+        ['D1 — Pneus/Outros (qtd)', num(gv('res-d1'))],
+        ['D1 — Descrição', gv('res-d1-txt')],
+        ['D2 — Construção/Lixo (qtd)', num(gv('res-d2'))],
+        ['D2 — Descrição', gv('res-d2-txt')],
+        ['E — Naturais (qtd)', num(gv('res-e'))],
+        ['E — Descrição', gv('res-e-txt')],
+        ['TOTAL DE FOCOS', num(g('res-total-focos'))],
+        ['', ''],
+
+        // Tratamentos
+        ['═══ TRATAMENTOS E INSUMOS ═══', ''],
+        ['Imóveis Tratados BTI', num(gv('res-imov-bti'))],
+        ['Imóveis Tratados ESP', num(gv('res-imov-esp'))],
+        ['Depósitos Tratados BTI', num(gv('res-dep-bti'))],
+        ['Depósitos Tratados ESP', num(gv('res-dep-esp'))],
+        ['Gasto BTI (g)', num(gv('res-gasto-bti'))],
+        ['Gasto ESP (ml)', num(gv('res-gasto-esp'))],
+        ['Depósitos Eliminados', num(gv('res-dep-eliminados'))],
+    ];
+
+    // ── Cria a workbook ──────────────────────────────────────
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(linhas);
+
+    // Largura das colunas
+    ws['!cols'] = [{ wch: 42 }, { wch: 38 }];
+
+    // Estilo das linhas de cabeçalho de seção (╔═══╗)
+    // SheetJS free não suporta estilos — mas a estrutura visual
+    // já é clara pelos separadores ═══ nas células
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Relatório');
+
+    // ── Salva o arquivo ──────────────────────────────────────
+    const nomeBairro = bairro.replace(/\s+/g, '_').toUpperCase();
+    const dataArq    = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+    const nomeArq    = `GeoEstratifica_${nomeBairro}_${dataArq}_${codigo.split('-').pop()}.xlsx`;
+
+    XLSX.writeFile(wb, nomeArq);
+
+    // ── Mostra código e abre Google Forms ───────────────────
+    setTimeout(() => {
+        alert(
+            `✅ Planilha gerada com sucesso!\n\n` +
+            `📋 Código único: ${codigo}\n\n` +
+            `Guarde este código — ele identifica este relatório.`
+        );
+    }, 400);
+}
+
+/* ── ABRIR GOOGLE FORMS ──────────────────────────────── */
+function abrirGoogleForms() {
+    window.open(
+        'https://docs.google.com/forms/d/e/1FAIpQLSfHAkL9KJVWqG-2d6QFRESJ8rTWETmM77uSkCbXUIi4YSq1cg/viewform?usp=sharing&ouid=103032376781676358520',
+        '_blank'
+    );
+}
+
 /* ── EVENT LISTENERS ──────────────────────────────── */
 document.getElementById('media-servidor').addEventListener('input',calcularOperacional);
 document.getElementById('quantidade-servidores').addEventListener('input',calcularOperacional);
 document.getElementById('data-inicio').addEventListener('change',calcularOperacional);
 </script>
+
+<!-- ============================================================
+     LEGENDA DINÂMICA DO MAPA
+     ============================================================ -->
+
+<!-- Overlay (fecha ao clicar fora) -->
+<div id="legenda-overlay" onclick="fecharLegenda()"></div>
+
+<!-- Botão flutuante L -->
+<div id="btn-legenda">
+    <div class="btn-flutuante" onclick="toggleLegenda()"
+         style="background:#1a1a2e;font-size:15px;font-weight:700;letter-spacing:1px;"
+         title="Legenda do mapa">
+        L
+    </div>
+</div>
+
+<!-- Painel deslizante -->
+<div id="painel-legenda">
+    <div id="legenda-header">
+        <div>
+            <h3>🗺️ Legenda do Mapa</h3>
+            <span id="legenda-status">Atualização automática</span>
+        </div>
+        <span id="legenda-fechar" onclick="fecharLegenda()">×</span>
+    </div>
+    <div id="legenda-corpo">
+        <!-- preenchido dinamicamente por atualizarLegenda() -->
+        <div class="legenda-vazia">
+            <span class="legenda-vazia-icone">🗺️</span>
+            <span class="legenda-vazia-texto">Nenhuma seleção ativa</span>
+            <span class="legenda-vazia-dica">Selecione quadras ou aplique classificações no mapa</span>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
