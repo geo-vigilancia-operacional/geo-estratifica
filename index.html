@@ -585,7 +585,7 @@ select.input-painel { cursor: pointer; appearance: auto; }
    LEGENDA DINÂMICA DO MAPA
    ============================================================ */
 #btn-legenda {
-    position: fixed; bottom: 120px; right: 12px;
+    position: fixed; bottom: 360px; right: 12px;
     z-index: 9999;
 }
 
@@ -969,7 +969,44 @@ select.input-painel { cursor: pointer; appearance: auto; }
             Nenhuma quadra selecionada.
         </div>
         <label class="label-campo">UAPS / Unidade</label>
-        <input type="text" id="input-obs-uaps" placeholder="Ex: UAPS Jangurussu" class="input-painel">
+        <select id="input-obs-uaps" class="input-painel">
+            <option value="">Selecione a UAPS...</option>
+            <option value="Alarico Leite">Alarico Leite</option>
+            <option value="Anísio Teixeira">Anísio Teixeira</option>
+            <option value="César Cals de Oliveira">César Cals de Oliveira</option>
+            <option value="Doutor Sergio Gomes de Matos">Doutor Sergio Gomes de Matos</option>
+            <option value="Dr. Acrísio Eufrasino de Pinho">Dr. Acrísio Eufrasino de Pinho</option>
+            <option value="Edilmar Norões">Edilmar Norões</option>
+            <option value="Edmar Fujita">Edmar Fujita</option>
+            <option value="Evandro Ayres de Moura">Evandro Ayres de Moura</option>
+            <option value="Fausto Freire">Fausto Freire</option>
+            <option value="Galba de Araújo">Galba de Araújo</option>
+            <option value="Hélio Góes Ferreira (em reforma)">Hélio Góes Ferreira (em reforma)</option>
+            <option value="Jangurussu">Jangurussu</option>
+            <option value="Janival de Almeida">Janival de Almeida</option>
+            <option value="Josafá Gomes da Silva">Josafá Gomes da Silva</option>
+            <option value="José Barros de Alencar">José Barros de Alencar</option>
+            <option value="João Hipólito (em reforma)">João Hipólito (em reforma)</option>
+            <option value="Lucia de Sousa Belém">Lucia de Sousa Belém</option>
+            <option value="Luís Franklin">Luís Franklin</option>
+            <option value="Manoel Carlos Gouveia">Manoel Carlos Gouveia</option>
+            <option value="Marcus Aurélio Rabelo">Marcus Aurélio Rabelo</option>
+            <option value="Maria Grasiela">Maria Grasiela</option>
+            <option value="Maria de Lourdes">Maria de Lourdes</option>
+            <option value="Mattos Dourado">Mattos Dourado</option>
+            <option value="Melo Jaborandi">Melo Jaborandi</option>
+            <option value="Monteiro de Moraes">Monteiro de Moraes</option>
+            <option value="Márcia Maria Mesquita Veloso">Márcia Maria Mesquita Veloso</option>
+            <option value="Osmar Viana">Osmar Viana</option>
+            <option value="Otoni Cardoso do Vale">Otoni Cardoso do Vale</option>
+            <option value="Padre Alberto Trombini">Padre Alberto Trombini</option>
+            <option value="Pedro Sampaio">Pedro Sampaio</option>
+            <option value="Pompeu Vasconcelos">Pompeu Vasconcelos</option>
+            <option value="Sítio São João">Sítio São João</option>
+            <option value="Terezinha Parente">Terezinha Parente</option>
+            <option value="Vicentina Campos">Vicentina Campos</option>
+            <option value="Waldo Pessoa">Waldo Pessoa</option>
+        </select>
         <label class="label-campo">Endereço do Mutirão / QT</label>
         <input type="text" id="input-obs-end" placeholder="Ex: Rua das Flores, QT 10" class="input-painel">
         <label class="label-campo">Responsável</label>
@@ -1378,7 +1415,7 @@ function processarGeoJSON(geojson) {
                 if(modoSelecao){
                     const sel=layer.options.fillColor===corManual;
                     if(sel){ layer.setStyle({fillColor:'#FFFFFF',fillOpacity:0,color:'#000'}); quadrasSelecionadas=quadrasSelecionadas.filter(f=>f!==feature); }
-                    else   { layer.setStyle({fillColor:corManual,fillOpacity:0.5,color:corManual}); if(!quadrasSelecionadas.includes(feature)) quadrasSelecionadas.push(feature); }
+                    else   { layer.setStyle({fillColor:corManual,fillOpacity:0.5,color:'#333',weight:2}); if(!quadrasSelecionadas.includes(feature)) quadrasSelecionadas.push(feature); }
                     atualizarCardSelecionadas(); atualizarEstratificacao(); atualizarListaQuadrasPainel();
                 } else {
                     const p=feature.properties||{};
@@ -1554,7 +1591,7 @@ function selecionarPorLista() {
         const qProp = String(layer.feature.properties.QUADRA || '').trim();
         if (nums.includes(qProp)) {
             // Pinta com a cor escolhida
-            layer.setStyle({ fillColor: cor, fillOpacity: 0.6, color: cor, weight: 2 });
+            layer.setStyle({ fillColor: cor, fillOpacity: 0.6, color: '#333', weight: 2 });
             // Adiciona em quadrasSelecionadas se ainda não estiver
             if (!quadrasSelecionadas.includes(layer.feature)) {
                 quadrasSelecionadas.push(layer.feature);
@@ -1595,7 +1632,7 @@ function aplicarRegras(){
     window.minhaCamadaJSON.eachLayer(layer=>{
         const p=layer.feature.properties;let cor=null;
         regras.forEach(r=>{if(Number(p[r.atributo]||0)>=r.min&&Number(p[r.atributo]||0)<=r.max)cor=r.cor;});
-        if(cor){layer.setStyle({fillColor:cor,fillOpacity:0.7,color:cor,weight:2});quadrasSelecionadas.push(layer.feature);}
+        if(cor){layer.setStyle({fillColor:cor,fillOpacity:0.7,color:'#333',weight:2});quadrasSelecionadas.push(layer.feature);}
         else{layer.setStyle({fillColor:'#FFFFFF',fillOpacity:0,color:'#000',weight:2});}
     });
     atualizarEstratificacao();atualizarCardSelecionadas();atualizarListaQuadrasPainel();_atualizarLegendaSeAberta();_atualizarLegendaSeAberta();
@@ -1693,11 +1730,11 @@ function copiarRelatorio(){
         m+=`--------------------------------\nIMÓVEIS DO BAIRRO: ${g('global-total-imoveis')}\nQUADRAS: ${g('global-total-quadras')}\nHABITANTES: ${g('global-total-hab')} | PE: ${g('global-total-pe')}\nAP ACIMA TÉRREO: ${g('global-total-ap')}\nMETA DO BAIRRO: ${g('global-total-programados')}\n`;
         m+=`--------------------------------\nESTRATIFICAÇÃO: ${gs('tipo-estratificacao')}\nMUTIRÃO: ${gs('tipo-mutirao')}\nMOTIVO: ${gs('acao-gerada')}\nINDICADOR: ${gs('indicios-encontrados')}\n`;
         m+=`--------------------------------\nMETA DA SELEÇÃO: ${g('sel-total-programados')}\nQUADRAS SELECIONADAS: ${g('sel-qtd-quadras')}\nLISTA:\n${document.getElementById('lista-quadras-selecionadas')?.innerText||'0'}\n`;
-        m+=`UAPS: ${gv('input-obs-uaps')||'---'}\nENDEREÇO: ${gv('input-obs-end')||'---'}\nRESPONSÁVEL: ${gv('input-responsavel')||'---'}\n`;
+        m+=`UAPS: ${gv('input-obs-uaps')||'---'}\nENDEREÇO DO MUTIRÃO: ${gv('input-obs-end')||'---'}\nRESPONSÁVEL: ${gv('input-responsavel')||'---'}\n`;
         m+=`--------------------------------\nINÍCIO PROG.: ${fD(gv('data-inicio'))}\nTÉRMINO PROG.: ${fD(gv('data-termino'))}\nMÉDIA/SERV: ${gv('media-servidor')}\nSERVIDORES: ${gv('quantidade-servidores')}\nDIAS: ${g('dias-trabalho')}\nCICLO: ${gv('res-ciclo')||'---'}\nCÃES: ${g('sel-total-caes')} | GATOS: ${g('sel-total-gatos')}\n`;
-        m+=`--------------------------------\nREALIZADO:\nINÍCIO: ${fD(gv('res-inicio'))}\nTÉRMINO: ${fD(gv('res-termino'))}\nS.EPI: ${gv('semana-epi-inicio')||'--'} a ${gv('semana-epi-fim')||'--'}\nHDP: ${gv('res-hdp')} | HDT: ${gv('res-hdt-trabalhado')||'0'}\nQUADRAS TRAB.: ${gv('res-quadras-trab')}\nIMÓVEIS TRAB.: ${gv('res-imov-trab')||'0'}\nFECHADOS: ${gv('res-fechados')||'0'}\nDESPROGRAMADOS: ${gv('res-imov-desprogram')||'0'}\nQUADRAS POSITIVAS:\n${gv('input-destaque')||'---'}\n`;
-        m+=`--------------------------------\nIMÓVEIS POSITIVOS: ${g('total-positivos')} (R:${gv('pos-r')} C:${gv('pos-c')} TB:${gv('pos-tb')} OU:${gv('pos-ou')})\nFOCOS: ${g('res-total-focos')}\n${focos||'Sem focos\n'}`;
-        m+=`--------------------------------\nTRATAMENTO:\nIMÓV BTI:${gv('res-imov-bti')||'0'} | ESP:${gv('res-imov-esp')||'0'}\nDEP BTI:${gv('res-dep-bti')||'0'} | ESP:${gv('res-dep-esp')||'0'}\nGASTO BTI:${gv('res-gasto-bti')||'0'}g | ESP:${gv('res-gasto-esp')||'0'}ml\nELIMINADOS:${gv('res-dep-eliminados')||'0'}\n`;
+        m+=`--------------------------------\nREALIZADO:\nINÍCIO: ${fD(gv('res-inicio'))}\nTÉRMINO: ${fD(gv('res-termino'))}\nSEMANA EPI: ${gv('semana-epi-inicio')||'--'} a ${gv('semana-epi-fim')||'--'}\nHDP: ${gv('res-hdp')} | HDT: ${gv('res-hdt-trabalhado')||'0'}\nQUADRAS TRAB.: ${gv('res-quadras-trab')}\nIMÓVEIS TRAB.: ${gv('res-imov-trab')||'0'}\nFECHADOS: ${gv('res-fechados')||'0'}\nDESPROGRAMADOS: ${gv('res-imov-desprogram')||'0'}\nQUADRAS POSITIVAS:\n${gv('input-destaque')||'---'}\n`;
+        m+=`--------------------------------\nIMÓVEIS POSITIVOS: ${g('total-positivos')} \n(R:${gv('pos-r')} C:${gv('pos-c')} TB:${gv('pos-tb')} OU:${gv('pos-ou')})\nFOCOS: ${g('res-total-focos')}\n${focos||'Sem focos\n'}`;
+        m+=`--------------------------------\nTRATAMENTO:\nIMÓV TRAT BTI:${gv('res-imov-bti')||'0'} | ESP:${gv('res-imov-esp')||'0'}\nDEP BTI:${gv('res-dep-bti')||'0'} | ESP:${gv('res-dep-esp')||'0'}\nGASTO BTI:${gv('res-gasto-bti')||'0'}g | ESP:${gv('res-gasto-esp')||'0'}ml\nELIMINADOS:${gv('res-dep-eliminados')||'0'}\n`;
         if(navigator.clipboard?.writeText) navigator.clipboard.writeText(m).then(()=>alert('Relatório Copiado!')).catch(()=>fbCopy(m));
         else fbCopy(m);
     }catch(e){console.error(e);alert('Erro ao copiar.');}
